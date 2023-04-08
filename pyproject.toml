@@ -1,0 +1,143 @@
+[project]
+name = "readnext"
+version = "0.0.1"
+description = "Hybrid recommender system for computer science papers"
+authors = [{ name = "Joel Beck", email = "joel.beck@stud.uni-goettingen.de" }]
+dependencies = [
+    "torch>=2.0.0",
+    "requests>=2.28.2",
+    "python-dotenv>=1.0.0",
+    "spacy>=3.5.1",
+    "scikit-learn>=1.2.2",
+    "numpy>=1.24.2",
+    "pip>=23.0.1",
+    "gensim>=4.3.1",
+    "transformers>=4.27.4",
+    "pandas>=2.0.0",
+    "tqdm>=4.65.0",
+]
+requires-python = "==3.10.*"
+readme = "README.md"
+license = { text = "MIT" }
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[project.urls]
+Homepage = "https://github.com/joel-beck/readnext"
+Repository = "https://github.com/joel-beck/readnext"
+
+[tool.pdm.scripts]
+# built-in commands: pdm add, pdm remove, pdm install, pdm fix, pdm update, pdm self
+# update, pdm list, pdm show, pdm build, pdm publish
+setup = "pdm install"
+update-pdm = "pdm self update"
+update-deps = "pdm update"
+update-all = { composite = ["update-pdm", "update-deps"] }
+format = "black ."
+lint = "ruff --fix --exit-non-zero-on-fix --show-fixes ."
+test = "pytest"
+check = "mypy ."
+pre = "pre-commit run --all-files"
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "ruff>=0.0.261",
+    "black>=23.3.0",
+    "pytest>=7.2.2",
+    "mypy>=1.2.0",
+    "types-requests>=2.28.11.17",
+    "pre-commit>=3.2.2",
+    "ipykernel>=6.22.0",
+    "notebook>=6.5.4",
+]
+
+[tool.black]
+line-length = 100
+target-version = ['py311']
+include = '\.pyi?$'
+
+[tool.mypy]
+allow_redefinition = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+disallow_incomplete_defs = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+no_implicit_optional = true
+show_error_codes = true
+strict_equality = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# command line options for pytest
+addopts = "--verbose"
+filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning"]
+
+[tool.ruff]
+line-length = 100
+fix = true # autofix behavior
+show-fixes = true # enumerate fixed violations
+show-source = true # show source code snippets when reporting lint violations
+format = "grouped" # Group violations by containing file
+ignore-init-module-imports = true # Avoid automatically removing unused imports in __init__.py files
+# see explanation of letter codes at https://beta.ruff.rs/docs/rules/
+select = [
+    "A", # flake8-builtins
+    "ANN", # flake8-annotations
+    "ARG", # flake8-unused-arguments
+    "BLE", # flake8-blind-except
+    "C4", # flake8-comprehensions
+    "DTZ", # flake8-datetimez
+    "E", # pycodestyle Error
+    "F", # Pyflakes
+    "I", # isort
+    "ICN", # flake8-import-conventions
+    "INP", # flake8-no-pep420
+    "ISC", # flake8-implicit-str-concat
+    "N", # pep8-naming
+    # causes toml parsing error: unknown field
+    # "NPY", # NumPy-specific rules
+    "PD", # pandas-vet
+    "PIE", # flake8-pie
+    "PT", # flake8-pytest-style
+    "PTH", # flake8-use-pathlib
+    "Q", # flake8-quotes
+    "RET", # flake8-return
+    "RSE", # flake8-raise
+    "SIM", # flake8-simplify
+    "TID", # flake8-tidy-imports
+    "UP", # pyupgrade
+    "W", # pycodestyle Warning
+
+]
+# - `ANN101` (missing type annotation for `self` in method)
+# - `N803` (argument name should be lowercase)
+# - `N806` (variable in function should be lowercase)
+# - `PD015` (use `.merge()` instead of `pd.merge()`, incorrect for Series)
+# - `PD901` (don't use `df` as a variable name)
+ignore = ["ANN101", "N803", "N806", "PD015", "PD901"]
+unfixable = ["F401"] # Never try to fix `F401` (unused imports)
+
+[tool.ruff.flake8-annotations]
+suppress-dummy-args = true # suppress violations "dummy" variables like `_`
+
+[tool.ruff.flake8-builtins]
+builtins-ignorelist = ["id"] # ignore violations for `id` builtin
+
+[tool.ruff.flake8-comprehensions]
+allow-dict-calls-with-keyword-arguments = true # Allow dict calls with keyword arguments (e.g. `dict(a=1, b=2)`)
+
+[tool.ruff.flake8-pytest-style]
+fixture-parentheses = false # `@pytest.fixture` instead of `@pytest.fixture()`
+mark-parentheses = false # `@pytest.mark.foo` instead of `@pytest.mark.foo()`
+
+[tool.ruff.isort]
+combine-as-imports = true # combines `as` imports on the same line

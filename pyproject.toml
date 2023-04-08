@@ -95,7 +95,6 @@ select = [
     "ARG", # flake8-unused-arguments
     "BLE", # flake8-blind-except
     "C4", # flake8-comprehensions
-    "DTZ", # flake8-datetimez
     "E", # pycodestyle Error
     "F", # Pyflakes
     "I", # isort

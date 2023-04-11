@@ -31,8 +31,6 @@ repos:
       - id: pretty-format-json
         args: ["--autofix"]
         stages: [commit]
-      - id: requirements-txt-fixer
-        stages: [commit]
       - id: trailing-whitespace
         stages: [commit]
   - repo: https://github.com/psf/black
@@ -41,9 +39,10 @@ repos:
       - id: black
         stages: [commit]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.260
+    rev: v0.0.261
     hooks:
       - id: ruff
+        args: [--fix, --exit-non-zero-on-fix, --show-fixes]
         stages: [commit]
         exclude: ^pyproject\.toml$
   - repo: https://github.com/asottile/pyupgrade
@@ -53,12 +52,12 @@ repos:
         args: [--py310-plus]
         stages: [push]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.1.1
+    rev: v1.2.0
     hooks:
       - id: mypy
         args: [--ignore-missing-imports]
         stages: [push]
   - repo: https://github.com/pdm-project/pdm
-    rev: 2.5.0b0
+    rev: 2.5.2
     hooks:
       - id: pdm-lock-check

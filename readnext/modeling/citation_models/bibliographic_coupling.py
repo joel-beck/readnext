@@ -3,10 +3,11 @@ import pandas as pd
 from readnext.data.config import DataPaths
 from readnext.modeling.citation_models.base import (
     compute_n_most_common,
+    compute_values_df,
     count_common_values_pairwise,
-    fill_values_df,
     lookup_n_most_common,
 )
+from readnext.modeling.config import ResultsPaths
 
 
 def count_common_references_pairwise(
@@ -18,7 +19,7 @@ def count_common_references_pairwise(
 def fill_references_df(
     df: pd.DataFrame, first_row: int | None = None, last_row: int | None = None
 ) -> pd.DataFrame:
-    return fill_values_df(df, count_common_references_pairwise, first_row, last_row)
+    return compute_values_df(df, count_common_references_pairwise, first_row, last_row)
 
 
 def compute_n_most_common_references(
@@ -50,10 +51,16 @@ def main() -> None:
     )
 
     # takes roughly 2 minutes
-    references_df = fill_references_df(documents_authors_labels_citations_most_cited)
+    bibliographic_coupling_most_cited = fill_references_df(
+        documents_authors_labels_citations_most_cited
+    )
 
-    # 8 MB of memory
-    references_df.memory_usage(deep=True).sum() / 1e6
+    bibliographic_coupling_most_cited.to_pickle(
+        ResultsPaths.citation_models.bibliographic_coupling_most_cited_pkl
+    )
+
+    # 8 MB of memory usage
+    # references_df.memory_usage(deep=True).sum() / 1e6
 
 
 if __name__ == "__main__":

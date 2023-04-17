@@ -38,22 +38,20 @@ def init_values_df_from_input(
     return pd.DataFrame(data=values, index=row_document_ids, columns=col_document_ids)
 
 
-# def print_progress(
-#     df: pd.DataFrame,
-#     row_index: int,
-#     col_index: int,
-# ) -> None:
-#     print(f"Dataframe entry: {(row_index, col_index)}")
-#     print(f"Computed values: {row_index * df.shape[1]} / {df.size}")
+def fill_upper_triangle(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Copy values from lower triangle to upper triangle (or reversed), excluding diagonal
+    values. Assumes that the dataframe has an equal number of rows and columns and is
+    initialized with zeros.
+    """
+    return df + df.T - np.diag(df.to_numpy().diagonal())
 
 
 def fill_values_df(
     input_df: pd.DataFrame,
+    values_df: pd.DataFrame,
     count_pairwise_func: Callable[[pd.DataFrame, int, int], int],
-    first_row: int | None,
-    last_row: int | None,
 ) -> pd.DataFrame:
-    values_df = init_values_df_from_input(input_df, first_row, last_row)
     document_id_combinations = itertools.product(
         enumerate(values_df.index), enumerate(values_df.columns)
     )
@@ -72,10 +70,19 @@ def fill_values_df(
         # set value of new dataframe
         values_df.loc[row_document_id, col_document_id] = num_common_values
 
-    # copy values from lower triangle to upper triangle, excluding diagonal
-    # values_df = values_df + values_df.T - np.diag(values_df.values.diagonal())
-
     return values_df
+
+
+def compute_values_df(
+    input_df: pd.DataFrame,
+    count_pairwise_func: Callable[[pd.DataFrame, int, int], int],
+    first_row: int | None,
+    last_row: int | None,
+) -> pd.DataFrame:
+    values_df = init_values_df_from_input(input_df, first_row, last_row)
+    values_df = fill_values_df(input_df, values_df, count_pairwise_func)
+
+    return fill_upper_triangle(values_df)
 
 
 def lookup_n_most_common(

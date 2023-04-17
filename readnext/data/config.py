@@ -1,11 +1,12 @@
 """
 Set file paths for reading and writing data. Requires a .env file in the root directory
 with the following variables:
-- DATA_DIRPATH (required): path to the data directory where all data files are stored
-- DOCUMENTS_METADATA_FILENAME (optional): name of the file containing the downloaded D3
-documents in jsonl format
-- AUTHORS_METADATA_FILENAME (optional): name of the file containing the downloaded D3
-authors in jsonl format
+- DATA_DIRPATH (default: `data`): path to the data directory where all data files are
+stored
+- DOCUMENTS_METADATA_FILENAME (default: `2022-11-30-papers.jsonl`): name of the file
+containing the downloaded D3 documents in jsonl format
+- AUTHORS_METADATA_FILENAME (default: `2022-11-30-authors.jsonl`): name of the file
+containing the downloaded D3 authors in jsonl format
 """
 
 import os
@@ -29,7 +30,7 @@ authors_metadata_json_filename = (
 )
 
 
-@dataclass
+@dataclass(frozen=True)
 class D3DocumentsDataPaths:
     raw_json: Path = data_dirpath / documents_metadata_json_filename
     chunks_stem: Path = data_dirpath / "2022-11-30_documents_chunks"
@@ -37,26 +38,26 @@ class D3DocumentsDataPaths:
     preprocessed_chunks_stem: Path = data_dirpath / "documents_preprocessed_chunks"
 
 
-@dataclass
+@dataclass(frozen=True)
 class D3AuthorsDataPaths:
     raw_json: Path = data_dirpath / authors_metadata_json_filename
     most_cited_pkl: Path = data_dirpath / "2022-11-30_authors_most_cited.pkl"
     full_pkl: Path = data_dirpath / "2022-11-30_authors_full.pkl"
 
 
-@dataclass
+@dataclass(frozen=True)
 class D3:
     documents: D3DocumentsDataPaths = D3DocumentsDataPaths()
     authors: D3AuthorsDataPaths = D3AuthorsDataPaths()
 
 
-@dataclass
+@dataclass(frozen=True)
 class ArxivDataPaths:
     raw_json: Path = data_dirpath / "arxiv_metadata.json"
     id_labels_pkl: Path = data_dirpath / "arxiv_id_labels.pkl"
 
 
-@dataclass
+@dataclass(frozen=True)
 class MergedDataPaths:
     documents_labels_chunk_stem: Path = data_dirpath / "documents_labels_chunks"
     documents_labels_pkl: Path = data_dirpath / "documents_labels.pkl"
@@ -73,7 +74,7 @@ class MergedDataPaths:
     most_cited_subset_size: int = 1_000
 
 
-@dataclass
+@dataclass(frozen=True)
 class DataPaths:
     d3: D3 = D3()
     arxiv: ArxivDataPaths = ArxivDataPaths()

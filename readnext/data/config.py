@@ -32,7 +32,6 @@ authors_metadata_json_filename = (
 @dataclass
 class D3DocumentsDataPaths:
     raw_json: Path = data_dirpath / documents_metadata_json_filename
-    most_cited_pkl: Path = data_dirpath / "2022-11-30_documents_most_cited.pkl"
     chunks_stem: Path = data_dirpath / "2022-11-30_documents_chunks"
     full_pkl: Path = data_dirpath / "2022-11-30_documents_full.pkl"
     preprocessed_chunks_stem: Path = data_dirpath / "documents_preprocessed_chunks"
@@ -68,6 +67,10 @@ class MergedDataPaths:
     documents_authors_labels_citations_pkl: Path = (
         data_dirpath / "documents_authors_labels_citations.pkl"
     )
+    documents_authors_labels_citations_most_cited_pkl: Path = (
+        data_dirpath / "documents_authors_labels_citations_most_cited.pkl"
+    )
+    most_cited_subset_size: int = 1_000
 
 
 @dataclass

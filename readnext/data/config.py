@@ -71,7 +71,7 @@ class MergedDataPaths:
     documents_authors_labels_citations_most_cited_pkl: Path = (
         data_dirpath / "documents_authors_labels_citations_most_cited.pkl"
     )
-    most_cited_subset_size: int = 1_000
+    most_cited_subset_size: int = 10_000
 
 
 @dataclass(frozen=True)

@@ -1,10 +1,10 @@
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from typing import cast
 
 import pandas as pd
 
-from readnext.data.config import DataPaths
-from readnext.modeling.config import ResultsPaths
+from readnext.evaluation.metrics import average_precision
 
 
 @dataclass
@@ -16,14 +16,14 @@ class Document:
 
 
 @dataclass
-class ModelData:
+class CitationModelData:
     input_document: Document
     feature_matrix: pd.DataFrame
     labels: pd.Series
 
 
 @dataclass
-class ModelDataFromId:
+class CitationModelDataFromId:
     document_id: int
     documents_data: pd.DataFrame
     co_citation_analysis_data: pd.DataFrame
@@ -89,10 +89,11 @@ class ModelDataFromId:
             .loc[:, "arxiv_labels"]
             .apply(self.shares_arxiv_label)
             .apply(self.boolean_to_int)
+            .rename("label")
         )
 
-    def get_model_data(self) -> ModelData:
-        return ModelData(
+    def get_model_data(self) -> CitationModelData:
+        return CitationModelData(
             self.document,
             self.get_feature_matrix(),
             self.get_labels(),
@@ -115,35 +116,22 @@ def set_missing_publication_dates_to_max_rank(df: pd.DataFrame) -> pd.DataFrame:
     return df.assign(publication_date_rank=df["publication_date_rank"].fillna(len(df)))
 
 
-def main() -> None:
-    documents_authors_labels_citations_most_cited: pd.DataFrame = (
-        pd.read_pickle(DataPaths.merged.documents_authors_labels_citations_most_cited_pkl)
-        .set_index("document_id")
-        .pipe(add_feature_rank_cols)
-        .pipe(set_missing_publication_dates_to_max_rank)
-    )
-
-    bibliographic_coupling_most_cited: pd.DataFrame = pd.read_pickle(
-        ResultsPaths.citation_models.bibliographic_coupling_most_cited_pkl
-    )
-
-    co_citation_analysis_most_cited: pd.DataFrame = pd.read_pickle(
-        ResultsPaths.citation_models.co_citation_analysis_most_cited_pkl
-    )
-
-    model_data_from_id = ModelDataFromId(
-        document_id=206594692,
-        documents_data=documents_authors_labels_citations_most_cited,
-        co_citation_analysis_data=co_citation_analysis_most_cited,
-        bibliographic_coupling_data=bibliographic_coupling_most_cited,
-    )
-
-    model_data = model_data_from_id.get_model_data()
-
-    model_data.input_document
-    model_data.labels
-    model_data.feature_matrix
+def select_top_n(
+    citation_model_data: CitationModelData, feature_name: str, n: int = 20
+) -> pd.Series:
+    return citation_model_data.feature_matrix[feature_name].sort_values(ascending=True).head(n)
 
 
-if __name__ == "__main__":
-    main()
+def add_labels(top_n: pd.Series, labels: pd.Series) -> pd.DataFrame:
+    return pd.merge(top_n, labels, left_index=True, right_index=True)
+
+
+def eval_top_n(
+    citation_model_data: CitationModelData,
+    feature_name: str,
+    metric: Callable[[Sequence[int]], float] = average_precision,
+    n: int = 20,
+) -> float:
+    top_n = select_top_n(citation_model_data, feature_name, n)
+    top_n_with_labels = add_labels(top_n, citation_model_data.labels)
+    return metric(top_n_with_labels["label"])  # type: ignore

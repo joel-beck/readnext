@@ -1,6 +1,8 @@
+from pathlib import Path
+
 import pytest
 
 
 @pytest.fixture
-def dummy_42() -> int:
-    return 42
+def root_path() -> Path:
+    return Path(__file__).parent.parent

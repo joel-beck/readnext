@@ -1,4 +1,6 @@
+import pickle
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Protocol, TypeAlias
 
 import torch
@@ -6,7 +8,8 @@ from spacy.language import Language
 from spacy.tokens.doc import Doc
 from transformers import BertTokenizerFast
 
-from readnext.modeling.language_models import DocumentsInfo
+# do not import from .language_models to avoid circular imports
+from readnext.modeling.language_models.preprocessing.document_info import DocumentsInfo
 from readnext.modeling.utils import setup_progress_bar
 
 DocumentTokens: TypeAlias = list[str]
@@ -22,12 +25,28 @@ class ListTokenizer(Protocol):
     def tokenize(self) -> DocumentsTokensList:
         ...
 
+    @staticmethod
+    def save_tokens(path: Path, tokens_list: DocumentsTokensList) -> None:
+        ...
+
+    @staticmethod
+    def load_tokens(path: Path) -> DocumentsTokensList:
+        ...
+
 
 @dataclass
 class TensorTokenizer(Protocol):
     documents_info: DocumentsInfo
 
     def tokenize(self) -> DocumentsTokensTensor:
+        ...
+
+    @staticmethod
+    def save_tokens(path: Path, tokens_tensor: DocumentsTokensTensor) -> None:
+        ...
+
+    @staticmethod
+    def load_tokens(path: Path) -> DocumentsTokensTensor:
         ...
 
 
@@ -89,10 +108,20 @@ class SpacyTokenizer:
     def strings_from_tokens(tokens_list: DocumentsTokensList) -> DocumentsTokensString:
         return [" ".join(tokens) for tokens in tokens_list]
 
+    @staticmethod
+    def save_tokens(path: Path, tokens_list: DocumentsTokensList) -> None:
+        with path.open("wb") as f:
+            pickle.dump(tokens_list, f)
+
+    @staticmethod
+    def load_tokens(path: Path) -> DocumentsTokensList:
+        with path.open("rb") as f:
+            return pickle.load(f)
+
 
 @dataclass
 class BERTTokenizer:
-    """Implement `TensorTokenizer` Protocol"""
+    """Implements `TensorTokenizer` Protocol"""
 
     documents_info: DocumentsInfo
     bert_tokenizer: BertTokenizerFast
@@ -110,3 +139,11 @@ class BERTTokenizer:
         )[
             "input_ids"
         ]  # type: ignore
+
+    @staticmethod
+    def save_tokens(path: Path, tokens_tensor: DocumentsTokensTensor) -> None:
+        torch.save(tokens_tensor, path)
+
+    @staticmethod
+    def load_tokens(path: Path) -> DocumentsTokensTensor:
+        return torch.load(path)

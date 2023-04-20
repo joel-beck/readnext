@@ -7,7 +7,7 @@ from gensim.models.fasttext import FastText
 from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
-from readnext.modeling.language_models import (
+from readnext.modeling.language_models.preprocessing import (
     DocumentsTokensList,
     DocumentsTokensString,
     DocumentsTokensTensor,
@@ -17,7 +17,7 @@ from readnext.modeling.language_models import (
 EmbeddingModel: TypeAlias = TfidfVectorizer | FastText | BertModel
 
 
-def save_embeddings(embeddings: np.ndarray, path: Path) -> None:
+def save_embeddings(path: Path, embeddings: np.ndarray) -> None:
     """Save document embeddings to disk"""
     np.save(path, embeddings)
 

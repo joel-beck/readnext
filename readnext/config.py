@@ -94,6 +94,7 @@ class DataPaths:
 class ModelVersions:
     spacy: str = "en_core_web_sm"
     fasttext: str = "cc.en.300.bin"
+    bert: str = "bert-base-uncased"
     scibert: str = "allenai/scibert_scivocab_uncased"
 
 
@@ -116,9 +117,21 @@ class CitationModelsResultsPaths:
 
 @dataclass(frozen=True)
 class LanguageModelsResultsPaths:
-    spacy_tokenized_abstracts_most_cited: Path = (
+    spacy_tokenized_abstracts_most_cited_pkl: Path = (
         results_dirpath / "spacy_tokenized_abstracts_most_cited.pkl"
     )
+    bert_tokenized_abstracts_most_cited_pth: Path = (
+        results_dirpath / "bert_tokenized_abstracts_most_cited.pth"
+    )
+    scibert_tokenized_abstracts_most_cited_pth: Path = (
+        results_dirpath / "scibert_tokenized_abstracts_most_cited.pth"
+    )
+    tfidf_embeddings_most_cited_npy: Path = results_dirpath / "tfidf_embeddings_most_cited.npy"
+    fasttext_embeddings_most_cited_npy: Path = (
+        results_dirpath / "fasttext_embeddings_most_cited.npy"
+    )
+    bert_embeddings_most_cited_npy: Path = results_dirpath / "bert_embeddings_most_cited.npy"
+    scibert_embeddings_most_cited_npy: Path = results_dirpath / "scibert_embeddings_most_cited.npy"
 
 
 @dataclass(frozen=True)

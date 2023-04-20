@@ -7,7 +7,7 @@ from spacy.tokens.doc import Doc
 from transformers import BertTokenizerFast
 
 from readnext.modeling.language_models import DocumentsInfo
-from readnext.modeling.utils.rich_progress_bars import setup_progress_bar
+from readnext.modeling.utils import setup_progress_bar
 
 DocumentTokens: TypeAlias = list[str]
 DocumentsTokensList: TypeAlias = list[DocumentTokens]

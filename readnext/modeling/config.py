@@ -1,6 +1,8 @@
 """
-Set file paths for reading and writing model results. Requires a .env file in the root
-directory with the following variables:
+- Set file paths for reading and writing model results.
+- Specify Model Versions
+
+Requires a .env file in the root directory with the following variables:
 - DATA_DIRPATH (default: `results`): path to the results directory where all model
 results are stored
 """
@@ -27,5 +29,18 @@ class CitationModelsResultsPaths:
 
 
 @dataclass(frozen=True)
+class LanguageModelsResultsPaths:
+    spacy_preprocessing_most_cited: Path = results_dirpath / "spacy_preprocessing_most_cited.pkl"
+
+
+@dataclass(frozen=True)
 class ResultsPaths:
     citation_models: CitationModelsResultsPaths = CitationModelsResultsPaths()
+    language_models: LanguageModelsResultsPaths = LanguageModelsResultsPaths()
+
+
+@dataclass
+class ModelVersions:
+    spacy: str = "en_core_web_sm"
+    fasttext: str = "cc.en.300.bin"
+    scibert: str = "allenai/scibert_scivocab_uncased"

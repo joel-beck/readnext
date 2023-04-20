@@ -4,7 +4,14 @@ from readnext.modeling.language_models.preprocessing.document_info import (
     DocumentStatistics,
     documents_info_from_df,
 )
-from readnext.modeling.language_models.preprocessing.tokenizer import BERTTokenizer, SpacyTokenizer
+from readnext.modeling.language_models.preprocessing.tokenizer import (
+    BERTTokenizer,
+    DocumentsTokensList,
+    DocumentsTokensString,
+    DocumentsTokensTensor,
+    DocumentTokens,
+    SpacyTokenizer,
+)
 
 __all__ = [
     "DocumentInfo",
@@ -12,5 +19,9 @@ __all__ = [
     "DocumentStatistics",
     "documents_info_from_df",
     "BERTTokenizer",
+    "DocumentsTokensList",
+    "DocumentsTokensString",
+    "DocumentsTokensTensor",
+    "DocumentTokens",
     "SpacyTokenizer",
 ]

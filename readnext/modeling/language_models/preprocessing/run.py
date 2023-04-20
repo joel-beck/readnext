@@ -25,7 +25,7 @@ def main() -> None:
     spacy_tokenizer = SpacyTokenizer(documents_info, spacy_model)
     spacy_tokenized_abstracts = spacy_tokenizer.tokenize()
 
-    with ResultsPaths.language_models.spacy_preprocessing_most_cited.open("wb") as f:
+    with ResultsPaths.language_models.spacy_tokenized_abstracts_most_cited.open("wb") as f:
         pickle.dump(spacy_tokenized_abstracts, f)
 
     # TODO: Add BERT Tokenizer

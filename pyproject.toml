@@ -141,7 +141,10 @@ select = [
 # - `PD015` (use `.merge()` instead of `pd.merge()`, incorrect for Series)
 # - `PD901` (don't use `df` as a variable name)
 ignore = ["ANN101", "N803", "N806", "PD015", "PD901"]
-unfixable = ["F401"] # Never try to fix `F401` (unused imports)
+# Never try to fix
+# - `F401` (unused imports)
+# - `F841` (unused variables)
+unfixable = ["F401", "F841"]
 
 [tool.ruff.flake8-annotations]
 suppress-dummy-args = true # suppress violations "dummy" variables like `_`

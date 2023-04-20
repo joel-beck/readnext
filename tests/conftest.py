@@ -5,4 +5,5 @@ import pytest
 
 @pytest.fixture
 def root_path() -> Path:
-    return Path(__file__).parent.parent
+    """Return project root path when pytest is executed from the project root directory"""
+    return Path().cwd()

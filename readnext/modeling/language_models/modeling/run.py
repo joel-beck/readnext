@@ -4,9 +4,14 @@ from gensim.models.fasttext import load_facebook_model
 from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
-from readnext.modeling.config import ModelPaths, ModelVersions, ResultsPaths
-from readnext.modeling.language_models.modeling import BERTEmbedder, FastTextEmbedder, TFIDFEmbedder
-from readnext.modeling.language_models.preprocessing import DocumentsTokensList, SpacyTokenizer
+from readnext.config import ModelPaths, ModelVersions, ResultsPaths
+from readnext.modeling.language_models import (
+    BERTEmbedder,
+    DocumentsTokensList,
+    FastTextEmbedder,
+    SpacyTokenizer,
+    TFIDFEmbedder,
+)
 
 
 def main() -> None:

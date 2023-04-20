@@ -3,8 +3,7 @@ from typing import cast
 
 import pandas as pd
 
-from readnext.data.config import DataPaths
-from readnext.modeling.config import ResultsPaths
+from readnext.config import DataPaths, ResultsPaths
 
 
 @dataclass

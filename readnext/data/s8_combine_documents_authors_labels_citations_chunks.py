@@ -5,7 +5,7 @@ dataframe.
 
 import pandas as pd
 
-from readnext.data.config import DataPaths
+from readnext.config import DataPaths
 
 
 def main() -> None:

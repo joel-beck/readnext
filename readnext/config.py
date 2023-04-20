@@ -1,8 +1,16 @@
 """
-Set file paths for reading and writing data. Requires a .env file in the root directory
-with the following variables:
+- Set file paths for reading and writing data
+- Set file paths for reading pretrained models
+- Set file paths for reading and writing model results
+- Specify Model Versions
+
+Requires a .env file in the root directory with the following variables:
 - DATA_DIRPATH (default: `data`): path to the data directory where all data files are
 stored
+- MODELS_DIRPATH (default: `models`): path to the models directory where all pretrained
+models are stored
+- RESULTS_DIRPATH (default: `results`): path to the results directory where all model
+results are stored
 - DOCUMENTS_METADATA_FILENAME (default: `2022-11-30-papers.jsonl`): name of the file
 containing the downloaded D3 documents in jsonl format
 - AUTHORS_METADATA_FILENAME (default: `2022-11-30-authors.jsonl`): name of the file
@@ -20,11 +28,12 @@ load_dotenv()
 # os.getenv() returns str | None, os.environ[] always returns str and raises KeyError if
 # environment variable is not set
 data_dirpath = Path(os.getenv("DATA_DIRPATH") or "data")
+models_dirpath = Path(os.getenv("MODELS_DIRPATH") or "models")
+results_dirpath = Path(os.getenv("RESULTS_DIRPATH") or "results")
 
 documents_metadata_json_filename = (
     os.getenv("DOCUMENTS_METADATA_FILENAME") or "2022-11-30-papers.jsonl"
 )
-
 authors_metadata_json_filename = (
     os.getenv("AUTHORS_METADATA_FILENAME") or "2022-11-30-authors.jsonl"
 )
@@ -79,3 +88,40 @@ class DataPaths:
     d3: D3 = D3()
     arxiv: ArxivDataPaths = ArxivDataPaths()
     merged: MergedDataPaths = MergedDataPaths()
+
+
+@dataclass(frozen=True)
+class ModelVersions:
+    spacy: str = "en_core_web_sm"
+    fasttext: str = "cc.en.300.bin"
+    scibert: str = "allenai/scibert_scivocab_uncased"
+
+
+@dataclass
+class ModelPaths:
+    """File paths to pretrained models"""
+
+    fasttext: Path = models_dirpath / ModelVersions.fasttext
+
+
+@dataclass(frozen=True)
+class CitationModelsResultsPaths:
+    bibliographic_coupling_most_cited_pkl: Path = (
+        results_dirpath / "bibliographic_coupling_most_cited.pkl"
+    )
+    co_citation_analysis_most_cited_pkl: Path = (
+        results_dirpath / "co_citation_analysis_most_cited.pkl"
+    )
+
+
+@dataclass(frozen=True)
+class LanguageModelsResultsPaths:
+    spacy_tokenized_abstracts_most_cited: Path = (
+        results_dirpath / "spacy_tokenized_abstracts_most_cited.pkl"
+    )
+
+
+@dataclass(frozen=True)
+class ResultsPaths:
+    citation_models: CitationModelsResultsPaths = CitationModelsResultsPaths()
+    language_models: LanguageModelsResultsPaths = LanguageModelsResultsPaths()

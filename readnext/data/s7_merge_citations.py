@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 from tqdm import tqdm
 from typing_extensions import TypedDict
 
-from readnext.data.config import DataPaths
+from readnext.config import DataPaths
 
 
 class SemanticScholarCitation(TypedDict):

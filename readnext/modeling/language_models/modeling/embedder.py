@@ -7,7 +7,7 @@ from gensim.models.fasttext import FastText
 from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
-from readnext.modeling.language_models.preprocessing import (
+from readnext.modeling.language_models import (
     DocumentsTokensList,
     DocumentsTokensString,
     DocumentsTokensTensor,

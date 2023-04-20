@@ -108,6 +108,9 @@ ENV/
 # ruff
 .ruff_cache/
 
+# sourcery
+.sourcery.yaml
+
 # IDE settings
 .vscode/
 .idea/
@@ -116,11 +119,16 @@ ENV/
 .DS_Store
 
 # Data Files
-*.csv
-*.tsv
+data/*.pkl
+data/*.csv
+data/*.tsv
+data-raw/*.pkl
+data-raw/*.csv
+data-raw/*.tsv
 
 # Model Files
 *.pth
+*.joblib
 
 # PDF and HTML files
 *.pdf

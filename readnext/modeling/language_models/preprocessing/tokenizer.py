@@ -1,77 +1,35 @@
 from dataclasses import dataclass
-from typing import Protocol, overload
+from typing import Protocol
 
-import pandas as pd
 import torch
 from spacy.language import Language
 from spacy.tokens.doc import Doc
 from transformers import BertTokenizerFast
-from typing_extensions import Self
 
+from readnext.modeling.language_models.preprocessing import DocumentsInfo
 from readnext.modeling.utils.rich_progress_bars import setup_progress_bar
 
 
 @dataclass
-class DocumentInfo:
-    document_id: int
-    title: str
-    abstract: str
-
-
-@dataclass
-class DocumentsInfo:
-    documents_info: list[DocumentInfo]
-
-    def __post_init__(self) -> None:
-        self.document_ids = [document_info.document_id for document_info in self.documents_info]
-        self.titles = [document_info.title for document_info in self.documents_info]
-        self.abstracts = [document_info.abstract for document_info in self.documents_info]
-
-    def __len__(self) -> int:
-        return len(self.documents_info)
-
-    @overload
-    def __getitem__(self, index: int) -> DocumentInfo:
-        ...
-
-    @overload
-    def __getitem__(self, index: slice) -> Self:
-        ...
-
-    def __getitem__(self, index: int | slice) -> DocumentInfo | Self:
-        # return single document info for integer index
-        if isinstance(index, int):
-            return self.documents_info[index]
-        # return list of document infos for slice index
-        return self.__class__(self.documents_info[index])
-
-
-@dataclass
-class DocumentStatistics:
-    similarity: float
-    document_info: DocumentInfo
-
-
-def documents_info_from_df(df: pd.DataFrame) -> DocumentsInfo:
-    document_ids = df["document_id"].tolist()
-    titles = df["title"].tolist()
-    abstracts = df["abstract"].tolist()
-
-    return DocumentsInfo(
-        [
-            DocumentInfo(document_id, title, abstract)
-            for document_id, title, abstract in zip(document_ids, titles, abstracts)
-        ]
-    )
-
-
-@dataclass
-class DocumentPreprocessor(Protocol):
+class ListTokenizer(Protocol):
     documents_info: DocumentsInfo
 
+    def tokenize(self) -> list[list[str]]:
+        ...
+
 
 @dataclass
-class SpacyPreprocessor:
+class TensorTokenizer(Protocol):
+    documents_info: DocumentsInfo
+
+    def tokenize(self) -> torch.Tensor:
+        ...
+
+
+@dataclass
+class SpacyTokenizer:
+    """Implements `ListTokenizer` Protocol"""
+
     documents_info: DocumentsInfo
     spacy_model: Language
     remove_stopwords: bool = True
@@ -81,7 +39,7 @@ class SpacyPreprocessor:
     def to_spacy_doc(self, document: str) -> Doc:
         return self.spacy_model(document)
 
-    def preprocess_spacy_doc(
+    def clean_spacy_doc(
         self,
         spacy_doc: Doc,
     ) -> list[str]:
@@ -103,10 +61,10 @@ class SpacyPreprocessor:
 
     def clean_document(self, document: str) -> list[str]:
         spacy_doc = self.to_spacy_doc(document)
-        return self.preprocess_spacy_doc(spacy_doc)
+        return self.clean_spacy_doc(spacy_doc)
 
     def tokenize(self) -> list[list[str]]:
-        """Preprocesses all abstracts of input documents and tokenizes them."""
+        """Cleans and Tokenized all abstracts of input documents."""
         progress_bar = setup_progress_bar()
         tokenized_abstracts = []
 
@@ -125,11 +83,13 @@ class SpacyPreprocessor:
 
 
 @dataclass
-class BERTPreprocessor:
+class BERTTokenizer:
+    """Implement `TensorTokenizer` Protocol"""
+
     documents_info: DocumentsInfo
     bert_tokenizer: BertTokenizerFast
 
-    def as_token_ids(self) -> torch.Tensor:
+    def tokenize(self) -> torch.Tensor:
         return self.bert_tokenizer(
             self.documents_info.abstracts,
             # BERT takes 512 dimensional tensors as input

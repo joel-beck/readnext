@@ -5,9 +5,9 @@ import spacy
 
 from readnext.data.config import DataPaths
 from readnext.modeling.config import ModelVersions, ResultsPaths
-from readnext.modeling.language_models.document_preprocessor import (
-    # BERTPreprocessor,
-    SpacyPreprocessor,
+from readnext.modeling.language_models.preprocessing import (
+    # BERTTokenizer,
+    SpacyTokenizer,
     documents_info_from_df,
 )
 
@@ -22,13 +22,13 @@ def main() -> None:
     # requires downloading the model first with `python -m spacy download
     # <model_version>` from the command line
     spacy_model = spacy.load(ModelVersions.spacy)
-    spacy_preprocessor = SpacyPreprocessor(documents_info, spacy_model)
-    spacy_tokenized_abstracts = spacy_preprocessor.tokenize()
+    spacy_tokenizer = SpacyTokenizer(documents_info, spacy_model)
+    spacy_tokenized_abstracts = spacy_tokenizer.tokenize()
 
     with ResultsPaths.language_models.spacy_preprocessing_most_cited.open("wb") as f:
         pickle.dump(spacy_tokenized_abstracts, f)
 
-    # TODO: Add BERT Preprocessing
+    # TODO: Add BERT Tokenizer
 
 
 if __name__ == "__main__":

@@ -17,6 +17,16 @@ from readnext.modeling.language_models import (
 EmbeddingModel: TypeAlias = TfidfVectorizer | FastText | BertModel
 
 
+def save_embeddings(embeddings: np.ndarray, path: Path) -> None:
+    """Save document embeddings to disk"""
+    np.save(path, embeddings)
+
+
+def load_embeddings(path: Path) -> np.ndarray:
+    """Load document embeddings from disk"""
+    return np.load(path)  # type: ignore
+
+
 @dataclass
 class Embedder(Protocol):
     embedding_model: EmbeddingModel
@@ -25,33 +35,9 @@ class Embedder(Protocol):
     def compute_embeddings(self) -> np.ndarray:
         ...
 
-    def save_embeddings(self, path: Path) -> None:
-        ...
-
-    def load_embeddings(self, path: Path) -> np.ndarray:
-        ...
-
     # def add_embeddings(self) -> None:
     #     """Store document embeddings as a property to the class"""
     #     self.embeddings = self._compute_embeddings()
-
-    # def save_embeddings(self, path: Path) -> None:
-    #     """Save document embeddings to disk"""
-    #     np.save(path, self.embeddings)
-
-    # @staticmethod
-    # def load_embeddings(path: Path) -> np.ndarray:
-    #     """Load document embeddings from disk and store them as a property to the class"""
-    #     return np.load(path)
-
-    # @abstractmethod
-    # def save_model(self, path: Path) -> None:
-    #     """Save trained model to disk"""
-
-    # @abstractmethod
-    # @staticmethod
-    # def load_model(path: Path) -> EmbeddingModel:
-    #     """Load trained model from disk"""
 
     # def most_similar_to(
     #     self, document_index: int, n: int = 1

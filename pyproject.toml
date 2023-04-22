@@ -43,6 +43,8 @@ update-all = { composite = ["update-pdm", "update-deps"] }
 format = "black ."
 lint = "ruff --fix --exit-non-zero-on-fix --show-fixes ."
 test = "pytest"
+# do not test data files in CI since the data files only exist locally
+test-ci = "pytest --ignore tests/test_data"
 check = "mypy ."
 pre = "pre-commit run --all-files"
 

@@ -30,4 +30,5 @@ jobs:
         run: pdm install
 
       - name: Run test script
-        run: pdm test
+        # do not test data files in CI since the data files only exist locally
+        run: pytest --ignore tests/test_data

@@ -35,12 +35,18 @@ Repository = "https://github.com/joel-beck/readnext"
 # built-in commands: pdm add, pdm remove, pdm install, pdm fix, pdm update, pdm self
 # update, pdm list, pdm show, pdm build, pdm publish
 setup = "pdm install"
+# `pdm install` does not install dependency groups, pytest from dev-dependencies is
+# required for CI
+# see docs at https://pdm.fming.dev/latest/usage/dependency/#select-a-subset-of-dependency-groups-to-be-installed-or-locked  # noqa
+install-dev = "pdm install -G dev"
 update-pdm = "pdm self update"
 update-deps = "pdm update"
 update-all = { composite = ["update-pdm", "update-deps"] }
 format = "black ."
 lint = "ruff --fix --exit-non-zero-on-fix --show-fixes ."
 test = "pytest"
+# do not test data files in CI since the data files only exist locally
+test-ci = "pytest --ignore tests/test_data"
 check = "mypy ."
 pre = "pre-commit run --all-files"
 

@@ -26,8 +26,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
+      - name: Install production dependencies
         run: pdm install
 
-      - name: Run pre-commit script
+      - name: Run pre-commit
         run: pdm pre

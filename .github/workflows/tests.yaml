@@ -26,9 +26,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
-        run: pdm install
+      - name: Install production and dev dependencies
+        run: pdm install-dev
 
-      - name: Run test script
-        # do not test data files in CI since the data files only exist locally
-        run: pytest --ignore tests/test_data
+      - name: Run tests
+        run: pdm test-ci

@@ -1,6 +1,9 @@
+from pathlib import Path
+
 import pytest
 
 
 @pytest.fixture
-def dummy_42() -> int:
-    return 42
+def root_path() -> Path:
+    """Return project root path when pytest is executed from the project root directory"""
+    return Path().cwd()

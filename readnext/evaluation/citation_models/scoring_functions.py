@@ -4,7 +4,7 @@ from enum import Enum
 import pandas as pd
 
 from readnext.evaluation.metrics import average_precision
-from readnext.modeling.citation_models.model_data import CitationModelData
+from readnext.modeling.citation_models import CitationModelData
 
 
 class ScoringFeature(Enum):

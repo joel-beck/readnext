@@ -1,6 +1,6 @@
 import numpy as np
-import pytest
 import pandas as pd
+import pytest
 
 from readnext.evaluation.metrics import MismatchingDimensionsError, cosine_similarity
 
@@ -85,7 +85,7 @@ def test_cosine_similarity_mismatching_dimensions_error() -> None:
         cosine_similarity([1, 2, 3], [4, 5])
 
 
-def test_cosine_similarity_long_input():
+def test_cosine_similarity_long_input() -> None:
     u = [1, 0, 1, 0] * 2500
     v = [0, 1, 0, 1] * 2500
     assert cosine_similarity(u, v) == 0.0

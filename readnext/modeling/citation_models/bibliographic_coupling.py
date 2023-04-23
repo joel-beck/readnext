@@ -1,13 +1,12 @@
 import pandas as pd
 
-from readnext.data.config import DataPaths
-from readnext.modeling.citation_models.base import (
+from readnext.config import DataPaths, ResultsPaths
+from readnext.modeling.citation_models import (
     compute_n_most_common,
     compute_values_df,
     count_common_values_pairwise,
     lookup_n_most_common,
 )
-from readnext.modeling.config import ResultsPaths
 
 
 def count_common_references_pairwise(

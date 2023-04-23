@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from readnext.data.config import DataPaths
+from readnext.config import DataPaths
 
 
 @pytest.fixture(scope="module")

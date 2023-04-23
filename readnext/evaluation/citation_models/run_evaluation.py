@@ -1,6 +1,6 @@
 import pandas as pd
 
-from readnext.data.config import DataPaths
+from readnext.config import DataPaths, ResultsPaths
 from readnext.evaluation.citation_models import (
     ScoringFeature,
     add_feature_rank_cols,
@@ -8,8 +8,7 @@ from readnext.evaluation.citation_models import (
     score_top_n,
     set_missing_publication_dates_to_max_rank,
 )
-from readnext.modeling.citation_models.model_data import CitationModelDataFromId
-from readnext.modeling.config import ResultsPaths
+from readnext.modeling.citation_models import CitationModelDataFromId
 
 
 def main() -> None:

@@ -4,18 +4,20 @@ version = "0.0.1"
 description = "Hybrid recommender system for computer science papers"
 authors = [{ name = "Joel Beck", email = "joel.beck@stud.uni-goettingen.de" }]
 dependencies = [
-    "torch>=2.0.0",
-    "requests>=2.28.2",
-    "python-dotenv>=1.0.0",
-    "spacy>=3.5.1",
-    "scikit-learn>=1.2.2",
-    "numpy>=1.24.2",
-    "pip>=23.0.1",
     "gensim>=4.3.1",
-    "transformers>=4.27.4",
-    "pandas>=2.0.0",
-    "tqdm>=4.65.0",
+    "ipywidgets>=8.0.6",
     "matplotlib>=3.7.1",
+    "numpy>=1.24.2",
+    "pandas>=2.0.0",
+    "pip>=23.0.1",
+    "python-dotenv>=1.0.0",
+    "requests>=2.28.2",
+    "rich[jupyter]>=13.3.4",
+    "scikit-learn>=1.2.2",
+    "spacy>=3.5.1",
+    "torch>=2.0.0",
+    "tqdm>=4.65.0",
+    "transformers>=4.27.4",
 ]
 requires-python = "==3.10.*"
 readme = "README.md"
@@ -50,14 +52,14 @@ pre = "pre-commit run --all-files"
 
 [tool.pdm.dev-dependencies]
 dev = [
-    "ruff>=0.0.261",
     "black>=23.3.0",
-    "pytest>=7.2.2",
-    "mypy>=1.2.0",
-    "types-requests>=2.28.11.17",
-    "pre-commit>=3.2.2",
     "ipykernel>=6.22.0",
+    "mypy>=1.2.0",
     "notebook>=6.5.4",
+    "pre-commit>=3.2.2",
+    "pytest>=7.2.2",
+    "ruff>=0.0.261",
+    "types-requests>=2.28.11.17",
 ]
 
 [tool.black]
@@ -145,7 +147,10 @@ select = [
 # - `PD015` (use `.merge()` instead of `pd.merge()`, incorrect for Series)
 # - `PD901` (don't use `df` as a variable name)
 ignore = ["ANN101", "N803", "N806", "PD015", "PD901"]
-unfixable = ["F401"] # Never try to fix `F401` (unused imports)
+# Never try to fix
+# - `F401` (unused imports)
+# - `F841` (unused variables)
+unfixable = ["F401", "F841"]
 
 [tool.ruff.flake8-annotations]
 suppress-dummy-args = true # suppress violations "dummy" variables like `_`

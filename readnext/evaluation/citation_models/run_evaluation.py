@@ -38,6 +38,7 @@ def main() -> None:
     )
     citation_model_data = citation_model_data_from_id.get_model_data()
 
+    print(citation_model_data.input_document)
     display_top_n(citation_model_data, ScoringFeature.weighted, n=10)
     score_top_n(citation_model_data, ScoringFeature.weighted, n=10)
 

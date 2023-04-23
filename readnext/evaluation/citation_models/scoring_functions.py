@@ -60,10 +60,8 @@ def display_top_n(
     by: ScoringFeature,
     n: int = 20,
 ) -> pd.DataFrame:
-    return (
-        select_top_n_ranks(citation_model_data, by, n)
-        .pipe(add_info_cols, citation_model_data.info_matrix)
-        .pipe(add_labels, citation_model_data.labels)
+    return select_top_n_ranks(citation_model_data, by, n).pipe(
+        add_info_cols, citation_model_data.info_matrix
     )
 
 
@@ -74,7 +72,7 @@ def score_top_n(
     n: int = 20,
 ) -> float:
     top_n_ranks_with_labels = select_top_n_ranks(citation_model_data, by, n).pipe(
-        add_labels, citation_model_data.labels
+        add_labels, citation_model_data.integer_labels
     )
 
     return metric(top_n_ranks_with_labels["label"])  # type: ignore

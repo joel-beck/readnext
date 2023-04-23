@@ -10,6 +10,7 @@ Since the documents dataset is too large to process at once, it is split into ch
 import pandas as pd
 
 from readnext.config import DataPaths
+from readnext.modeling.utils import setup_progress_bar
 
 
 def write_out_chunked_dataframe(dataframe_chunks: list[pd.DataFrame], file_index: int) -> None:
@@ -33,16 +34,17 @@ def main() -> None:
     dataframe_chunks = []
     file_index = 1
 
-    for i, chunk in enumerate(json_reader_chunks, 1):
-        dataframe_chunks.append(chunk)
-        print(f"Read {len(dataframe_chunks) * chunksize} documents")
+    with setup_progress_bar() as progress_bar:
+        for i, chunk in progress_bar.track(enumerate(json_reader_chunks, 1)):
+            dataframe_chunks.append(chunk)
+            print(f"Read {len(dataframe_chunks) * chunksize} documents")
 
-        if i % chunks_per_file == 0:
-            write_out_chunked_dataframe(dataframe_chunks, file_index)
+            if i % chunks_per_file == 0:
+                write_out_chunked_dataframe(dataframe_chunks, file_index)
 
-            # remove already processed chunks and increment file index
-            dataframe_chunks = []
-            file_index += 1
+                # remove already processed chunks and increment file index
+                dataframe_chunks = []
+                file_index += 1
 
 
 if __name__ == "__main__":

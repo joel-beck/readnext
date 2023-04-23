@@ -8,6 +8,7 @@ from pathlib import Path
 import pandas as pd
 
 from readnext.config import DataPaths
+from readnext.modeling.utils import setup_progress_bar
 
 
 def add_labels(df: pd.DataFrame) -> pd.DataFrame:
@@ -52,13 +53,16 @@ def merge_labels_chunk(filepath: Path, chunk_index: int) -> None:
 
 
 def main() -> None:
+    dirpath_documents_labels_chunks = DataPaths.merged.documents_labels_chunk_stem.parent
     filename_pattern = "documents_preprocessed_chunks_*.pkl"
+    matching_files = sorted(dirpath_documents_labels_chunks.glob(filename_pattern))
 
-    for chunk_index, filepath in enumerate(
-        DataPaths.merged.documents_labels_chunk_stem.parent.glob(filename_pattern), 1
-    ):
-        print(f"Merging labels for file {filepath.name}")
-        merge_labels_chunk(filepath, chunk_index)
+    with setup_progress_bar() as progress_bar:
+        for chunk_index, filepath in progress_bar.track(
+            enumerate(matching_files, 1), total=len(matching_files)
+        ):
+            print(f"Merging labels for file {filepath.name}")
+            merge_labels_chunk(filepath, chunk_index)
 
 
 if __name__ == "__main__":

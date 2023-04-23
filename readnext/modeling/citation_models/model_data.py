@@ -9,7 +9,16 @@ class Document:
     document_id: int
     title: str
     author: str
-    labels: list[str]
+    arxiv_labels: list[str]
+
+    def __str__(self) -> str:
+        return (
+            f"Document {self.document_id}\n"
+            "---------------------\n"
+            f"Title: {self.title}\n"
+            f"Author: {self.author}\n"
+            f"Arxiv Labels: {self.arxiv_labels}"
+        )
 
 
 @dataclass
@@ -17,7 +26,7 @@ class CitationModelData:
     input_document: Document
     info_matrix: pd.DataFrame
     feature_matrix: pd.DataFrame
-    labels: pd.Series
+    integer_labels: pd.Series
 
 
 @dataclass
@@ -30,6 +39,7 @@ class CitationModelDataFromId:
         default_factory=lambda: [
             "title",
             "author",
+            "arxiv_labels",
             "publication_date",
             "citationcount_document",
             "citationcount_author",
@@ -98,13 +108,13 @@ class CitationModelDataFromId:
         self,
         candidate_document_labels: list[str],
     ) -> bool:
-        return any(label in candidate_document_labels for label in self.input_document.labels)
+        return any(label in candidate_document_labels for label in self.input_document.arxiv_labels)
 
     @staticmethod
     def boolean_to_int(boolean: bool) -> int:
         return int(boolean)
 
-    def get_labels(self) -> pd.Series:
+    def get_integer_labels(self) -> pd.Series:
         return (
             self.filter_documents_data()
             .loc[:, "arxiv_labels"]
@@ -118,5 +128,5 @@ class CitationModelDataFromId:
             self.input_document,
             self.get_info_matrix(),
             self.get_feature_matrix(),
-            self.get_labels(),
+            self.get_integer_labels(),
         )

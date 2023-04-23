@@ -963,6 +963,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "rank-bm25"
+version = "0.2.2"
+summary = "Various BM25 algorithms for document ranking"
+dependencies = [
+    "numpy",
+]
+
+[[package]]
 name = "regex"
 version = "2023.3.23"
 requires_python = ">=3.8"
@@ -1351,7 +1359,7 @@ summary = "Jupyter interactive widgets for Jupyter Notebook"
 [metadata]
 lock_version = "4.2"
 groups = ["default", "dev"]
-content_hash = "sha256:5ef26f0e2d87cc05ee810c7ed49f591dd5743cf248d45e6a3edeaaebb79d8061"
+content_hash = "sha256:a353c071ac7cd2a0f51e325aa99df67fae4c73923cc5fb67ba24200b4ee42953"
 
 [metadata.files]
 "anyio 3.6.2" = [
@@ -2659,6 +2667,10 @@ content_hash = "sha256:5ef26f0e2d87cc05ee810c7ed49f591dd5743cf248d45e6a3edeaaebb
     {url = "https://files.pythonhosted.org/packages/f3/e4/47cdac8f73433899e468307ff1a9629a5d4fba4a953592ec3ca83d3016f7/pyzmq-25.0.2-pp38-pypy38_pp73-macosx_10_9_x86_64.whl", hash = "sha256:269968f2a76c0513490aeb3ba0dc3c77b7c7a11daa894f9d1da88d4a0db09835"},
     {url = "https://files.pythonhosted.org/packages/f8/ee/4138bfa745cf62ee1d5229bcafca102f15b3e5867cf18645c5bacfb4d7cb/pyzmq-25.0.2-cp37-cp37m-musllinux_1_1_x86_64.whl", hash = "sha256:28fdb9224a258134784a9cf009b59265a9dde79582fb750d4e88a6bcbc6fa3dc"},
     {url = "https://files.pythonhosted.org/packages/fe/95/35cab273bd36529dafe7484713be28f1a22a775dc36fa4be7fc1d23eeeb8/pyzmq-25.0.2-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:65c19a63b4a83ae45d62178b70223adeee5f12f3032726b897431b6553aa25af"},
+]
+"rank-bm25 0.2.2" = [
+    {url = "https://files.pythonhosted.org/packages/2a/21/f691fb2613100a62b3fa91e9988c991e9ca5b89ea31c0d3152a3210344f9/rank_bm25-0.2.2-py3-none-any.whl", hash = "sha256:7bd4a95571adadfc271746fa146a4bcfd89c0cf731e49c3d1ad863290adbe8ae"},
+    {url = "https://files.pythonhosted.org/packages/fc/0a/f9579384aa017d8b4c15613f86954b92a95a93d641cc849182467cf0bb3b/rank_bm25-0.2.2.tar.gz", hash = "sha256:096ccef76f8188563419aaf384a02f0ea459503fdf77901378d4fd9d87e5e51d"},
 ]
 "regex 2023.3.23" = [
     {url = "https://files.pythonhosted.org/packages/03/86/4a27b8135ec8e1e16ee1fcabe5123d879064eabf20aacf22daf794988474/regex-2023.3.23-cp39-cp39-musllinux_1_1_s390x.whl", hash = "sha256:cde09c4fdd070772aa2596d97e942eb775a478b32459e042e1be71b739d08b77"},

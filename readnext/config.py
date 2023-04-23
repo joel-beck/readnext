@@ -93,6 +93,7 @@ class DataPaths:
 @dataclass(frozen=True)
 class ModelVersions:
     spacy: str = "en_core_web_sm"
+    word2vec: str = "word2vec-google-news-300"
     fasttext: str = "cc.en.300.bin"
     bert: str = "bert-base-uncased"
     scibert: str = "allenai/scibert_scivocab_uncased"
@@ -102,6 +103,7 @@ class ModelVersions:
 class ModelPaths:
     """File paths to pretrained models"""
 
+    word2vec: Path = models_dirpath / ModelVersions.word2vec
     fasttext: Path = models_dirpath / ModelVersions.fasttext
 
 
@@ -127,6 +129,10 @@ class LanguageModelsResultsPaths:
         results_dirpath / "scibert_tokenized_abstracts_most_cited.pth"
     )
     tfidf_embeddings_most_cited_npy: Path = results_dirpath / "tfidf_embeddings_most_cited.npy"
+    bm25_embeddings_most_cited_npy: Path = results_dirpath / "bm25_embeddings_most_cited.npy"
+    word2vec_embeddings_most_cited_npy: Path = (
+        results_dirpath / "word2vec_embeddings_most_cited.npy"
+    )
     fasttext_embeddings_most_cited_npy: Path = (
         results_dirpath / "fasttext_embeddings_most_cited.npy"
     )

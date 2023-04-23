@@ -18,6 +18,7 @@ dependencies = [
     "torch>=2.0.0",
     "tqdm>=4.65.0",
     "transformers>=4.27.4",
+    "rank-bm25>=0.2.2",
 ]
 requires-python = "==3.10.*"
 readme = "README.md"

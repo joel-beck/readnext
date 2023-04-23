@@ -25,18 +25,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# os.getenv() returns str | None, os.environ[] always returns str and raises KeyError if
-# environment variable is not set
-data_dirpath = Path(os.getenv("DATA_DIRPATH") or "data")
-models_dirpath = Path(os.getenv("MODELS_DIRPATH") or "models")
-results_dirpath = Path(os.getenv("RESULTS_DIRPATH") or "results")
+data_dirpath = Path(os.getenv("DATA_DIRPATH", "data"))
+models_dirpath = Path(os.getenv("MODELS_DIRPATH", "models"))
+results_dirpath = Path(os.getenv("RESULTS_DIRPATH", "results"))
 
-documents_metadata_json_filename = (
-    os.getenv("DOCUMENTS_METADATA_FILENAME") or "2022-11-30-papers.jsonl"
+documents_metadata_json_filename = os.getenv(
+    "DOCUMENTS_METADATA_FILENAME", "2022-11-30-papers.jsonl"
 )
-authors_metadata_json_filename = (
-    os.getenv("AUTHORS_METADATA_FILENAME") or "2022-11-30-authors.jsonl"
-)
+authors_metadata_json_filename = os.getenv("AUTHORS_METADATA_FILENAME", "2022-11-30-authors.jsonl")
 
 
 @dataclass(frozen=True)

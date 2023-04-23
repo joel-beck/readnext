@@ -101,7 +101,7 @@ def main() -> None:
     tqdm.pandas()
     load_dotenv()
 
-    SEMANTICSCHOLAR_API_KEY = os.getenv("SEMANTICSCHOLAR_API_KEY") or ""
+    SEMANTICSCHOLAR_API_KEY = os.getenv("SEMANTICSCHOLAR_API_KEY", "")
     request_headers = {"x-api-key": SEMANTICSCHOLAR_API_KEY}
 
     documents_authors_labels: pd.DataFrame = pd.read_pickle(

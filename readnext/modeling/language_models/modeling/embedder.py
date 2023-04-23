@@ -159,11 +159,12 @@ class GensimEmbedder(ABC):
     ) -> np.ndarray:
         """
         Takes a list of tokenized documents (list of lists of strings, one list of
-        strings for each document) as input and computes the fasttext token embeddings.
+        strings for each document) as input and computes the word2vec or fasttext token
+        embeddings.
 
-        Output has shape (n_documents_input, n_dimensions) with
-        - n_documents_input: number of documents in provided input
-        - n_dimensions: dimension of embedding space
+        Output has shape (n_documents_input, n_dimensions) with - n_documents_input:
+        number of documents in provided input - n_dimensions: dimension of embedding
+        space
         """
         document_embeddings_list = [
             self.compute_document_embedding(

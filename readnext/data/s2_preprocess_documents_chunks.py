@@ -10,6 +10,7 @@ import pandas as pd
 
 from readnext.config import DataPaths
 from readnext.data.preprocessing_utils import add_rank
+from readnext.modeling.utils import setup_progress_bar
 
 
 def flatten_list_of_dicts(list_of_dicts: list[dict], key: str) -> list[str]:
@@ -64,13 +65,16 @@ def preprocess_document_chunk(filepath: Path, chunk_index: int) -> None:
 
 
 def main() -> None:
+    dirpath_documents_preprocessed_chunks = DataPaths.d3.documents.preprocessed_chunks_stem.parent
     filename_pattern = "*_documents_chunks_*.pkl"
+    matching_files = sorted(dirpath_documents_preprocessed_chunks.glob(filename_pattern))
 
-    for chunk_index, filepath in enumerate(
-        DataPaths.d3.documents.preprocessed_chunks_stem.parent.glob(filename_pattern), 1
-    ):
-        print(f"Preprocessing file {filepath.name}")
-        preprocess_document_chunk(filepath, chunk_index)
+    with setup_progress_bar() as progress_bar:
+        for chunk_index, filepath in progress_bar.track(
+            enumerate(matching_files, 1), total=len(matching_files)
+        ):
+            print(f"Preprocessing file {filepath.name}")
+            preprocess_document_chunk(filepath, chunk_index)
 
 
 if __name__ == "__main__":

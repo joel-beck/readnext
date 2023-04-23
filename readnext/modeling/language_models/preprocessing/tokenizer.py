@@ -91,10 +91,9 @@ class SpacyTokenizer:
 
     def tokenize(self) -> DocumentsTokensList:
         """Cleans and tokenizes multiple abstracts."""
-        progress_bar = setup_progress_bar()
         tokenized_abstracts = []
 
-        with progress_bar:
+        with setup_progress_bar() as progress_bar:
             for abstract in progress_bar.track(self.documents_info.abstracts):
                 tokenized_abstracts.append(self.clean_document(abstract))
 

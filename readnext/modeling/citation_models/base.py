@@ -4,7 +4,8 @@ from typing import Literal
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
+
+from readnext.modeling.utils import setup_progress_bar
 
 
 def count_common_values_pairwise(
@@ -57,18 +58,19 @@ def fill_values_df(
     )
     num_iterations = len(values_df) * len(values_df.columns)
 
-    for (row_index, row_document_id), (col_index, col_document_id) in tqdm(
-        document_id_combinations, desc="Progress", total=num_iterations
-    ):
-        # dataframe is symmetric, we only compute values for the lower triangle and
-        # diagonal and then copy them to the upper triangle
-        if row_index < col_index:
-            continue
+    with setup_progress_bar() as progress_bar:
+        for (row_index, row_document_id), (col_index, col_document_id) in progress_bar.track(
+            document_id_combinations, total=num_iterations
+        ):
+            # dataframe is symmetric, we only compute values for the lower triangle and
+            # diagonal and then copy them to the upper triangle
+            if row_index < col_index:
+                continue
 
-        # takes the original dataframe and not the new dataframe as input
-        num_common_values = count_pairwise_func(input_df, row_document_id, col_document_id)
-        # set value of new dataframe
-        values_df.loc[row_document_id, col_document_id] = num_common_values
+            # takes the original dataframe and not the new dataframe as input
+            num_common_values = count_pairwise_func(input_df, row_document_id, col_document_id)
+            # set value of new dataframe
+            values_df.loc[row_document_id, col_document_id] = num_common_values
 
     return values_df
 

@@ -118,29 +118,47 @@ class LanguageModelsResultsPaths:
     spacy_tokenized_abstracts_most_cited_pkl: Path = (
         results_dirpath / "spacy_tokenized_abstracts_most_cited.pkl"
     )
-    bert_tokenized_abstracts_most_cited_pt: Path = (
-        results_dirpath / "bert_tokenized_abstracts_most_cited.pt"
-    )
-    scibert_tokenized_abstracts_most_cited_pt: Path = (
-        results_dirpath / "scibert_tokenized_abstracts_most_cited.pt"
-    )
     tfidf_embeddings_mapping_most_cited_pkl: Path = (
         results_dirpath / "tfidf_embeddings_most_cited.pkl"
+    )
+    tfidf_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "tfidf_cosine_similarities_most_cited.pkl"
     )
     bm25_embeddings_mapping_most_cited_pkl: Path = (
         results_dirpath / "bm25_embeddings_most_cited.pkl"
     )
+    bm25_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "bm25_cosine_similarities_most_cited.pkl"
+    )
     word2vec_embeddings_mapping_most_cited_pkl: Path = (
         results_dirpath / "word2vec_embeddings_most_cited.pkl"
+    )
+    word2vec_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "word2vec_cosine_similarities_most_cited.pkl"
     )
     fasttext_embeddings_mapping_most_cited_pkl: Path = (
         results_dirpath / "fasttext_embeddings_most_cited.pkl"
     )
+    fasttext_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "fasttext_cosine_similarities_most_cited.pkl"
+    )
+    bert_tokenized_abstracts_most_cited_pt: Path = (
+        results_dirpath / "bert_tokenized_abstracts_most_cited.pt"
+    )
     bert_embeddings_mapping_most_cited_pkl: Path = (
         results_dirpath / "bert_embeddings_most_cited.pkl"
     )
+    bert_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "bert_cosine_similarities_most_cited.pkl"
+    )
+    scibert_tokenized_abstracts_most_cited_pt: Path = (
+        results_dirpath / "scibert_tokenized_abstracts_most_cited.pt"
+    )
     scibert_embeddings_mapping_most_cited_pkl: Path = (
         results_dirpath / "scibert_embeddings_most_cited.pkl"
+    )
+    scibert_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "scibert_cosine_similarities_most_cited.pkl"
     )
 
 

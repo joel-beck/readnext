@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Literal, Protocol, TypeAlias
 
 import numpy as np
@@ -29,18 +28,8 @@ def embeddings_mapping_to_frame(embeddings_mapping: DocumentEmbeddingsMapping) -
         pd.Series(embeddings_mapping, name="embedding")
         .to_frame()
         .rename_axis("document_id", axis="index")
+        .reset_index(drop=False)
     )
-
-
-def save_embeddings_mapping(path: Path, embeddings_mapping: DocumentEmbeddingsMapping) -> None:
-    """Save document embeddings mapping to disk"""
-    embeddings_df = embeddings_mapping_to_frame(embeddings_mapping)
-    embeddings_df.to_pickle(path)
-
-
-def load_embeddings_mapping(path: Path) -> pd.DataFrame:
-    """Load document embeddings mapping from disk"""
-    return pd.read_pickle(path)
 
 
 @dataclass

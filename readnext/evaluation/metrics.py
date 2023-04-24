@@ -1,30 +1,74 @@
-from collections.abc import Sequence
-from typing import TypeAlias
+from collections.abc import Callable, Sequence
+from typing import Literal, TypeAlias
 
 import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
 
+Vector: TypeAlias = Sequence | NDArray | pd.Series
 EmbeddingVector: TypeAlias = Sequence[float] | NDArray | pd.Series
 RecommendationLabelList: TypeAlias = Sequence[int] | NDArray | pd.Series
 RecommendationLabelLists: TypeAlias = Sequence[RecommendationLabelList]
+
+PairwiseMetric: TypeAlias = Callable[[pd.DataFrame, int, int], int | float]
 
 
 class MismatchingDimensionsError(Exception):
     pass
 
 
-def check_equal_dimensions(u: EmbeddingVector, v: EmbeddingVector) -> None:
-    if len(u) != len(v):
+def check_equal_dimensions(vec_1: Vector, vec_2: Vector) -> None:
+    if len(vec_1) != len(vec_2):
         raise MismatchingDimensionsError(
-            f"Length of first input = {len(u)} != {len(v)} = Length of second input"
+            f"Length of first input = {len(vec_1)} != {len(vec_2)} = Length of second input"
         )
+
+
+def count_common_values(
+    value_list_1: list[str],
+    value_list_2: list[str],
+) -> int:
+    return len(set(value_list_1).intersection(value_list_2))
+
+
+def count_common_values_from_df(
+    df: pd.DataFrame,
+    colname: Literal["citations", "references"],
+    document_id_1: int,
+    document_id_2: int,
+) -> int:
+    # iloc[0] to get the first and only value of the pandas Series
+    row_value_list: list[str] = df.loc[df["document_id"] == document_id_1, colname].iloc[0]
+    col_value_list: list[str] = df.loc[df["document_id"] == document_id_2, colname].iloc[0]
+
+    return count_common_values(row_value_list, col_value_list)
+
+
+def count_common_references_from_df(
+    df: pd.DataFrame, document_id_1: int, document_id_2: int
+) -> int:
+    return count_common_values_from_df(df, "references", document_id_1, document_id_2)
+
+
+def count_common_citations_from_df(df: pd.DataFrame, document_id_1: int, document_id_2: int) -> int:
+    return count_common_values_from_df(df, "citations", document_id_1, document_id_2)
 
 
 def cosine_similarity(u: EmbeddingVector, v: EmbeddingVector) -> float:
     """Computes cosine similarity between two one-dimensional sequences"""
     check_equal_dimensions(u, v)
     return np.dot(u, v) / (np.linalg.norm(u) * np.linalg.norm(v))  # type: ignore
+
+
+def cosine_similarity_from_df(
+    df: pd.DataFrame,
+    document_id_1: int,
+    document_id_2: int,
+) -> float:
+    row_embedding: EmbeddingVector = df.loc[df["document_id"] == document_id_1, "embedding"].iloc[0]  # type: ignore # noqa: E501
+    col_embedding: EmbeddingVector = df.loc[df["document_id"] == document_id_2, "embedding"].iloc[0]  # type: ignore # noqa: E501
+
+    return cosine_similarity(row_embedding, col_embedding)
 
 
 def precision(label_list: RecommendationLabelList) -> float:

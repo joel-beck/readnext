@@ -12,9 +12,10 @@ from readnext.modeling.language_models.modeling import (
     FastTextEmbedder,
     TFIDFEmbedder,
     Word2VecEmbedder,
-    save_embeddings_mapping,
+    embeddings_mapping_to_frame,
 )
 from readnext.modeling.language_models.preprocessing import BERTTokenizer, SpacyTokenizer
+from readnext.modeling.utils import save_df_to_pickle
 
 
 def main() -> None:
@@ -35,10 +36,9 @@ def main() -> None:
     tfidf_embeddings_mapping = tfidf_embedder.compute_embeddings_mapping(
         spacy_tokens_string_mapping
     )
-
-    save_embeddings_mapping(
+    save_df_to_pickle(
+        embeddings_mapping_to_frame(tfidf_embeddings_mapping),
         ResultsPaths.language_models.tfidf_embeddings_mapping_most_cited_pkl,
-        tfidf_embeddings_mapping,
     )
 
     # TODO: See TODO in `embedder.py`
@@ -61,9 +61,9 @@ def main() -> None:
     word2vec_embeddings_mapping = word2vec_embedder.compute_embeddings_mapping(
         spacy_tokens_list_mapping
     )
-    save_embeddings_mapping(
+    save_df_to_pickle(
+        embeddings_mapping_to_frame(word2vec_embeddings_mapping),
         ResultsPaths.language_models.word2vec_embeddings_mapping_most_cited_pkl,
-        word2vec_embeddings_mapping,
     )
 
     # requires pre-downloaded model from fasttext website:
@@ -73,23 +73,25 @@ def main() -> None:
     fasttext_embeddings_mapping = fasttext_embedder.compute_embeddings_mapping(
         spacy_tokens_list_mapping
     )
-    save_embeddings_mapping(
+    save_df_to_pickle(
+        embeddings_mapping_to_frame(fasttext_embeddings_mapping),
         ResultsPaths.language_models.fasttext_embeddings_mapping_most_cited_pkl,
-        fasttext_embeddings_mapping,
     )
 
     bert_model = BertModel.from_pretrained(ModelVersions.bert)  # type: ignore
     bert_embedder = BERTEmbedder(bert_model)  # type: ignore
     bert_embeddings_mapping = bert_embedder.compute_embeddings_mapping(bert_tokens_tensor_mapping)
-    save_embeddings_mapping(
-        ResultsPaths.language_models.bert_embeddings_mapping_most_cited_pkl, bert_embeddings_mapping
+    save_df_to_pickle(
+        embeddings_mapping_to_frame(bert_embeddings_mapping),
+        ResultsPaths.language_models.bert_embeddings_mapping_most_cited_pkl,
     )
 
     scibert_model = BertModel.from_pretrained(ModelVersions.scibert)  # type: ignore
     scibert_embedder = BERTEmbedder(scibert_model)  # type: ignore
     scibert_embeddings = scibert_embedder.compute_embeddings_mapping(scibert_tokens_tensor_mapping)
-    save_embeddings_mapping(
-        ResultsPaths.language_models.scibert_embeddings_mapping_most_cited_pkl, scibert_embeddings
+    save_df_to_pickle(
+        embeddings_mapping_to_frame(scibert_embeddings),
+        ResultsPaths.language_models.scibert_embeddings_mapping_most_cited_pkl,
     )
 
     # sparse vector embeddings of dimension 2728

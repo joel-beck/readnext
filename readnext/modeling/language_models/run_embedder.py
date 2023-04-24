@@ -6,15 +6,16 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
 from readnext.config import ModelPaths, ModelVersions, ResultsPaths
-from readnext.modeling.language_models.modeling import (
+from readnext.modeling.language_models import (
     BERTEmbedder,
+    BERTTokenizer,
     BM25Embedder,
     FastTextEmbedder,
+    SpacyTokenizer,
     TFIDFEmbedder,
     Word2VecEmbedder,
     embeddings_mapping_to_frame,
 )
-from readnext.modeling.language_models.preprocessing import BERTTokenizer, SpacyTokenizer
 from readnext.modeling.utils import save_df_to_pickle
 
 
@@ -80,6 +81,7 @@ def main() -> None:
 
     bert_model = BertModel.from_pretrained(ModelVersions.bert)  # type: ignore
     bert_embedder = BERTEmbedder(bert_model)  # type: ignore
+    # TODO: Fix bug here!
     bert_embeddings_mapping = bert_embedder.compute_embeddings_mapping(bert_tokens_tensor_mapping)
     save_df_to_pickle(
         embeddings_mapping_to_frame(bert_embeddings_mapping),

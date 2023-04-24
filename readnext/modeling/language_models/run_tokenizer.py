@@ -3,7 +3,7 @@ import spacy
 from transformers import BertTokenizerFast
 
 from readnext.config import DataPaths, ModelVersions, ResultsPaths
-from readnext.modeling.language_models.preprocessing import (
+from readnext.modeling.language_models import (
     BERTTokenizer,
     SpacyTokenizer,
     documents_info_from_df,

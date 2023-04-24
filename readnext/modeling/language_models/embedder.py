@@ -9,7 +9,7 @@ from rank_bm25 import BM25Okapi
 from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
-from readnext.modeling.language_models.preprocessing import (
+from readnext.modeling.language_models import (
     DocumentsTokensTensor,
     DocumentsTokensTensorMapping,
     DocumentStringMapping,

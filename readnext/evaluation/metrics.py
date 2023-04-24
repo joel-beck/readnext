@@ -65,6 +65,7 @@ def cosine_similarity_from_df(
     document_id_1: int,
     document_id_2: int,
 ) -> float:
+    # iloc[0] to get the first and only value of the pandas Series
     row_embedding: EmbeddingVector = df.loc[df["document_id"] == document_id_1, "embedding"].iloc[0]  # type: ignore # noqa: E501
     col_embedding: EmbeddingVector = df.loc[df["document_id"] == document_id_2, "embedding"].iloc[0]  # type: ignore # noqa: E501
 

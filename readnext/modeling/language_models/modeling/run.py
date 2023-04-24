@@ -37,7 +37,8 @@ def main() -> None:
     )
 
     save_embeddings_mapping(
-        ResultsPaths.language_models.tfidf_embeddings_most_cited_npy, tfidf_embeddings_mapping
+        ResultsPaths.language_models.tfidf_embeddings_mapping_most_cited_pkl,
+        tfidf_embeddings_mapping,
     )
 
     # TODO: See TODO in `embedder.py`
@@ -61,7 +62,8 @@ def main() -> None:
         spacy_tokens_list_mapping
     )
     save_embeddings_mapping(
-        ResultsPaths.language_models.word2vec_embeddings_most_cited_npy, word2vec_embeddings_mapping
+        ResultsPaths.language_models.word2vec_embeddings_mapping_most_cited_pkl,
+        word2vec_embeddings_mapping,
     )
 
     # requires pre-downloaded model from fasttext website:
@@ -72,21 +74,22 @@ def main() -> None:
         spacy_tokens_list_mapping
     )
     save_embeddings_mapping(
-        ResultsPaths.language_models.fasttext_embeddings_most_cited_npy, fasttext_embeddings_mapping
+        ResultsPaths.language_models.fasttext_embeddings_mapping_most_cited_pkl,
+        fasttext_embeddings_mapping,
     )
 
     bert_model = BertModel.from_pretrained(ModelVersions.bert)  # type: ignore
     bert_embedder = BERTEmbedder(bert_model)  # type: ignore
     bert_embeddings_mapping = bert_embedder.compute_embeddings_mapping(bert_tokens_tensor_mapping)
     save_embeddings_mapping(
-        ResultsPaths.language_models.bert_embeddings_most_cited_npy, bert_embeddings_mapping
+        ResultsPaths.language_models.bert_embeddings_mapping_most_cited_pkl, bert_embeddings_mapping
     )
 
     scibert_model = BertModel.from_pretrained(ModelVersions.scibert)  # type: ignore
     scibert_embedder = BERTEmbedder(scibert_model)  # type: ignore
     scibert_embeddings = scibert_embedder.compute_embeddings_mapping(scibert_tokens_tensor_mapping)
     save_embeddings_mapping(
-        ResultsPaths.language_models.scibert_embeddings_most_cited_npy, scibert_embeddings
+        ResultsPaths.language_models.scibert_embeddings_mapping_most_cited_pkl, scibert_embeddings
     )
 
     # sparse vector embeddings of dimension 2728

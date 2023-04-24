@@ -124,16 +124,24 @@ class LanguageModelsResultsPaths:
     scibert_tokenized_abstracts_most_cited_pt: Path = (
         results_dirpath / "scibert_tokenized_abstracts_most_cited.pt"
     )
-    tfidf_embeddings_most_cited_npy: Path = results_dirpath / "tfidf_embeddings_most_cited.npy"
-    bm25_embeddings_most_cited_npy: Path = results_dirpath / "bm25_embeddings_most_cited.npy"
-    word2vec_embeddings_most_cited_npy: Path = (
-        results_dirpath / "word2vec_embeddings_most_cited.npy"
+    tfidf_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "tfidf_embeddings_most_cited.pkl"
     )
-    fasttext_embeddings_most_cited_npy: Path = (
-        results_dirpath / "fasttext_embeddings_most_cited.npy"
+    bm25_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "bm25_embeddings_most_cited.pkl"
     )
-    bert_embeddings_most_cited_npy: Path = results_dirpath / "bert_embeddings_most_cited.npy"
-    scibert_embeddings_most_cited_npy: Path = results_dirpath / "scibert_embeddings_most_cited.npy"
+    word2vec_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "word2vec_embeddings_most_cited.pkl"
+    )
+    fasttext_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "fasttext_embeddings_most_cited.pkl"
+    )
+    bert_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "bert_embeddings_most_cited.pkl"
+    )
+    scibert_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "scibert_embeddings_most_cited.pkl"
+    )
 
 
 @dataclass(frozen=True)

@@ -4,8 +4,8 @@ from readnext.modeling.language_models.modeling.embedder import (
     FastTextEmbedder,
     TFIDFEmbedder,
     Word2VecEmbedder,
-    load_embeddings,
-    save_embeddings,
+    load_embeddings_mapping,
+    save_embeddings_mapping,
 )
 
 __all__ = [
@@ -14,6 +14,6 @@ __all__ = [
     "FastTextEmbedder",
     "TFIDFEmbedder",
     "Word2VecEmbedder",
-    "load_embeddings",
-    "save_embeddings",
+    "load_embeddings_mapping",
+    "save_embeddings_mapping",
 ]

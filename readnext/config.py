@@ -118,11 +118,11 @@ class LanguageModelsResultsPaths:
     spacy_tokenized_abstracts_most_cited_pkl: Path = (
         results_dirpath / "spacy_tokenized_abstracts_most_cited.pkl"
     )
-    bert_tokenized_abstracts_most_cited_pth: Path = (
-        results_dirpath / "bert_tokenized_abstracts_most_cited.pth"
+    bert_tokenized_abstracts_most_cited_pt: Path = (
+        results_dirpath / "bert_tokenized_abstracts_most_cited.pt"
     )
-    scibert_tokenized_abstracts_most_cited_pth: Path = (
-        results_dirpath / "scibert_tokenized_abstracts_most_cited.pth"
+    scibert_tokenized_abstracts_most_cited_pt: Path = (
+        results_dirpath / "scibert_tokenized_abstracts_most_cited.pt"
     )
     tfidf_embeddings_most_cited_npy: Path = results_dirpath / "tfidf_embeddings_most_cited.npy"
     bm25_embeddings_most_cited_npy: Path = results_dirpath / "bm25_embeddings_most_cited.npy"

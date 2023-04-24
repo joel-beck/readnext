@@ -4,36 +4,50 @@ from pathlib import Path
 from typing import Literal, Protocol, TypeAlias
 
 import numpy as np
+import pandas as pd
 from gensim.models import FastText, KeyedVectors
 from rank_bm25 import BM25Okapi
 from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
 from readnext.modeling.language_models.preprocessing import (
-    DocumentsTokensList,
-    DocumentsTokensString,
     DocumentsTokensTensor,
+    DocumentsTokensTensorMapping,
+    DocumentStringMapping,
     DocumentTokens,
+    DocumentTokensMapping,
 )
 
 EmbeddingModel: TypeAlias = TfidfVectorizer | BM25Okapi | KeyedVectors | FastText | BertModel
 
-
-def save_embeddings(path: Path, embeddings: np.ndarray) -> None:
-    """Save document embeddings to disk"""
-    np.save(path, embeddings)
+DocumentEmbeddings: TypeAlias = np.ndarray
+DocumentEmbeddingsMapping: TypeAlias = dict[int, DocumentEmbeddings]
 
 
-def load_embeddings(path: Path) -> np.ndarray:
-    """Load document embeddings from disk"""
-    return np.load(path)  # type: ignore
+def embeddings_mapping_to_frame(embeddings_mapping: DocumentEmbeddingsMapping) -> pd.DataFrame:
+    return (
+        pd.Series(embeddings_mapping, name="embedding")
+        .to_frame()
+        .rename_axis("document_id", axis="index")
+    )
+
+
+def save_embeddings_mapping(path: Path, embeddings_mapping: DocumentEmbeddingsMapping) -> None:
+    """Save document embeddings mapping to disk"""
+    embeddings_df = embeddings_mapping_to_frame(embeddings_mapping)
+    embeddings_df.to_pickle(path)
+
+
+def load_embeddings_mapping(path: Path) -> pd.DataFrame:
+    """Load document embeddings mapping from disk"""
+    return pd.read_pickle(path)
 
 
 @dataclass
 class Embedder(Protocol):
     embedding_model: EmbeddingModel
 
-    def compute_embeddings(self) -> np.ndarray:
+    def compute_embeddings_mapping(self) -> np.ndarray:
         ...
 
     # def most_similar_to(
@@ -70,8 +84,13 @@ class TFIDFEmbedder:
 
     embedding_model: TfidfVectorizer
 
+    def fit_embedding_model(self, tokens_mapping: DocumentStringMapping) -> None:
+        self.embedding_model = self.embedding_model.fit(tokens_mapping.values())
+
     # one row per document, one column per token in vocabulary
-    def compute_embeddings(self, tokens: DocumentsTokensString) -> np.ndarray:
+    def compute_embeddings_mapping(
+        self, tokens_mapping: DocumentStringMapping
+    ) -> DocumentEmbeddingsMapping:
         """
         Takes a list of cleaned documents (list of strings, one string for each
         document) as input and computes the tfidf token embeddings.
@@ -80,13 +99,20 @@ class TFIDFEmbedder:
         documents in provided input - n_tokens_vocab: number of tokens in vocabulary
         that was learned during training
         """
-        return self.embedding_model.fit_transform(tokens).toarray()  # type: ignore
+        self.embedding_model = self.embedding_model.fit(tokens_mapping.values())
+
+        return {
+            document_id: self.embedding_model.transform([document]).toarray()[0]
+            for document_id, document in tokens_mapping.items()
+        }
 
 
 # TODO: Can we compute document embeddings with bm25 just like with tfidf wothout
 # providing a query? In other words, can we obtain a document-term-matrix with bm25 with
 # dimensions (n_documents, n_tokens_vocab) like with tfidf? Right now we skip this step
 # (violates protocol) and directly compute similarities without cosine similarity.
+# Possible Solution: Manually implement bm25 as done here:
+# https://www.pinecone.io/learn/semantic-search/
 @dataclass
 class BM25Embedder:
     """
@@ -107,7 +133,9 @@ class BM25Embedder:
         """
         return self.embedding_model.get_scores(tokens)  # type: ignore
 
-    def compute_embeddings(self, tokens_list: DocumentsTokensList) -> np.ndarray:
+    def compute_embeddings_mapping(
+        self, tokens_mapping: DocumentTokensMapping
+    ) -> DocumentEmbeddingsMapping:
         """
         Takes a list of tokenized documents (list of lists of strings, one list of
         strings for each document) as input and computes the bm25 token embeddings.
@@ -116,7 +144,10 @@ class BM25Embedder:
         - n_documents_input: number of documents in provided input
         - n_documents_training: number of documents in training corpus
         """
-        return np.array([self.compute_embedding_single_document(tokens) for tokens in tokens_list])
+        return {
+            document_id: self.compute_embedding_single_document(tokens)
+            for document_id, tokens in tokens_mapping.items()
+        }
 
 
 @dataclass
@@ -154,9 +185,9 @@ class GensimEmbedder(ABC):
 
         return np.max(word_embeddings_per_document, axis=0)  # type: ignore
 
-    def compute_embeddings(
-        self, tokens_list: DocumentsTokensList, strategy: Literal["mean", "max"] = "mean"
-    ) -> np.ndarray:
+    def compute_embeddings_mapping(
+        self, tokens_mapping: DocumentTokensMapping, strategy: Literal["mean", "max"] = "mean"
+    ) -> DocumentEmbeddingsMapping:
         """
         Takes a list of tokenized documents (list of lists of strings, one list of
         strings for each document) as input and computes the word2vec or fasttext token
@@ -166,13 +197,12 @@ class GensimEmbedder(ABC):
         number of documents in provided input - n_dimensions: dimension of embedding
         space
         """
-        document_embeddings_list = [
-            self.compute_document_embedding(
+        return {
+            document_id: self.compute_document_embedding(
                 self.compute_word_embeddings_per_document(tokens), strategy
             )
-            for tokens in tokens_list
-        ]
-        return np.vstack(document_embeddings_list)
+            for document_id, tokens in tokens_mapping.items()
+        }
 
 
 class Word2VecEmbedder(GensimEmbedder):
@@ -204,27 +234,39 @@ class BERTEmbedder:
 
     embedding_model: BertModel
 
-    def compute_embeddings(
-        self, tokens_tensor: DocumentsTokensTensor, strategy: Literal["mean", "max"] = "mean"
-    ) -> np.ndarray:
+    def compute_embeddings_single_document(
+        self,
+        tokens_tensor: DocumentsTokensTensor,
+        strategy: Literal["mean", "max"] = "mean",
+    ) -> DocumentEmbeddings:
         """
-        Takes a tensor of tokenized documents as input and computes the BERT token embeddings.
+        Takes a tensor of a single tokenized document as input and computes the BERT
+        token embeddings.
 
-        Output has shape (n_documents_input, n_dimensions) with
-        - n_documents_input: number of documents in provided input, corresponds to first
-        dimension of `tokens_tensor` input
-        - n_dimensions: dimension of embedding space
+        Output has shape (n_documents_input, n_dimensions) with - n_documents_input:
+        number of documents in provided input, corresponds to first dimension of
+        `tokens_tensor` input - n_dimensions: dimension of embedding space
         """
         # outputs is an ordered dictionary with keys `last_hidden_state` and `pooler_output`
         outputs = self.embedding_model(tokens_tensor)
 
         # first element of outputs is the last hidden state of the [CLS] token
         # dimension: num_documents x num_tokens_per_document x embedding_dimension
-        all_document_embeddings = outputs.last_hidden_state
+        document_embeddings = outputs.last_hidden_state
 
         if strategy == "mean":
-            document_embeddings = all_document_embeddings.mean(dim=1)
+            document_embedding = document_embeddings.mean(dim=1)
         else:
-            document_embeddings = all_document_embeddings.max(dim=1)
+            document_embedding = document_embeddings.max(dim=1)
 
-        return document_embeddings.detach().numpy()  # type: ignore
+        return document_embedding.detach().numpy()  # type: ignore
+
+    def compute_embeddings_mapping(
+        self,
+        tokens_tensor_mapping: DocumentsTokensTensorMapping,
+        strategy: Literal["mean", "max"] = "mean",
+    ) -> DocumentEmbeddingsMapping:
+        return {
+            document_id: self.compute_embeddings_single_document(tokens_tensor, strategy)
+            for document_id, tokens_tensor in tokens_tensor_mapping.items()
+        }

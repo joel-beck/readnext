@@ -3,6 +3,8 @@ from readnext.modeling.model_data import (
     CitationModelDataFromId,
     LanguageModelData,
     LanguageModelDataFromId,
+    ModelData,
+    ModelDataFromId,
 )
 
 __all__ = [
@@ -10,4 +12,6 @@ __all__ = [
     "CitationModelDataFromId",
     "LanguageModelData",
     "LanguageModelDataFromId",
+    "ModelData",
+    "ModelDataFromId",
 ]

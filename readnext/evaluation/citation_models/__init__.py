@@ -1,4 +1,4 @@
-from readnext.evaluation.citation_models.scoring_functions import (
+from readnext.evaluation.citation_models.citation_models_scoring import (
     ScoringFeature,
     add_feature_rank_cols,
     display_top_n,

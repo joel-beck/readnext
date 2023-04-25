@@ -6,7 +6,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
 from readnext.config import ModelPaths, ModelVersions, ResultsPaths
-from readnext.utils import save_df_to_pickle
 from readnext.modeling.language_models import (
     BERTEmbedder,
     BERTTokenizer,
@@ -17,8 +16,7 @@ from readnext.modeling.language_models import (
     Word2VecEmbedder,
     embeddings_mapping_to_frame,
 )
-
-from readnext.utils import slice_mapping
+from readnext.utils import save_df_to_pickle, slice_mapping
 
 
 def main() -> None:

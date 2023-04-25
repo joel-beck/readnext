@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Literal, Protocol, TypeAlias
 from enum import Enum
+from typing import Protocol, TypeAlias
+
 import numpy as np
 import pandas as pd
 from gensim.models import FastText, KeyedVectors
@@ -27,7 +28,7 @@ DocumentEmbeddingsMapping: TypeAlias = dict[int, DocumentEmbeddings]
 
 class AggregationStrategy(str, Enum):
     mean = "mean"
-    max = "max"
+    max = "max"  # noqa: A003
 
     def __str__(self) -> str:
         return self.value
@@ -191,7 +192,7 @@ class GensimEmbedder(ABC):
         if aggregation_strategy.is_mean:
             return np.mean(word_embeddings_per_document, axis=0)  # type: ignore
 
-        elif aggregation_strategy.is_max:
+        if aggregation_strategy.is_max:
             return np.max(word_embeddings_per_document, axis=0)  # type: ignore
 
         raise ValueError(f"Aggregation strategy `{aggregation_strategy}` is not implemented.")

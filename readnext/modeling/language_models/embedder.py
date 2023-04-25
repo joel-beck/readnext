@@ -9,7 +9,8 @@ from rank_bm25 import BM25Okapi
 from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
-from readnext.modeling.language_models import (
+# do not import from .language_models to avoid circular imports
+from readnext.modeling.language_models.tokenizer import (
     DocumentsTokensTensor,
     DocumentsTokensTensorMapping,
     DocumentStringMapping,
@@ -237,7 +238,9 @@ class BERTEmbedder:
         `tokens_tensor` input - n_dimensions: dimension of embedding space
         """
         # outputs is an ordered dictionary with keys `last_hidden_state` and `pooler_output`
-        outputs = self.embedding_model(tokens_tensor)
+        # BertModel expects tensor of shape (batch_size, sequence_length), i.e. add
+        # batch dimension to `tokens_tensor`
+        outputs = self.embedding_model(tokens_tensor.unsqueeze(0))
 
         # first element of outputs is the last hidden state of the [CLS] token
         # dimension: num_documents x num_tokens_per_document x embedding_dimension

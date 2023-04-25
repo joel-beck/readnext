@@ -6,7 +6,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
 from readnext.config import ModelPaths, ModelVersions, ResultsPaths
-from readnext.modeling import save_df_to_pickle
+from readnext.utils import save_df_to_pickle
 from readnext.modeling.language_models import (
     BERTEmbedder,
     BERTTokenizer,
@@ -47,7 +47,6 @@ def main() -> None:
     bm25_embedder = BM25Embedder(bm25_model)
     bm25_embeddings_mapping = bm25_embedder.compute_embeddings_mapping(spacy_tokens_list_mapping)
     len(bm25_embeddings_mapping)
-    # save_embeddings(ResultsPaths.language_models.bm25_embeddings_most_cited_npy, bm25_embeddings)
 
     # requires pre-downloaded model from gensim data repository:
     # https://github.com/RaRe-Technologies/gensim-data
@@ -81,7 +80,6 @@ def main() -> None:
 
     bert_model = BertModel.from_pretrained(ModelVersions.bert)  # type: ignore
     bert_embedder = BERTEmbedder(bert_model)  # type: ignore
-    # TODO: Fix bug here!
     bert_embeddings_mapping = bert_embedder.compute_embeddings_mapping(bert_tokens_tensor_mapping)
     save_df_to_pickle(
         embeddings_mapping_to_frame(bert_embeddings_mapping),
@@ -95,17 +93,6 @@ def main() -> None:
         embeddings_mapping_to_frame(scibert_embeddings),
         ResultsPaths.language_models.scibert_embeddings_mapping_most_cited_pkl,
     )
-
-    # sparse vector embeddings of dimension 2728
-    print(f"Dimension of TF-IDF Embeddings: {list(tfidf_embeddings_mapping.values())[0].shape}")
-    # dense vector embeddings of dimension 300
-    print(f"Dimension of Word2Vec Embeddings: {len(word2vec_embeddings_mapping)}")
-    # dense vector embeddings of dimension 300
-    print(f"Dimension of FastText Embeddings: {len(fasttext_embeddings_mapping)}")
-    # dense vector embeddings of dimension 768
-    print(f"Dimension of BERT Embeddings: {len(bert_embeddings_mapping)}")
-    # dense vector embeddings of dimension 768
-    print(f"Dimension of SciBERT Embeddings: {len(scibert_embeddings)}")
 
 
 if __name__ == "__main__":

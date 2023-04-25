@@ -58,29 +58,6 @@ class Embedder(Protocol):
     def compute_embeddings_mapping(self) -> np.ndarray:
         ...
 
-    # def most_similar_to(
-    #     self, document_index: int, n: int = 1
-    # ) -> DocumentStatistics | list[DocumentStatistics]:
-    #     """
-    #     Return n most similar documents of training corpus for given input document. If
-    #     n=1 return single DocumentStatistics object, otherwise return list of
-    #     DocumentStatistics.
-    #     """
-    #     document_similarities = [
-    #         DocumentStatistics(
-    #             similarity=self.cosine_similarity(document_index, i),
-    #             document_info=self.tokenizer.documents_info[i],
-    #         )
-    #         for i, _ in enumerate(self.embeddings)
-    #         # exclude input document itself from list
-    #         if i != document_index
-    #     ]
-
-    #     sorted_by_similarity = sorted(document_similarities, key=lambda x: -x.similarity)
-    #     n_most_similar = sorted_by_similarity[:n]
-
-    #     return n_most_similar[0] if n == 1 else n_most_similar
-
 
 @dataclass
 class TFIDFEmbedder:

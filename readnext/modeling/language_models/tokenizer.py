@@ -1,7 +1,8 @@
 import pickle
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Protocol, TypeAlias
+from typing import TypeAlias
 
 import torch
 from spacy.language import Language
@@ -26,39 +27,45 @@ DocumentsTokensTensorMapping: TypeAlias = dict[int, DocumentsTokensTensor]
 
 
 @dataclass
-class ListTokenizer(Protocol):
+class ListTokenizer(ABC):
     documents_info: DocumentsInfo
 
+    @abstractmethod
     def tokenize(self) -> DocumentTokensMapping:
         ...
 
+    @abstractmethod
     @staticmethod
     def save_tokens_mapping(path: Path, tokens_list: DocumentTokensMapping) -> None:
         ...
 
+    @abstractmethod
     @staticmethod
     def load_tokens_mapping(path: Path) -> DocumentTokensMapping:
         ...
 
 
 @dataclass
-class TensorTokenizer(Protocol):
+class TensorTokenizer(ABC):
     documents_info: DocumentsInfo
 
+    @abstractmethod
     def tokenize(self) -> DocumentsTokensTensorMapping:
         ...
 
+    @abstractmethod
     @staticmethod
     def save_tokens_mapping(path: Path, tokens_tensor: DocumentsTokensTensorMapping) -> None:
         ...
 
+    @abstractmethod
     @staticmethod
     def load_tokens_mapping(path: Path) -> DocumentsTokensTensorMapping:
         ...
 
 
 @dataclass
-class SpacyTokenizer:
+class SpacyTokenizer(ListTokenizer):
     """Implements `ListTokenizer` Protocol"""
 
     documents_info: DocumentsInfo
@@ -127,11 +134,11 @@ class SpacyTokenizer:
     @staticmethod
     def load_tokens_mapping(path: Path) -> DocumentTokensMapping:
         with path.open("rb") as f:
-            return pickle.load(f)
+            return pickle.load(f)  # type: ignore
 
 
 @dataclass
-class BERTTokenizer:
+class BERTTokenizer(TensorTokenizer):
     """Implements `TensorTokenizer` Protocol"""
 
     documents_info: DocumentsInfo
@@ -159,4 +166,4 @@ class BERTTokenizer:
 
     @staticmethod
     def load_tokens_mapping(path: Path) -> DocumentsTokensTensorMapping:
-        return torch.load(path)
+        return torch.load(path)  # type: ignore

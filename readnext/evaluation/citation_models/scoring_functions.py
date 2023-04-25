@@ -18,6 +18,10 @@ class ScoringFeature(Enum):
     def __str__(self) -> str:
         return self.value
 
+    @property
+    def is_weighted(self) -> bool:
+        return self == self.weighted
+
 
 def add_feature_rank_cols(
     df: pd.DataFrame,
@@ -39,7 +43,7 @@ def select_top_n_ranks(
     citation_model_data: CitationModelData, by: ScoringFeature, n: int = 20
 ) -> pd.DataFrame:
     # `weighted` option for now computes row sums, i.e. each feature is weighted equally
-    if by.name == "weighted":
+    if by.is_weighted:
         ranks_unsorted = citation_model_data.feature_matrix.sum(axis=1).rename("weighted_rank")
     else:
         ranks_unsorted = citation_model_data.feature_matrix[by.value]

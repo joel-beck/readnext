@@ -25,18 +25,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# os.getenv() returns str | None, os.environ[] always returns str and raises KeyError if
-# environment variable is not set
-data_dirpath = Path(os.getenv("DATA_DIRPATH") or "data")
-models_dirpath = Path(os.getenv("MODELS_DIRPATH") or "models")
-results_dirpath = Path(os.getenv("RESULTS_DIRPATH") or "results")
+data_dirpath = Path(os.getenv("DATA_DIRPATH", "data"))
+models_dirpath = Path(os.getenv("MODELS_DIRPATH", "models"))
+results_dirpath = Path(os.getenv("RESULTS_DIRPATH", "results"))
 
-documents_metadata_json_filename = (
-    os.getenv("DOCUMENTS_METADATA_FILENAME") or "2022-11-30-papers.jsonl"
+documents_metadata_json_filename = os.getenv(
+    "DOCUMENTS_METADATA_FILENAME", "2022-11-30-papers.jsonl"
 )
-authors_metadata_json_filename = (
-    os.getenv("AUTHORS_METADATA_FILENAME") or "2022-11-30-authors.jsonl"
-)
+authors_metadata_json_filename = os.getenv("AUTHORS_METADATA_FILENAME", "2022-11-30-authors.jsonl")
 
 
 @dataclass(frozen=True)
@@ -93,6 +89,7 @@ class DataPaths:
 @dataclass(frozen=True)
 class ModelVersions:
     spacy: str = "en_core_web_sm"
+    word2vec: str = "word2vec-google-news-300"
     fasttext: str = "cc.en.300.bin"
     bert: str = "bert-base-uncased"
     scibert: str = "allenai/scibert_scivocab_uncased"
@@ -102,6 +99,7 @@ class ModelVersions:
 class ModelPaths:
     """File paths to pretrained models"""
 
+    word2vec: Path = models_dirpath / ModelVersions.word2vec
     fasttext: Path = models_dirpath / ModelVersions.fasttext
 
 
@@ -120,18 +118,48 @@ class LanguageModelsResultsPaths:
     spacy_tokenized_abstracts_most_cited_pkl: Path = (
         results_dirpath / "spacy_tokenized_abstracts_most_cited.pkl"
     )
-    bert_tokenized_abstracts_most_cited_pth: Path = (
-        results_dirpath / "bert_tokenized_abstracts_most_cited.pth"
+    tfidf_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "tfidf_embeddings_most_cited.pkl"
     )
-    scibert_tokenized_abstracts_most_cited_pth: Path = (
-        results_dirpath / "scibert_tokenized_abstracts_most_cited.pth"
+    tfidf_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "tfidf_cosine_similarities_most_cited.pkl"
     )
-    tfidf_embeddings_most_cited_npy: Path = results_dirpath / "tfidf_embeddings_most_cited.npy"
-    fasttext_embeddings_most_cited_npy: Path = (
-        results_dirpath / "fasttext_embeddings_most_cited.npy"
+    bm25_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "bm25_embeddings_most_cited.pkl"
     )
-    bert_embeddings_most_cited_npy: Path = results_dirpath / "bert_embeddings_most_cited.npy"
-    scibert_embeddings_most_cited_npy: Path = results_dirpath / "scibert_embeddings_most_cited.npy"
+    bm25_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "bm25_cosine_similarities_most_cited.pkl"
+    )
+    word2vec_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "word2vec_embeddings_most_cited.pkl"
+    )
+    word2vec_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "word2vec_cosine_similarities_most_cited.pkl"
+    )
+    fasttext_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "fasttext_embeddings_most_cited.pkl"
+    )
+    fasttext_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "fasttext_cosine_similarities_most_cited.pkl"
+    )
+    bert_tokenized_abstracts_most_cited_pt: Path = (
+        results_dirpath / "bert_tokenized_abstracts_most_cited.pt"
+    )
+    bert_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "bert_embeddings_most_cited.pkl"
+    )
+    bert_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "bert_cosine_similarities_most_cited.pkl"
+    )
+    scibert_tokenized_abstracts_most_cited_pt: Path = (
+        results_dirpath / "scibert_tokenized_abstracts_most_cited.pt"
+    )
+    scibert_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "scibert_embeddings_most_cited.pkl"
+    )
+    scibert_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "scibert_cosine_similarities_most_cited.pkl"
+    )
 
 
 @dataclass(frozen=True)

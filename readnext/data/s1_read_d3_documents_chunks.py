@@ -10,7 +10,7 @@ Since the documents dataset is too large to process at once, it is split into ch
 import pandas as pd
 
 from readnext.config import DataPaths
-from readnext.modeling.utils import setup_progress_bar
+from readnext.utils import setup_progress_bar
 
 
 def write_out_chunked_dataframe(dataframe_chunks: list[pd.DataFrame], file_index: int) -> None:

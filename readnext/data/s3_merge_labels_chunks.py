@@ -8,7 +8,7 @@ from pathlib import Path
 import pandas as pd
 
 from readnext.config import DataPaths
-from readnext.modeling.utils import setup_progress_bar
+from readnext.utils import setup_progress_bar
 
 
 def add_labels(df: pd.DataFrame) -> pd.DataFrame:

@@ -37,6 +37,28 @@ def main() -> None:
         ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl,
     )
 
+    bert_embeddings_mapping = load_df_from_pickle(
+        ResultsPaths.language_models.bert_embeddings_mapping_most_cited_pkl
+    )
+    # NOTE: Remove to train on full data
+    bert_embeddings_mapping = bert_embeddings_mapping.head(1000)
+    bert_cosine_similarities = precompute_cosine_similarities(bert_embeddings_mapping)
+    save_df_to_pickle(
+        bert_cosine_similarities,
+        ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl,
+    )
+
+    scibert_embeddings_mapping = load_df_from_pickle(
+        ResultsPaths.language_models.scibert_embeddings_mapping_most_cited_pkl
+    )
+    # NOTE: Remove to train on full data
+    scibert_embeddings_mapping = scibert_embeddings_mapping.head(1000)
+    scibert_cosine_similarities = precompute_cosine_similarities(scibert_embeddings_mapping)
+    save_df_to_pickle(
+        scibert_cosine_similarities,
+        ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl,
+    )
+
 
 if __name__ == "__main__":
     main()

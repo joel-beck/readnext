@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Literal, Protocol, TypeAlias
-
+from enum import Enum
 import numpy as np
 import pandas as pd
 from gensim.models import FastText, KeyedVectors
@@ -17,11 +17,28 @@ from readnext.modeling.language_models.tokenizer import (
     DocumentTokens,
     DocumentTokensMapping,
 )
+from readnext.utils import setup_progress_bar
 
 EmbeddingModel: TypeAlias = TfidfVectorizer | BM25Okapi | KeyedVectors | FastText | BertModel
 
 DocumentEmbeddings: TypeAlias = np.ndarray
 DocumentEmbeddingsMapping: TypeAlias = dict[int, DocumentEmbeddings]
+
+
+class AggregationStrategy(str, Enum):
+    mean = "mean"
+    max = "max"
+
+    def __str__(self) -> str:
+        return self.value
+
+    @property
+    def is_mean(self) -> bool:
+        return self == self.mean
+
+    @property
+    def is_max(self) -> bool:
+        return self == self.max
 
 
 def embeddings_mapping_to_frame(embeddings_mapping: DocumentEmbeddingsMapping) -> pd.DataFrame:
@@ -162,7 +179,8 @@ class GensimEmbedder(ABC):
 
     @staticmethod
     def compute_document_embedding(
-        word_embeddings_per_document: np.ndarray, strategy: Literal["mean", "max"] = "mean"
+        word_embeddings_per_document: np.ndarray,
+        aggregation_strategy: AggregationStrategy = AggregationStrategy.mean,
     ) -> np.ndarray:
         """
         Combines word embeddings per document by averaging each embedding dimension.
@@ -170,13 +188,18 @@ class GensimEmbedder(ABC):
         Output has shape (n_dimensions,) with
         - n_dimensions: dimension of embedding space
         """
-        if strategy == "mean":
+        if aggregation_strategy.is_mean:
             return np.mean(word_embeddings_per_document, axis=0)  # type: ignore
 
-        return np.max(word_embeddings_per_document, axis=0)  # type: ignore
+        elif aggregation_strategy.is_max:
+            return np.max(word_embeddings_per_document, axis=0)  # type: ignore
+
+        raise ValueError(f"Aggregation strategy `{aggregation_strategy}` is not implemented.")
 
     def compute_embeddings_mapping(
-        self, tokens_mapping: DocumentTokensMapping, strategy: Literal["mean", "max"] = "mean"
+        self,
+        tokens_mapping: DocumentTokensMapping,
+        aggregation_strategy: AggregationStrategy = AggregationStrategy.mean,
     ) -> DocumentEmbeddingsMapping:
         """
         Takes a list of tokenized documents (list of lists of strings, one list of
@@ -189,7 +212,7 @@ class GensimEmbedder(ABC):
         """
         return {
             document_id: self.compute_document_embedding(
-                self.compute_word_embeddings_per_document(tokens), strategy
+                self.compute_word_embeddings_per_document(tokens), aggregation_strategy
             )
             for document_id, tokens in tokens_mapping.items()
         }
@@ -227,7 +250,7 @@ class BERTEmbedder:
     def compute_embeddings_single_document(
         self,
         tokens_tensor: DocumentsTokensTensor,
-        strategy: Literal["mean", "max"] = "mean",
+        aggregation_strategy: AggregationStrategy = AggregationStrategy.mean,
     ) -> DocumentEmbeddings:
         """
         Takes a tensor of a single tokenized document as input and computes the BERT
@@ -244,21 +267,30 @@ class BERTEmbedder:
 
         # first element of outputs is the last hidden state of the [CLS] token
         # dimension: num_documents x num_tokens_per_document x embedding_dimension
-        document_embeddings = outputs.last_hidden_state
+        document_embeddings: DocumentsTokensTensor = outputs.last_hidden_state
 
-        if strategy == "mean":
+        if aggregation_strategy.is_mean:
             document_embedding = document_embeddings.mean(dim=1)
-        else:
+        elif aggregation_strategy.is_max:
             document_embedding = document_embeddings.max(dim=1)
+        else:
+            raise ValueError(f"Aggregation strategy `{aggregation_strategy}` is not implemented.")
 
-        return document_embedding.detach().numpy()  # type: ignore
+        return document_embedding.squeeze(0).detach().numpy()  # type: ignore
 
     def compute_embeddings_mapping(
         self,
         tokens_tensor_mapping: DocumentsTokensTensorMapping,
-        strategy: Literal["mean", "max"] = "mean",
+        aggregation_strategy: AggregationStrategy = AggregationStrategy.mean,
     ) -> DocumentEmbeddingsMapping:
-        return {
-            document_id: self.compute_embeddings_single_document(tokens_tensor, strategy)
-            for document_id, tokens_tensor in tokens_tensor_mapping.items()
-        }
+        embeddings_mapping = {}
+
+        with setup_progress_bar() as progress_bar:
+            for document_id, tokens_tensor in progress_bar.track(
+                tokens_tensor_mapping.items(), total=len(tokens_tensor_mapping)
+            ):
+                embeddings_mapping[document_id] = self.compute_embeddings_single_document(
+                    tokens_tensor, aggregation_strategy
+                )
+
+        return embeddings_mapping

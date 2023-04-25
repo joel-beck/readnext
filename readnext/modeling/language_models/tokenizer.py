@@ -10,7 +10,7 @@ from transformers import BertTokenizerFast
 
 # do not import from .language_models to avoid circular imports
 from readnext.modeling.language_models import DocumentsInfo
-from readnext.modeling.utils import setup_progress_bar
+from readnext.utils import setup_progress_bar
 
 # each document is represented as a list of tokens
 DocumentTokens: TypeAlias = list[str]

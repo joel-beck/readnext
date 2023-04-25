@@ -10,7 +10,7 @@ from readnext.evaluation.metrics import (
     count_common_citations_from_df,
     count_common_references_from_df,
 )
-from readnext.modeling.utils import setup_progress_bar
+from readnext.utils import setup_progress_bar
 
 
 def init_pairwise_scores_df_from_input(

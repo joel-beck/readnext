@@ -6,7 +6,7 @@ dataframe.
 import pandas as pd
 
 from readnext.config import DataPaths
-from readnext.modeling.utils import setup_progress_bar
+from readnext.utils import setup_progress_bar
 
 
 def main() -> None:

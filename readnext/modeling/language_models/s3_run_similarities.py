@@ -1,6 +1,6 @@
 from readnext.config import ResultsPaths
 from readnext.evaluation.pairwise_scores import precompute_cosine_similarities
-from readnext.modeling.utils import load_df_from_pickle, save_df_to_pickle
+from readnext.utils import load_df_from_pickle, save_df_to_pickle
 
 
 def main() -> None:

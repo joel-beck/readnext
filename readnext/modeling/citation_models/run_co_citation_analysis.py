@@ -9,7 +9,6 @@ def main() -> None:
         DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
     )
 
-    # option 1: pre-compute all pairwise counts, computation at training time
     co_citation_analysis_most_cited = precompute_co_citations(
         documents_authors_labels_citations_most_cited
     )

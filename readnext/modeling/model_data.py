@@ -4,12 +4,12 @@ from typing import cast
 
 import pandas as pd
 
-from readnext.modeling.document_data import Document, DocumentScore
+from readnext.modeling.document_info import DocumentInfo, DocumentScore
 
 
 @dataclass
 class ModelData(ABC):
-    query_document: Document
+    query_document: DocumentInfo
     info_matrix: pd.DataFrame
     integer_labels: pd.Series
 
@@ -29,7 +29,7 @@ class ModelDataFromId(ABC):
     document_id: int
     documents_data: pd.DataFrame
     info_cols: list[str]
-    query_document: Document = field(init=False)
+    query_document: DocumentInfo = field(init=False)
 
     def __post_init__(self) -> None:
         query_document_title = str(self.documents_data.loc[self.document_id, "title"])
@@ -38,7 +38,7 @@ class ModelDataFromId(ABC):
             list[str], self.documents_data.loc[self.document_id, "arxiv_labels"]
         )
 
-        self.query_document = Document(
+        self.query_document = DocumentInfo(
             self.document_id, query_document_title, query_document_author, query_document_labels
         )
 

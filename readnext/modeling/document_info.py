@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Document:
+class DocumentInfo:
     document_id: int
     title: str
     author: str

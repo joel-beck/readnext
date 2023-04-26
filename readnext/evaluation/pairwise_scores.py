@@ -31,8 +31,11 @@ def find_top_n_matches_single_document(
 
 
 def precompute_pairwise_scores(
-    input_df: pd.DataFrame, pairwise_metric: PairwiseMetric, n: int
+    input_df: pd.DataFrame, pairwise_metric: PairwiseMetric, n: int | None
 ) -> pd.DataFrame:
+    if n is None:
+        n = len(input_df)
+
     tqdm.pandas()
     document_ids = input_df["document_id"].tolist()
 
@@ -54,20 +57,20 @@ def precompute_pairwise_scores(
 # more observations the weighted model is able to use.
 def precompute_co_citations(
     df: pd.DataFrame,
-    n: int = 1000,
+    n: int | None = None,
 ) -> pd.DataFrame:
     return precompute_pairwise_scores(df, count_common_citations_from_df, n)
 
 
 def precompute_co_references(
     df: pd.DataFrame,
-    n: int = 1000,
+    n: int | None = None,
 ) -> pd.DataFrame:
     return precompute_pairwise_scores(df, count_common_references_from_df, n)
 
 
 def precompute_cosine_similarities(
     df: pd.DataFrame,
-    n: int = 50,
+    n: int | None = None,
 ) -> pd.DataFrame:
     return precompute_pairwise_scores(df, cosine_similarity_from_df, n)

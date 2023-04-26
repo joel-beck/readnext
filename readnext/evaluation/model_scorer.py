@@ -37,7 +37,7 @@ class ModelScorer(ABC, Generic[T]):
 
     @abstractmethod
     def select_top_n_ranks(
-        self, model_data: T, by: ScoringFeature | None = None, n: int = 20
+        self, model_data: T, scoring_feature: ScoringFeature | None = None, n: int = 20
     ) -> pd.DataFrame:
         ...
 
@@ -45,7 +45,7 @@ class ModelScorer(ABC, Generic[T]):
     def score_top_n(
         self,
         model_data: T,
-        by: ScoringFeature | None = None,
+        scoring_feature: ScoringFeature | None = None,
         metric: Callable[[Sequence[int]], float] = average_precision,
         n: int = 20,
     ) -> float:
@@ -55,7 +55,7 @@ class ModelScorer(ABC, Generic[T]):
     def display_top_n(
         self,
         model_data: T,
-        by: ScoringFeature | None = None,
+        scoring_feature: ScoringFeature | None = None,
         n: int = 20,
     ) -> pd.DataFrame:
         ...
@@ -79,17 +79,20 @@ class CitationModelScorer(ModelScorer):
         return df.assign(publication_date_rank=df["publication_date_rank"].fillna(len(df)))
 
     def select_top_n_ranks(
-        self, citation_model_data: CitationModelData, by: ScoringFeature | None = None, n: int = 20
+        self,
+        citation_model_data: CitationModelData,
+        scoring_feature: ScoringFeature | None = None,
+        n: int = 20,
     ) -> pd.DataFrame:
-        assert by is not None, "Specify a scoring feature to rank by"
+        assert scoring_feature is not None, "Specify a scoring feature to rank by"
 
         # `weighted` option for now computes row sums, i.e. each feature is weighted equally
-        if by.is_weighted:
+        if scoring_feature.is_weighted:
             ranks_unsorted = (
                 citation_model_data.feature_matrix.dropna().sum(axis=1).rename("weighted_rank")
             )
         else:
-            ranks_unsorted = citation_model_data.feature_matrix[by.value]
+            ranks_unsorted = citation_model_data.feature_matrix[scoring_feature.value]
 
         return ranks_unsorted.sort_values().head(n).to_frame()
 
@@ -99,23 +102,23 @@ class CitationModelScorer(ModelScorer):
     def display_top_n(
         self,
         citation_model_data: CitationModelData,
-        by: ScoringFeature | None = None,
+        scoring_feature: ScoringFeature | None = None,
         n: int = 20,
     ) -> pd.DataFrame:
-        return self.select_top_n_ranks(citation_model_data, by, n).pipe(
+        return self.select_top_n_ranks(citation_model_data, scoring_feature, n).pipe(
             self.add_info_cols, citation_model_data.info_matrix
         )
 
     def score_top_n(
         self,
         citation_model_data: CitationModelData,
-        by: ScoringFeature | None = None,
+        scoring_feature: ScoringFeature | None = None,
         metric: Callable[[Sequence[int]], float] = average_precision,
         n: int = 20,
     ) -> float:
-        top_n_ranks_with_labels = self.select_top_n_ranks(citation_model_data, by, n).pipe(
-            self.add_labels, citation_model_data.integer_labels
-        )
+        top_n_ranks_with_labels = self.select_top_n_ranks(
+            citation_model_data, scoring_feature, n
+        ).pipe(self.add_labels, citation_model_data.integer_labels)
 
         return metric(top_n_ranks_with_labels["label"])  # type: ignore
 
@@ -125,10 +128,10 @@ class LanguageModelScorer(ModelScorer):
     def select_top_n_ranks(
         self,
         language_model_data: LanguageModelData,
-        by: ScoringFeature | None = None,  # noqa: ARG002
+        scoring_feature: ScoringFeature | None = None,  # noqa: ARG002
         n: int = 20,
     ) -> pd.DataFrame:
-        """The `by` argument is not used for scoring language models."""
+        """The `scoring_feature` argument is not used for scoring language models."""
         return language_model_data.embedding_ranks.sort_values("cosine_similarity_rank").head(n)
 
     def move_cosine_similarity_first(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -144,22 +147,22 @@ class LanguageModelScorer(ModelScorer):
     def display_top_n(
         self,
         language_model_data: LanguageModelData,
-        by: ScoringFeature | None = None,
+        scoring_feature: ScoringFeature | None = None,
         n: int = 20,
     ) -> pd.DataFrame:
-        return self.select_top_n_ranks(language_model_data, by, n).pipe(
+        return self.select_top_n_ranks(language_model_data, scoring_feature, n).pipe(
             self.add_info_cols, language_model_data.info_matrix
         )
 
     def score_top_n(
         self,
         language_model_data: LanguageModelData,
-        by: ScoringFeature | None = None,
+        scoring_feature: ScoringFeature | None = None,
         metric: Callable[[Sequence[int]], float] = average_precision,
         n: int = 20,
     ) -> float:
-        top_n_ranks_with_labels = self.select_top_n_ranks(language_model_data, by, n).pipe(
-            self.add_labels, language_model_data.integer_labels
-        )
+        top_n_ranks_with_labels = self.select_top_n_ranks(
+            language_model_data, scoring_feature, n
+        ).pipe(self.add_labels, language_model_data.integer_labels)
 
         return metric(top_n_ranks_with_labels["label"])  # type: ignore

@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from typing import cast
 
 import pandas as pd
+from typing_extensions import Self
 
 from readnext.modeling.document_info import DocumentInfo, DocumentScore
 
@@ -13,33 +14,56 @@ class ModelData(ABC):
     info_matrix: pd.DataFrame
     integer_labels: pd.Series
 
+    @abstractmethod
+    def __getitem__(self, indices: pd.Index) -> Self:
+        ...
+
 
 @dataclass
 class CitationModelData(ModelData):
     feature_matrix: pd.DataFrame
+
+    def __getitem__(self, indices: pd.Index) -> Self:
+        return self.__class__(
+            self.query_document,
+            self.info_matrix.loc[indices],
+            self.integer_labels,
+            self.feature_matrix.loc[indices],
+        )
 
 
 @dataclass
 class LanguageModelData(ModelData):
     embedding_ranks: pd.DataFrame
 
+    def __getitem__(self, indices: pd.Index) -> Self:
+        return self.__class__(
+            self.query_document,
+            self.info_matrix.loc[indices],
+            self.integer_labels,
+            self.embedding_ranks.loc[indices],
+        )
+
 
 @dataclass(kw_only=True)
 class ModelDataFromId(ABC):
-    document_id: int
+    query_document_id: int
     documents_data: pd.DataFrame
     info_cols: list[str]
     query_document: DocumentInfo = field(init=False)
 
     def __post_init__(self) -> None:
-        query_document_title = str(self.documents_data.loc[self.document_id, "title"])
-        query_document_author = str(self.documents_data.loc[self.document_id, "author"])
+        query_document_title = str(self.documents_data.loc[self.query_document_id, "title"])
+        query_document_author = str(self.documents_data.loc[self.query_document_id, "author"])
         query_document_labels = cast(
-            list[str], self.documents_data.loc[self.document_id, "arxiv_labels"]
+            list[str], self.documents_data.loc[self.query_document_id, "arxiv_labels"]
         )
 
         self.query_document = DocumentInfo(
-            self.document_id, query_document_title, query_document_author, query_document_labels
+            self.query_document_id,
+            query_document_title,
+            query_document_author,
+            query_document_labels,
         )
 
     @abstractmethod
@@ -51,7 +75,7 @@ class ModelDataFromId(ABC):
         ...
 
     def exclude_query_document(self, df: pd.DataFrame) -> pd.DataFrame:
-        return df.loc[df.index != self.document_id]
+        return df.loc[df.index != self.query_document_id]
 
     def filter_documents_data(self) -> pd.DataFrame:
         return self.exclude_query_document(self.documents_data)
@@ -113,7 +137,9 @@ class CitationModelDataFromId(ModelDataFromId):
     )
 
     def get_citation_method_scores(self, citation_method_data: pd.DataFrame) -> pd.DataFrame:
-        document_scores: list[DocumentScore] = citation_method_data.loc[self.document_id].item()
+        document_scores: list[DocumentScore] = citation_method_data.loc[
+            self.query_document_id
+        ].item()
 
         return self.document_scores_to_frame(document_scores)
 
@@ -158,12 +184,12 @@ class CitationModelDataFromId(ModelDataFromId):
 
 @dataclass(kw_only=True)
 class LanguageModelDataFromId(ModelDataFromId):
-    cosine_similarity_matrix: pd.DataFrame
+    cosine_similarities: pd.DataFrame
     info_cols: list[str] = field(default_factory=lambda: ["title", "author", "arxiv_labels"])
 
     def get_cosine_similarity_scores(self) -> pd.DataFrame:
-        document_scores: list[DocumentScore] = self.cosine_similarity_matrix.loc[
-            self.document_id
+        document_scores: list[DocumentScore] = self.cosine_similarities.loc[
+            self.query_document_id
         ].item()
 
         return self.document_scores_to_frame(document_scores).rename(

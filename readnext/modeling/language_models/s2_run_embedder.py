@@ -22,7 +22,7 @@ def main() -> None:
         ResultsPaths.language_models.spacy_tokenized_abstracts_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    spacy_tokens_list_mapping = slice_mapping(spacy_tokens_list_mapping, size=100)
+    spacy_tokens_list_mapping = slice_mapping(spacy_tokens_list_mapping, size=1000)
 
     spacy_tokens_string_mapping = SpacyTokenizer.strings_from_tokens(spacy_tokens_list_mapping)
 
@@ -30,13 +30,13 @@ def main() -> None:
         ResultsPaths.language_models.bert_tokenized_abstracts_most_cited_pt
     )
     # NOTE: Remove to train on full data
-    bert_tokens_tensor_mapping = slice_mapping(bert_tokens_tensor_mapping, size=100)
+    bert_tokens_tensor_mapping = slice_mapping(bert_tokens_tensor_mapping, size=1000)
 
     scibert_tokens_tensor_mapping = BERTTokenizer.load_tokens_mapping(
         ResultsPaths.language_models.scibert_tokenized_abstracts_most_cited_pt
     )
     # NOTE: Remove to train on full data
-    scibert_tokens_tensor_mapping = slice_mapping(scibert_tokens_tensor_mapping, size=100)
+    scibert_tokens_tensor_mapping = slice_mapping(scibert_tokens_tensor_mapping, size=1000)
 
     tfidf_model = TfidfVectorizer()
     tfidf_embedder = TFIDFEmbedder(tfidf_model)
@@ -78,7 +78,6 @@ def main() -> None:
         ResultsPaths.language_models.fasttext_embeddings_mapping_most_cited_pkl,
     )
 
-    # takes roughly an hour for 10.000 documents
     bert_model = BertModel.from_pretrained(ModelVersions.bert)  # type: ignore
     bert_embedder = BERTEmbedder(bert_model)  # type: ignore
     bert_embeddings_mapping = bert_embedder.compute_embeddings_mapping(bert_tokens_tensor_mapping)

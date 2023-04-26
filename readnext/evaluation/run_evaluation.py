@@ -32,7 +32,7 @@ def main() -> None:
     # SECTION: Get Model Data
     # SUBSECTION: Citation Models
     citation_model_data_from_id = CitationModelDataFromId(
-        document_id=query_document_id,
+        query_document_id=query_document_id,
         documents_data=documents_authors_labels_citations_most_cited.pipe(
             citation_model_scorer.add_feature_rank_cols
         ).pipe(citation_model_scorer.set_missing_publication_dates_to_max_rank),
@@ -63,9 +63,9 @@ def main() -> None:
         ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl
     )
     tfidf_data_from_id = LanguageModelDataFromId(
-        document_id=query_document_id,
+        query_document_id=query_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
-        cosine_similarity_matrix=tfidf_cosine_similarities_most_cited,
+        cosine_similarities=tfidf_cosine_similarities_most_cited,
     )
     tfidf_data = tfidf_data_from_id.get_model_data()
     language_model_scorer.display_top_n(tfidf_data, n=10)
@@ -75,9 +75,9 @@ def main() -> None:
         ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl
     )
     word2vec_data_from_id = LanguageModelDataFromId(
-        document_id=query_document_id,
+        query_document_id=query_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
-        cosine_similarity_matrix=word2vec_cosine_similarities_most_cited,
+        cosine_similarities=word2vec_cosine_similarities_most_cited,
     )
     word2vec_data = word2vec_data_from_id.get_model_data()
     language_model_scorer.display_top_n(word2vec_data, n=10)
@@ -87,9 +87,9 @@ def main() -> None:
         ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl
     )
     fasttext_data_from_id = LanguageModelDataFromId(
-        document_id=query_document_id,
+        query_document_id=query_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
-        cosine_similarity_matrix=fasttext_cosine_similarities_most_cited,
+        cosine_similarities=fasttext_cosine_similarities_most_cited,
     )
     fasttext_data = fasttext_data_from_id.get_model_data()
     language_model_scorer.display_top_n(fasttext_data, n=10)
@@ -99,9 +99,9 @@ def main() -> None:
         ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl
     )
     bert_data_from_id = LanguageModelDataFromId(
-        document_id=query_document_id,
+        query_document_id=query_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
-        cosine_similarity_matrix=bert_cosine_similarities_most_cited,
+        cosine_similarities=bert_cosine_similarities_most_cited,
     )
     bert_data = bert_data_from_id.get_model_data()
     language_model_scorer.display_top_n(bert_data, n=10)
@@ -111,9 +111,9 @@ def main() -> None:
         ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl
     )
     scibert_data_from_id = LanguageModelDataFromId(
-        document_id=query_document_id,
+        query_document_id=query_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
-        cosine_similarity_matrix=scibert_cosine_similarities_most_cited,
+        cosine_similarities=scibert_cosine_similarities_most_cited,
     )
     scibert_data = scibert_data_from_id.get_model_data()
     language_model_scorer.display_top_n(scibert_data, n=10)

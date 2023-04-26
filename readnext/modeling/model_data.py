@@ -4,8 +4,6 @@ from typing import cast
 
 import pandas as pd
 
-from readnext.evaluation.pairwise_scores import DocumentScore
-
 
 @dataclass
 class Document:
@@ -22,6 +20,13 @@ class Document:
             f"Author: {self.author}\n"
             f"Arxiv Labels: {self.arxiv_labels}"
         )
+
+
+# defined here instead of in readnext.evaluation to avoid circular imports
+@dataclass
+class DocumentScore:
+    document_id: int
+    score: float
 
 
 @dataclass

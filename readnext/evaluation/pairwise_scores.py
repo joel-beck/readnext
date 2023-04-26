@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 import pandas as pd
 from tqdm import tqdm
 
@@ -9,12 +7,7 @@ from readnext.evaluation.metrics import (
     count_common_citations_from_df,
     count_common_references_from_df,
 )
-
-
-@dataclass
-class DocumentScore:
-    document_id: int
-    score: float
+from readnext.modeling import DocumentScore
 
 
 def find_top_n_matches_single_document(

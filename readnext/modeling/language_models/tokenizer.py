@@ -34,13 +34,13 @@ class ListTokenizer(ABC):
     def tokenize(self) -> DocumentTokensMapping:
         ...
 
-    @abstractmethod
     @staticmethod
+    @abstractmethod
     def save_tokens_mapping(path: Path, tokens_list: DocumentTokensMapping) -> None:
         ...
 
-    @abstractmethod
     @staticmethod
+    @abstractmethod
     def load_tokens_mapping(path: Path) -> DocumentTokensMapping:
         ...
 
@@ -53,13 +53,13 @@ class TensorTokenizer(ABC):
     def tokenize(self) -> DocumentsTokensTensorMapping:
         ...
 
-    @abstractmethod
     @staticmethod
+    @abstractmethod
     def save_tokens_mapping(path: Path, tokens_tensor: DocumentsTokensTensorMapping) -> None:
         ...
 
-    @abstractmethod
     @staticmethod
+    @abstractmethod
     def load_tokens_mapping(path: Path) -> DocumentsTokensTensorMapping:
         ...
 

@@ -1,5 +1,5 @@
 from readnext.config import ResultsPaths
-from readnext.evaluation.pairwise_scores import precompute_cosine_similarities
+from readnext.evaluation import precompute_cosine_similarities
 from readnext.utils import load_df_from_pickle, save_df_to_pickle
 
 

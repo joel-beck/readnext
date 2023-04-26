@@ -99,7 +99,7 @@ def precompute_cosine_similarities(
 
 def lookup_n_highest_pairwise_scores(
     df: pd.DataFrame,
-    input_document_id: int,
+    query_document_id: int,
     output_colname: Literal["num_common_citations", "num_common_references", "cosine_similarity"],
     n: int | None = None,
 ) -> pd.Series:
@@ -108,9 +108,9 @@ def lookup_n_highest_pairwise_scores(
     place during training.
     """
     full_ranking = (
-        df.loc[input_document_id]
+        df.loc[query_document_id]
         .sort_values(ascending=False)
-        .drop(input_document_id)
+        .drop(query_document_id)
         .astype(int)
         .rename(output_colname)
     )
@@ -120,23 +120,23 @@ def lookup_n_highest_pairwise_scores(
 
 def lookup_n_most_common_citations(
     df: pd.DataFrame,
-    input_document_id: int,
+    query_document_id: int,
     n: int | None = None,
 ) -> pd.Series:
-    return lookup_n_highest_pairwise_scores(df, input_document_id, "num_common_citations", n)
+    return lookup_n_highest_pairwise_scores(df, query_document_id, "num_common_citations", n)
 
 
 def lookup_n_most_common_references(
     df: pd.DataFrame,
-    input_document_id: int,
+    query_document_id: int,
     n: int | None = None,
 ) -> pd.Series:
-    return lookup_n_highest_pairwise_scores(df, input_document_id, "num_common_references", n)
+    return lookup_n_highest_pairwise_scores(df, query_document_id, "num_common_references", n)
 
 
 def compute_n_highest_pairwise_scores(
     df: pd.DataFrame,
-    input_document_id: int,
+    query_document_id: int,
     colname: Literal["citations", "references"],
     pairwise_metric: PairwiseMetric,
     output_name: Literal["num_common_citations", "num_common_references"],
@@ -150,11 +150,11 @@ def compute_n_highest_pairwise_scores(
         df[["document_id", colname]]
         .set_index("document_id")
         .apply(
-            lambda x: pairwise_metric(df, input_document_id, x.name),
+            lambda x: pairwise_metric(df, query_document_id, x.name),
             axis=1,
         )
         .sort_values(ascending=False)
-        .drop(input_document_id)
+        .drop(query_document_id)
         .rename(output_name)
     )
 
@@ -163,12 +163,12 @@ def compute_n_highest_pairwise_scores(
 
 def compute_n_most_common_citations(
     df: pd.DataFrame,
-    input_document_id: int,
+    query_document_id: int,
     n: int | None = None,
 ) -> pd.Series:
     return compute_n_highest_pairwise_scores(
         df,
-        input_document_id,
+        query_document_id,
         "citations",
         count_common_references_from_df,
         "num_common_citations",
@@ -178,12 +178,12 @@ def compute_n_most_common_citations(
 
 def compute_n_most_common_references(
     df: pd.DataFrame,
-    input_document_id: int,
+    query_document_id: int,
     n: int | None = None,
 ) -> pd.Series:
     return compute_n_highest_pairwise_scores(
         df,
-        input_document_id,
+        query_document_id,
         "references",
         count_common_references_from_df,
         "num_common_references",

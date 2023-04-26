@@ -1,7 +1,7 @@
 import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
-from readnext.evaluation.pairwise_scores import precompute_co_citations
+from readnext.evaluation import precompute_co_citations
 
 
 def main() -> None:

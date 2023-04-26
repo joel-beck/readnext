@@ -55,13 +55,13 @@ tfidf_data = tfidf_data_from_id.get_model_data()
 language_model_scorer.display_top_n(tfidf_data, n=10)
 
 # SECTION: Experimenting for Hybrid Model
-# SUBSECTION: Citation to Language
 citation_model_data_from_id = citation_model_data_from_id
 citation_model_data = citation_model_data_from_id.get_model_data()
 
 language_model_data_from_id = tfidf_data_from_id
 language_model_data = language_model_data_from_id.get_model_data()
 
+# SUBSECTION: Citation to Language
 # Candidate Documents
 candidate_ids = language_model_scorer.display_top_n(language_model_data, n=30).index
 # Score of Candidate Documents
@@ -75,6 +75,21 @@ citation_model_scorer.display_top_n(
 citation_model_scorer.score_top_n(
     citation_model_data[candidate_ids], scoring_feature=ScoringFeature.weighted, n=30
 )
+
+# SUBSECTION: Language to Citation
+# Candidate Documents
+candidate_ids = citation_model_scorer.display_top_n(
+    citation_model_data, scoring_feature=ScoringFeature.weighted, n=30
+).index
+# Score of Candidate Documents
+citation_model_scorer.score_top_n(
+    citation_model_data, scoring_feature=ScoringFeature.weighted, n=30
+)
+
+# Recommendations of Hybrid Recommender
+language_model_scorer.display_top_n(language_model_data[candidate_ids], n=10)
+# Final Score of Hybrid Recommender
+language_model_scorer.score_top_n(language_model_data[candidate_ids], n=30)
 
 
 @dataclass

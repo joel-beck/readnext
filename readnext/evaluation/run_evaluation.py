@@ -74,11 +74,77 @@ def main() -> None:
     fasttext_data = fasttext_data_from_id.get_model_data()
     language_model_scorer.display_top_n(fasttext_data, n=10)
 
+    # SUBSECTION: BERT
+    bert_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl
+    )
+    bert_data_from_id = LanguageModelDataFromId(
+        document_id=query_document_id,
+        documents_data=documents_authors_labels_citations_most_cited,
+        cosine_similarity_matrix=bert_cosine_similarities_most_cited,
+    )
+    bert_data = bert_data_from_id.get_model_data()
+    language_model_scorer.display_top_n(bert_data, n=10)
+
+    # SUBSECTION: SciBERT
+    scibert_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl
+    )
+    scibert_data_from_id = LanguageModelDataFromId(
+        document_id=query_document_id,
+        documents_data=documents_authors_labels_citations_most_cited,
+        cosine_similarity_matrix=scibert_cosine_similarities_most_cited,
+    )
+    scibert_data = scibert_data_from_id.get_model_data()
+    language_model_scorer.display_top_n(scibert_data, n=10)
+
     # SECTION: Evaluate Scores
-    citation_model_scorer.score_top_n(citation_model_data, ScoringFeature.weighted, n=10)
-    language_model_scorer.score_top_n(tfidf_data, n=10)
-    language_model_scorer.score_top_n(word2vec_data, n=10)
-    language_model_scorer.score_top_n(fasttext_data, n=10)
+    pd.DataFrame(
+        [
+            (
+                "Publication Date",
+                citation_model_scorer.score_top_n(
+                    citation_model_data, ScoringFeature.publication_date, n=20
+                ),
+            ),
+            (
+                "Citation Count Document",
+                citation_model_scorer.score_top_n(
+                    citation_model_data, ScoringFeature.citationcount_document, n=20
+                ),
+            ),
+            (
+                "Citation Count Author",
+                citation_model_scorer.score_top_n(
+                    citation_model_data, ScoringFeature.citationcount_author, n=20
+                ),
+            ),
+            (
+                "Co-Citation Analysis",
+                citation_model_scorer.score_top_n(
+                    citation_model_data, ScoringFeature.co_citation_analysis, n=20
+                ),
+            ),
+            (
+                "Bibliographic Coupling",
+                citation_model_scorer.score_top_n(
+                    citation_model_data, ScoringFeature.bibliographic_coupling, n=20
+                ),
+            ),
+            (
+                "Weighted",
+                citation_model_scorer.score_top_n(
+                    citation_model_data, ScoringFeature.weighted, n=20
+                ),
+            ),
+            ("TF-IDF", language_model_scorer.score_top_n(tfidf_data, n=20)),
+            ("Word2Vec", language_model_scorer.score_top_n(word2vec_data, n=20)),
+            ("FastText", language_model_scorer.score_top_n(fasttext_data, n=20)),
+            ("BERT", language_model_scorer.score_top_n(bert_data, n=20)),
+            ("SciBERT", language_model_scorer.score_top_n(scibert_data, n=20)),
+        ],
+        columns=["Feature", "Average Precision"],
+    ).sort_values(by="Average Precision", ascending=False).reset_index(drop=True)
 
 
 if __name__ == "__main__":

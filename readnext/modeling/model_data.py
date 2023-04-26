@@ -24,7 +24,7 @@ class Document:
 
 @dataclass
 class ModelData(ABC):
-    input_document: Document
+    query_document: Document
     info_matrix: pd.DataFrame
     integer_labels: pd.Series
 
@@ -44,17 +44,17 @@ class ModelDataFromId(ABC):
     document_id: int
     documents_data: pd.DataFrame
     info_cols: list[str]
-    input_document: Document = field(init=False)
+    query_document: Document = field(init=False)
 
     def __post_init__(self) -> None:
-        input_document_title = str(self.documents_data.loc[self.document_id, "title"])
-        input_document_author = str(self.documents_data.loc[self.document_id, "author"])
-        input_document_labels = cast(
+        query_document_title = str(self.documents_data.loc[self.document_id, "title"])
+        query_document_author = str(self.documents_data.loc[self.document_id, "author"])
+        query_document_labels = cast(
             list[str], self.documents_data.loc[self.document_id, "arxiv_labels"]
         )
 
-        self.input_document = Document(
-            self.document_id, input_document_title, input_document_author, input_document_labels
+        self.query_document = Document(
+            self.document_id, query_document_title, query_document_author, query_document_labels
         )
 
     @abstractmethod
@@ -65,11 +65,11 @@ class ModelDataFromId(ABC):
     def get_model_data(self) -> ModelData:
         ...
 
-    def exclude_input_document(self, df: pd.DataFrame) -> pd.DataFrame:
+    def exclude_query_document(self, df: pd.DataFrame) -> pd.DataFrame:
         return df.loc[df.index != self.document_id]
 
     def filter_documents_data(self) -> pd.DataFrame:
-        return self.exclude_input_document(self.documents_data)
+        return self.exclude_query_document(self.documents_data)
 
     def get_info_matrix(self) -> pd.DataFrame:
         return self.filter_documents_data().loc[:, self.info_cols]
@@ -78,7 +78,7 @@ class ModelDataFromId(ABC):
         self,
         candidate_document_labels: list[str],
     ) -> bool:
-        return any(label in candidate_document_labels for label in self.input_document.arxiv_labels)
+        return any(label in candidate_document_labels for label in self.query_document.arxiv_labels)
 
     @staticmethod
     def boolean_to_int(boolean: bool) -> int:
@@ -117,7 +117,7 @@ class CitationModelDataFromId(ModelDataFromId):
     )
 
     def get_citation_method_data(self, citation_method_data: pd.DataFrame) -> pd.DataFrame:
-        return citation_method_data.loc[self.document_id].pipe(self.exclude_input_document)
+        return citation_method_data.loc[self.document_id].pipe(self.exclude_query_document)
 
     def get_co_citation_analysis_data(self) -> pd.DataFrame:
         return self.get_citation_method_data(self.co_citation_analysis_data)
@@ -147,7 +147,7 @@ class CitationModelDataFromId(ModelDataFromId):
 
     def get_model_data(self) -> CitationModelData:
         return CitationModelData(
-            self.input_document,
+            self.query_document,
             self.get_info_matrix().pipe(self.extend_info_matrix),
             self.get_integer_labels(),
             self.get_feature_matrix(),
@@ -164,7 +164,7 @@ class LanguageModelDataFromId(ModelDataFromId):
             self.cosine_similarity_matrix.loc[self.document_id]
             .rename("cosine_similarity")
             .to_frame()
-            .pipe(self.exclude_input_document)
+            .pipe(self.exclude_query_document)
         )
 
     def extend_info_matrix(self, info_matrix: pd.DataFrame) -> pd.DataFrame:
@@ -181,7 +181,7 @@ class LanguageModelDataFromId(ModelDataFromId):
 
     def get_model_data(self) -> LanguageModelData:
         return LanguageModelData(
-            self.input_document,
+            self.query_document,
             self.get_info_matrix().pipe(self.extend_info_matrix),
             self.get_integer_labels(),
             self.cosine_similarity_ranks(),

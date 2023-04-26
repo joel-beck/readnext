@@ -27,7 +27,7 @@ class CitationModelData(ModelData):
         return self.__class__(
             self.query_document,
             self.info_matrix.loc[indices],
-            self.integer_labels,
+            self.integer_labels.loc[indices],
             self.feature_matrix.loc[indices],
         )
 
@@ -40,7 +40,7 @@ class LanguageModelData(ModelData):
         return self.__class__(
             self.query_document,
             self.info_matrix.loc[indices],
-            self.integer_labels,
+            self.integer_labels.loc[indices],
             self.embedding_ranks.loc[indices],
         )
 

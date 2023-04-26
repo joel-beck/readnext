@@ -13,13 +13,17 @@ def main() -> None:
     documents_authors_labels_citations_most_cited: pd.DataFrame = pd.read_pickle(
         DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
     ).set_index("document_id")
-
-    bibliographic_coupling_most_cited: pd.DataFrame = pd.read_pickle(
-        ResultsPaths.citation_models.bibliographic_coupling_most_cited_pkl
+    # NOTE: Remove to evaluate on full data
+    documents_authors_labels_citations_most_cited = (
+        documents_authors_labels_citations_most_cited.head(1000)
     )
 
-    co_citation_analysis_most_cited: pd.DataFrame = pd.read_pickle(
-        ResultsPaths.citation_models.co_citation_analysis_most_cited_pkl
+    bibliographic_coupling_scores_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl
+    )
+
+    co_citation_analysis_scores_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl
     )
 
     citation_model_scorer = CitationModelScorer()
@@ -32,10 +36,26 @@ def main() -> None:
         documents_data=documents_authors_labels_citations_most_cited.pipe(
             citation_model_scorer.add_feature_rank_cols
         ).pipe(citation_model_scorer.set_missing_publication_dates_to_max_rank),
-        co_citation_analysis_data=co_citation_analysis_most_cited,
-        bibliographic_coupling_data=bibliographic_coupling_most_cited,
+        co_citation_analysis_scores=co_citation_analysis_scores_most_cited,
+        bibliographic_coupling_scores=bibliographic_coupling_scores_most_cited,
     )
     citation_model_data = citation_model_data_from_id.get_model_data()
+
+    print(citation_model_data.query_document)
+
+    citation_model_scorer.display_top_n(citation_model_data, ScoringFeature.publication_date, n=10)
+    citation_model_scorer.display_top_n(
+        citation_model_data, ScoringFeature.citationcount_document, n=10
+    )
+    citation_model_scorer.display_top_n(
+        citation_model_data, ScoringFeature.citationcount_author, n=10
+    )
+    citation_model_scorer.display_top_n(
+        citation_model_data, ScoringFeature.co_citation_analysis, n=10
+    )
+    citation_model_scorer.display_top_n(
+        citation_model_data, ScoringFeature.bibliographic_coupling, n=10
+    )
     citation_model_scorer.display_top_n(citation_model_data, ScoringFeature.weighted, n=10)
 
     # SUBSECTION: TF-IDF

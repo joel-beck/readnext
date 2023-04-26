@@ -4,6 +4,8 @@ from typing import cast
 
 import pandas as pd
 
+from readnext.evaluation.pairwise_scores import DocumentScore
+
 
 @dataclass
 class Document:
@@ -93,11 +95,22 @@ class ModelDataFromId(ABC):
             .rename("label")
         )
 
+    def document_scores_to_frame(self, document_scores: list[DocumentScore]) -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "document_id": document_score.document_id,
+                    "score": document_score.score,
+                }
+                for document_score in document_scores
+            ]
+        ).set_index("document_id")
+
 
 @dataclass(kw_only=True)
 class CitationModelDataFromId(ModelDataFromId):
-    co_citation_analysis_data: pd.DataFrame
-    bibliographic_coupling_data: pd.DataFrame
+    co_citation_analysis_scores: pd.DataFrame
+    bibliographic_coupling_scores: pd.DataFrame
     info_cols: list[str] = field(
         default_factory=lambda: [
             "title",
@@ -116,19 +129,25 @@ class CitationModelDataFromId(ModelDataFromId):
         ]
     )
 
-    def get_citation_method_data(self, citation_method_data: pd.DataFrame) -> pd.DataFrame:
-        return citation_method_data.loc[self.document_id].pipe(self.exclude_query_document)
+    def get_citation_method_scores(self, citation_method_data: pd.DataFrame) -> pd.DataFrame:
+        document_scores: list[DocumentScore] = citation_method_data.loc[self.document_id].item()
 
-    def get_co_citation_analysis_data(self) -> pd.DataFrame:
-        return self.get_citation_method_data(self.co_citation_analysis_data)
+        return self.document_scores_to_frame(document_scores)
 
-    def get_bibliographic_coupling_data(self) -> pd.DataFrame:
-        return self.get_citation_method_data(self.bibliographic_coupling_data)
+    def get_co_citation_analysis_scores(self) -> pd.DataFrame:
+        return self.get_citation_method_scores(self.co_citation_analysis_scores).rename(
+            columns={"score": "co_citation_analysis"}
+        )
+
+    def get_bibliographic_coupling_scores(self) -> pd.DataFrame:
+        return self.get_citation_method_scores(self.bibliographic_coupling_scores).rename(
+            columns={"score": "bibliographic_coupling"}
+        )
 
     def extend_info_matrix(self, info_matrix: pd.DataFrame) -> pd.DataFrame:
         return info_matrix.assign(
-            co_citation_analysis=self.get_co_citation_analysis_data(),
-            bibliographic_coupling=self.get_bibliographic_coupling_data(),
+            co_citation_analysis=self.get_co_citation_analysis_scores(),
+            bibliographic_coupling=self.get_bibliographic_coupling_scores(),
         )
 
     def get_feature_matrix(self) -> pd.DataFrame:
@@ -136,10 +155,10 @@ class CitationModelDataFromId(ModelDataFromId):
             self.filter_documents_data()
             .loc[:, self.feature_cols]
             .assign(
-                co_citation_analysis_rank=self.get_co_citation_analysis_data().rank(
+                co_citation_analysis_rank=self.get_co_citation_analysis_scores().rank(
                     ascending=False
                 ),
-                bibliographic_coupling_rank=self.get_bibliographic_coupling_data().rank(
+                bibliographic_coupling_rank=self.get_bibliographic_coupling_scores().rank(
                     ascending=False
                 ),
             )
@@ -159,22 +178,23 @@ class LanguageModelDataFromId(ModelDataFromId):
     cosine_similarity_matrix: pd.DataFrame
     info_cols: list[str] = field(default_factory=lambda: ["title", "author", "arxiv_labels"])
 
-    def get_cosine_similarity(self) -> pd.DataFrame:
-        return (
-            self.cosine_similarity_matrix.loc[self.document_id]
-            .rename("cosine_similarity")
-            .to_frame()
-            .pipe(self.exclude_query_document)
+    def get_cosine_similarity_scores(self) -> pd.DataFrame:
+        document_scores: list[DocumentScore] = self.cosine_similarity_matrix.loc[
+            self.document_id
+        ].item()
+
+        return self.document_scores_to_frame(document_scores).rename(
+            columns={"score": "cosine_similarity"}
         )
 
     def extend_info_matrix(self, info_matrix: pd.DataFrame) -> pd.DataFrame:
         return info_matrix.assign(
-            cosine_similarity=self.get_cosine_similarity(),
+            cosine_similarity=self.get_cosine_similarity_scores(),
         )
 
     def cosine_similarity_ranks(self) -> pd.DataFrame:
         return (
-            self.get_cosine_similarity()
+            self.get_cosine_similarity_scores()
             .rank(ascending=False)
             .rename({"cosine_similarity": "cosine_similarity_rank"}, axis="columns")
         )

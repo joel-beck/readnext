@@ -1,8 +1,7 @@
-import itertools
-from typing import Literal
+from dataclasses import dataclass
 
-import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 from readnext.evaluation.metrics import (
     PairwiseMetric,
@@ -10,182 +9,72 @@ from readnext.evaluation.metrics import (
     count_common_citations_from_df,
     count_common_references_from_df,
 )
-from readnext.utils import setup_progress_bar
 
 
-def init_pairwise_scores_df_from_input(
-    input_df: pd.DataFrame, first_row: int | None, last_row: int | None
-) -> pd.DataFrame:
-    """
-    Sets index labels and column names to document_ids. Values are initialized with 0.
-    Number of rows is passed as input, number of columns is inferred from input_df.
-    """
-    first_row = 0 if first_row is None else first_row
-    last_row = len(input_df) if last_row is None else last_row
-
-    col_document_ids = input_df["document_id"]
-    row_document_ids = col_document_ids.iloc[first_row:last_row]
-
-    output_values = np.zeros((len(row_document_ids), len(col_document_ids)), dtype=np.int_)
-
-    return pd.DataFrame(data=output_values, index=row_document_ids, columns=col_document_ids)
+@dataclass
+class DocumentScore:
+    document_id: int
+    score: float
 
 
-def fill_pairwise_scores_df(
+def find_top_n_matches_single_document(
     input_df: pd.DataFrame,
-    pairwise_scores_df: pd.DataFrame,
+    document_ids: list[int],
+    query_document_id: int,
     pairwise_metric: PairwiseMetric,
-) -> pd.DataFrame:
-    document_id_combinations = itertools.product(
-        enumerate(pairwise_scores_df.index), enumerate(pairwise_scores_df.columns)
-    )
-    num_iterations = len(pairwise_scores_df) * len(pairwise_scores_df.columns)
-
-    with setup_progress_bar() as progress_bar:
-        for (row_index, row_document_id), (col_index, col_document_id) in progress_bar.track(
-            document_id_combinations, total=num_iterations
-        ):
-            # dataframe is symmetric, we only compute values for the lower triangle and
-            # diagonal and then copy them to the upper triangle
-            if row_index < col_index:
-                continue
-
-            # takes the original dataframe and not the new dataframe as input
-            pairwise_score = pairwise_metric(input_df, row_document_id, col_document_id)
-            # set value of new dataframe
-            pairwise_scores_df.loc[row_document_id, col_document_id] = pairwise_score
-
-    return pairwise_scores_df
-
-
-def fill_upper_triangle(df: pd.DataFrame) -> pd.DataFrame:
+    n: int,
+) -> list[DocumentScore]:
     """
-    Copy values from lower triangle to upper triangle (or reversed), excluding diagonal
-    values. Assumes that the dataframe has an equal number of rows and columns and is
-    initialized with zeros.
+    Find the n documents with the highest pairwise score for a single document.
     """
-    return df + df.T - np.diag(df.to_numpy().diagonal())
+    scores = []
+    for document_id in document_ids:
+        if document_id == query_document_id:
+            continue
+        score = pairwise_metric(input_df, query_document_id, document_id)
+        scores.append(DocumentScore(document_id, score))
+
+    return sorted(scores, key=lambda x: x.score, reverse=True)[:n]
 
 
 def precompute_pairwise_scores(
-    input_df: pd.DataFrame,
-    pairwise_metric: PairwiseMetric,
-    first_row: int | None,
-    last_row: int | None,
+    input_df: pd.DataFrame, pairwise_metric: PairwiseMetric, n: int
 ) -> pd.DataFrame:
-    pairwise_scores_df = init_pairwise_scores_df_from_input(input_df, first_row, last_row)
-    pairwise_scores_df = fill_pairwise_scores_df(input_df, pairwise_scores_df, pairwise_metric)
+    tqdm.pandas()
+    document_ids = input_df["document_id"].tolist()
 
-    return fill_upper_triangle(pairwise_scores_df)
+    return (
+        pd.DataFrame(data=document_ids, columns=["document_id"])
+        .assign(
+            scores=lambda df: df["document_id"].progress_apply(
+                lambda query_document_id: find_top_n_matches_single_document(
+                    input_df, document_ids, query_document_id, pairwise_metric, n
+                )
+            )
+        )
+        .set_index("document_id")
+    )
 
 
+# Set value for `n` higher for co-citation analysis and bibliographic coupling since
+# they are features for the weighted linear model. The higher the value for `n`, the
+# more observations the weighted model is able to use.
 def precompute_co_citations(
-    df: pd.DataFrame, first_row: int | None = None, last_row: int | None = None
+    df: pd.DataFrame,
+    n: int = 1000,
 ) -> pd.DataFrame:
-    return precompute_pairwise_scores(df, count_common_citations_from_df, first_row, last_row)
+    return precompute_pairwise_scores(df, count_common_citations_from_df, n)
 
 
 def precompute_co_references(
-    df: pd.DataFrame, first_row: int | None = None, last_row: int | None = None
+    df: pd.DataFrame,
+    n: int = 1000,
 ) -> pd.DataFrame:
-    return precompute_pairwise_scores(df, count_common_references_from_df, first_row, last_row)
+    return precompute_pairwise_scores(df, count_common_references_from_df, n)
 
 
 def precompute_cosine_similarities(
-    df: pd.DataFrame, first_row: int | None = None, last_row: int | None = None
+    df: pd.DataFrame,
+    n: int = 50,
 ) -> pd.DataFrame:
-    return precompute_pairwise_scores(df, cosine_similarity_from_df, first_row, last_row)
-
-
-def lookup_n_highest_pairwise_scores(
-    df: pd.DataFrame,
-    query_document_id: int,
-    output_colname: Literal["num_common_citations", "num_common_references", "cosine_similarity"],
-    n: int | None = None,
-) -> pd.Series:
-    """
-    Input Dataframe is already precomputed with all pairwise counts. Computation takes
-    place during training.
-    """
-    full_ranking = (
-        df.loc[query_document_id]
-        .sort_values(ascending=False)
-        .drop(query_document_id)
-        .astype(int)
-        .rename(output_colname)
-    )
-
-    return full_ranking if n is None else full_ranking.iloc[:n]
-
-
-def lookup_n_most_common_citations(
-    df: pd.DataFrame,
-    query_document_id: int,
-    n: int | None = None,
-) -> pd.Series:
-    return lookup_n_highest_pairwise_scores(df, query_document_id, "num_common_citations", n)
-
-
-def lookup_n_most_common_references(
-    df: pd.DataFrame,
-    query_document_id: int,
-    n: int | None = None,
-) -> pd.Series:
-    return lookup_n_highest_pairwise_scores(df, query_document_id, "num_common_references", n)
-
-
-def compute_n_highest_pairwise_scores(
-    df: pd.DataFrame,
-    query_document_id: int,
-    colname: Literal["citations", "references"],
-    pairwise_metric: PairwiseMetric,
-    output_name: Literal["num_common_citations", "num_common_references"],
-    n: int | None = None,
-) -> pd.Series:
-    """
-    Input Dataframe is raw data. Only computes pairwise counts for the input document
-    with respect to all other documents. Computation takes places during inference.
-    """
-    full_ranking = (
-        df[["document_id", colname]]
-        .set_index("document_id")
-        .apply(
-            lambda x: pairwise_metric(df, query_document_id, x.name),
-            axis=1,
-        )
-        .sort_values(ascending=False)
-        .drop(query_document_id)
-        .rename(output_name)
-    )
-
-    return full_ranking if n is None else full_ranking.iloc[:n]
-
-
-def compute_n_most_common_citations(
-    df: pd.DataFrame,
-    query_document_id: int,
-    n: int | None = None,
-) -> pd.Series:
-    return compute_n_highest_pairwise_scores(
-        df,
-        query_document_id,
-        "citations",
-        count_common_references_from_df,
-        "num_common_citations",
-        n,
-    )
-
-
-def compute_n_most_common_references(
-    df: pd.DataFrame,
-    query_document_id: int,
-    n: int | None = None,
-) -> pd.Series:
-    return compute_n_highest_pairwise_scores(
-        df,
-        query_document_id,
-        "references",
-        count_common_references_from_df,
-        "num_common_references",
-        n,
-    )
+    return precompute_pairwise_scores(df, cosine_similarity_from_df, n)

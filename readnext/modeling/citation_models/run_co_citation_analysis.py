@@ -8,13 +8,17 @@ def main() -> None:
     documents_authors_labels_citations_most_cited = pd.read_pickle(
         DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
     )
+    # NOTE: Remove to train on full data
+    documents_authors_labels_citations_most_cited = (
+        documents_authors_labels_citations_most_cited.head(1000)
+    )
 
-    co_citation_analysis_most_cited = precompute_co_citations(
+    co_citation_analysis_scores_most_cited = precompute_co_citations(
         documents_authors_labels_citations_most_cited
     )
 
-    co_citation_analysis_most_cited.to_pickle(
-        ResultsPaths.citation_models.co_citation_analysis_most_cited_pkl
+    co_citation_analysis_scores_most_cited.to_pickle(
+        ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl
     )
 
 

@@ -105,11 +105,11 @@ class ModelPaths:
 
 @dataclass(frozen=True)
 class CitationModelsResultsPaths:
-    bibliographic_coupling_most_cited_pkl: Path = (
-        results_dirpath / "bibliographic_coupling_most_cited.pkl"
+    bibliographic_coupling_scores_most_cited_pkl: Path = (
+        results_dirpath / "bibliographic_coupling_scores_most_cited.pkl"
     )
-    co_citation_analysis_most_cited_pkl: Path = (
-        results_dirpath / "co_citation_analysis_most_cited.pkl"
+    co_citation_analysis_scores_most_cited_pkl: Path = (
+        results_dirpath / "co_citation_analysis_scores_most_cited.pkl"
     )
 
 

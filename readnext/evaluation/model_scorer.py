@@ -85,7 +85,9 @@ class CitationModelScorer(ModelScorer):
 
         # `weighted` option for now computes row sums, i.e. each feature is weighted equally
         if by.is_weighted:
-            ranks_unsorted = citation_model_data.feature_matrix.sum(axis=1).rename("weighted_rank")
+            ranks_unsorted = (
+                citation_model_data.feature_matrix.dropna().sum(axis=1).rename("weighted_rank")
+            )
         else:
             ranks_unsorted = citation_model_data.feature_matrix[by.value]
 

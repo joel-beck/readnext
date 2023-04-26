@@ -133,7 +133,7 @@ class LanguageModelScorer(ModelScorer):
     @staticmethod
     def select_top_n_ranks(
         language_model_data: LanguageModelData,
-        scoring_feature: ScoringFeature | None = None,  # noqa: ARG002
+        scoring_feature: ScoringFeature | None = None,  # noqa: ARG004
         n: int = 20,
     ) -> pd.DataFrame:
         """The `scoring_feature` argument is not used for scoring language models."""

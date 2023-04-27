@@ -7,7 +7,7 @@ from readnext.evaluation.metrics import (
     count_common_citations_from_df,
     count_common_references_from_df,
 )
-from readnext.modeling import DocumentScore
+from readnext.modeling import DocumentInfo, DocumentScore
 
 
 def find_top_n_matches_single_document(
@@ -24,8 +24,9 @@ def find_top_n_matches_single_document(
     for document_id in document_ids:
         if document_id == query_document_id:
             continue
+        document_info = DocumentInfo(document_id=document_id)
         score = pairwise_metric(input_df, query_document_id, document_id)
-        scores.append(DocumentScore(document_id, score))
+        scores.append(DocumentScore(document_info, score))
 
     return sorted(scores, key=lambda x: x.score, reverse=True)[:n]
 

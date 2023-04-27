@@ -10,7 +10,7 @@ from spacy.tokens.doc import Doc
 from transformers import BertTokenizerFast
 
 # do not import from .language_models to avoid circular imports
-from readnext.modeling.language_models.document_info import DocumentsInfo
+from readnext.modeling import DocumentsInfo
 from readnext.utils import setup_progress_bar
 
 # each document is represented as a list of tokens

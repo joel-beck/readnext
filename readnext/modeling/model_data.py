@@ -5,7 +5,7 @@ from typing import cast
 import pandas as pd
 from typing_extensions import Self
 
-from readnext.modeling.document_info import DocumentInfo, DocumentScore
+from readnext.modeling import DocumentInfo, DocumentScore
 
 
 @dataclass
@@ -34,14 +34,14 @@ class CitationModelData(ModelData):
 
 @dataclass
 class LanguageModelData(ModelData):
-    embedding_ranks: pd.DataFrame
+    cosine_similarity_ranks: pd.DataFrame
 
     def __getitem__(self, indices: pd.Index) -> Self:
         return self.__class__(
             self.query_document,
             self.info_matrix.loc[indices],
             self.integer_labels.loc[indices],
-            self.embedding_ranks.loc[indices],
+            self.cosine_similarity_ranks.loc[indices],
         )
 
 
@@ -60,10 +60,10 @@ class ModelDataFromId(ABC):
         )
 
         self.query_document = DocumentInfo(
-            self.query_document_id,
-            query_document_title,
-            query_document_author,
-            query_document_labels,
+            document_id=self.query_document_id,
+            title=query_document_title,
+            author=query_document_author,
+            arxiv_labels=query_document_labels,
         )
 
     @abstractmethod
@@ -106,7 +106,7 @@ class ModelDataFromId(ABC):
         return pd.DataFrame(
             [
                 {
-                    "document_id": document_score.document_id,
+                    "document_id": document_score.document_info.document_id,
                     "score": document_score.score,
                 }
                 for document_score in document_scores

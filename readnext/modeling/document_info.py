@@ -5,7 +5,7 @@ import pandas as pd
 from typing_extensions import Self
 
 
-@dataclass
+@dataclass(kw_only=True)
 class DocumentInfo:
     document_id: int
     title: str = ""
@@ -52,7 +52,7 @@ class DocumentsInfo:
 
 
 # defined here instead of in readnext.evaluation to avoid circular imports
-@dataclass
+@dataclass(kw_only=True)
 class DocumentScore:
     document_info: DocumentInfo
     score: float
@@ -65,7 +65,7 @@ def documents_info_from_df(df: pd.DataFrame) -> DocumentsInfo:
 
     return DocumentsInfo(
         [
-            DocumentInfo(document_id, title, abstract)
+            DocumentInfo(document_id=document_id, title=title, abstract=abstract)
             for document_id, title, abstract in zip(document_ids, titles, abstracts)
         ]
     )

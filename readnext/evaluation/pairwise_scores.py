@@ -26,7 +26,7 @@ def find_top_n_matches_single_document(
             continue
         document_info = DocumentInfo(document_id=document_id)
         score = pairwise_metric(input_df, query_document_id, document_id)
-        scores.append(DocumentScore(document_info, score))
+        scores.append(DocumentScore(document_info=document_info, score=score))
 
     return sorted(scores, key=lambda x: x.score, reverse=True)[:n]
 

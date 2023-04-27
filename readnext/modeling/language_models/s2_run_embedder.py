@@ -1,7 +1,6 @@
 from gensim.models import KeyedVectors
 from gensim.models.fasttext import load_facebook_model
 from gensim.models.keyedvectors import load_word2vec_format
-from rank_bm25 import BM25Okapi
 from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
@@ -9,7 +8,6 @@ from readnext.config import ModelPaths, ModelVersions, ResultsPaths
 from readnext.modeling.language_models import (
     BERTEmbedder,
     BERTTokenizer,
-    BM25Embedder,
     FastTextEmbedder,
     SpacyTokenizer,
     TFIDFEmbedder,
@@ -23,19 +21,22 @@ def main() -> None:
     spacy_tokens_list_mapping = SpacyTokenizer.load_tokens_mapping(
         ResultsPaths.language_models.spacy_tokenized_abstracts_most_cited_pkl
     )
+    # NOTE: Remove to train on full data
+    spacy_tokens_list_mapping = slice_mapping(spacy_tokens_list_mapping, size=1000)
+
     spacy_tokens_string_mapping = SpacyTokenizer.strings_from_tokens(spacy_tokens_list_mapping)
 
     bert_tokens_tensor_mapping = BERTTokenizer.load_tokens_mapping(
         ResultsPaths.language_models.bert_tokenized_abstracts_most_cited_pt
     )
     # NOTE: Remove to train on full data
-    bert_tokens_tensor_mapping = slice_mapping(bert_tokens_tensor_mapping, size=100)
+    bert_tokens_tensor_mapping = slice_mapping(bert_tokens_tensor_mapping, size=1000)
 
     scibert_tokens_tensor_mapping = BERTTokenizer.load_tokens_mapping(
         ResultsPaths.language_models.scibert_tokenized_abstracts_most_cited_pt
     )
     # NOTE: Remove to train on full data
-    scibert_tokens_tensor_mapping = slice_mapping(scibert_tokens_tensor_mapping, size=100)
+    scibert_tokens_tensor_mapping = slice_mapping(scibert_tokens_tensor_mapping, size=1000)
 
     tfidf_model = TfidfVectorizer()
     tfidf_embedder = TFIDFEmbedder(tfidf_model)
@@ -46,12 +47,6 @@ def main() -> None:
         embeddings_mapping_to_frame(tfidf_embeddings_mapping),
         ResultsPaths.language_models.tfidf_embeddings_mapping_most_cited_pkl,
     )
-
-    # TODO: See TODO in `embedder.py`
-    bm25_model = BM25Okapi(spacy_tokens_list_mapping)
-    bm25_embedder = BM25Embedder(bm25_model)
-    bm25_embeddings_mapping = bm25_embedder.compute_embeddings_mapping(spacy_tokens_list_mapping)
-    len(bm25_embeddings_mapping)
 
     # requires pre-downloaded model from gensim data repository:
     # https://github.com/RaRe-Technologies/gensim-data
@@ -83,7 +78,6 @@ def main() -> None:
         ResultsPaths.language_models.fasttext_embeddings_mapping_most_cited_pkl,
     )
 
-    # takes roughly an hour for 10.000 documents
     bert_model = BertModel.from_pretrained(ModelVersions.bert)  # type: ignore
     bert_embedder = BERTEmbedder(bert_model)  # type: ignore
     bert_embeddings_mapping = bert_embedder.compute_embeddings_mapping(bert_tokens_tensor_mapping)

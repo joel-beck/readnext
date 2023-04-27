@@ -105,11 +105,11 @@ class ModelPaths:
 
 @dataclass(frozen=True)
 class CitationModelsResultsPaths:
-    bibliographic_coupling_most_cited_pkl: Path = (
-        results_dirpath / "bibliographic_coupling_most_cited.pkl"
+    bibliographic_coupling_scores_most_cited_pkl: Path = (
+        results_dirpath / "bibliographic_coupling_scores_most_cited.pkl"
     )
-    co_citation_analysis_most_cited_pkl: Path = (
-        results_dirpath / "co_citation_analysis_most_cited.pkl"
+    co_citation_analysis_scores_most_cited_pkl: Path = (
+        results_dirpath / "co_citation_analysis_scores_most_cited.pkl"
     )
 
 
@@ -119,25 +119,25 @@ class LanguageModelsResultsPaths:
         results_dirpath / "spacy_tokenized_abstracts_most_cited.pkl"
     )
     tfidf_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "tfidf_embeddings_most_cited.pkl"
+        results_dirpath / "tfidf_embeddings_mapping_most_cited.pkl"
     )
     tfidf_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "tfidf_cosine_similarities_most_cited.pkl"
     )
     bm25_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "bm25_embeddings_most_cited.pkl"
+        results_dirpath / "bm25_embeddings_mapping_most_cited.pkl"
     )
     bm25_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "bm25_cosine_similarities_most_cited.pkl"
     )
     word2vec_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "word2vec_embeddings_most_cited.pkl"
+        results_dirpath / "word2vec_embeddings_mapping_most_cited.pkl"
     )
     word2vec_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "word2vec_cosine_similarities_most_cited.pkl"
     )
     fasttext_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "fasttext_embeddings_most_cited.pkl"
+        results_dirpath / "fasttext_embeddings_mapping_most_cited.pkl"
     )
     fasttext_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "fasttext_cosine_similarities_most_cited.pkl"
@@ -146,7 +146,7 @@ class LanguageModelsResultsPaths:
         results_dirpath / "bert_tokenized_abstracts_most_cited.pt"
     )
     bert_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "bert_embeddings_most_cited.pkl"
+        results_dirpath / "bert_embeddings_mapping_most_cited.pkl"
     )
     bert_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "bert_cosine_similarities_most_cited.pkl"
@@ -155,7 +155,7 @@ class LanguageModelsResultsPaths:
         results_dirpath / "scibert_tokenized_abstracts_most_cited.pt"
     )
     scibert_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "scibert_embeddings_most_cited.pkl"
+        results_dirpath / "scibert_embeddings_mapping_most_cited.pkl"
     )
     scibert_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "scibert_cosine_similarities_most_cited.pkl"

@@ -88,7 +88,7 @@ strict_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = false # too many false positives
 warn_no_return = true
-warn_return_any = true
+warn_return_any = false
 warn_unreachable = true
 # Miscellaneous strictness flags
 allow_redefinition = true

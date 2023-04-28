@@ -36,7 +36,7 @@ def test_precision_with_pd_series() -> None:
 
 
 def test_precision_with_empty_list() -> None:
-    label_list = []
+    label_list: list[int] = []
     assert precision(label_list) == 0.0
 
 

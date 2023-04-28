@@ -59,11 +59,7 @@ def test_arxiv_labels(
     assert isinstance(first_observation[0], str)
 
     # Check that all observations have at least one label
-    assert (
-        documents_authors_labels_citations_most_cited["arxiv_labels"]
-        .apply(lambda x: len(x) > 0)
-        .all()
-    )
+    assert arxiv_labels.apply(lambda x: len(x) > 0).all()
 
     # `col.sum()` for a dataframe column containing lists returns a set of all unique
     # values!
@@ -84,11 +80,7 @@ def test_semanticscholar_tags(
     assert isinstance(first_observation[0], str)
 
     # Check that all observations have at least one tag
-    assert (
-        documents_authors_labels_citations_most_cited["semanticscholar_tags"]
-        .apply(lambda x: len(x) > 0)
-        .all()
-    )
+    assert semanticscholar_tags.apply(lambda x: len(x) > 0).all()
 
     ## 22 unique tags in total
     unique_semanticscholar_tags = set(semanticscholar_tags.sum())

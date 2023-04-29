@@ -3,29 +3,30 @@ import torch
 
 from readnext.config import ResultsPaths
 from readnext.utils import load_object_from_pickle
+from readnext.modeling.language_models import DocumentsTokensTensorMapping, DocumentTokensMapping
 
 
 @pytest.fixture(scope="module")
-def spacy_tokenized_abstracts_mapping_most_cited() -> dict[int, list[str]]:
+def spacy_tokenized_abstracts_mapping_most_cited() -> DocumentTokensMapping:
     return load_object_from_pickle(
         ResultsPaths.language_models.spacy_tokenized_abstracts_mapping_most_cited_pkl
     )
 
 
 @pytest.fixture(scope="module")
-def bert_tokenized_abstracts_mapping_most_cited() -> dict[int, torch.Tensor]:
+def bert_tokenized_abstracts_mapping_most_cited() -> DocumentsTokensTensorMapping:
     return torch.load(ResultsPaths.language_models.bert_tokenized_abstracts_mapping_most_cited_pt)
 
 
 @pytest.fixture(scope="module")
-def scibert_tokenized_abstracts_mapping_most_cited() -> dict[int, torch.Tensor]:
+def scibert_tokenized_abstracts_mapping_most_cited() -> DocumentsTokensTensorMapping:
     return torch.load(
         ResultsPaths.language_models.scibert_tokenized_abstracts_mapping_most_cited_pt
     )
 
 
 def test_spacy_tokenized_abstracts_most_cited(
-    spacy_tokenized_abstracts_mapping_most_cited: dict[int, list[str]]
+    spacy_tokenized_abstracts_mapping_most_cited: DocumentTokensMapping,
 ) -> None:
     assert isinstance(spacy_tokenized_abstracts_mapping_most_cited, dict)
 
@@ -44,7 +45,7 @@ def test_spacy_tokenized_abstracts_most_cited(
 
 
 def test_bert_tokenized_abstracts_most_cited(
-    bert_tokenized_abstracts_mapping_most_cited: dict[int, torch.Tensor]
+    bert_tokenized_abstracts_mapping_most_cited: DocumentsTokensTensorMapping,
 ) -> None:
     assert isinstance(bert_tokenized_abstracts_mapping_most_cited, dict)
 
@@ -72,7 +73,7 @@ def test_bert_tokenized_abstracts_most_cited(
 
 
 def test_scibert_tokenized_abstracts_most_cited(
-    scibert_tokenized_abstracts_mapping_most_cited: dict[int, torch.Tensor]
+    scibert_tokenized_abstracts_mapping_most_cited: DocumentsTokensTensorMapping,
 ) -> None:
     assert isinstance(scibert_tokenized_abstracts_mapping_most_cited, dict)
 

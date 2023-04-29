@@ -19,7 +19,7 @@ from readnext.utils import save_df_to_pickle, slice_mapping
 
 def main() -> None:
     spacy_tokens_list_mapping = SpacyTokenizer.load_tokens_mapping(
-        ResultsPaths.language_models.spacy_tokenized_abstracts_most_cited_pkl
+        ResultsPaths.language_models.spacy_tokenized_abstracts_mapping_most_cited_pkl
     )
     # NOTE: Remove to train on full data
     spacy_tokens_list_mapping = slice_mapping(spacy_tokens_list_mapping, size=1000)
@@ -27,13 +27,13 @@ def main() -> None:
     spacy_tokens_string_mapping = SpacyTokenizer.strings_from_tokens(spacy_tokens_list_mapping)
 
     bert_tokens_tensor_mapping = BERTTokenizer.load_tokens_mapping(
-        ResultsPaths.language_models.bert_tokenized_abstracts_most_cited_pt
+        ResultsPaths.language_models.bert_tokenized_abstracts_mapping_most_cited_pt
     )
     # NOTE: Remove to train on full data
     bert_tokens_tensor_mapping = slice_mapping(bert_tokens_tensor_mapping, size=1000)
 
     scibert_tokens_tensor_mapping = BERTTokenizer.load_tokens_mapping(
-        ResultsPaths.language_models.scibert_tokenized_abstracts_most_cited_pt
+        ResultsPaths.language_models.scibert_tokenized_abstracts_mapping_most_cited_pt
     )
     # NOTE: Remove to train on full data
     scibert_tokens_tensor_mapping = slice_mapping(scibert_tokens_tensor_mapping, size=1000)

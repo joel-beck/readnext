@@ -69,20 +69,6 @@ class ModelScorer(ABC, Generic[T]):
 @dataclass
 class CitationModelScorer(ModelScorer):
     @staticmethod
-    def add_feature_rank_cols(df: pd.DataFrame) -> pd.DataFrame:
-        return df.assign(
-            publication_date_rank=df["publication_date"].rank(ascending=False),
-            citationcount_document_rank=df["citationcount_document"].rank(ascending=False),
-            citationcount_author_rank=df["citationcount_author"].rank(ascending=False),
-        )
-
-    @staticmethod
-    def set_missing_publication_dates_to_max_rank(df: pd.DataFrame) -> pd.DataFrame:
-        # set publication_date_rank to maxiumum rank (number of documents in dataframe) for
-        # documents with missing publication date
-        return df.assign(publication_date_rank=df["publication_date_rank"].fillna(len(df)))
-
-    @staticmethod
     def select_top_n_ranks(
         citation_model_data: CitationModelData,
         scoring_feature: ScoringFeature | None = None,
@@ -137,7 +123,9 @@ class LanguageModelScorer(ModelScorer):
         n: int = 20,
     ) -> pd.DataFrame:
         """The `scoring_feature` argument is not used for scoring language models."""
-        return language_model_data.embedding_ranks.sort_values("cosine_similarity_rank").head(n)
+        return language_model_data.cosine_similarity_ranks.sort_values(
+            "cosine_similarity_rank"
+        ).head(n)
 
     @staticmethod
     def move_cosine_similarity_first(df: pd.DataFrame) -> pd.DataFrame:

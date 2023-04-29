@@ -11,7 +11,7 @@ def main() -> None:
     )
     # NOTE: Remove to train on full data
     documents_authors_labels_citations_most_cited = (
-        documents_authors_labels_citations_most_cited.head(1000)
+        documents_authors_labels_citations_most_cited.head(100)
     )
 
     bibliographic_coupling_scores_most_cited = precompute_co_references(

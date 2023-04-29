@@ -1,4 +1,3 @@
-import pickle
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
@@ -10,8 +9,12 @@ from spacy.tokens.doc import Doc
 from transformers import BertTokenizerFast
 
 # do not import from .language_models to avoid circular imports
-from readnext.modeling.language_models.document_info import DocumentsInfo
-from readnext.utils import setup_progress_bar
+from readnext.modeling import DocumentsInfo
+from readnext.utils import (
+    load_object_from_pickle,
+    save_object_to_pickle,
+    setup_progress_bar,
+)
 
 # each document is represented as a list of tokens
 DocumentTokens: TypeAlias = list[str]
@@ -128,13 +131,11 @@ class SpacyTokenizer(ListTokenizer):
 
     @staticmethod
     def save_tokens_mapping(path: Path, tokens_mapping: DocumentTokensMapping) -> None:
-        with path.open("wb") as f:
-            pickle.dump(tokens_mapping, f)
+        save_object_to_pickle(tokens_mapping, path)
 
     @staticmethod
     def load_tokens_mapping(path: Path) -> DocumentTokensMapping:
-        with path.open("rb") as f:
-            return pickle.load(f)  # type: ignore
+        return load_object_from_pickle(path)  # type: ignore
 
 
 @dataclass

@@ -1,10 +1,13 @@
 import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
-from readnext.evaluation import CitationModelScorer
 from readnext.modeling import (
     CitationModelDataFromId,
     LanguageModelDataFromId,
+)
+from readnext.modeling.citation_models import (
+    add_feature_rank_cols,
+    set_missing_publication_dates_to_max_rank,
 )
 from readnext.modeling.hybrid_models import HybridRecommender, HybridScores
 
@@ -32,8 +35,8 @@ def main() -> None:
     citation_model_data_from_id = CitationModelDataFromId(
         query_document_id=query_document_id,
         documents_data=documents_authors_labels_citations_most_cited.pipe(
-            CitationModelScorer.add_feature_rank_cols
-        ).pipe(CitationModelScorer.set_missing_publication_dates_to_max_rank),
+            add_feature_rank_cols
+        ).pipe(set_missing_publication_dates_to_max_rank),
         co_citation_analysis_scores=co_citation_analysis_scores_most_cited,
         bibliographic_coupling_scores=bibliographic_coupling_scores_most_cited,
     )

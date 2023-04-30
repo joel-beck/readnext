@@ -9,7 +9,7 @@ from readnext.modeling.citation_models import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
-from readnext.modeling.hybrid_models import HybridRecommender, HybridScores
+from readnext.modeling.hybrid_models import HybridRecommender, HybridScore, compare_hybrid_scores
 
 
 def main() -> None:
@@ -54,6 +54,17 @@ def main() -> None:
     )
     tfidf_data = tfidf_data_from_id.get_model_data()
 
+    # SUBSECTION: Word2Vec
+    word2vec_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl
+    )
+    word2vec_data_from_id = LanguageModelDataFromId(
+        query_document_id=query_document_id,
+        documents_data=documents_authors_labels_citations_most_cited,
+        cosine_similarities=word2vec_cosine_similarities_most_cited,
+    )
+    word2vec_data = word2vec_data_from_id.get_model_data()
+
     # SUBSECTION: FastText
     fasttext_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
         ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl
@@ -65,45 +76,102 @@ def main() -> None:
     )
     fasttext_data = fasttext_data_from_id.get_model_data()
 
+    # SUBSECTION: BERT
+    bert_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl
+    )
+    bert_data_from_id = LanguageModelDataFromId(
+        query_document_id=query_document_id,
+        documents_data=documents_authors_labels_citations_most_cited,
+        cosine_similarities=bert_cosine_similarities_most_cited,
+    )
+    bert_data = bert_data_from_id.get_model_data()
+
+    # SUBSECTION: SciBERT
+    scibert_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl
+    )
+    scibert_data_from_id = LanguageModelDataFromId(
+        query_document_id=query_document_id,
+        documents_data=documents_authors_labels_citations_most_cited,
+        cosine_similarities=scibert_cosine_similarities_most_cited,
+    )
+    scibert_data = scibert_data_from_id.get_model_data()
+
     # SECTION: Hybrid Models
     # SUBSECTION: TF-IDF
     tfidf_hybrid_recommender = HybridRecommender(
-        citation_model_data=citation_model_data, language_model_data=tfidf_data
+        language_model_name="Tf-Idf",
+        citation_model_data=citation_model_data,
+        language_model_data=tfidf_data,
     )
+    tfidf_hybrid_recommender.fit(n_candidates=30, n_final=30)
 
-    tfidf_hybrid_scores = HybridScores(
-        citation_to_language=tfidf_hybrid_recommender.score_citation_to_language(
-            n_candidates=30, n_final=30
-        ),
-        citation_to_language_candidates=tfidf_hybrid_recommender.citation_to_language_candidate_scores,
-        language_to_citation=tfidf_hybrid_recommender.score_language_to_citation(
-            n_candidates=30, n_final=30
-        ),
-        language_to_citation_candidates=tfidf_hybrid_recommender.language_to_citation_candidate_scores,
+    tfidf_hybrid_recommender.citation_to_language_recommendations
+    tfidf_hybrid_recommender.language_to_citation_recommendations
+
+    tfidf_hybrid_score = HybridScore.from_recommender(tfidf_hybrid_recommender)
+
+    # SUBSECTION: Word2Vec
+    word2vec_hybrid_recommender = HybridRecommender(
+        language_model_name="Word2Vec",
+        citation_model_data=citation_model_data,
+        language_model_data=word2vec_data,
     )
+    word2vec_hybrid_recommender.fit(n_candidates=30, n_final=30)
 
-    print(tfidf_hybrid_scores)
+    word2vec_hybrid_recommender.citation_to_language_recommendations
+    word2vec_hybrid_recommender.language_to_citation_recommendations
 
-    tfidf_hybrid_recommender.select_citation_to_language()
-    tfidf_hybrid_recommender.select_language_to_citation()
+    word2vec_hybrid_score = HybridScore.from_recommender(word2vec_hybrid_recommender)
 
     # SUBSECTION: FastText
     fasttext_hybrid_recommender = HybridRecommender(
-        citation_model_data=citation_model_data, language_model_data=fasttext_data
+        language_model_name="FastText",
+        citation_model_data=citation_model_data,
+        language_model_data=fasttext_data,
     )
+    fasttext_hybrid_recommender.fit(n_candidates=30, n_final=30)
 
-    fasttext_hybrid_scores = HybridScores(
-        citation_to_language=fasttext_hybrid_recommender.score_citation_to_language(
-            n_candidates=30, n_final=30
-        ),
-        citation_to_language_candidates=fasttext_hybrid_recommender.citation_to_language_candidate_scores,
-        language_to_citation=fasttext_hybrid_recommender.score_language_to_citation(
-            n_candidates=30, n_final=30
-        ),
-        language_to_citation_candidates=fasttext_hybrid_recommender.language_to_citation_candidate_scores,
+    fasttext_hybrid_recommender.citation_to_language_recommendations
+    fasttext_hybrid_recommender.language_to_citation_recommendations
+
+    fasttext_hybrid_score = HybridScore.from_recommender(fasttext_hybrid_recommender)
+
+    # SUBSECTION: BERT
+    bert_hybrid_recommender = HybridRecommender(
+        language_model_name="BERT",
+        citation_model_data=citation_model_data,
+        language_model_data=bert_data,
     )
+    bert_hybrid_recommender.fit(n_candidates=30, n_final=30)
 
-    print(fasttext_hybrid_scores)
+    bert_hybrid_recommender.citation_to_language_recommendations
+    bert_hybrid_recommender.language_to_citation_recommendations
+
+    bert_hybrid_score = HybridScore.from_recommender(bert_hybrid_recommender)
+
+    # SUBSECTION: SciBERT
+    scibert_hybrid_recommender = HybridRecommender(
+        language_model_name="SciBERT",
+        citation_model_data=citation_model_data,
+        language_model_data=scibert_data,
+    )
+    scibert_hybrid_recommender.fit(n_candidates=30, n_final=30)
+
+    scibert_hybrid_recommender.citation_to_language_recommendations
+    scibert_hybrid_recommender.language_to_citation_recommendations
+
+    scibert_hybrid_score = HybridScore.from_recommender(scibert_hybrid_recommender)
+
+    # SECTION: Compare Scores
+    compare_hybrid_scores(
+        tfidf_hybrid_score,
+        word2vec_hybrid_score,
+        fasttext_hybrid_score,
+        bert_hybrid_score,
+        scibert_hybrid_score,
+    )
 
 
 if __name__ == "__main__":

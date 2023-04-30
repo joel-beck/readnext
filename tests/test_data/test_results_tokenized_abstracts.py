@@ -2,8 +2,8 @@ import pytest
 import torch
 
 from readnext.config import ResultsPaths
-from readnext.utils import load_object_from_pickle
 from readnext.modeling.language_models import DocumentsTokensTensorMapping, DocumentTokensMapping
+from readnext.utils import load_object_from_pickle
 
 
 @pytest.fixture(scope="module")

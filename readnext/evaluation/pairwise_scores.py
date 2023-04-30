@@ -18,7 +18,7 @@ def find_top_n_matches_single_document(
     n: int,
 ) -> list[DocumentScore]:
     """
-    Find the n documents with the highest pairwise score for a single document.
+    Find the n documents with the highest pairwise score for a single query document.
     """
     scores = []
     for document_id in document_ids:
@@ -34,6 +34,11 @@ def find_top_n_matches_single_document(
 def precompute_pairwise_scores(
     input_df: pd.DataFrame, pairwise_metric: PairwiseMetric, n: int | None
 ) -> pd.DataFrame:
+    """
+    Precompute and store pairwise scores for all documents in a dataframe with one row
+    per query document. The scores are stored as a sorted list of `DocumentScore`
+    objects.
+    """
     if n is None:
         n = len(input_df)
 
@@ -60,6 +65,10 @@ def precompute_co_citations(
     df: pd.DataFrame,
     n: int | None = None,
 ) -> pd.DataFrame:
+    """
+    Precompute and store pairwise co-citation scores for all documents in a dataframe
+    with one row per query document.
+    """
     return precompute_pairwise_scores(df, count_common_citations_from_df, n)
 
 
@@ -67,6 +76,10 @@ def precompute_co_references(
     df: pd.DataFrame,
     n: int | None = None,
 ) -> pd.DataFrame:
+    """
+    Precmopute and store pairwise co-reference scores for all documents in a dataframe
+    with one row per query document.
+    """
     return precompute_pairwise_scores(df, count_common_references_from_df, n)
 
 
@@ -74,4 +87,8 @@ def precompute_cosine_similarities(
     df: pd.DataFrame,
     n: int | None = None,
 ) -> pd.DataFrame:
+    """
+    Precompute and store pairwise cosine similarity scores for all documents in a
+    dataframe with one row per query document.
+    """
     return precompute_pairwise_scores(df, cosine_similarity_from_df, n)

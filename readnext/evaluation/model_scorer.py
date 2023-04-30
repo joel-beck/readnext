@@ -13,6 +13,8 @@ T = TypeVar("T", bound=ModelData)
 
 
 class ScoringFeature(Enum):
+    """Determine which model feature / column to use for scoring the citation model."""
+
     publication_date = "publication_date_rank"
     citationcount_document = "citationcount_document_rank"
     citationcount_author = "citationcount_author_rank"
@@ -25,14 +27,18 @@ class ScoringFeature(Enum):
 
     @property
     def is_weighted(self) -> bool:
+        """A weighted combination of all citation model features is used for scoring."""
         return self == self.weighted  # type: ignore
 
 
 @dataclass
 class ModelScorer(ABC, Generic[T]):
     """
-    Use Generic instead of `ModelData` directly to use `ModelData` subclasses in
-    `ModelScorer` subclasses without violating the Liskov Substitution Principle.
+    Base class for computing scores and selecting the best recommendations from a model.
+
+    Use a Generic instead of the `ModelData` class directly to use `ModelData`
+    subclasses in `ModelScorer` subclasses without violating the Liskov Substitution
+    Principle.
     """
 
     @staticmethod
@@ -63,6 +69,7 @@ class ModelScorer(ABC, Generic[T]):
 
     @staticmethod
     def add_labels(df: pd.DataFrame, labels: pd.Series) -> pd.DataFrame:
+        """Add a vector of integer labels to a dataframe."""
         return pd.merge(df, labels, left_index=True, right_index=True)
 
 
@@ -74,6 +81,11 @@ class CitationModelScorer(ModelScorer):
         scoring_feature: ScoringFeature | None = None,
         n: int = 20,
     ) -> pd.DataFrame:
+        """
+        Select the top n recommendations from a citation model with a given scoring
+        feature.
+        """
+
         assert scoring_feature is not None, "Specify a scoring feature to rank by"
 
         # `weighted` option for now computes row sums, i.e. each feature is weighted equally
@@ -88,6 +100,7 @@ class CitationModelScorer(ModelScorer):
 
     @staticmethod
     def add_info_cols(df: pd.DataFrame, info_matrix: pd.DataFrame) -> pd.DataFrame:
+        """Add document info columns to a dataframe."""
         return pd.merge(df, info_matrix, left_index=True, right_index=True)
 
     @staticmethod
@@ -96,6 +109,10 @@ class CitationModelScorer(ModelScorer):
         scoring_feature: ScoringFeature | None = None,
         n: int = 20,
     ) -> pd.DataFrame:
+        """
+        Select and collect the top n recommendations from a citation model in a
+        dataframe together with additional information columns about the documents.
+        """
         return CitationModelScorer.select_top_n_ranks(citation_model_data, scoring_feature, n).pipe(
             CitationModelScorer.add_info_cols, citation_model_data.info_matrix
         )
@@ -107,6 +124,10 @@ class CitationModelScorer(ModelScorer):
         metric: Callable[[Sequence[int]], float] = average_precision,
         n: int = 20,
     ) -> float:
+        """
+        Compute the average precision (or a different metric) for the top n
+        recommendations.
+        """
         top_n_ranks_with_labels = CitationModelScorer.select_top_n_ranks(
             citation_model_data, scoring_feature, n
         ).pipe(CitationModelScorer.add_labels, citation_model_data.integer_labels)
@@ -122,17 +143,25 @@ class LanguageModelScorer(ModelScorer):
         scoring_feature: ScoringFeature | None = None,  # noqa: ARG004
         n: int = 20,
     ) -> pd.DataFrame:
-        """The `scoring_feature` argument is not used for scoring language models."""
+        """
+        Select the top n recommendations from a language model. The `scoring_feature`
+        argument is not used for scoring language models.
+        """
         return language_model_data.cosine_similarity_ranks.sort_values(
             "cosine_similarity_rank"
         ).head(n)
 
     @staticmethod
     def move_cosine_similarity_first(df: pd.DataFrame) -> pd.DataFrame:
+        """Move the cosine similarity column to the first position in a dataframe."""
         return df[["cosine_similarity"] + list(df.columns.drop("cosine_similarity"))]
 
     @staticmethod
     def add_info_cols(df: pd.DataFrame, info_matrix: pd.DataFrame) -> pd.DataFrame:
+        """
+        Add document info columns to a dataframe. The cosine similarity column is moved
+        to the first position and replaces the cosine similarity rank column.
+        """
         return (
             pd.merge(df, info_matrix, left_index=True, right_index=True)
             .drop("cosine_similarity_rank", axis="columns")
@@ -145,6 +174,9 @@ class LanguageModelScorer(ModelScorer):
         scoring_feature: ScoringFeature | None = None,
         n: int = 20,
     ) -> pd.DataFrame:
+        """
+        Select and collect the top n recommendations from a language model in a dataframe.
+        """
         return LanguageModelScorer.select_top_n_ranks(language_model_data, scoring_feature, n).pipe(
             LanguageModelScorer.add_info_cols, language_model_data.info_matrix
         )
@@ -156,6 +188,10 @@ class LanguageModelScorer(ModelScorer):
         metric: Callable[[Sequence[int]], float] = average_precision,
         n: int = 20,
     ) -> float:
+        """
+        Compute the average precision (or a different metric) for the top n
+        recommendations.
+        """
         top_n_ranks_with_labels = LanguageModelScorer.select_top_n_ranks(
             language_model_data, scoring_feature, n
         ).pipe(LanguageModelScorer.add_labels, language_model_data.integer_labels)

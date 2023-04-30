@@ -14,10 +14,14 @@ PairwiseMetric: TypeAlias = Callable[[pd.DataFrame, int, int], int | float]
 
 
 class MismatchingDimensionsError(Exception):
+    """Custom exception class when two vectors do not have the same dimensions/length."""
+
     pass
 
 
 def check_equal_dimensions(vec_1: Vector, vec_2: Vector) -> None:
+    """Raise exception when two vectors do not have the same dimensions/length."""
+
     if len(vec_1) != len(vec_2):
         raise MismatchingDimensionsError(
             f"Length of first input = {len(vec_1)} != {len(vec_2)} = Length of second input"
@@ -28,6 +32,7 @@ def count_common_values(
     value_list_1: list[str],
     value_list_2: list[str],
 ) -> int:
+    """Count the number of common values between two lists."""
     return len(set(value_list_1).intersection(value_list_2))
 
 
@@ -37,6 +42,10 @@ def count_common_values_from_df(
     document_id_1: int,
     document_id_2: int,
 ) -> int:
+    """
+    Count the number of common values between two lists that are extracted from a
+    DataFrame.
+    """
     # iloc[0] to get the first and only value of the pandas Series
     row_value_list: list[str] = df.loc[df["document_id"] == document_id_1, colname].iloc[0]
     col_value_list: list[str] = df.loc[df["document_id"] == document_id_2, colname].iloc[0]
@@ -47,15 +56,17 @@ def count_common_values_from_df(
 def count_common_references_from_df(
     df: pd.DataFrame, document_id_1: int, document_id_2: int
 ) -> int:
+    """Count the number of common references between two documents."""
     return count_common_values_from_df(df, "references", document_id_1, document_id_2)
 
 
 def count_common_citations_from_df(df: pd.DataFrame, document_id_1: int, document_id_2: int) -> int:
+    """Count the number of common citations between two documents."""
     return count_common_values_from_df(df, "citations", document_id_1, document_id_2)
 
 
 def cosine_similarity(u: EmbeddingVector, v: EmbeddingVector) -> float:
-    """Computes cosine similarity between two one-dimensional sequences"""
+    """Compute the cosine similarity between two one-dimensional sequences"""
     check_equal_dimensions(u, v)
     return np.dot(u, v) / (np.linalg.norm(u) * np.linalg.norm(v))  # type: ignore
 
@@ -65,6 +76,10 @@ def cosine_similarity_from_df(
     document_id_1: int,
     document_id_2: int,
 ) -> float:
+    """
+    Compute the cosine similarity between two document embddings that are extracted from a
+    DataFrame.
+    """
     # iloc[0] to get the first and only value of the pandas Series
     row_embedding: EmbeddingVector = df.loc[df["document_id"] == document_id_1, "embedding"].iloc[0]  # type: ignore # noqa: E501
     col_embedding: EmbeddingVector = df.loc[df["document_id"] == document_id_2, "embedding"].iloc[0]  # type: ignore # noqa: E501
@@ -74,6 +89,8 @@ def cosine_similarity_from_df(
 
 def precision(label_list: RecommendationLabelList) -> float:
     """
+    Compute the average precision for a list of integer recommendation labels.
+
     Precision = # of relevant items / # of items
 
     If the labels are binary 0/1 encoded, this coincides with mean(labels).
@@ -89,6 +106,8 @@ def precision(label_list: RecommendationLabelList) -> float:
 
 def average_precision(label_list: RecommendationLabelList) -> float:
     """
+    Compute the average precision for a list of integer recommendation labels.
+
     AP = (1/r) * sum_{k=1}^{K} P(k) * rel(k)
 
     K = # of items r = # of relevant items P(k) = precision at k rel(k) = 1 if item k is
@@ -123,7 +142,7 @@ def average_precision(label_list: RecommendationLabelList) -> float:
 
 def mean_average_precision(label_lists: RecommendationLabelLists) -> float:
     """
-    Computes mean average precision for multiple recommendation lists.
+    Computes the mean average precision for multiple integer recommendation label lists.
 
     Mean Average Precision of empty input is set to 0.0.
     """

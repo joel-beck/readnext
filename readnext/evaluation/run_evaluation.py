@@ -1,3 +1,5 @@
+"""Compute evaluation metrics and show best recommendations for a single query document."""
+
 import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths

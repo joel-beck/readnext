@@ -1,3 +1,7 @@
+"""
+Precompute and store bibliographic coupling scores for all documents in a dataframe.
+"""
+
 import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths

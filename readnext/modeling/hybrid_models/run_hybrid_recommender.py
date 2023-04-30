@@ -194,7 +194,7 @@ def main() -> None:
             )
             for query_document_id in documents_authors_labels_citations_most_cited.head(
                 5
-            ).index.values
+            ).index.to_numpy()
         ]
     )
 

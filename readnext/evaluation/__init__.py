@@ -8,8 +8,8 @@ from readnext.evaluation.metrics import (
 )
 from readnext.evaluation.model_scorer import (
     CitationModelScorer,
+    FeatureWeights,
     LanguageModelScorer,
-    ScoringFeature,
 )
 from readnext.evaluation.pairwise_scores import (
     precompute_co_citations,
@@ -25,8 +25,8 @@ __all__ = [
     "count_common_references_from_df",
     "mean_average_precision",
     "CitationModelScorer",
+    "FeatureWeights",
     "LanguageModelScorer",
-    "ScoringFeature",
     "precompute_co_citations",
     "precompute_co_references",
     "precompute_cosine_similarities",

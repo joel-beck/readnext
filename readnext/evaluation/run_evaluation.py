@@ -1,7 +1,7 @@
 import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
-from readnext.evaluation import CitationModelScorer, LanguageModelScorer, ScoringFeature
+from readnext.evaluation import CitationModelScorer, FeatureWeights, LanguageModelScorer
 from readnext.modeling import CitationModelDataFromId, LanguageModelDataFromId
 from readnext.modeling.citation_models import (
     add_feature_rank_cols,
@@ -44,20 +44,12 @@ def main() -> None:
 
     print(citation_model_data.query_document)
 
-    CitationModelScorer.display_top_n(citation_model_data, ScoringFeature.publication_date, n=10)
-    CitationModelScorer.display_top_n(
-        citation_model_data, ScoringFeature.citationcount_document, n=10
-    )
-    CitationModelScorer.display_top_n(
-        citation_model_data, ScoringFeature.citationcount_author, n=10
-    )
-    CitationModelScorer.display_top_n(
-        citation_model_data, ScoringFeature.co_citation_analysis, n=10
-    )
-    CitationModelScorer.display_top_n(
-        citation_model_data, ScoringFeature.bibliographic_coupling, n=10
-    )
-    CitationModelScorer.display_top_n(citation_model_data, ScoringFeature.weighted, n=10)
+    CitationModelScorer.display_top_n(citation_model_data, FeatureWeights(), n=10)
+    CitationModelScorer.display_top_n(citation_model_data, FeatureWeights(1, 0, 0, 0, 0), n=10)
+    CitationModelScorer.display_top_n(citation_model_data, FeatureWeights(0, 1, 0, 0, 0), n=10)
+    CitationModelScorer.display_top_n(citation_model_data, FeatureWeights(0, 0, 1, 0, 0), n=10)
+    CitationModelScorer.display_top_n(citation_model_data, FeatureWeights(0, 0, 0, 1, 0), n=10)
+    CitationModelScorer.display_top_n(citation_model_data, FeatureWeights(0, 0, 0, 0, 1), n=10)
 
     # SUBSECTION: TF-IDF
     tfidf_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
@@ -125,36 +117,36 @@ def main() -> None:
             (
                 "Publication Date",
                 CitationModelScorer.score_top_n(
-                    citation_model_data, ScoringFeature.publication_date, n=20
+                    citation_model_data, FeatureWeights(1, 0, 0, 0, 0), n=20
                 ),
             ),
             (
                 "Citation Count Document",
                 CitationModelScorer.score_top_n(
-                    citation_model_data, ScoringFeature.citationcount_document, n=20
+                    citation_model_data, FeatureWeights(0, 1, 0, 0, 0), n=20
                 ),
             ),
             (
                 "Citation Count Author",
                 CitationModelScorer.score_top_n(
-                    citation_model_data, ScoringFeature.citationcount_author, n=20
+                    citation_model_data, FeatureWeights(0, 0, 1, 0, 0), n=20
                 ),
             ),
             (
                 "Co-Citation Analysis",
                 CitationModelScorer.score_top_n(
-                    citation_model_data, ScoringFeature.co_citation_analysis, n=20
+                    citation_model_data, FeatureWeights(0, 0, 0, 1, 0), n=20
                 ),
             ),
             (
                 "Bibliographic Coupling",
                 CitationModelScorer.score_top_n(
-                    citation_model_data, ScoringFeature.bibliographic_coupling, n=20
+                    citation_model_data, FeatureWeights(0, 0, 0, 0, 1), n=20
                 ),
             ),
             (
                 "Weighted",
-                CitationModelScorer.score_top_n(citation_model_data, ScoringFeature.weighted, n=20),
+                CitationModelScorer.score_top_n(citation_model_data, FeatureWeights(), n=20),
             ),
             ("TF-IDF", LanguageModelScorer.score_top_n(tfidf_data, n=20)),
             ("Word2Vec", LanguageModelScorer.score_top_n(word2vec_data, n=20)),

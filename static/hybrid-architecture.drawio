@@ -1,11 +1,11 @@
 <mxfile host="65bd71144e">
     <diagram id="yu0OQrqvoiVsUhACBv0z" name="Page-1">
-        <mxGraphModel dx="978" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1778" dy="1245" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="2" value="Language Recommender" style="swimlane;startSize=20;horizontal=1;containerType=tree;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" vertex="1" parent="1">
-                    <mxGeometry x="30" y="40" width="730" height="190" as="geometry">
+                    <mxGeometry x="876" y="40" width="730" height="190" as="geometry">
                         <mxRectangle x="200" y="260" width="90" height="30" as="alternateBounds"/>
                     </mxGeometry>
                 </mxCell>
@@ -102,7 +102,7 @@
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="34" value="Citation Recommender" style="swimlane;startSize=20;horizontal=1;containerType=tree;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" vertex="1" parent="1">
-                    <mxGeometry x="30" y="280" width="730" height="190" as="geometry">
+                    <mxGeometry x="40" y="40" width="730" height="190" as="geometry">
                         <mxRectangle x="200" y="260" width="90" height="30" as="alternateBounds"/>
                     </mxGeometry>
                 </mxCell>
@@ -156,7 +156,7 @@
                     </mxCell>
                 </UserObject>
                 <mxCell id="52" value="Feature Weighting" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="34">
-                    <mxGeometry x="210" y="100" width="310" height="40" as="geometry"/>
+                    <mxGeometry x="210" y="110" width="310" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="57" style="edgeStyle=elbowEdgeStyle;html=1;startArrow=none;endArrow=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="34" source="42" target="52">
                     <mxGeometry relative="1" as="geometry">
@@ -164,6 +164,71 @@
                         <Array as="points">
                             <mxPoint x="645" y="130"/>
                         </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="60" value="Hybrid Recommender" style="swimlane;startSize=20;horizontal=1;containerType=tree;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" vertex="1" parent="1">
+                    <mxGeometry x="490" y="310" width="670" height="370" as="geometry">
+                        <mxRectangle x="200" y="260" width="90" height="30" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="73" value="Citation Recommender" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                    <mxGeometry x="75" y="32.5" width="120" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="78" value="" style="edgeStyle=none;html=1;" edge="1" source="73" target="79" parent="60">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="79" value="Candidate List" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                    <mxGeometry x="35" y="137.5" width="200" height="22.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="80" value="" style="edgeStyle=none;html=1;" edge="1" target="81" source="79" parent="60">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="305" y="627.5" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="81" value="Language Recommender" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                    <mxGeometry x="75" y="211.25" width="120" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="82" value="" style="edgeStyle=none;html=1;" edge="1" target="83" source="81" parent="60">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="305" y="701.25" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="83" value="Final Recommendations" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                    <mxGeometry x="30" y="316.25" width="210" height="22.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="96" value="" style="edgeStyle=none;html=1;" edge="1" parent="60" target="97">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="540" y="97.5" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="97" value="Candidate List" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                    <mxGeometry x="440" y="137.5" width="200" height="22.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="98" value="" style="edgeStyle=none;html=1;" edge="1" parent="60" source="97" target="99">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="540" y="97.5" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="99" value="Citation Recommender" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                    <mxGeometry x="480" y="211.25" width="120" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="100" value="" style="edgeStyle=none;html=1;" edge="1" parent="60" source="99">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="540" y="171.25" as="sourcePoint"/>
+                        <mxPoint x="540" y="316.25" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="101" value="Final Recommendations" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                    <mxGeometry x="440" y="316.25" width="210" height="22.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="102" value="Language Recommender" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                    <mxGeometry x="480" y="32.5" width="120" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="104" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;" edge="1" parent="60">
+                    <mxGeometry width="100" height="100" relative="1" as="geometry">
+                        <mxPoint x="270" y="184.41" as="sourcePoint"/>
+                        <mxPoint x="400" y="184.41" as="targetPoint"/>
+                        <Array as="points"/>
                     </mxGeometry>
                 </mxCell>
             </root>

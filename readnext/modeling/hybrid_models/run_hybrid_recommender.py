@@ -12,33 +12,20 @@ from readnext.modeling.citation_models import (
 from readnext.modeling.hybrid_models import HybridRecommender, HybridScore, compare_hybrid_scores
 
 
-def main() -> None:
-    query_document_id = 206594692
-
-    documents_authors_labels_citations_most_cited: pd.DataFrame = pd.read_pickle(
-        DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
-    ).set_index("document_id")
-    # NOTE: Remove to evaluate on full data
-    documents_authors_labels_citations_most_cited = (
-        documents_authors_labels_citations_most_cited.head(1000)
-    )
-
-    bibliographic_coupling_scores_most_cited: pd.DataFrame = pd.read_pickle(
-        ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl
-    )
-
-    co_citation_analysis_scores_most_cited: pd.DataFrame = pd.read_pickle(
-        ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl
-    )
-
+def compare_hybrid_scores_by_document_id(
+    query_document_id: int,
+    documents_data: pd.DataFrame,
+    co_citation_analysis_scores: pd.DataFrame,
+    bibliographic_coupling_scores: pd.DataFrame,
+) -> pd.DataFrame:
     # SECTION: Citation Models
     citation_model_data_from_id = CitationModelDataFromId(
         query_document_id=query_document_id,
-        documents_data=documents_authors_labels_citations_most_cited.pipe(
-            add_feature_rank_cols
-        ).pipe(set_missing_publication_dates_to_max_rank),
-        co_citation_analysis_scores=co_citation_analysis_scores_most_cited,
-        bibliographic_coupling_scores=bibliographic_coupling_scores_most_cited,
+        documents_data=documents_data.pipe(add_feature_rank_cols).pipe(
+            set_missing_publication_dates_to_max_rank
+        ),
+        co_citation_analysis_scores=co_citation_analysis_scores,
+        bibliographic_coupling_scores=bibliographic_coupling_scores,
     )
     citation_model_data = citation_model_data_from_id.get_model_data()
 
@@ -49,7 +36,7 @@ def main() -> None:
     )
     tfidf_data_from_id = LanguageModelDataFromId(
         query_document_id=query_document_id,
-        documents_data=documents_authors_labels_citations_most_cited,
+        documents_data=documents_data,
         cosine_similarities=tfidf_cosine_similarities_most_cited,
     )
     tfidf_data = tfidf_data_from_id.get_model_data()
@@ -60,7 +47,7 @@ def main() -> None:
     )
     word2vec_data_from_id = LanguageModelDataFromId(
         query_document_id=query_document_id,
-        documents_data=documents_authors_labels_citations_most_cited,
+        documents_data=documents_data,
         cosine_similarities=word2vec_cosine_similarities_most_cited,
     )
     word2vec_data = word2vec_data_from_id.get_model_data()
@@ -71,7 +58,7 @@ def main() -> None:
     )
     fasttext_data_from_id = LanguageModelDataFromId(
         query_document_id=query_document_id,
-        documents_data=documents_authors_labels_citations_most_cited,
+        documents_data=documents_data,
         cosine_similarities=fasttext_cosine_similarities_most_cited,
     )
     fasttext_data = fasttext_data_from_id.get_model_data()
@@ -82,7 +69,7 @@ def main() -> None:
     )
     bert_data_from_id = LanguageModelDataFromId(
         query_document_id=query_document_id,
-        documents_data=documents_authors_labels_citations_most_cited,
+        documents_data=documents_data,
         cosine_similarities=bert_cosine_similarities_most_cited,
     )
     bert_data = bert_data_from_id.get_model_data()
@@ -93,7 +80,7 @@ def main() -> None:
     )
     scibert_data_from_id = LanguageModelDataFromId(
         query_document_id=query_document_id,
-        documents_data=documents_authors_labels_citations_most_cited,
+        documents_data=documents_data,
         cosine_similarities=scibert_cosine_similarities_most_cited,
     )
     scibert_data = scibert_data_from_id.get_model_data()
@@ -165,13 +152,61 @@ def main() -> None:
     scibert_hybrid_score = HybridScore.from_recommender(scibert_hybrid_recommender)
 
     # SECTION: Compare Scores
-    compare_hybrid_scores(
-        tfidf_hybrid_score,
-        word2vec_hybrid_score,
-        fasttext_hybrid_score,
-        bert_hybrid_score,
-        scibert_hybrid_score,
+    return (
+        compare_hybrid_scores(
+            tfidf_hybrid_score,
+            word2vec_hybrid_score,
+            fasttext_hybrid_score,
+            bert_hybrid_score,
+            scibert_hybrid_score,
+        )
+        .assign(query_document_id=query_document_id)
+        .set_index("query_document_id")
+        .rename_axis(index="Query Document ID")
     )
+
+
+def main() -> None:
+    documents_authors_labels_citations_most_cited: pd.DataFrame = pd.read_pickle(
+        DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
+    ).set_index("document_id")
+    # NOTE: Remove to evaluate on full data
+    documents_authors_labels_citations_most_cited = (
+        documents_authors_labels_citations_most_cited.head(1000)
+    )
+
+    bibliographic_coupling_scores_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl
+    )
+
+    co_citation_analysis_scores_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl
+    )
+
+    # add query document ids to index
+    average_precision_scores = pd.concat(
+        [
+            compare_hybrid_scores_by_document_id(
+                query_document_id,
+                documents_authors_labels_citations_most_cited,
+                co_citation_analysis_scores_most_cited,
+                bibliographic_coupling_scores_most_cited,
+            )
+            for query_document_id in documents_authors_labels_citations_most_cited.head(
+                5
+            ).index.values
+        ]
+    )
+
+    # add best score column for each query document id
+    average_precision_scores["Best Score"] = average_precision_scores.select_dtypes(
+        include="number"
+    ).max(axis=1)
+
+    # filter best language model for each query document id
+    average_precision_scores.sort_values("Best Score", ascending=False).reset_index(
+        drop=False
+    ).drop_duplicates(subset="Query Document ID").reset_index(drop=True)
 
 
 if __name__ == "__main__":

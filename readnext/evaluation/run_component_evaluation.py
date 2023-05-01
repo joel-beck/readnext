@@ -3,7 +3,7 @@
 import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
-from readnext.evaluation import CitationModelScorer, FeatureWeights, LanguageModelScorer
+from readnext.evaluation.scoring import CitationModelScorer, FeatureWeights, LanguageModelScorer
 from readnext.modeling import (
     CitationModelData,
     CitationModelDataConstructor,

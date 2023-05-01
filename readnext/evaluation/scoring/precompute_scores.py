@@ -1,7 +1,7 @@
 import pandas as pd
 from tqdm import tqdm
 
-from readnext.evaluation.metrics import (
+from readnext.evaluation.scoring.metrics import (
     PairwiseMetric,
     cosine_similarity_from_df,
     count_common_citations_from_df,

@@ -6,6 +6,7 @@ recommender model in both recommender component orders for a given query documen
 import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
+from readnext.evaluation.scoring import HybridScore, HybridScorer, compare_hybrid_scores
 from readnext.modeling import (
     CitationModelData,
     CitationModelDataConstructor,
@@ -16,7 +17,6 @@ from readnext.modeling.citation_models import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
-from readnext.modeling.hybrid_models import HybridRecommender, HybridScore, compare_hybrid_scores
 
 
 def compare_hybrid_scores_by_document_id(
@@ -94,69 +94,69 @@ def compare_hybrid_scores_by_document_id(
 
     # SECTION: Hybrid Models
     # SUBSECTION: TF-IDF
-    tfidf_hybrid_recommender = HybridRecommender(
+    tfidf_hybrid_scorer = HybridScorer(
         language_model_name="Tf-Idf",
         citation_model_data=citation_model_data,
         language_model_data=tfidf_data,
     )
-    tfidf_hybrid_recommender.fit(n_candidates=30, n_final=30)
+    tfidf_hybrid_scorer.fit(n_candidates=30, n_final=30)
 
-    tfidf_hybrid_recommender.citation_to_language_recommendations
-    tfidf_hybrid_recommender.language_to_citation_recommendations
+    tfidf_hybrid_scorer.citation_to_language_recommendations
+    tfidf_hybrid_scorer.language_to_citation_recommendations
 
-    tfidf_hybrid_score = HybridScore.from_recommender(tfidf_hybrid_recommender)
+    tfidf_hybrid_score = HybridScore.from_scorer(tfidf_hybrid_scorer)
 
     # SUBSECTION: Word2Vec
-    word2vec_hybrid_recommender = HybridRecommender(
+    word2vec_hybrid_scorer = HybridScorer(
         language_model_name="Word2Vec",
         citation_model_data=citation_model_data,
         language_model_data=word2vec_data,
     )
-    word2vec_hybrid_recommender.fit(n_candidates=30, n_final=30)
+    word2vec_hybrid_scorer.fit(n_candidates=30, n_final=30)
 
-    word2vec_hybrid_recommender.citation_to_language_recommendations
-    word2vec_hybrid_recommender.language_to_citation_recommendations
+    word2vec_hybrid_scorer.citation_to_language_recommendations
+    word2vec_hybrid_scorer.language_to_citation_recommendations
 
-    word2vec_hybrid_score = HybridScore.from_recommender(word2vec_hybrid_recommender)
+    word2vec_hybrid_score = HybridScore.from_scorer(word2vec_hybrid_scorer)
 
     # SUBSECTION: FastText
-    fasttext_hybrid_recommender = HybridRecommender(
+    fasttext_hybrid_scorer = HybridScorer(
         language_model_name="FastText",
         citation_model_data=citation_model_data,
         language_model_data=fasttext_data,
     )
-    fasttext_hybrid_recommender.fit(n_candidates=30, n_final=30)
+    fasttext_hybrid_scorer.fit(n_candidates=30, n_final=30)
 
-    fasttext_hybrid_recommender.citation_to_language_recommendations
-    fasttext_hybrid_recommender.language_to_citation_recommendations
+    fasttext_hybrid_scorer.citation_to_language_recommendations
+    fasttext_hybrid_scorer.language_to_citation_recommendations
 
-    fasttext_hybrid_score = HybridScore.from_recommender(fasttext_hybrid_recommender)
+    fasttext_hybrid_score = HybridScore.from_scorer(fasttext_hybrid_scorer)
 
     # SUBSECTION: BERT
-    bert_hybrid_recommender = HybridRecommender(
+    bert_hybrid_scorer = HybridScorer(
         language_model_name="BERT",
         citation_model_data=citation_model_data,
         language_model_data=bert_data,
     )
-    bert_hybrid_recommender.fit(n_candidates=30, n_final=30)
+    bert_hybrid_scorer.fit(n_candidates=30, n_final=30)
 
-    bert_hybrid_recommender.citation_to_language_recommendations
-    bert_hybrid_recommender.language_to_citation_recommendations
+    bert_hybrid_scorer.citation_to_language_recommendations
+    bert_hybrid_scorer.language_to_citation_recommendations
 
-    bert_hybrid_score = HybridScore.from_recommender(bert_hybrid_recommender)
+    bert_hybrid_score = HybridScore.from_scorer(bert_hybrid_scorer)
 
     # SUBSECTION: SciBERT
-    scibert_hybrid_recommender = HybridRecommender(
+    scibert_hybrid_scorer = HybridScorer(
         language_model_name="SciBERT",
         citation_model_data=citation_model_data,
         language_model_data=scibert_data,
     )
-    scibert_hybrid_recommender.fit(n_candidates=30, n_final=30)
+    scibert_hybrid_scorer.fit(n_candidates=30, n_final=30)
 
-    scibert_hybrid_recommender.citation_to_language_recommendations
-    scibert_hybrid_recommender.language_to_citation_recommendations
+    scibert_hybrid_scorer.citation_to_language_recommendations
+    scibert_hybrid_scorer.language_to_citation_recommendations
 
-    scibert_hybrid_score = HybridScore.from_recommender(scibert_hybrid_recommender)
+    scibert_hybrid_score = HybridScore.from_scorer(scibert_hybrid_scorer)
 
     # SECTION: Compare Scores
     return (

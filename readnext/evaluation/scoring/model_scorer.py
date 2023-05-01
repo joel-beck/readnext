@@ -5,7 +5,7 @@ from typing import Generic, TypeVar
 
 import pandas as pd
 
-from readnext.evaluation.metrics import average_precision
+from readnext.evaluation.scoring.metrics import average_precision
 from readnext.modeling import CitationModelData, LanguageModelData, ModelData
 
 T = TypeVar("T", bound=ModelData)

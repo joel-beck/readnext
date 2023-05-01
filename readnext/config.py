@@ -20,7 +20,7 @@ containing the downloaded D3 authors in jsonl format
 """
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -60,8 +60,8 @@ class D3AuthorsDataPaths:
 class D3:
     """Collects file paths for the raw D3 data."""
 
-    documents: D3DocumentsDataPaths = D3DocumentsDataPaths()
-    authors: D3AuthorsDataPaths = D3AuthorsDataPaths()
+    documents: D3DocumentsDataPaths = field(default_factory=D3DocumentsDataPaths)
+    authors: D3AuthorsDataPaths = field(default_factory=D3AuthorsDataPaths)
 
 
 @dataclass(frozen=True)
@@ -98,9 +98,9 @@ class MergedDataPaths:
 class DataPaths:
     """Collects file paths for all data files."""
 
-    d3: D3 = D3()
-    arxiv: ArxivDataPaths = ArxivDataPaths()
-    merged: MergedDataPaths = MergedDataPaths()
+    d3: D3 = field(default_factory=D3)
+    arxiv: ArxivDataPaths = field(default_factory=ArxivDataPaths)
+    merged: MergedDataPaths = field(default_factory=MergedDataPaths)
 
 
 @dataclass(frozen=True)
@@ -189,5 +189,5 @@ class LanguageModelsResultsPaths:
 class ResultsPaths:
     """Collects file paths for all result files."""
 
-    citation_models: CitationModelsResultsPaths = CitationModelsResultsPaths()
-    language_models: LanguageModelsResultsPaths = LanguageModelsResultsPaths()
+    citation_models: CitationModelsResultsPaths = field(default_factory=CitationModelsResultsPaths)
+    language_models: LanguageModelsResultsPaths = field(default_factory=LanguageModelsResultsPaths)

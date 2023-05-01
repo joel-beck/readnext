@@ -155,7 +155,7 @@ class LanguageModelScorer(ModelScorer):
     @staticmethod
     def move_cosine_similarity_first(df: pd.DataFrame) -> pd.DataFrame:
         """Move the cosine similarity column to the first position in a dataframe."""
-        return df[["cosine_similarity"] + list(df.columns.drop("cosine_similarity"))]
+        return df[["cosine_similarity", *list(df.columns.drop("cosine_similarity"))]]
 
     @staticmethod
     def add_info_cols(df: pd.DataFrame, info_matrix: pd.DataFrame) -> pd.DataFrame:

@@ -136,6 +136,7 @@ select = [
     "Q", # flake8-quotes
     "RET", # flake8-return
     "RSE", # flake8-raise
+    "RUF", # ruff-specific rules
     "SIM", # flake8-simplify
     "TID", # flake8-tidy-imports
     "UP", # pyupgrade

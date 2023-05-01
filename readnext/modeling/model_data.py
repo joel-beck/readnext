@@ -63,7 +63,7 @@ class LanguageModelData(ModelData):
             constructor.query_document,
             constructor.get_info_matrix().pipe(constructor.extend_info_matrix),
             constructor.get_integer_labels(),
-            constructor.cosine_similarity_ranks(),
+            constructor.get_cosine_similarity_ranks(),
         )
 
     def __getitem__(self, indices: pd.Index) -> Self:

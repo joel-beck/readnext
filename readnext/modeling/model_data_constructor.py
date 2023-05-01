@@ -60,7 +60,7 @@ class ModelDataConstructor(ABC):
             .loc[:, "arxiv_labels"]
             .apply(self.shares_arxiv_label)
             .apply(self.boolean_to_int)
-            .rename("label")
+            .rename("integer_labels")
         )
 
     def document_scores_to_frame(self, document_scores: list[DocumentScore]) -> pd.DataFrame:

@@ -109,6 +109,7 @@ class Metric(ABC, Generic[TLabelList, TReturn]):
         ...
 
 
+@dataclass
 class AveragePrecisionMetric(Metric):
     """Average Precision (AP) metric."""
 
@@ -174,6 +175,7 @@ class AveragePrecisionMetric(Metric):
         return AveragePrecisionMetric.score(df["integer_labels"])
 
 
+@dataclass
 class CountUniqueLabelsMetric(Metric):
     """Count the number of unique labels."""
 

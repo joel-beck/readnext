@@ -120,8 +120,6 @@ def main() -> None:
     LanguageModelScorer.display_top_n(scibert_data, n=10)
 
     # SECTION: Evaluate Scores
-    # TODO: Make sure that columns `arxiv_labels` and `integer_labels` are contained in
-    # the dataframe!
     average_precision_scores = (
         pd.DataFrame(
             [
@@ -280,9 +278,9 @@ def main() -> None:
                     LanguageModelScorer.score_top_n(scibert_data, CountUniqueLabelsMetric(), n=20),
                 ),
             ],
-            columns=["Feature", "Average Precision"],
+            columns=["Feature", "Number of Unique Labels"],
         )
-        .sort_values(by="Average Precision", ascending=False)
+        .sort_values(by="Number of Unique Labels", ascending=False)
         .reset_index(drop=True)
     )
 

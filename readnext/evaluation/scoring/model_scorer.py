@@ -169,7 +169,7 @@ class CitationModelScorer(ModelScorer):
         Compute the average precision (or a different metric) for the top n
         recommendations.
         """
-        top_n_ranks_with_labels = CitationModelScorer.select_top_n_ranks(
+        top_n_ranks_with_labels = CitationModelScorer.display_top_n(
             citation_model_data, feature_weights, n
         ).pipe(CitationModelScorer.add_labels, citation_model_data.integer_labels)
 
@@ -255,7 +255,7 @@ class LanguageModelScorer(ModelScorer):
         Compute the average precision (or a different metric) for the top n
         recommendations.
         """
-        top_n_ranks_with_labels = LanguageModelScorer.select_top_n_ranks(
+        top_n_ranks_with_labels = LanguageModelScorer.display_top_n(
             language_model_data, feature_weights, n
         ).pipe(LanguageModelScorer.add_labels, language_model_data.integer_labels)
 

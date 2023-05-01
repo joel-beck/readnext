@@ -7,6 +7,7 @@ import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
 from readnext.evaluation.scoring import HybridScore, HybridScorer, compare_hybrid_scores
+from readnext.evaluation.scoring.metrics import AveragePrecisionMetric
 from readnext.modeling import (
     CitationModelData,
     CitationModelDataConstructor,
@@ -99,7 +100,7 @@ def compare_hybrid_scores_by_document_id(
         citation_model_data=citation_model_data,
         language_model_data=tfidf_data,
     )
-    tfidf_hybrid_scorer.fit(n_candidates=30, n_final=30)
+    tfidf_hybrid_scorer.fit(AveragePrecisionMetric(), n_candidates=30, n_final=30)
 
     tfidf_hybrid_scorer.citation_to_language_recommendations
     tfidf_hybrid_scorer.language_to_citation_recommendations
@@ -112,7 +113,7 @@ def compare_hybrid_scores_by_document_id(
         citation_model_data=citation_model_data,
         language_model_data=word2vec_data,
     )
-    word2vec_hybrid_scorer.fit(n_candidates=30, n_final=30)
+    word2vec_hybrid_scorer.fit(AveragePrecisionMetric(), n_candidates=30, n_final=30)
 
     word2vec_hybrid_scorer.citation_to_language_recommendations
     word2vec_hybrid_scorer.language_to_citation_recommendations
@@ -125,7 +126,7 @@ def compare_hybrid_scores_by_document_id(
         citation_model_data=citation_model_data,
         language_model_data=fasttext_data,
     )
-    fasttext_hybrid_scorer.fit(n_candidates=30, n_final=30)
+    fasttext_hybrid_scorer.fit(AveragePrecisionMetric(), n_candidates=30, n_final=30)
 
     fasttext_hybrid_scorer.citation_to_language_recommendations
     fasttext_hybrid_scorer.language_to_citation_recommendations
@@ -138,7 +139,7 @@ def compare_hybrid_scores_by_document_id(
         citation_model_data=citation_model_data,
         language_model_data=bert_data,
     )
-    bert_hybrid_scorer.fit(n_candidates=30, n_final=30)
+    bert_hybrid_scorer.fit(AveragePrecisionMetric(), n_candidates=30, n_final=30)
 
     bert_hybrid_scorer.citation_to_language_recommendations
     bert_hybrid_scorer.language_to_citation_recommendations
@@ -151,7 +152,7 @@ def compare_hybrid_scores_by_document_id(
         citation_model_data=citation_model_data,
         language_model_data=scibert_data,
     )
-    scibert_hybrid_scorer.fit(n_candidates=30, n_final=30)
+    scibert_hybrid_scorer.fit(AveragePrecisionMetric(), n_candidates=30, n_final=30)
 
     scibert_hybrid_scorer.citation_to_language_recommendations
     scibert_hybrid_scorer.language_to_citation_recommendations

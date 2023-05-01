@@ -5,7 +5,7 @@ Precompute and store co-citation scores for all documents in a dataframe.
 import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
-from readnext.evaluation import precompute_co_citations
+from readnext.evaluation.scoring import precompute_co_citations
 
 
 def main() -> None:

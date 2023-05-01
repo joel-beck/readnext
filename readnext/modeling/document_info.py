@@ -27,7 +27,7 @@ class DocumentInfo:
 
 @dataclass
 class DocumentsInfo:
-    """Represents a collection of mutliple documents/papers."""
+    """Represents a collection of multiple documents/papers."""
 
     documents_info: list[DocumentInfo]
 

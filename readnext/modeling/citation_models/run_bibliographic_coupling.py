@@ -5,7 +5,7 @@ Precompute and store bibliographic coupling scores for all documents in a datafr
 import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
-from readnext.evaluation import precompute_co_references
+from readnext.evaluation.scoring import precompute_co_references
 from readnext.utils import save_df_to_pickle
 
 

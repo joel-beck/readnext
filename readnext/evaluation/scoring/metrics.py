@@ -7,15 +7,18 @@ from numpy.typing import NDArray
 
 Vector: TypeAlias = Sequence | NDArray | pd.Series
 EmbeddingVector: TypeAlias = Sequence[float] | NDArray | pd.Series
-RecommendationLabelList: TypeAlias = Sequence[int] | NDArray | pd.Series
-RecommendationLabelLists: TypeAlias = Sequence[RecommendationLabelList]
+
+IntegerLabelList: TypeAlias = Sequence[int] | NDArray | pd.Series
+IntegerLabelLists: TypeAlias = Sequence[IntegerLabelList]
+
+StringLabelList: TypeAlias = Sequence[str] | NDArray | pd.Series
+StringLabelLists: TypeAlias = Sequence[StringLabelList]
 
 PairwiseMetric: TypeAlias = Callable[[pd.DataFrame, int, int], int | float]
 
 
 class MismatchingDimensionsError(Exception):
     """Custom exception class when two vectors do not have the same dimensions/length."""
-
 
 
 def check_equal_dimensions(vec_1: Vector, vec_2: Vector) -> None:
@@ -86,7 +89,7 @@ def cosine_similarity_from_df(
     return cosine_similarity(row_embedding, col_embedding)
 
 
-def precision(label_list: RecommendationLabelList) -> float:
+def precision(label_list: IntegerLabelList) -> float:
     """
     Compute the average precision for a list of integer recommendation labels.
 
@@ -103,7 +106,7 @@ def precision(label_list: RecommendationLabelList) -> float:
     return np.mean(label_list)  # type: ignore
 
 
-def average_precision(label_list: RecommendationLabelList) -> float:
+def average_precision(label_list: IntegerLabelList) -> float:
     """
     Compute the average precision for a list of integer recommendation labels.
 
@@ -139,7 +142,7 @@ def average_precision(label_list: RecommendationLabelList) -> float:
     return (1 / num_relevant_items) * np.dot(precision_scores, relevance_scores)  # type: ignore
 
 
-def mean_average_precision(label_lists: RecommendationLabelLists) -> float:
+def mean_average_precision(label_lists: IntegerLabelLists) -> float:
     """
     Computes the mean average precision for multiple integer recommendation label lists.
 
@@ -149,3 +152,11 @@ def mean_average_precision(label_lists: RecommendationLabelLists) -> float:
         return 0.0
 
     return np.mean([average_precision(label_list) for label_list in label_lists])  # type: ignore
+
+
+def count_unique_labels(labels_list: StringLabelLists) -> int:
+    """
+    Count the number of unique labels in a list of labels, where the labels are
+    themselves lists of strings.
+    """
+    return len({label for labels in labels_list for label in labels})

@@ -4,6 +4,7 @@ import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
 from readnext.evaluation.scoring import CitationModelScorer, FeatureWeights, LanguageModelScorer
+from readnext.evaluation.scoring.metrics import AveragePrecisionMetric, CountUniqueLabelsMetric
 from readnext.modeling import (
     CitationModelData,
     CitationModelDataConstructor,
@@ -36,6 +37,9 @@ def main() -> None:
     co_citation_analysis_scores_most_cited: pd.DataFrame = pd.read_pickle(
         ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl
     )
+
+    average_precision = AveragePrecisionMetric()
+    count_unique_labels = CountUniqueLabelsMetric()
 
     # SECTION: Get Model Data
     # SUBSECTION: Citation Models
@@ -119,50 +123,143 @@ def main() -> None:
     LanguageModelScorer.display_top_n(scibert_data, n=10)
 
     # SECTION: Evaluate Scores
-    pd.DataFrame(
-        [
-            (
-                "Publication Date",
-                CitationModelScorer.score_top_n(
-                    citation_model_data, FeatureWeights(1, 0, 0, 0, 0), n=20
+    # TODO: Make sure that columns `arxiv_labels` and `integer_labels` are contained in
+    # the dataframe!
+    average_precision_scores = (
+        pd.DataFrame(
+            [
+                (
+                    "Publication Date",
+                    CitationModelScorer.score_top_n(
+                        citation_model_data, average_precision, FeatureWeights(1, 0, 0, 0, 0), n=20
+                    ),
                 ),
-            ),
-            (
-                "Citation Count Document",
-                CitationModelScorer.score_top_n(
-                    citation_model_data, FeatureWeights(0, 1, 0, 0, 0), n=20
+                (
+                    "Citation Count Document",
+                    CitationModelScorer.score_top_n(
+                        citation_model_data, average_precision, FeatureWeights(0, 1, 0, 0, 0), n=20
+                    ),
                 ),
-            ),
-            (
-                "Citation Count Author",
-                CitationModelScorer.score_top_n(
-                    citation_model_data, FeatureWeights(0, 0, 1, 0, 0), n=20
+                (
+                    "Citation Count Author",
+                    CitationModelScorer.score_top_n(
+                        citation_model_data, average_precision, FeatureWeights(0, 0, 1, 0, 0), n=20
+                    ),
                 ),
-            ),
-            (
-                "Co-Citation Analysis",
-                CitationModelScorer.score_top_n(
-                    citation_model_data, FeatureWeights(0, 0, 0, 1, 0), n=20
+                (
+                    "Co-Citation Analysis",
+                    CitationModelScorer.score_top_n(
+                        citation_model_data, average_precision, FeatureWeights(0, 0, 0, 1, 0), n=20
+                    ),
                 ),
-            ),
-            (
-                "Bibliographic Coupling",
-                CitationModelScorer.score_top_n(
-                    citation_model_data, FeatureWeights(0, 0, 0, 0, 1), n=20
+                (
+                    "Bibliographic Coupling",
+                    CitationModelScorer.score_top_n(
+                        citation_model_data, average_precision, FeatureWeights(0, 0, 0, 0, 1), n=20
+                    ),
                 ),
-            ),
-            (
-                "Weighted",
-                CitationModelScorer.score_top_n(citation_model_data, FeatureWeights(), n=20),
-            ),
-            ("TF-IDF", LanguageModelScorer.score_top_n(tfidf_data, n=20)),
-            ("Word2Vec", LanguageModelScorer.score_top_n(word2vec_data, n=20)),
-            ("FastText", LanguageModelScorer.score_top_n(fasttext_data, n=20)),
-            ("BERT", LanguageModelScorer.score_top_n(bert_data, n=20)),
-            ("SciBERT", LanguageModelScorer.score_top_n(scibert_data, n=20)),
-        ],
-        columns=["Feature", "Average Precision"],
-    ).sort_values(by="Average Precision", ascending=False).reset_index(drop=True)
+                (
+                    "Weighted",
+                    CitationModelScorer.score_top_n(
+                        citation_model_data, average_precision, FeatureWeights(), n=20
+                    ),
+                ),
+                ("TF-IDF", LanguageModelScorer.score_top_n(tfidf_data, average_precision, n=20)),
+                (
+                    "Word2Vec",
+                    LanguageModelScorer.score_top_n(word2vec_data, average_precision, n=20),
+                ),
+                (
+                    "FastText",
+                    LanguageModelScorer.score_top_n(fasttext_data, average_precision, n=20),
+                ),
+                ("BERT", LanguageModelScorer.score_top_n(bert_data, average_precision, n=20)),
+                ("SciBERT", LanguageModelScorer.score_top_n(scibert_data, average_precision, n=20)),
+            ],
+            columns=["Feature", "Average Precision"],
+        )
+        .sort_values(by="Average Precision", ascending=False)
+        .reset_index(drop=True)
+    )
+
+    print(average_precision_scores)
+
+    count_unique_labels_scores = (
+        pd.DataFrame(
+            [
+                (
+                    "Publication Date",
+                    CitationModelScorer.score_top_n(
+                        citation_model_data,
+                        count_unique_labels,
+                        FeatureWeights(1, 0, 0, 0, 0),
+                        n=20,
+                    ),
+                ),
+                (
+                    "Citation Count Document",
+                    CitationModelScorer.score_top_n(
+                        citation_model_data,
+                        count_unique_labels,
+                        FeatureWeights(0, 1, 0, 0, 0),
+                        n=20,
+                    ),
+                ),
+                (
+                    "Citation Count Author",
+                    CitationModelScorer.score_top_n(
+                        citation_model_data,
+                        count_unique_labels,
+                        FeatureWeights(0, 0, 1, 0, 0),
+                        n=20,
+                    ),
+                ),
+                (
+                    "Co-Citation Analysis",
+                    CitationModelScorer.score_top_n(
+                        citation_model_data,
+                        count_unique_labels,
+                        FeatureWeights(0, 0, 0, 1, 0),
+                        n=20,
+                    ),
+                ),
+                (
+                    "Bibliographic Coupling",
+                    CitationModelScorer.score_top_n(
+                        citation_model_data,
+                        count_unique_labels,
+                        FeatureWeights(0, 0, 0, 0, 1),
+                        n=20,
+                    ),
+                ),
+                (
+                    "Weighted",
+                    CitationModelScorer.score_top_n(
+                        citation_model_data, count_unique_labels, FeatureWeights(), n=20
+                    ),
+                ),
+                ("TF-IDF", LanguageModelScorer.score_top_n(tfidf_data, count_unique_labels, n=20)),
+                (
+                    "Word2Vec",
+                    LanguageModelScorer.score_top_n(word2vec_data, count_unique_labels, n=20),
+                ),
+                (
+                    "FastText",
+                    LanguageModelScorer.score_top_n(fasttext_data, count_unique_labels, n=20),
+                ),
+                ("BERT", LanguageModelScorer.score_top_n(bert_data, count_unique_labels, n=20)),
+                (
+                    "SciBERT",
+                    LanguageModelScorer.score_top_n(scibert_data, count_unique_labels, n=20),
+                ),
+            ],
+            columns=["Feature", "Average Precision"],
+        )
+        .sort_values(by="Average Precision", ascending=False)
+        .reset_index(drop=True)
+    )
+
+    print(count_unique_labels_scores)
 
 
 if __name__ == "__main__":

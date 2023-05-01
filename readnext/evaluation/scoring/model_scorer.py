@@ -1,14 +1,13 @@
 from abc import ABC, abstractmethod
-from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, overload
 
 import pandas as pd
 
-from readnext.evaluation.scoring.metrics import average_precision
+from readnext.evaluation.scoring.metrics import AveragePrecisionMetric, CountUniqueLabelsMetric
 from readnext.modeling import CitationModelData, LanguageModelData, ModelData
 
-T = TypeVar("T", bound=ModelData)
+TModelData = TypeVar("TModelData", bound=ModelData)
 
 
 @dataclass
@@ -32,7 +31,7 @@ class FeatureWeights:
 
 
 @dataclass
-class ModelScorer(ABC, Generic[T]):
+class ModelScorer(ABC, Generic[TModelData]):
     """
     Base class for computing scores and selecting the best recommendations from a model.
 
@@ -44,24 +43,46 @@ class ModelScorer(ABC, Generic[T]):
     @staticmethod
     @abstractmethod
     def select_top_n_ranks(
-        model_data: T, feature_weights: FeatureWeights | None = None, n: int = 20
+        model_data: TModelData, feature_weights: FeatureWeights | None = None, n: int = 20
     ) -> pd.DataFrame:
+        ...
+
+    @overload
+    @staticmethod
+    @abstractmethod
+    def score_top_n(
+        model_data: TModelData,
+        metric: AveragePrecisionMetric,
+        feature_weights: FeatureWeights | None = None,
+        n: int = 20,
+    ) -> float:
+        ...
+
+    @overload
+    @staticmethod
+    @abstractmethod
+    def score_top_n(
+        model_data: TModelData,
+        metric: CountUniqueLabelsMetric,
+        feature_weights: FeatureWeights | None = None,
+        n: int = 20,
+    ) -> int:
         ...
 
     @staticmethod
     @abstractmethod
     def score_top_n(
-        model_data: T,
+        model_data: TModelData,
+        metric: AveragePrecisionMetric | CountUniqueLabelsMetric,
         feature_weights: FeatureWeights | None = None,
-        metric: Callable[[Sequence[int]], float] = average_precision,
         n: int = 20,
-    ) -> float:
+    ) -> float | int:
         ...
 
     @staticmethod
     @abstractmethod
     def display_top_n(
-        model_data: T, feature_weights: FeatureWeights | None = None, n: int = 20
+        model_data: TModelData, feature_weights: FeatureWeights | None = None, n: int = 20
     ) -> pd.DataFrame:
         ...
 
@@ -117,13 +138,33 @@ class CitationModelScorer(ModelScorer):
             CitationModelScorer.add_info_cols, citation_model_data.info_matrix
         )
 
+    @overload
     @staticmethod
     def score_top_n(
         citation_model_data: CitationModelData,
+        metric: AveragePrecisionMetric,
         feature_weights: FeatureWeights | None = None,
-        metric: Callable[[Sequence[int]], float] = average_precision,
         n: int = 20,
     ) -> float:
+        ...
+
+    @overload
+    @staticmethod
+    def score_top_n(
+        citation_model_data: CitationModelData,
+        metric: CountUniqueLabelsMetric,
+        feature_weights: FeatureWeights | None = None,
+        n: int = 20,
+    ) -> int:
+        ...
+
+    @staticmethod
+    def score_top_n(
+        citation_model_data: CitationModelData,
+        metric: AveragePrecisionMetric | CountUniqueLabelsMetric,
+        feature_weights: FeatureWeights | None = None,
+        n: int = 20,
+    ) -> float | int:
         """
         Compute the average precision (or a different metric) for the top n
         recommendations.
@@ -132,7 +173,7 @@ class CitationModelScorer(ModelScorer):
             citation_model_data, feature_weights, n
         ).pipe(CitationModelScorer.add_labels, citation_model_data.integer_labels)
 
-        return metric(top_n_ranks_with_labels["label"])  # type: ignore
+        return metric.from_df(top_n_ranks_with_labels)
 
 
 @dataclass
@@ -183,13 +224,33 @@ class LanguageModelScorer(ModelScorer):
             LanguageModelScorer.add_info_cols, language_model_data.info_matrix
         )
 
+    @overload
     @staticmethod
     def score_top_n(
         language_model_data: LanguageModelData,
+        metric: AveragePrecisionMetric,
         feature_weights: FeatureWeights | None = None,
-        metric: Callable[[Sequence[int]], float] = average_precision,
         n: int = 20,
     ) -> float:
+        ...
+
+    @overload
+    @staticmethod
+    def score_top_n(
+        language_model_data: LanguageModelData,
+        metric: CountUniqueLabelsMetric,
+        feature_weights: FeatureWeights | None = None,
+        n: int = 20,
+    ) -> int:
+        ...
+
+    @staticmethod
+    def score_top_n(
+        language_model_data: LanguageModelData,
+        metric: AveragePrecisionMetric | CountUniqueLabelsMetric,
+        feature_weights: FeatureWeights | None = None,
+        n: int = 20,
+    ) -> float | int:
         """
         Compute the average precision (or a different metric) for the top n
         recommendations.
@@ -198,4 +259,4 @@ class LanguageModelScorer(ModelScorer):
             language_model_data, feature_weights, n
         ).pipe(LanguageModelScorer.add_labels, language_model_data.integer_labels)
 
-        return metric(top_n_ranks_with_labels["label"])  # type: ignore
+        return metric.from_df(top_n_ranks_with_labels)

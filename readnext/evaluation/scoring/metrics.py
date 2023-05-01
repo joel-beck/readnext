@@ -1,5 +1,7 @@
+from abc import ABC, abstractmethod
 from collections.abc import Callable, Sequence
-from typing import Literal, TypeAlias
+from dataclasses import dataclass
+from typing import Generic, Literal, TypeAlias, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -15,6 +17,9 @@ StringLabelList: TypeAlias = Sequence[str] | NDArray | pd.Series
 StringLabelLists: TypeAlias = Sequence[StringLabelList]
 
 PairwiseMetric: TypeAlias = Callable[[pd.DataFrame, int, int], int | float]
+
+TLabelList = TypeVar("TLabelList", IntegerLabelList, StringLabelList)
+TReturn = TypeVar("TReturn", int, float)
 
 
 class MismatchingDimensionsError(Exception):
@@ -89,74 +94,106 @@ def cosine_similarity_from_df(
     return cosine_similarity(row_embedding, col_embedding)
 
 
-def precision(label_list: IntegerLabelList) -> float:
-    """
-    Compute the average precision for a list of integer recommendation labels.
+@dataclass
+class Metric(ABC, Generic[TLabelList, TReturn]):
+    """Base class for all metrics."""
 
-    Precision = # of relevant items / # of items
+    @abstractmethod
+    def __call__(self, label_list: TLabelList) -> TReturn:
+        ...
 
-    If the labels are binary 0/1 encoded, this coincides with mean(labels).
-    Precision of empty list is set to 0.0.
-    """
-    # cannot be simplified to `if not label_list` since label_list may be a numpy array
-    # or pandas series
-    if not len(label_list):
-        return 0.0
-
-    return np.mean(label_list)  # type: ignore
+    @abstractmethod
+    def from_df(self, df: pd.DataFrame) -> TReturn:
+        ...
 
 
-def average_precision(label_list: IntegerLabelList) -> float:
-    """
-    Compute the average precision for a list of integer recommendation labels.
+class AveragePrecisionMetric(Metric):
+    """Average Precision (AP) metric."""
 
-    AP = (1/r) * sum_{k=1}^{K} P(k) * rel(k)
+    def precision(self, label_list: IntegerLabelList) -> float:
+        """
+        Compute the average precision for a list of integer recommendation labels.
 
-    K = # of items r = # of relevant items P(k) = precision at k rel(k) = 1 if item k is
-    relevant, 0 otherwise
+        Precision = # of relevant items / # of items
 
-    If the labels are binary 0/1 encoded, this simplifies to: r = sum(labels) P(k) =
-    mean(labels[:k]) rel(k) = labels[k] -> relevance scores = labels
+        If the labels are binary 0/1 encoded, this coincides with mean(labels).
+        Precision of empty list is set to 0.0.
+        """
+        # cannot be simplified to `if not label_list` since label_list may be a numpy array
+        # or pandas series
+        if not len(label_list):
+            return 0.0
 
-    Average Precision of empty list and list with only zeros (only irrelevant items) is
-    set to 0.0.
-    """
-    if not len(label_list):
-        return 0.0
+        return np.mean(label_list)  # type: ignore
 
-    if isinstance(label_list, pd.Series):
-        label_list = label_list.to_list()
+    def __call__(self, label_list: IntegerLabelList) -> float:
+        """
+        Compute the average precision for a list of integer recommendation labels.
 
-    num_relevant_items = sum(label_list)
-    if num_relevant_items == 0:
-        return 0.0
+        AP = (1/r) * sum_{k=1}^{K} P(k) * rel(k)
 
-    relevance_scores = label_list
+        K = # of items r = # of relevant items P(k) = precision at k rel(k) = 1 if item k is
+        relevant, 0 otherwise
 
-    precision_scores = []
-    for k, _ in enumerate(label_list, 1):
-        partial_labels = label_list[:k]
-        partial_precision = precision(partial_labels)
-        precision_scores.append(partial_precision)
+        If the labels are binary 0/1 encoded, this simplifies to: r = sum(labels) P(k) =
+        mean(labels[:k]) rel(k) = labels[k] -> relevance scores = labels
 
-    return (1 / num_relevant_items) * np.dot(precision_scores, relevance_scores)  # type: ignore
+        Average Precision of empty list and list with only zeros (only irrelevant items) is
+        set to 0.0.
+        """
+        if not len(label_list):
+            return 0.0
+
+        if isinstance(label_list, pd.Series):
+            label_list = label_list.to_list()
+
+        num_relevant_items = sum(label_list)
+        if num_relevant_items == 0:
+            return 0.0
+
+        relevance_scores = label_list
+
+        precision_scores = []
+        for k, _ in enumerate(label_list, 1):
+            partial_labels = label_list[:k]
+            partial_precision = self.precision(partial_labels)
+            precision_scores.append(partial_precision)
+
+        return (1 / num_relevant_items) * np.dot(precision_scores, relevance_scores)  # type: ignore
+
+    def from_df(self, df: pd.DataFrame) -> float:
+        """
+        Compute the average precision for a list of integer recommendation labels that are
+        contained in a dataframe column.
+        """
+        return self(df["integer_labels"])
 
 
-def mean_average_precision(label_lists: IntegerLabelLists) -> float:
-    """
-    Computes the mean average precision for multiple integer recommendation label lists.
+class CountUniqueLabelsMetric(Metric):
+    """Count the number of unique labels."""
 
-    Mean Average Precision of empty input is set to 0.0.
-    """
-    if not len(label_lists):
-        return 0.0
+    def __call__(self, label_list: StringLabelLists) -> int:
+        """
+        Count the number of unique labels in a list of labels, where the labels are
+        themselves lists of strings.
+        """
+        return len({label for labels in label_list for label in labels})
 
-    return np.mean([average_precision(label_list) for label_list in label_lists])  # type: ignore
+    def from_df(self, df: pd.DataFrame) -> int:
+        """
+        Count the number of unique labels in a list of labels that are contained in a
+        dataframe column.
+        """
+        return self(df["arxiv_labels"])  # type: ignore
 
 
-def count_unique_labels(labels_list: StringLabelLists) -> int:
-    """
-    Count the number of unique labels in a list of labels, where the labels are
-    themselves lists of strings.
-    """
-    return len({label for labels in labels_list for label in labels})
+# def mean_average_precision(label_lists: IntegerLabelLists) -> float:
+#     """
+#     Computes the mean average precision for multiple integer recommendation label lists.
+
+#     Mean Average Precision of empty input is set to 0.0.
+#     """
+#     if not len(label_lists):
+#         return 0.0
+
+#     return np.mean([average_precision(label_list) for label_list in label_lists])  # type: ignore

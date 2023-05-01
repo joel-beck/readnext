@@ -143,11 +143,12 @@ select = [
 
 ]
 # - `ANN101` (missing type annotation for `self` in method)
+# - `ANN102` (missing type annotation for `cls` in classmethod)
 # - `N803` (argument name should be lowercase)
 # - `N806` (variable in function should be lowercase)
 # - `PD015` (use `.merge()` instead of `pd.merge()`, incorrect for Series)
 # - `PD901` (don't use `df` as a variable name)
-ignore = ["ANN101", "N803", "N806", "PD015", "PD901"]
+ignore = ["ANN101", "ANN102", "N803", "N806", "PD015", "PD901"]
 # Never try to fix
 # - `F401` (unused imports)
 # - `F841` (unused variables)

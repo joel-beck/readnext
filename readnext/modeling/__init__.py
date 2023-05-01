@@ -6,11 +6,13 @@ from readnext.modeling.document_info import (
 )
 from readnext.modeling.model_data import (
     CitationModelData,
-    CitationModelDataFromId,
     LanguageModelData,
-    LanguageModelDataFromId,
     ModelData,
-    ModelDataFromId,
+)
+from readnext.modeling.model_data_constructor import (
+    CitationModelDataConstructor,
+    LanguageModelDataConstructor,
+    ModelDataConstructor,
 )
 
 __all__ = [
@@ -19,9 +21,9 @@ __all__ = [
     "DocumentsInfo",
     "documents_info_from_df",
     "CitationModelData",
-    "CitationModelDataFromId",
     "LanguageModelData",
-    "LanguageModelDataFromId",
     "ModelData",
-    "ModelDataFromId",
+    "CitationModelDataConstructor",
+    "LanguageModelDataConstructor",
+    "ModelDataConstructor",
 ]

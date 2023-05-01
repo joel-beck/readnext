@@ -2,7 +2,12 @@ import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
 from readnext.evaluation import CitationModelScorer, FeatureWeights, LanguageModelScorer
-from readnext.modeling import CitationModelDataFromId, LanguageModelDataFromId
+from readnext.modeling import (
+    CitationModelData,
+    CitationModelDataConstructor,
+    LanguageModelData,
+    LanguageModelDataConstructor,
+)
 from readnext.modeling.citation_models import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
@@ -32,7 +37,7 @@ def main() -> None:
 
     # SECTION: Get Model Data
     # SUBSECTION: Citation Models
-    citation_model_data_from_id = CitationModelDataFromId(
+    citation_model_data_constructor = CitationModelDataConstructor(
         query_document_id=query_document_id,
         documents_data=documents_authors_labels_citations_most_cited.pipe(
             add_feature_rank_cols
@@ -40,7 +45,7 @@ def main() -> None:
         co_citation_analysis_scores=co_citation_analysis_scores_most_cited,
         bibliographic_coupling_scores=bibliographic_coupling_scores_most_cited,
     )
-    citation_model_data = citation_model_data_from_id.get_model_data()
+    citation_model_data = CitationModelData.from_constructor(citation_model_data_constructor)
 
     print(citation_model_data.query_document)
 
@@ -55,60 +60,60 @@ def main() -> None:
     tfidf_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
         ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl
     )
-    tfidf_data_from_id = LanguageModelDataFromId(
+    tfidf_data_constructor = LanguageModelDataConstructor(
         query_document_id=query_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
         cosine_similarities=tfidf_cosine_similarities_most_cited,
     )
-    tfidf_data = tfidf_data_from_id.get_model_data()
+    tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
     LanguageModelScorer.display_top_n(tfidf_data, n=10)
 
     # SUBSECTION: Word2Vec
     word2vec_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
         ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl
     )
-    word2vec_data_from_id = LanguageModelDataFromId(
+    word2vec_data_constructor = LanguageModelDataConstructor(
         query_document_id=query_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
         cosine_similarities=word2vec_cosine_similarities_most_cited,
     )
-    word2vec_data = word2vec_data_from_id.get_model_data()
+    word2vec_data = LanguageModelData.from_constructor(word2vec_data_constructor)
     LanguageModelScorer.display_top_n(word2vec_data, n=10)
 
     # SUBSECTION: FastText
     fasttext_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
         ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl
     )
-    fasttext_data_from_id = LanguageModelDataFromId(
+    fasttext_data_constructor = LanguageModelDataConstructor(
         query_document_id=query_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
         cosine_similarities=fasttext_cosine_similarities_most_cited,
     )
-    fasttext_data = fasttext_data_from_id.get_model_data()
+    fasttext_data = LanguageModelData.from_constructor(fasttext_data_constructor)
     LanguageModelScorer.display_top_n(fasttext_data, n=10)
 
     # SUBSECTION: BERT
     bert_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
         ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl
     )
-    bert_data_from_id = LanguageModelDataFromId(
+    bert_data_constructor = LanguageModelDataConstructor(
         query_document_id=query_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
         cosine_similarities=bert_cosine_similarities_most_cited,
     )
-    bert_data = bert_data_from_id.get_model_data()
+    bert_data = LanguageModelData.from_constructor(bert_data_constructor)
     LanguageModelScorer.display_top_n(bert_data, n=10)
 
     # SUBSECTION: SciBERT
     scibert_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
         ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl
     )
-    scibert_data_from_id = LanguageModelDataFromId(
+    scibert_data_constructor = LanguageModelDataConstructor(
         query_document_id=query_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
         cosine_similarities=scibert_cosine_similarities_most_cited,
     )
-    scibert_data = scibert_data_from_id.get_model_data()
+    scibert_data = LanguageModelData.from_constructor(scibert_data_constructor)
     LanguageModelScorer.display_top_n(scibert_data, n=10)
 
     # SECTION: Evaluate Scores

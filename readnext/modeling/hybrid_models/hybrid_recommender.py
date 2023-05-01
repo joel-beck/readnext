@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 import pandas as pd
 from typing_extensions import Self
 
-from readnext.evaluation import CitationModelScorer, LanguageModelScorer, FeatureWeights
+from readnext.evaluation import CitationModelScorer, FeatureWeights, LanguageModelScorer
 from readnext.modeling import (
     CitationModelData,
     LanguageModelData,

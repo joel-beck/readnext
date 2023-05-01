@@ -2,8 +2,10 @@ import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
 from readnext.modeling import (
-    CitationModelDataFromId,
-    LanguageModelDataFromId,
+    CitationModelData,
+    CitationModelDataConstructor,
+    LanguageModelData,
+    LanguageModelDataConstructor,
 )
 from readnext.modeling.citation_models import (
     add_feature_rank_cols,
@@ -19,7 +21,7 @@ def compare_hybrid_scores_by_document_id(
     bibliographic_coupling_scores: pd.DataFrame,
 ) -> pd.DataFrame:
     # SECTION: Citation Models
-    citation_model_data_from_id = CitationModelDataFromId(
+    citation_model_data_constructor = CitationModelDataConstructor(
         query_document_id=query_document_id,
         documents_data=documents_data.pipe(add_feature_rank_cols).pipe(
             set_missing_publication_dates_to_max_rank
@@ -27,63 +29,63 @@ def compare_hybrid_scores_by_document_id(
         co_citation_analysis_scores=co_citation_analysis_scores,
         bibliographic_coupling_scores=bibliographic_coupling_scores,
     )
-    citation_model_data = citation_model_data_from_id.get_model_data()
+    citation_model_data = CitationModelData.from_constructor(citation_model_data_constructor)
 
     # SECTION: Language Models
     # SUBSECTION: TF-IDF
     tfidf_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
         ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl
     )
-    tfidf_data_from_id = LanguageModelDataFromId(
+    tfidf_data_constructor = LanguageModelDataConstructor(
         query_document_id=query_document_id,
         documents_data=documents_data,
         cosine_similarities=tfidf_cosine_similarities_most_cited,
     )
-    tfidf_data = tfidf_data_from_id.get_model_data()
+    tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
 
     # SUBSECTION: Word2Vec
     word2vec_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
         ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl
     )
-    word2vec_data_from_id = LanguageModelDataFromId(
+    word2vec_data_constructor = LanguageModelDataConstructor(
         query_document_id=query_document_id,
         documents_data=documents_data,
         cosine_similarities=word2vec_cosine_similarities_most_cited,
     )
-    word2vec_data = word2vec_data_from_id.get_model_data()
+    word2vec_data = LanguageModelData.from_constructor(word2vec_data_constructor)
 
     # SUBSECTION: FastText
     fasttext_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
         ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl
     )
-    fasttext_data_from_id = LanguageModelDataFromId(
+    fasttext_data_constructor = LanguageModelDataConstructor(
         query_document_id=query_document_id,
         documents_data=documents_data,
         cosine_similarities=fasttext_cosine_similarities_most_cited,
     )
-    fasttext_data = fasttext_data_from_id.get_model_data()
+    fasttext_data = LanguageModelData.from_constructor(fasttext_data_constructor)
 
     # SUBSECTION: BERT
     bert_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
         ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl
     )
-    bert_data_from_id = LanguageModelDataFromId(
+    bert_data_constructor = LanguageModelDataConstructor(
         query_document_id=query_document_id,
         documents_data=documents_data,
         cosine_similarities=bert_cosine_similarities_most_cited,
     )
-    bert_data = bert_data_from_id.get_model_data()
+    bert_data = LanguageModelData.from_constructor(bert_data_constructor)
 
     # SUBSECTION: SciBERT
     scibert_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
         ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl
     )
-    scibert_data_from_id = LanguageModelDataFromId(
+    scibert_data_constructor = LanguageModelDataConstructor(
         query_document_id=query_document_id,
         documents_data=documents_data,
         cosine_similarities=scibert_cosine_similarities_most_cited,
     )
-    scibert_data = scibert_data_from_id.get_model_data()
+    scibert_data = LanguageModelData.from_constructor(scibert_data_constructor)
 
     # SECTION: Hybrid Models
     # SUBSECTION: TF-IDF

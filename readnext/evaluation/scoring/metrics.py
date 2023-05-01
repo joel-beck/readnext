@@ -98,19 +98,22 @@ def cosine_similarity_from_df(
 class Metric(ABC, Generic[TLabelList, TReturn]):
     """Base class for all metrics."""
 
+    @staticmethod
     @abstractmethod
-    def __call__(self, label_list: TLabelList) -> TReturn:
+    def score(label_list: TLabelList) -> TReturn:
         ...
 
+    @staticmethod
     @abstractmethod
-    def from_df(self, df: pd.DataFrame) -> TReturn:
+    def from_df(df: pd.DataFrame) -> TReturn:
         ...
 
 
 class AveragePrecisionMetric(Metric):
     """Average Precision (AP) metric."""
 
-    def precision(self, label_list: IntegerLabelList) -> float:
+    @staticmethod
+    def precision(label_list: IntegerLabelList) -> float:
         """
         Compute the average precision for a list of integer recommendation labels.
 
@@ -126,7 +129,8 @@ class AveragePrecisionMetric(Metric):
 
         return np.mean(label_list)  # type: ignore
 
-    def __call__(self, label_list: IntegerLabelList) -> float:
+    @staticmethod
+    def score(label_list: IntegerLabelList) -> float:
         """
         Compute the average precision for a list of integer recommendation labels.
 
@@ -156,35 +160,38 @@ class AveragePrecisionMetric(Metric):
         precision_scores = []
         for k, _ in enumerate(label_list, 1):
             partial_labels = label_list[:k]
-            partial_precision = self.precision(partial_labels)
+            partial_precision = AveragePrecisionMetric.precision(partial_labels)
             precision_scores.append(partial_precision)
 
         return (1 / num_relevant_items) * np.dot(precision_scores, relevance_scores)  # type: ignore
 
-    def from_df(self, df: pd.DataFrame) -> float:
+    @staticmethod
+    def from_df(df: pd.DataFrame) -> float:
         """
         Compute the average precision for a list of integer recommendation labels that are
         contained in a dataframe column.
         """
-        return self(df["integer_labels"])
+        return AveragePrecisionMetric.score(df["integer_labels"])
 
 
 class CountUniqueLabelsMetric(Metric):
     """Count the number of unique labels."""
 
-    def __call__(self, label_list: StringLabelLists) -> int:
+    @staticmethod
+    def score(label_list: StringLabelLists) -> int:
         """
         Count the number of unique labels in a list of labels, where the labels are
         themselves lists of strings.
         """
         return len({label for labels in label_list for label in labels})
 
-    def from_df(self, df: pd.DataFrame) -> int:
+    @staticmethod
+    def from_df(df: pd.DataFrame) -> int:
         """
         Count the number of unique labels in a list of labels that are contained in a
         dataframe column.
         """
-        return self(df["arxiv_labels"])  # type: ignore
+        return CountUniqueLabelsMetric.score(df["arxiv_labels"])  # type: ignore
 
 
 # def mean_average_precision(label_lists: IntegerLabelLists) -> float:

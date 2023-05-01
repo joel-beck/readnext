@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from enum import Enum
 from typing import Generic, TypeVar
 
 import pandas as pd
@@ -12,23 +11,24 @@ from readnext.modeling import CitationModelData, LanguageModelData, ModelData
 T = TypeVar("T", bound=ModelData)
 
 
-class ScoringFeature(Enum):
-    """Determine which model feature / column to use for scoring the citation model."""
+@dataclass
+class FeatureWeights:
+    publication_date: float = 1.0
+    citationcount_document: float = 1.0
+    citationcount_author: float = 1.0
+    co_citation_analysis: float = 1.0
+    bibliographic_coupling: float = 1.0
 
-    publication_date = "publication_date_rank"
-    citationcount_document = "citationcount_document_rank"
-    citationcount_author = "citationcount_author_rank"
-    co_citation_analysis = "co_citation_analysis_rank"
-    bibliographic_coupling = "bibliographic_coupling_rank"
-    weighted = "weighted_rank"
-
-    def __str__(self) -> str:
-        return self.value
-
-    @property
-    def is_weighted(self) -> bool:
-        """A weighted combination of all citation model features is used for scoring."""
-        return self == self.weighted  # type: ignore
+    def to_series(self) -> pd.Series:
+        return pd.Series(
+            {
+                "publication_date_rank": self.publication_date,
+                "citationcount_document_rank": self.citationcount_document,
+                "citationcount_author_rank": self.citationcount_author,
+                "co_citation_analysis_rank": self.co_citation_analysis,
+                "bibliographic_coupling_rank": self.bibliographic_coupling,
+            }
+        )
 
 
 @dataclass
@@ -44,7 +44,7 @@ class ModelScorer(ABC, Generic[T]):
     @staticmethod
     @abstractmethod
     def select_top_n_ranks(
-        model_data: T, scoring_feature: ScoringFeature | None = None, n: int = 20
+        model_data: T, feature_weights: FeatureWeights | None = None, n: int = 20
     ) -> pd.DataFrame:
         ...
 
@@ -52,7 +52,7 @@ class ModelScorer(ABC, Generic[T]):
     @abstractmethod
     def score_top_n(
         model_data: T,
-        scoring_feature: ScoringFeature | None = None,
+        feature_weights: FeatureWeights | None = None,
         metric: Callable[[Sequence[int]], float] = average_precision,
         n: int = 20,
     ) -> float:
@@ -61,9 +61,7 @@ class ModelScorer(ABC, Generic[T]):
     @staticmethod
     @abstractmethod
     def display_top_n(
-        model_data: T,
-        scoring_feature: ScoringFeature | None = None,
-        n: int = 20,
+        model_data: T, feature_weights: FeatureWeights | None = None, n: int = 20
     ) -> pd.DataFrame:
         ...
 
@@ -72,31 +70,33 @@ class ModelScorer(ABC, Generic[T]):
         """Add a vector of integer labels to a dataframe."""
         return pd.merge(df, labels, left_index=True, right_index=True)
 
+    @staticmethod
+    def compute_weighted_rowsums(df: pd.DataFrame, feature_weights: FeatureWeights) -> pd.Series:
+        return df.mul(feature_weights.to_series()).sum(axis=1)
+
 
 @dataclass
 class CitationModelScorer(ModelScorer):
     @staticmethod
     def select_top_n_ranks(
         citation_model_data: CitationModelData,
-        scoring_feature: ScoringFeature | None = None,
+        feature_weights: FeatureWeights | None = None,
         n: int = 20,
     ) -> pd.DataFrame:
         """
-        Select the top n recommendations from a citation model with a given scoring
-        feature.
+        Select and collect the top n recommendations from a citation model in a dataframe.
         """
+        assert feature_weights is not None, "Specify feature weights to rank by"
 
-        assert scoring_feature is not None, "Specify a scoring feature to rank by"
-
-        # `weighted` option for now computes row sums, i.e. each feature is weighted equally
-        if scoring_feature.is_weighted:
-            ranks_unsorted = (
-                citation_model_data.feature_matrix.dropna().sum(axis=1).rename("weighted_rank")
+        return (
+            CitationModelScorer.compute_weighted_rowsums(
+                citation_model_data.feature_matrix.dropna(), feature_weights
             )
-        else:
-            ranks_unsorted = citation_model_data.feature_matrix[scoring_feature.value]
-
-        return ranks_unsorted.sort_values().head(n).to_frame()
+            .rename("weighted_rank")
+            .sort_values()
+            .head(n)
+            .to_frame()
+        )
 
     @staticmethod
     def add_info_cols(df: pd.DataFrame, info_matrix: pd.DataFrame) -> pd.DataFrame:
@@ -106,21 +106,21 @@ class CitationModelScorer(ModelScorer):
     @staticmethod
     def display_top_n(
         citation_model_data: CitationModelData,
-        scoring_feature: ScoringFeature | None = None,
+        feature_weights: FeatureWeights | None = None,
         n: int = 20,
     ) -> pd.DataFrame:
         """
         Select and collect the top n recommendations from a citation model in a
         dataframe together with additional information columns about the documents.
         """
-        return CitationModelScorer.select_top_n_ranks(citation_model_data, scoring_feature, n).pipe(
+        return CitationModelScorer.select_top_n_ranks(citation_model_data, feature_weights, n).pipe(
             CitationModelScorer.add_info_cols, citation_model_data.info_matrix
         )
 
     @staticmethod
     def score_top_n(
         citation_model_data: CitationModelData,
-        scoring_feature: ScoringFeature | None = None,
+        feature_weights: FeatureWeights | None = None,
         metric: Callable[[Sequence[int]], float] = average_precision,
         n: int = 20,
     ) -> float:
@@ -129,7 +129,7 @@ class CitationModelScorer(ModelScorer):
         recommendations.
         """
         top_n_ranks_with_labels = CitationModelScorer.select_top_n_ranks(
-            citation_model_data, scoring_feature, n
+            citation_model_data, feature_weights, n
         ).pipe(CitationModelScorer.add_labels, citation_model_data.integer_labels)
 
         return metric(top_n_ranks_with_labels["label"])  # type: ignore
@@ -140,12 +140,13 @@ class LanguageModelScorer(ModelScorer):
     @staticmethod
     def select_top_n_ranks(
         language_model_data: LanguageModelData,
-        scoring_feature: ScoringFeature | None = None,  # noqa: ARG004
+        feature_weights: FeatureWeights | None = None,  # noqa: ARG004
         n: int = 20,
     ) -> pd.DataFrame:
         """
-        Select the top n recommendations from a language model. The `scoring_feature`
-        argument is not used for scoring language models.
+        Select and collect the top n recommendations from a language model in a dataframe.
+
+        The `feature_weights` argument is not used for scoring language models.
         """
         return language_model_data.cosine_similarity_ranks.sort_values(
             "cosine_similarity_rank"
@@ -171,20 +172,21 @@ class LanguageModelScorer(ModelScorer):
     @staticmethod
     def display_top_n(
         language_model_data: LanguageModelData,
-        scoring_feature: ScoringFeature | None = None,
+        feature_weights: FeatureWeights | None = None,
         n: int = 20,
     ) -> pd.DataFrame:
         """
-        Select and collect the top n recommendations from a language model in a dataframe.
+        Select and collect the top n recommendations from a language model in a
+        dataframe together with additional information columns about the documents.
         """
-        return LanguageModelScorer.select_top_n_ranks(language_model_data, scoring_feature, n).pipe(
+        return LanguageModelScorer.select_top_n_ranks(language_model_data, feature_weights, n).pipe(
             LanguageModelScorer.add_info_cols, language_model_data.info_matrix
         )
 
     @staticmethod
     def score_top_n(
         language_model_data: LanguageModelData,
-        scoring_feature: ScoringFeature | None = None,
+        feature_weights: FeatureWeights | None = None,
         metric: Callable[[Sequence[int]], float] = average_precision,
         n: int = 20,
     ) -> float:
@@ -193,7 +195,7 @@ class LanguageModelScorer(ModelScorer):
         recommendations.
         """
         top_n_ranks_with_labels = LanguageModelScorer.select_top_n_ranks(
-            language_model_data, scoring_feature, n
+            language_model_data, feature_weights, n
         ).pipe(LanguageModelScorer.add_labels, language_model_data.integer_labels)
 
         return metric(top_n_ranks_with_labels["label"])  # type: ignore

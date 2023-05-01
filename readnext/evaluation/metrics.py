@@ -16,7 +16,6 @@ PairwiseMetric: TypeAlias = Callable[[pd.DataFrame, int, int], int | float]
 class MismatchingDimensionsError(Exception):
     """Custom exception class when two vectors do not have the same dimensions/length."""
 
-    pass
 
 
 def check_equal_dimensions(vec_1: Vector, vec_2: Vector) -> None:

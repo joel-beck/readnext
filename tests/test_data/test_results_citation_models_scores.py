@@ -1,10 +1,10 @@
-import pytest
 import pandas as pd
+import pytest
+from pandas.api.types import is_integer_dtype
 
 from readnext.config import ResultsPaths
-from readnext.modeling import DocumentScore, DocumentInfo
+from readnext.modeling import DocumentInfo, DocumentScore
 from readnext.utils import load_df_from_pickle
-from pandas.api.types import is_integer_dtype
 
 
 @pytest.fixture(scope="module")

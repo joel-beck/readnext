@@ -13,6 +13,14 @@ def test_mean_average_precision_single_empty_list() -> None:
     assert AveragePrecision.mean_average_precision([[]]) == 0.0
 
 
+def test_mean_average_precision_empty_list_multiple() -> None:
+    assert AveragePrecision.mean_average_precision([[], []]) == 0.0
+
+
+def test_mean_average_precision_single_item() -> None:
+    assert AveragePrecision.mean_average_precision([[1], [0]]) == 0.5
+
+
 def test_mean_average_precision_single_list_all_zeros() -> None:
     assert AveragePrecision.mean_average_precision([[0, 0, 0]]) == 0.0
 
@@ -45,24 +53,16 @@ def test_mean_average_precision_multiple_lists_different_lengths() -> None:
     ) == pytest.approx(0.6851851851851851)
 
 
-def test_mean_average_precision_with_pandas_series() -> None:
-    s1 = pd.Series([0, 1, 0, 0, 1])
-    s2 = pd.Series([1, 1, 0, 1, 0])
-    assert AveragePrecision.mean_average_precision([s1, s2]) == pytest.approx(0.683333333333333)
-
-
 def test_mean_average_precision_with_numpy_arrays() -> None:
     a1 = np.array([0, 1, 0, 0, 1])
     a2 = np.array([1, 1, 0, 1, 0])
     assert AveragePrecision.mean_average_precision([a1, a2]) == pytest.approx(0.683333333333333)
 
 
-def test_mean_average_precision_empty_list() -> None:
-    assert AveragePrecision.mean_average_precision([[], []]) == 0.0
-
-
-def test_mean_average_precision_single_item() -> None:
-    assert AveragePrecision.mean_average_precision([[1], [0]]) == 0.5
+def test_mean_average_precision_with_pandas_series() -> None:
+    s1 = pd.Series([0, 1, 0, 0, 1])
+    s2 = pd.Series([1, 1, 0, 1, 0])
+    assert AveragePrecision.mean_average_precision([s1, s2]) == pytest.approx(0.683333333333333)
 
 
 def test_mean_average_precision_numpy_arrays() -> None:

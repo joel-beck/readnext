@@ -10,8 +10,8 @@ from numpy.typing import NDArray
 IntegerLabelList: TypeAlias = Sequence[int] | NDArray | pd.Series
 IntegerLabelLists: TypeAlias = Sequence[IntegerLabelList]
 
-StringLabelList: TypeAlias = Sequence[str] | NDArray | pd.Series
-StringLabelLists: TypeAlias = Sequence[StringLabelList]
+StringLabelList: TypeAlias = Sequence[str] | pd.Series
+StringLabelLists: TypeAlias = Sequence[StringLabelList] | pd.Series
 
 TLabelList = TypeVar("TLabelList", IntegerLabelList, StringLabelList)
 TReturn = TypeVar("TReturn", int, float)

@@ -1,10 +1,11 @@
-import pytest
 import pandas as pd
+import pytest
+
 from readnext.evaluation.metrics import CountUniqueLabels
 
 
 def test_count_unique_labels_empty_list() -> None:
-    label_list = []
+    label_list: list[str] = []
     assert CountUniqueLabels.score(label_list) == 0
 
 
@@ -24,7 +25,7 @@ def test_count_unique_labels_with_duplicates() -> None:
 
 
 @pytest.mark.parametrize(
-    "input_list, expected_output",
+    ("input_list", "expected_output"),
     [
         (["a", "b", "c"], 3),
         (["a", "a", "b"], 2),
@@ -32,7 +33,9 @@ def test_count_unique_labels_with_duplicates() -> None:
         ([], 0),
     ],
 )
-def test_count_unique_labels_single_list_parametrized(input_list, expected_output) -> None:
+def test_count_unique_labels_single_list_parametrized(
+    input_list: list[str], expected_output: int
+) -> None:
     label_list = [input_list]
     assert CountUniqueLabels.score(label_list) == expected_output
 
@@ -75,7 +78,7 @@ def test_count_unique_labels_series_of_tuples() -> None:
 
 
 @pytest.mark.parametrize(
-    "input_list, expected_output",
+    ("input_list", "expected_output"),
     [
         (("a", "b", "c"), 3),
         (("a", "a", "b"), 2),
@@ -83,7 +86,9 @@ def test_count_unique_labels_series_of_tuples() -> None:
         ((), 0),
     ],
 )
-def test_count_unique_labels_single_tuple_parametrized(input_list, expected_output) -> None:
+def test_count_unique_labels_single_tuple_parametrized(
+    input_list: list[str], expected_output: int
+) -> None:
     label_list = [input_list]
     assert CountUniqueLabels.score(label_list) == expected_output
 
@@ -102,7 +107,7 @@ def test_count_unique_labels_from_df() -> None:
 
 
 def test_count_unique_labels_from_df_empty() -> None:
-    data = {"arxiv_labels": []}
+    data: dict[str, list[int]] = {"arxiv_labels": []}
     df = pd.DataFrame(data)
     assert CountUniqueLabels.from_df(df) == 0
 
@@ -134,14 +139,16 @@ def test_count_unique_labels_from_df_mixed_lists_and_tuples() -> None:
 
 
 @pytest.mark.parametrize(
-    "arxiv_labels_column, expected_output",
+    ("arxiv_labels_column", "expected_output"),
     [
         ([["a", "b", "c"], ["a", "d", "e"], ["a", "b", "a"], ["a", "a", "b", "c"]], 5),
         ([("a", "b", "c"), ("a", "d", "e"), ("a", "b", "a"), ("a", "a", "b", "c")], 5),
         ([["a", "b", "c"], ("a", "d", "e"), ["a", "b", "a"], ("a", "a", "b", "c")], 5),
     ],
 )
-def test_count_unique_labels_from_df_parametrized(arxiv_labels_column, expected_output) -> None:
+def test_count_unique_labels_from_df_parametrized(
+    arxiv_labels_column: list[list[str]], expected_output: int
+) -> None:
     data = {"arxiv_labels": arxiv_labels_column}
     df = pd.DataFrame(data)
     assert CountUniqueLabels.from_df(df) == expected_output

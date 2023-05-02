@@ -6,7 +6,7 @@ from readnext.evaluation.metrics import AveragePrecision
 
 
 def test_average_precision_score_empty() -> None:
-    label_list = []
+    label_list: list[int] = []
     assert AveragePrecision.score(label_list) == pytest.approx(0.0)
 
 
@@ -49,7 +49,7 @@ def test_average_precision_from_df() -> None:
 
 
 def test_average_precision_from_df_empty() -> None:
-    data = {"integer_labels": []}
+    data: dict[str, list[int]] = {"integer_labels": []}
     df = pd.DataFrame(data)
     assert AveragePrecision.from_df(df) == pytest.approx(0.0)
 

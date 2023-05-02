@@ -6,7 +6,7 @@ from readnext.evaluation.metrics import AveragePrecision
 
 
 def test_average_precision_precision_empty() -> None:
-    label_list = []
+    label_list: list[int] = []
     assert AveragePrecision.precision(label_list) == pytest.approx(0.0)
 
 

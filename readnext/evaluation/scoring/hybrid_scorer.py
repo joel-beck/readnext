@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 
 import pandas as pd
 
+from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
 from readnext.evaluation.scoring.model_scorer import (
     CitationModelScorer,
     FeatureWeights,
@@ -29,7 +30,10 @@ class HybridScorer:
     language_to_citation_recommendations: pd.DataFrame = field(init=False)
 
     def set_citation_to_language_candidates(
-        self, feature_weights: FeatureWeights = FeatureWeights(), n_candidates: int = 30
+        self,
+        metric: AveragePrecision | CountUniqueLabels,
+        feature_weights: FeatureWeights = FeatureWeights(),
+        n_candidates: int = 30,
     ) -> None:
         # compute again for each method call since a different scoring feature or number
         # of candidates may be used
@@ -39,6 +43,7 @@ class HybridScorer:
 
         self.citation_to_language_candidate_scores = CitationModelScorer.score_top_n(
             self.citation_model_data,
+            metric,
             feature_weights=feature_weights,
             n=n_candidates,
         )
@@ -47,11 +52,12 @@ class HybridScorer:
 
     def top_n_citation_to_language(
         self,
+        metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
         n_candidates: int = 30,
         n_final: int = 10,
     ) -> None:
-        self.set_citation_to_language_candidates(feature_weights, n_candidates)
+        self.set_citation_to_language_candidates(metric, feature_weights, n_candidates)
 
         self.citation_to_language_recommendations = LanguageModelScorer.display_top_n(
             self.language_model_data[self.citation_to_language_candidate_ids], n=n_final
@@ -59,34 +65,38 @@ class HybridScorer:
 
     def score_citation_to_language(
         self,
+        metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
         n_candidates: int = 30,
         n_final: int = 10,
     ) -> None:
-        self.set_citation_to_language_candidates(feature_weights, n_candidates)
+        self.set_citation_to_language_candidates(metric, feature_weights, n_candidates)
 
         self.citation_to_language_scores = LanguageModelScorer.score_top_n(
-            self.language_model_data[self.citation_to_language_candidate_ids], n=n_final
+            self.language_model_data[self.citation_to_language_candidate_ids], metric, n=n_final
         )
 
-    def set_language_to_citation_candidates(self, n_candidates: int = 30) -> None:
+    def set_language_to_citation_candidates(
+        self, metric: AveragePrecision | CountUniqueLabels, n_candidates: int = 30
+    ) -> None:
         self.language_to_citation_candidates = LanguageModelScorer.display_top_n(
             self.language_model_data, n=n_candidates
         )
 
         self.language_to_citation_candidate_scores = LanguageModelScorer.score_top_n(
-            self.language_model_data, n=n_candidates
+            self.language_model_data, metric, n=n_candidates
         )
 
         self.language_to_citation_candidate_ids = self.language_to_citation_candidates.index
 
     def top_n_language_to_citation(
         self,
+        metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
         n_candidates: int = 30,
         n_final: int = 10,
     ) -> None:
-        self.set_language_to_citation_candidates(n_candidates)
+        self.set_language_to_citation_candidates(metric, n_candidates)
 
         self.language_to_citation_recommendations = CitationModelScorer.display_top_n(
             self.citation_model_data[self.language_to_citation_candidate_ids],
@@ -96,25 +106,28 @@ class HybridScorer:
 
     def score_language_to_citation(
         self,
+        metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
         n_candidates: int = 30,
         n_final: int = 10,
     ) -> None:
-        self.set_language_to_citation_candidates(n_candidates)
+        self.set_language_to_citation_candidates(metric, n_candidates)
 
         self.language_to_citation_scores = CitationModelScorer.score_top_n(
             self.citation_model_data[self.language_to_citation_candidate_ids],
+            metric,
             feature_weights,
             n=n_final,
         )
 
     def fit(
         self,
+        metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
         n_candidates: int = 30,
         n_final: int = 10,
     ) -> None:
-        self.top_n_citation_to_language(feature_weights, n_candidates, n_final)
-        self.score_citation_to_language(feature_weights, n_candidates, n_final)
-        self.top_n_language_to_citation(feature_weights, n_candidates, n_final)
-        self.score_language_to_citation(feature_weights, n_candidates, n_final)
+        self.top_n_citation_to_language(metric, feature_weights, n_candidates, n_final)
+        self.score_citation_to_language(metric, feature_weights, n_candidates, n_final)
+        self.top_n_language_to_citation(metric, feature_weights, n_candidates, n_final)
+        self.score_language_to_citation(metric, feature_weights, n_candidates, n_final)

@@ -1,11 +1,11 @@
 import pandas as pd
 from tqdm import tqdm
 
-from readnext.evaluation.scoring.metrics import (
+from readnext.evaluation.metrics import (
+    CosineSimilarity,
+    CountCommonCitations,
+    CountCommonReferences,
     PairwiseMetric,
-    cosine_similarity_from_df,
-    count_common_citations_from_df,
-    count_common_references_from_df,
 )
 from readnext.modeling import DocumentInfo, DocumentScore
 
@@ -25,7 +25,7 @@ def find_top_n_matches_single_document(
         if document_id == query_document_id:
             continue
         document_info = DocumentInfo(document_id=document_id)
-        score = pairwise_metric(input_df, query_document_id, document_id)
+        score = pairwise_metric.from_df(input_df, query_document_id, document_id)
         scores.append(DocumentScore(document_info=document_info, score=score))
 
     return sorted(scores, key=lambda x: x.score, reverse=True)[:n]
@@ -69,7 +69,7 @@ def precompute_co_citations(
     Precompute and store pairwise co-citation scores for all documents in a dataframe
     with one row per query document.
     """
-    return precompute_pairwise_scores(df, count_common_citations_from_df, n)
+    return precompute_pairwise_scores(df, CountCommonCitations(), n)
 
 
 def precompute_co_references(
@@ -80,7 +80,7 @@ def precompute_co_references(
     Precmopute and store pairwise co-reference scores for all documents in a dataframe
     with one row per query document.
     """
-    return precompute_pairwise_scores(df, count_common_references_from_df, n)
+    return precompute_pairwise_scores(df, CountCommonReferences(), n)
 
 
 def precompute_cosine_similarities(
@@ -91,4 +91,4 @@ def precompute_cosine_similarities(
     Precompute and store pairwise cosine similarity scores for all documents in a
     dataframe with one row per query document.
     """
-    return precompute_pairwise_scores(df, cosine_similarity_from_df, n)
+    return precompute_pairwise_scores(df, CosineSimilarity(), n)

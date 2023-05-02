@@ -2,10 +2,9 @@ from dataclasses import dataclass, field
 
 import pandas as pd
 
+from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
 from readnext.evaluation.scoring.model_scorer import (
-    AveragePrecisionMetric,
     CitationModelScorer,
-    CountUniqueLabelsMetric,
     FeatureWeights,
     LanguageModelScorer,
 )
@@ -32,7 +31,7 @@ class HybridScorer:
 
     def set_citation_to_language_candidates(
         self,
-        metric: AveragePrecisionMetric | CountUniqueLabelsMetric,
+        metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
         n_candidates: int = 30,
     ) -> None:
@@ -53,7 +52,7 @@ class HybridScorer:
 
     def top_n_citation_to_language(
         self,
-        metric: AveragePrecisionMetric | CountUniqueLabelsMetric,
+        metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
         n_candidates: int = 30,
         n_final: int = 10,
@@ -66,7 +65,7 @@ class HybridScorer:
 
     def score_citation_to_language(
         self,
-        metric: AveragePrecisionMetric | CountUniqueLabelsMetric,
+        metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
         n_candidates: int = 30,
         n_final: int = 10,
@@ -78,7 +77,7 @@ class HybridScorer:
         )
 
     def set_language_to_citation_candidates(
-        self, metric: AveragePrecisionMetric | CountUniqueLabelsMetric, n_candidates: int = 30
+        self, metric: AveragePrecision | CountUniqueLabels, n_candidates: int = 30
     ) -> None:
         self.language_to_citation_candidates = LanguageModelScorer.display_top_n(
             self.language_model_data, n=n_candidates
@@ -92,7 +91,7 @@ class HybridScorer:
 
     def top_n_language_to_citation(
         self,
-        metric: AveragePrecisionMetric | CountUniqueLabelsMetric,
+        metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
         n_candidates: int = 30,
         n_final: int = 10,
@@ -107,7 +106,7 @@ class HybridScorer:
 
     def score_language_to_citation(
         self,
-        metric: AveragePrecisionMetric | CountUniqueLabelsMetric,
+        metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
         n_candidates: int = 30,
         n_final: int = 10,
@@ -123,7 +122,7 @@ class HybridScorer:
 
     def fit(
         self,
-        metric: AveragePrecisionMetric | CountUniqueLabelsMetric,
+        metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
         n_candidates: int = 30,
         n_final: int = 10,

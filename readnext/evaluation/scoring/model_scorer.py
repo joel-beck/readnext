@@ -4,7 +4,7 @@ from typing import Generic, TypeVar, overload
 
 import pandas as pd
 
-from readnext.evaluation.scoring.metrics import AveragePrecisionMetric, CountUniqueLabelsMetric
+from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
 from readnext.modeling import CitationModelData, LanguageModelData, ModelData
 
 TModelData = TypeVar("TModelData", bound=ModelData)
@@ -52,7 +52,7 @@ class ModelScorer(ABC, Generic[TModelData]):
     @abstractmethod
     def score_top_n(
         model_data: TModelData,
-        metric: AveragePrecisionMetric,
+        metric: AveragePrecision,
         feature_weights: FeatureWeights | None = None,
         n: int = 20,
     ) -> float:
@@ -63,7 +63,7 @@ class ModelScorer(ABC, Generic[TModelData]):
     @abstractmethod
     def score_top_n(
         model_data: TModelData,
-        metric: CountUniqueLabelsMetric,
+        metric: CountUniqueLabels,
         feature_weights: FeatureWeights | None = None,
         n: int = 20,
     ) -> int:
@@ -73,7 +73,7 @@ class ModelScorer(ABC, Generic[TModelData]):
     @abstractmethod
     def score_top_n(
         model_data: TModelData,
-        metric: AveragePrecisionMetric | CountUniqueLabelsMetric,
+        metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights | None = None,
         n: int = 20,
     ) -> float | int:
@@ -142,7 +142,7 @@ class CitationModelScorer(ModelScorer):
     @staticmethod
     def score_top_n(
         citation_model_data: CitationModelData,
-        metric: AveragePrecisionMetric,
+        metric: AveragePrecision,
         feature_weights: FeatureWeights | None = None,
         n: int = 20,
     ) -> float:
@@ -152,7 +152,7 @@ class CitationModelScorer(ModelScorer):
     @staticmethod
     def score_top_n(
         citation_model_data: CitationModelData,
-        metric: CountUniqueLabelsMetric,
+        metric: CountUniqueLabels,
         feature_weights: FeatureWeights | None = None,
         n: int = 20,
     ) -> int:
@@ -161,7 +161,7 @@ class CitationModelScorer(ModelScorer):
     @staticmethod
     def score_top_n(
         citation_model_data: CitationModelData,
-        metric: AveragePrecisionMetric | CountUniqueLabelsMetric,
+        metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights | None = None,
         n: int = 20,
     ) -> float | int:
@@ -228,7 +228,7 @@ class LanguageModelScorer(ModelScorer):
     @staticmethod
     def score_top_n(
         language_model_data: LanguageModelData,
-        metric: AveragePrecisionMetric,
+        metric: AveragePrecision,
         feature_weights: FeatureWeights | None = None,
         n: int = 20,
     ) -> float:
@@ -238,7 +238,7 @@ class LanguageModelScorer(ModelScorer):
     @staticmethod
     def score_top_n(
         language_model_data: LanguageModelData,
-        metric: CountUniqueLabelsMetric,
+        metric: CountUniqueLabels,
         feature_weights: FeatureWeights | None = None,
         n: int = 20,
     ) -> int:
@@ -247,7 +247,7 @@ class LanguageModelScorer(ModelScorer):
     @staticmethod
     def score_top_n(
         language_model_data: LanguageModelData,
-        metric: AveragePrecisionMetric | CountUniqueLabelsMetric,
+        metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights | None = None,
         n: int = 20,
     ) -> float | int:

@@ -3,8 +3,8 @@
 import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
+from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
 from readnext.evaluation.scoring import CitationModelScorer, FeatureWeights, LanguageModelScorer
-from readnext.evaluation.scoring.metrics import AveragePrecisionMetric, CountUniqueLabelsMetric
 from readnext.modeling import (
     CitationModelData,
     CitationModelDataConstructor,
@@ -127,7 +127,7 @@ def main() -> None:
                     "Publication Date",
                     CitationModelScorer.score_top_n(
                         citation_model_data,
-                        AveragePrecisionMetric(),
+                        AveragePrecision(),
                         FeatureWeights(1, 0, 0, 0, 0),
                         n=20,
                     ),
@@ -136,7 +136,7 @@ def main() -> None:
                     "Citation Count Document",
                     CitationModelScorer.score_top_n(
                         citation_model_data,
-                        AveragePrecisionMetric(),
+                        AveragePrecision(),
                         FeatureWeights(0, 1, 0, 0, 0),
                         n=20,
                     ),
@@ -145,7 +145,7 @@ def main() -> None:
                     "Citation Count Author",
                     CitationModelScorer.score_top_n(
                         citation_model_data,
-                        AveragePrecisionMetric(),
+                        AveragePrecision(),
                         FeatureWeights(0, 0, 1, 0, 0),
                         n=20,
                     ),
@@ -154,7 +154,7 @@ def main() -> None:
                     "Co-Citation Analysis",
                     CitationModelScorer.score_top_n(
                         citation_model_data,
-                        AveragePrecisionMetric(),
+                        AveragePrecision(),
                         FeatureWeights(0, 0, 0, 1, 0),
                         n=20,
                     ),
@@ -163,7 +163,7 @@ def main() -> None:
                     "Bibliographic Coupling",
                     CitationModelScorer.score_top_n(
                         citation_model_data,
-                        AveragePrecisionMetric(),
+                        AveragePrecision(),
                         FeatureWeights(0, 0, 0, 0, 1),
                         n=20,
                     ),
@@ -171,28 +171,28 @@ def main() -> None:
                 (
                     "Weighted",
                     CitationModelScorer.score_top_n(
-                        citation_model_data, AveragePrecisionMetric(), FeatureWeights(), n=20
+                        citation_model_data, AveragePrecision(), FeatureWeights(), n=20
                     ),
                 ),
                 (
                     "TF-IDF",
-                    LanguageModelScorer.score_top_n(tfidf_data, AveragePrecisionMetric(), n=20),
+                    LanguageModelScorer.score_top_n(tfidf_data, AveragePrecision(), n=20),
                 ),
                 (
                     "Word2Vec",
-                    LanguageModelScorer.score_top_n(word2vec_data, AveragePrecisionMetric(), n=20),
+                    LanguageModelScorer.score_top_n(word2vec_data, AveragePrecision(), n=20),
                 ),
                 (
                     "FastText",
-                    LanguageModelScorer.score_top_n(fasttext_data, AveragePrecisionMetric(), n=20),
+                    LanguageModelScorer.score_top_n(fasttext_data, AveragePrecision(), n=20),
                 ),
                 (
                     "BERT",
-                    LanguageModelScorer.score_top_n(bert_data, AveragePrecisionMetric(), n=20),
+                    LanguageModelScorer.score_top_n(bert_data, AveragePrecision(), n=20),
                 ),
                 (
                     "SciBERT",
-                    LanguageModelScorer.score_top_n(scibert_data, AveragePrecisionMetric(), n=20),
+                    LanguageModelScorer.score_top_n(scibert_data, AveragePrecision(), n=20),
                 ),
             ],
             columns=["Feature", "Average Precision"],
@@ -210,7 +210,7 @@ def main() -> None:
                     "Publication Date",
                     CitationModelScorer.score_top_n(
                         citation_model_data,
-                        CountUniqueLabelsMetric(),
+                        CountUniqueLabels(),
                         FeatureWeights(1, 0, 0, 0, 0),
                         n=20,
                     ),
@@ -219,7 +219,7 @@ def main() -> None:
                     "Citation Count Document",
                     CitationModelScorer.score_top_n(
                         citation_model_data,
-                        CountUniqueLabelsMetric(),
+                        CountUniqueLabels(),
                         FeatureWeights(0, 1, 0, 0, 0),
                         n=20,
                     ),
@@ -228,7 +228,7 @@ def main() -> None:
                     "Citation Count Author",
                     CitationModelScorer.score_top_n(
                         citation_model_data,
-                        CountUniqueLabelsMetric(),
+                        CountUniqueLabels(),
                         FeatureWeights(0, 0, 1, 0, 0),
                         n=20,
                     ),
@@ -237,7 +237,7 @@ def main() -> None:
                     "Co-Citation Analysis",
                     CitationModelScorer.score_top_n(
                         citation_model_data,
-                        CountUniqueLabelsMetric(),
+                        CountUniqueLabels(),
                         FeatureWeights(0, 0, 0, 1, 0),
                         n=20,
                     ),
@@ -246,7 +246,7 @@ def main() -> None:
                     "Bibliographic Coupling",
                     CitationModelScorer.score_top_n(
                         citation_model_data,
-                        CountUniqueLabelsMetric(),
+                        CountUniqueLabels(),
                         FeatureWeights(0, 0, 0, 0, 1),
                         n=20,
                     ),
@@ -254,28 +254,28 @@ def main() -> None:
                 (
                     "Weighted",
                     CitationModelScorer.score_top_n(
-                        citation_model_data, CountUniqueLabelsMetric(), FeatureWeights(), n=20
+                        citation_model_data, CountUniqueLabels(), FeatureWeights(), n=20
                     ),
                 ),
                 (
                     "TF-IDF",
-                    LanguageModelScorer.score_top_n(tfidf_data, CountUniqueLabelsMetric(), n=20),
+                    LanguageModelScorer.score_top_n(tfidf_data, CountUniqueLabels(), n=20),
                 ),
                 (
                     "Word2Vec",
-                    LanguageModelScorer.score_top_n(word2vec_data, CountUniqueLabelsMetric(), n=20),
+                    LanguageModelScorer.score_top_n(word2vec_data, CountUniqueLabels(), n=20),
                 ),
                 (
                     "FastText",
-                    LanguageModelScorer.score_top_n(fasttext_data, CountUniqueLabelsMetric(), n=20),
+                    LanguageModelScorer.score_top_n(fasttext_data, CountUniqueLabels(), n=20),
                 ),
                 (
                     "BERT",
-                    LanguageModelScorer.score_top_n(bert_data, CountUniqueLabelsMetric(), n=20),
+                    LanguageModelScorer.score_top_n(bert_data, CountUniqueLabels(), n=20),
                 ),
                 (
                     "SciBERT",
-                    LanguageModelScorer.score_top_n(scibert_data, CountUniqueLabelsMetric(), n=20),
+                    LanguageModelScorer.score_top_n(scibert_data, CountUniqueLabels(), n=20),
                 ),
             ],
             columns=["Feature", "Number of Unique Labels"],

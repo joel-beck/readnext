@@ -24,7 +24,7 @@ Given a query document, the goal of the hybrid recommender is to propose a list 
 
 The flow of the hybrid recommender system to generate recommendations is visualized in the following diagram:
 
-![](./static/hybrid-architecture.svg)
+![](./static/hybrid-architecture.png)
 
 In the first step, the metadata, the bibliography and the abstract of the query document are extracted.
 

@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="yu0OQrqvoiVsUhACBv0z" name="Page-1">
-        <mxGraphModel dx="1191" dy="1289" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#FFFFFF" math="0" shadow="1">
+        <mxGraphModel dx="1191" dy="1289" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#FFFFFF" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -27,7 +27,7 @@
                 <mxCell id="150" value="" style="edgeStyle=orthogonalEdgeStyle;curved=1;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=default;" parent="1" source="110" target="149" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="110" value="Query Document" style="pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#050505;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;outlineConnect=0;align=center;shape=mxgraph.office.concepts.document;fillStyle=auto;" parent="1" vertex="1">
+                <mxCell id="110" value="Query Document" style="pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#605c5c;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;outlineConnect=0;align=center;shape=mxgraph.office.concepts.document;fillStyle=auto;gradientColor=none;" parent="1" vertex="1">
                     <mxGeometry x="776" y="40" width="100" height="120" as="geometry"/>
                 </mxCell>
                 <mxCell id="129" value="Average Precision" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">

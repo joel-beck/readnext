@@ -20,7 +20,7 @@ Comprehensive documentation with detailed explanations of how the package is str
 
 Given a query document, the goal of the hybrid recommender is to propose a list of papers that are related to the query document and, thus, might be interesting follow-up reads.
 
-
+TODO: Add more information here
 
 The flow of the hybrid recommender system to generate recommendations is visualized in the following diagram:
 

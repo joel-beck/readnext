@@ -31,6 +31,8 @@ DocumentsTokensTensorMapping: TypeAlias = dict[int, DocumentsTokensTensor]
 
 @dataclass
 class ListTokenizer(ABC):
+    """Base class to tokenize abstracts into a list of string tokens."""
+
     documents_info: DocumentsInfo
 
     @abstractmethod
@@ -50,6 +52,8 @@ class ListTokenizer(ABC):
 
 @dataclass
 class TensorTokenizer(ABC):
+    """Base class to tokenize abstracts into a tensor of token ids."""
+
     documents_info: DocumentsInfo
 
     @abstractmethod
@@ -69,7 +73,7 @@ class TensorTokenizer(ABC):
 
 @dataclass
 class SpacyTokenizer(ListTokenizer):
-    """Implements `ListTokenizer` Protocol"""
+    """Tokenize abstracts using spacy into a list of string tokens."""
 
     documents_info: DocumentsInfo
     spacy_model: Language
@@ -78,13 +82,17 @@ class SpacyTokenizer(ListTokenizer):
     remove_non_alphanumeric: bool = False
 
     def to_spacy_doc(self, document: str) -> Doc:
+        """Converts a single abstract into a spacy document."""
         return self.spacy_model(document)
 
     def clean_spacy_doc(
         self,
         spacy_doc: Doc,
     ) -> DocumentTokens:
-        """Cleans a single spacy document."""
+        """
+        Cleans a single spacy document by removing stopwords, punctuation, and
+        non-alphanumeric tokens.
+        """
         clean_tokens = []
         # use for loop instead of list comprehension to allow disabling of individual filters
         for token in spacy_doc:
@@ -102,12 +110,15 @@ class SpacyTokenizer(ListTokenizer):
         return clean_tokens
 
     def clean_document(self, document: DocumentString) -> DocumentTokens:
-        """Converts and cleans a single abstract."""
+        """Tokenizes and cleans a single abstract."""
         spacy_doc = self.to_spacy_doc(document)
         return self.clean_spacy_doc(spacy_doc)
 
     def tokenize(self) -> DocumentTokensMapping:
-        """Cleans and tokenizes multiple abstracts."""
+        """
+        Tokenizes and cleans multiple abstracts. Gnereates a mapping of document ids to
+        tokens.
+        """
         tokenized_abstracts_mapping = {}
 
         with setup_progress_bar() as progress_bar:
@@ -119,33 +130,48 @@ class SpacyTokenizer(ListTokenizer):
 
         return tokenized_abstracts_mapping
 
-    # `TfidfVectorizer` expects a list of strings, not a list of lists of strings
     def to_strings(self) -> DocumentStringMapping:
+        """
+        Generates a mapping of document ids to strings from raw abstracts. Required
+        since `TfidfVectorizer` expects a list of strings, not a list of lists of
+        strings.
+        """
         return {document_id: " ".join(tokens) for document_id, tokens in self.tokenize().items()}
 
     @staticmethod
     def strings_from_tokens(
         tokens_mapping: DocumentTokensMapping,
     ) -> DocumentStringMapping:
+        """
+        Converts a mapping of document ids to tokens (list of string) into a mapping of
+        document ids to strings. Required since `TfidfVectorizer` expects a list of
+        strings, not a list of lists of strings.
+        """
         return {document_id: " ".join(tokens) for document_id, tokens in tokens_mapping.items()}
 
     @staticmethod
     def save_tokens_mapping(path: Path, tokens_mapping: DocumentTokensMapping) -> None:
+        """Save a mapping of document ids to tokens to a pickle file."""
         save_object_to_pickle(tokens_mapping, path)
 
     @staticmethod
     def load_tokens_mapping(path: Path) -> DocumentTokensMapping:
+        """Load a mapping of document ids to tokens from a pickle file."""
         return load_object_from_pickle(path)  # type: ignore
 
 
 @dataclass
 class BERTTokenizer(TensorTokenizer):
-    """Implements `TensorTokenizer` Protocol"""
+    """Tokenize abstracts using BERT into a tensor of token ids."""
 
     documents_info: DocumentsInfo
     bert_tokenizer: BertTokenizerFast
 
     def tokenize(self) -> DocumentsTokensTensorMapping:
+        """
+        Tokenizes multiple abstracts into token ids. Generates a mapping of document ids
+        to token ids.
+        """
         tokenized_abstracts = self.bert_tokenizer(
             self.documents_info.abstracts,
             # BERT takes 512 dimensional tensors as input
@@ -163,8 +189,10 @@ class BERTTokenizer(TensorTokenizer):
     def save_tokens_mapping(
         path: Path, tokens_tensor_mapping: DocumentsTokensTensorMapping
     ) -> None:
+        """Save a mapping of document ids to token ids to a pytorch file."""
         torch.save(tokens_tensor_mapping, path)
 
     @staticmethod
     def load_tokens_mapping(path: Path) -> DocumentsTokensTensorMapping:
+        """Load a mapping of document ids to token ids from a pytorch file."""
         return torch.load(path)  # type: ignore

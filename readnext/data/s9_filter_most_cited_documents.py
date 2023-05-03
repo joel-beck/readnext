@@ -1,3 +1,8 @@
+"""
+Filter a subset of the most cited documents from the full documents data and store it in
+a separate file.
+"""
+
 import pandas as pd
 
 from readnext.config import DataPaths

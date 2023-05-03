@@ -1,3 +1,5 @@
+"""Tokenize paper abstracts in order to pass it to embedding models."""
+
 import pandas as pd
 import spacy
 from transformers import BertTokenizerFast

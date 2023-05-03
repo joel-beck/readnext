@@ -1,8 +1,10 @@
 """
-- Set file paths for reading and writing data
-- Set file paths for reading pretrained models
-- Set file paths for reading and writing model results
-- Specify Model Versions
+Project configuration file.
+
+- Sets file paths for reading and writing data
+- Sets file paths for reading pretrained models
+- Sets file paths for reading and writing model results
+- Specifies Model Versions
 
 Requires a .env file in the root directory with the following variables:
 - DATA_DIRPATH (default: `data`): path to the data directory where all data files are
@@ -37,6 +39,8 @@ authors_metadata_json_filename = os.getenv("AUTHORS_METADATA_FILENAME", "2022-11
 
 @dataclass(frozen=True)
 class D3DocumentsDataPaths:
+    """Sets file paths for the raw D3 documents data."""
+
     raw_json: Path = data_dirpath / documents_metadata_json_filename
     chunks_stem: Path = data_dirpath / "2022-11-30_documents_chunks"
     full_pkl: Path = data_dirpath / "2022-11-30_documents_full.pkl"
@@ -45,6 +49,8 @@ class D3DocumentsDataPaths:
 
 @dataclass(frozen=True)
 class D3AuthorsDataPaths:
+    """Sets file paths for the raw D3 authors data."""
+
     raw_json: Path = data_dirpath / authors_metadata_json_filename
     most_cited_pkl: Path = data_dirpath / "2022-11-30_authors_most_cited.pkl"
     full_pkl: Path = data_dirpath / "2022-11-30_authors_full.pkl"
@@ -52,18 +58,27 @@ class D3AuthorsDataPaths:
 
 @dataclass(frozen=True)
 class D3:
-    documents: D3DocumentsDataPaths = D3DocumentsDataPaths()
-    authors: D3AuthorsDataPaths = D3AuthorsDataPaths()
+    """Collects file paths for the raw D3 data."""
+
+    documents: D3DocumentsDataPaths = D3DocumentsDataPaths()  # noqa: RUF009
+    authors: D3AuthorsDataPaths = D3AuthorsDataPaths()  # noqa: RUF009
 
 
 @dataclass(frozen=True)
 class ArxivDataPaths:
+    """Sets file paths for the raw arXiv data."""
+
     raw_json: Path = data_dirpath / "arxiv_metadata.json"
     id_labels_pkl: Path = data_dirpath / "arxiv_id_labels.pkl"
 
 
 @dataclass(frozen=True)
 class MergedDataPaths:
+    """
+    Sets file paths for all processed data files after adding information to the raw D3
+    data.
+    """
+
     documents_labels_chunk_stem: Path = data_dirpath / "documents_labels_chunks"
     documents_labels_pkl: Path = data_dirpath / "documents_labels.pkl"
     documents_authors_labels_pkl: Path = data_dirpath / "documents_authors_labels.pkl"
@@ -81,13 +96,17 @@ class MergedDataPaths:
 
 @dataclass(frozen=True)
 class DataPaths:
-    d3: D3 = D3()
-    arxiv: ArxivDataPaths = ArxivDataPaths()
-    merged: MergedDataPaths = MergedDataPaths()
+    """Collects file paths for all data files."""
+
+    d3: D3 = D3()  # noqa: RUF009
+    arxiv: ArxivDataPaths = ArxivDataPaths()  # noqa: RUF009
+    merged: MergedDataPaths = MergedDataPaths()  # noqa: RUF009
 
 
 @dataclass(frozen=True)
 class ModelVersions:
+    """Specifies the versions of pretrained models."""
+
     spacy: str = "en_core_web_sm"
     word2vec: str = "word2vec-google-news-300"
     fasttext: str = "cc.en.300.bin"
@@ -97,7 +116,7 @@ class ModelVersions:
 
 @dataclass
 class ModelPaths:
-    """File paths to pretrained models"""
+    """Sets file paths to pretrained models."""
 
     word2vec: Path = models_dirpath / ModelVersions.word2vec
     fasttext: Path = models_dirpath / ModelVersions.fasttext
@@ -105,6 +124,8 @@ class ModelPaths:
 
 @dataclass(frozen=True)
 class CitationModelsResultsPaths:
+    """Sets file paths for citation model results."""
+
     bibliographic_coupling_scores_most_cited_pkl: Path = (
         results_dirpath / "bibliographic_coupling_scores_most_cited.pkl"
     )
@@ -115,6 +136,8 @@ class CitationModelsResultsPaths:
 
 @dataclass(frozen=True)
 class LanguageModelsResultsPaths:
+    """Sets file paths for language model results."""
+
     spacy_tokenized_abstracts_mapping_most_cited_pkl: Path = (
         results_dirpath / "spacy_tokenized_abstracts_mapping_most_cited.pkl"
     )
@@ -123,12 +146,6 @@ class LanguageModelsResultsPaths:
     )
     tfidf_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "tfidf_cosine_similarities_most_cited.pkl"
-    )
-    bm25_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "bm25_embeddings_mapping_most_cited.pkl"
-    )
-    bm25_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "bm25_cosine_similarities_most_cited.pkl"
     )
     word2vec_embeddings_mapping_most_cited_pkl: Path = (
         results_dirpath / "word2vec_embeddings_mapping_most_cited.pkl"
@@ -164,5 +181,7 @@ class LanguageModelsResultsPaths:
 
 @dataclass(frozen=True)
 class ResultsPaths:
-    citation_models: CitationModelsResultsPaths = CitationModelsResultsPaths()
-    language_models: LanguageModelsResultsPaths = LanguageModelsResultsPaths()
+    """Collects file paths for all result files."""
+
+    citation_models: CitationModelsResultsPaths = CitationModelsResultsPaths()  # noqa: RUF009
+    language_models: LanguageModelsResultsPaths = LanguageModelsResultsPaths()  # noqa: RUF009

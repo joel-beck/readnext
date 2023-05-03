@@ -7,6 +7,8 @@ from typing_extensions import Self
 
 @dataclass(kw_only=True)
 class DocumentInfo:
+    """Collects information about a single document/paper."""
+
     document_id: int
     title: str = ""
     author: str = ""
@@ -25,6 +27,8 @@ class DocumentInfo:
 
 @dataclass
 class DocumentsInfo:
+    """Represents a collection of multiple documents/papers."""
+
     documents_info: list[DocumentInfo]
 
     def __post_init__(self) -> None:
@@ -54,11 +58,20 @@ class DocumentsInfo:
 # defined here instead of in readnext.evaluation to avoid circular imports
 @dataclass(kw_only=True)
 class DocumentScore:
+    """
+    Represents a document and its corresponding score. Depending on the context, the
+    score can be e.g. a similarity score or an average precision score.
+    """
+
     document_info: DocumentInfo
     score: float
 
 
 def documents_info_from_df(df: pd.DataFrame) -> DocumentsInfo:
+    """
+    Generate a `DocumentsInfo` instance from the input documents dataframe, which
+    consists `document_id`, `title`, and `abstract` columns.
+    """
     document_ids = df["document_id"].tolist()
     titles = df["title"].tolist()
     abstracts = df["abstract"].tolist()

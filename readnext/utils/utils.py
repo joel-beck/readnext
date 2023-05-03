@@ -12,7 +12,7 @@ def slice_mapping(
     end: int | None = None,
 ) -> dict[TKey, TValue]:
     """
-    Subset a dictionary by numeric indices. Is size is provided, it takes precedence
+    Subset a dictionary by numeric indices. If size is provided, it takes precedence
     over start and end.
     """
 

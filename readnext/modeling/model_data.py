@@ -17,6 +17,12 @@ T = TypeVar("T", bound=ModelDataConstructor)
 
 @dataclass
 class ModelData(ABC, Generic[T]):
+    """
+    Holds the required data for a recommender model, including information about the
+    query document, information features about the candidate documents, and the integer
+    labels for the candidate documents.
+    """
+
     query_document: DocumentInfo
     info_matrix: pd.DataFrame
     integer_labels: pd.Series
@@ -24,15 +30,20 @@ class ModelData(ABC, Generic[T]):
     @classmethod
     @abstractmethod
     def from_constructor(cls, constructor: T) -> Self:
-        ...
+        """Construct a `ModelData` instance from a `ModelDataConstructor` instance."""
 
     @abstractmethod
     def __getitem__(self, indices: pd.Index) -> Self:
-        ...
+        """Specify how to index or slice a `ModelData` instance."""
 
 
 @dataclass
 class CitationModelData(ModelData):
+    """
+    Holds the required data for the citation recommender model. Adds a feature matrix
+    which contains the citation and global document features.
+    """
+
     feature_matrix: pd.DataFrame
 
     @classmethod
@@ -55,6 +66,11 @@ class CitationModelData(ModelData):
 
 @dataclass
 class LanguageModelData(ModelData):
+    """
+    Holds the required data for the language model recommender model. Adds cosine
+    similarity ranks of all candidate documents with respect to the query document.
+    """
+
     cosine_similarity_ranks: pd.DataFrame
 
     @classmethod

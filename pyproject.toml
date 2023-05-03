@@ -136,6 +136,7 @@ select = [
     "Q", # flake8-quotes
     "RET", # flake8-return
     "RSE", # flake8-raise
+    "RUF", # ruff-specific rules
     "SIM", # flake8-simplify
     "TID", # flake8-tidy-imports
     "UP", # pyupgrade
@@ -148,7 +149,8 @@ select = [
 # - `N806` (variable in function should be lowercase)
 # - `PD015` (use `.merge()` instead of `pd.merge()`, incorrect for Series)
 # - `PD901` (don't use `df` as a variable name)
-ignore = ["ANN101", "ANN102", "N803", "N806", "PD015", "PD901"]
+# - "RUF100" (unused `noqa`)
+ignore = ["ANN101", "ANN102", "N803", "N806", "PD015", "PD901", "RUF100"]
 # Never try to fix
 # - `F401` (unused imports)
 # - `F841` (unused variables)

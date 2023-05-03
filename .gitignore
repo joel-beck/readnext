@@ -134,13 +134,6 @@ data-raw/*.tsv
 *.pdf
 *.html
 
-# Image Files
-*.png
-*.jpeg
-*.jpg
-*.svg
-*.gif
-
 # Presentation Files
 *.pptx
 *.ppt

@@ -4,7 +4,7 @@ import torch
 from readnext.config import ResultsPaths
 from readnext.modeling.language_models import TokensMapping, TokensTensorMapping
 from readnext.utils import load_object_from_pickle, slice_mapping
-from readnext.utils.testing import assert_token_tensor_mapping_equal
+from readnext.utils.testing import assert_tokens_tensor_mapping_equal
 
 
 @pytest.fixture(scope="module")
@@ -115,12 +115,12 @@ def test_that_test_data_mimics_real_data(
         == test_spacy_tokenized_abstracts_mapping_most_cited
     )
 
-    assert_token_tensor_mapping_equal(
+    assert_tokens_tensor_mapping_equal(
         slice_mapping(bert_tokenized_abstracts_mapping_most_cited, 100),
         test_bert_tokenized_abstracts_mapping_most_cited,
     )
 
-    assert_token_tensor_mapping_equal(
+    assert_tokens_tensor_mapping_equal(
         slice_mapping(scibert_tokenized_abstracts_mapping_most_cited, 100),
         test_scibert_tokenized_abstracts_mapping_most_cited,
     )

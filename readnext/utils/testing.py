@@ -3,7 +3,7 @@ import torch
 from readnext.modeling.language_models import TokensTensorMapping
 
 
-def assert_token_tensor_mapping_equal(
+def assert_tokens_tensor_mapping_equal(
     mapping_1: TokensTensorMapping, mapping_2: TokensTensorMapping
 ) -> None:
     assert isinstance(mapping_1, dict)

@@ -25,8 +25,8 @@ DocumentString: TypeAlias = str
 DocumentStringMapping: TypeAlias = dict[int, DocumentString]
 
 # each document is represented as a tensor of token ids
-DocumentsTokensTensor: TypeAlias = torch.Tensor
-DocumentsTokensTensorMapping: TypeAlias = dict[int, DocumentsTokensTensor]
+DocumentTokensTensor: TypeAlias = torch.Tensor
+DocumentTokensTensorMapping: TypeAlias = dict[int, DocumentTokensTensor]
 
 
 @dataclass
@@ -57,17 +57,17 @@ class TensorTokenizer(ABC):
     documents_info: DocumentsInfo
 
     @abstractmethod
-    def tokenize(self) -> DocumentsTokensTensorMapping:
+    def tokenize(self) -> DocumentTokensTensorMapping:
         ...
 
     @staticmethod
     @abstractmethod
-    def save_tokens_mapping(path: Path, tokens_tensor: DocumentsTokensTensorMapping) -> None:
+    def save_tokens_mapping(path: Path, tokens_tensor: DocumentTokensTensorMapping) -> None:
         ...
 
     @staticmethod
     @abstractmethod
-    def load_tokens_mapping(path: Path) -> DocumentsTokensTensorMapping:
+    def load_tokens_mapping(path: Path) -> DocumentTokensTensorMapping:
         ...
 
 
@@ -167,7 +167,7 @@ class BERTTokenizer(TensorTokenizer):
     documents_info: DocumentsInfo
     bert_tokenizer: BertTokenizerFast
 
-    def tokenize(self) -> DocumentsTokensTensorMapping:
+    def tokenize(self) -> DocumentTokensTensorMapping:
         """
         Tokenizes multiple abstracts into token ids. Generates a mapping of document ids
         to token ids.
@@ -186,13 +186,11 @@ class BERTTokenizer(TensorTokenizer):
         return dict(zip(self.documents_info.document_ids, tokenized_abstracts))  # type: ignore
 
     @staticmethod
-    def save_tokens_mapping(
-        path: Path, tokens_tensor_mapping: DocumentsTokensTensorMapping
-    ) -> None:
+    def save_tokens_mapping(path: Path, tokens_tensor_mapping: DocumentTokensTensorMapping) -> None:
         """Save a mapping of document ids to token ids to a pytorch file."""
         torch.save(tokens_tensor_mapping, path)
 
     @staticmethod
-    def load_tokens_mapping(path: Path) -> DocumentsTokensTensorMapping:
+    def load_tokens_mapping(path: Path) -> DocumentTokensTensorMapping:
         """Load a mapping of document ids to token ids from a pytorch file."""
         return torch.load(path)  # type: ignore

@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+import torch
 
 from readnext.utils import load_df_from_pickle, load_object_from_pickle
 
@@ -28,7 +29,7 @@ def test_bert_embeddings_mapping_most_cited(root_path: Path) -> dict:
 
 @pytest.fixture(scope="session")
 def test_bert_tokenized_abstracts_mapping_most_cited(root_path: Path) -> dict:
-    return load_object_from_pickle(
+    return torch.load(
         root_path / "tests" / "data" / "test_bert_tokenized_abstracts_mapping_most_cited.pt"
     )
 
@@ -84,15 +85,15 @@ def test_scibert_embeddings_mapping_most_cited(root_path: Path) -> dict:
 
 @pytest.fixture(scope="session")
 def test_scibert_tokenized_abstracts_mapping_most_cited(root_path: Path) -> dict:
-    return load_object_from_pickle(
+    return torch.load(
         root_path / "tests" / "data" / "test_scibert_tokenized_abstracts_mapping_most_cited.pt"
     )
 
 
 @pytest.fixture(scope="session")
-def test_spacy_tokenized_abstracts_most_cited(root_path: Path) -> pd.DataFrame:
-    return load_df_from_pickle(
-        root_path / "tests" / "data" / "test_spacy_tokenized_abstracts_most_cited.pkl"
+def test_spacy_tokenized_abstracts_mapping_most_cited(root_path: Path) -> pd.DataFrame:
+    return load_object_from_pickle(
+        root_path / "tests" / "data" / "test_spacy_tokenized_abstracts_mapping_most_cited.pkl"
     )
 
 

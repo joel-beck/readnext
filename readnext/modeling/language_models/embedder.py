@@ -12,11 +12,11 @@ from transformers import BertModel
 
 # do not import from .language_models to avoid circular imports
 from readnext.modeling.language_models.tokenizer import (
-    DocumentsTokensTensor,
-    DocumentsTokensTensorMapping,
     DocumentStringMapping,
     DocumentTokens,
     DocumentTokensMapping,
+    DocumentTokensTensor,
+    DocumentTokensTensorMapping,
 )
 from readnext.utils import setup_progress_bar
 
@@ -253,7 +253,7 @@ class BERTEmbedder:
 
     def compute_embeddings_single_document(
         self,
-        tokens_tensor: DocumentsTokensTensor,
+        tokens_tensor: DocumentTokensTensor,
         aggregation_strategy: AggregationStrategy = AggregationStrategy.mean,
     ) -> DocumentEmbeddings:
         """
@@ -274,7 +274,7 @@ class BERTEmbedder:
 
         # first element of outputs is the last hidden state of the [CLS] token
         # dimension: num_documents x num_tokens_per_document x embedding_dimension
-        document_embeddings: DocumentsTokensTensor = outputs.last_hidden_state
+        document_embeddings: DocumentTokensTensor = outputs.last_hidden_state
 
         if aggregation_strategy.is_mean:
             document_embedding = document_embeddings.mean(dim=1)
@@ -287,7 +287,7 @@ class BERTEmbedder:
 
     def compute_embeddings_mapping(
         self,
-        tokens_tensor_mapping: DocumentsTokensTensorMapping,
+        tokens_tensor_mapping: DocumentTokensTensorMapping,
         aggregation_strategy: AggregationStrategy = AggregationStrategy.mean,
     ) -> DocumentEmbeddingsMapping:
         """

@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 from pandas.api.types import is_integer_dtype
+from pandas.testing import assert_frame_equal
 
 from readnext.config import ResultsPaths
 from readnext.utils import load_df_from_pickle, load_object_from_pickle
@@ -148,4 +149,41 @@ def test_scibert_embeddings_most_cited(
     # check embedding dimension
     assert all(
         len(embedding) == 768 for embedding in scibert_embeddings_mapping_most_cited["embedding"]
+    )
+
+
+def test_that_test_data_mimics_real_data(
+    tfidf_embeddings_mapping_most_cited: pd.DataFrame,
+    word2vec_embeddings_mapping_most_cited: pd.DataFrame,
+    fasttext_embeddings_mapping_most_cited: pd.DataFrame,
+    bert_embeddings_mapping_most_cited: pd.DataFrame,
+    scibert_embeddings_mapping_most_cited: pd.DataFrame,
+    test_tfidf_embeddings_mapping_most_cited: pd.DataFrame,
+    test_word2vec_embeddings_mapping_most_cited: pd.DataFrame,
+    test_fasttext_embeddings_mapping_most_cited: pd.DataFrame,
+    test_bert_embeddings_mapping_most_cited: pd.DataFrame,
+    test_scibert_embeddings_mapping_most_cited: pd.DataFrame,
+) -> None:
+    assert_frame_equal(
+        tfidf_embeddings_mapping_most_cited.head(100), test_tfidf_embeddings_mapping_most_cited
+    )
+
+    assert_frame_equal(
+        word2vec_embeddings_mapping_most_cited.head(100),
+        test_word2vec_embeddings_mapping_most_cited,
+    )
+
+    assert_frame_equal(
+        fasttext_embeddings_mapping_most_cited.head(100),
+        test_fasttext_embeddings_mapping_most_cited,
+    )
+
+    assert_frame_equal(
+        bert_embeddings_mapping_most_cited.head(100),
+        test_bert_embeddings_mapping_most_cited,
+    )
+
+    assert_frame_equal(
+        scibert_embeddings_mapping_most_cited.head(100),
+        test_scibert_embeddings_mapping_most_cited,
     )

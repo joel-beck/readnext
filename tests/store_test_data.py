@@ -58,18 +58,18 @@ def main() -> None:
         # handle pytorch files
         if destination_path.suffix == ".pt":
             tensor_mapping = torch.load(path)
-            torch.save(slice_mapping(tensor_mapping, size=10), destination_path)
+            torch.save(slice_mapping(tensor_mapping, size=100), destination_path)
             continue
 
         # handle pickle files
         obj = load_df_from_pickle(path)
 
         if isinstance(obj, pd.DataFrame):
-            save_df_to_pickle(obj.head(10), destination_path)
+            save_df_to_pickle(obj.head(100), destination_path)
             continue
 
         if isinstance(obj, dict):
-            save_object_to_pickle(slice_mapping(obj, size=10), destination_path)
+            save_object_to_pickle(slice_mapping(obj, size=100), destination_path)
 
 
 if __name__ == "__main__":

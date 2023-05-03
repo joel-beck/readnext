@@ -8,12 +8,12 @@ from readnext.modeling.language_models.embedder import (
 )
 from readnext.modeling.language_models.tokenizer import (
     BERTTokenizer,
-    DocumentString,
-    DocumentStringMapping,
-    DocumentTokens,
-    DocumentTokensMapping,
-    DocumentTokensTensor,
-    DocumentTokensTensorMapping,
+    str,
+    StringMapping,
+    Tokens,
+    TokensMapping,
+    TokensTensor,
+    TokensTensorMapping,
     SpacyTokenizer,
 )
 
@@ -25,11 +25,11 @@ __all__ = [
     "Word2VecEmbedder",
     "embeddings_mapping_to_frame",
     "BERTTokenizer",
-    "DocumentTokensTensor",
-    "DocumentTokensTensorMapping",
-    "DocumentString",
-    "DocumentStringMapping",
-    "DocumentTokens",
-    "DocumentTokensMapping",
+    "TokensTensor",
+    "TokensTensorMapping",
+    "str",
+    "StringMapping",
+    "Tokens",
+    "TokensMapping",
     "SpacyTokenizer",
 ]

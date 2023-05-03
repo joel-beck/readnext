@@ -12,11 +12,11 @@ from readnext.modeling.model_data_constructor import (
     ModelDataConstructor,
 )
 
-T = TypeVar("T", bound=ModelDataConstructor)
+TModelDataConstructor = TypeVar("TModelDataConstructor", bound=ModelDataConstructor)
 
 
 @dataclass
-class ModelData(ABC, Generic[T]):
+class ModelData(ABC, Generic[TModelDataConstructor]):
     """
     Holds the required data for a recommender model, including information about the
     query document, information features about the candidate documents, and the integer
@@ -29,7 +29,7 @@ class ModelData(ABC, Generic[T]):
 
     @classmethod
     @abstractmethod
-    def from_constructor(cls, constructor: T) -> Self:
+    def from_constructor(cls, constructor: TModelDataConstructor) -> Self:
         """Construct a `ModelData` instance from a `ModelDataConstructor` instance."""
 
     @abstractmethod

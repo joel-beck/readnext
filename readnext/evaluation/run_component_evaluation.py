@@ -1,4 +1,7 @@
-"""Compute evaluation metrics and show best recommendations for a single query document."""
+"""
+Compute evaluation metrics and show the best recommendations of either the Citation
+model or a single Language Model for a single query document.
+"""
 
 import pandas as pd
 

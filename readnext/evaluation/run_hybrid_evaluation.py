@@ -1,6 +1,6 @@
 """
-Compute average precision scores and select the best recommendations from the hybrid
-recommender model in both recommender component orders for a given query document.
+Compute scores and select the best recommendations from the hybrid recommender model in
+both hybrid recommender component orders for a given query document.
 """
 
 import pandas as pd

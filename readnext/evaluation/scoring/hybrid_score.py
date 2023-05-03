@@ -8,6 +8,12 @@ from readnext.evaluation.scoring.hybrid_scorer import HybridScorer
 
 @dataclass
 class HybridScore:
+    """
+    Holds all scores (e.g. Average Precision) for a hybrid recommender. Makes it easy to
+    compare the scores of both recommender component orders as well as the individual
+    component scores.
+    """
+
     language_model_name: str
     citation_to_language: float
     citation_to_language_candidates: float
@@ -16,6 +22,7 @@ class HybridScore:
 
     @classmethod
     def from_scorer(cls, hybrid_scorer: HybridScorer) -> Self:
+        """Constructs a HybridScore from a HybridScorer."""
         return cls(
             language_model_name=hybrid_scorer.language_model_name,
             citation_to_language=hybrid_scorer.citation_to_language_scores,
@@ -39,6 +46,7 @@ class HybridScore:
         )
 
     def to_frame(self) -> pd.DataFrame:
+        """Collect all scores in a DataFrame."""
         return pd.DataFrame(
             {
                 "Language Model": self.language_model_name,
@@ -56,4 +64,8 @@ class HybridScore:
 
 
 def compare_hybrid_scores(*hybrid_scores: HybridScore) -> pd.DataFrame:
+    """
+    Stacks the hybrid recommender scores for multiple query documents vertically in a
+    DataFrame.
+    """
     return pd.concat([hybrid_score.to_frame() for hybrid_score in hybrid_scores], ignore_index=True)

@@ -12,6 +12,11 @@ TModelData = TypeVar("TModelData", bound=ModelData)
 
 @dataclass
 class FeatureWeights:
+    """
+    Holds the weights for the citation features and global document features for the
+    non-language model recommender.
+    """
+
     publication_date: float = 1.0
     citationcount_document: float = 1.0
     citationcount_author: float = 1.0
@@ -19,6 +24,7 @@ class FeatureWeights:
     bibliographic_coupling: float = 1.0
 
     def to_series(self) -> pd.Series:
+        """Collects all weights in a Pandas Series."""
         return pd.Series(
             {
                 "publication_date_rank": self.publication_date,
@@ -88,11 +94,12 @@ class ModelScorer(ABC, Generic[TModelData]):
 
     @staticmethod
     def add_labels(df: pd.DataFrame, labels: pd.Series) -> pd.DataFrame:
-        """Add a vector of integer labels to a dataframe."""
+        """Add a vector of labels to a dataframe."""
         return pd.merge(df, labels, left_index=True, right_index=True)
 
     @staticmethod
     def compute_weighted_rowsums(df: pd.DataFrame, feature_weights: FeatureWeights) -> pd.Series:
+        """Compute the weighted rowsums of a dataframe with one weight for each column."""
         return df.mul(feature_weights.to_series()).sum(axis=1)
 
 

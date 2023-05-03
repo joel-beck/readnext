@@ -27,6 +27,13 @@ DocumentEmbeddingsMapping: TypeAlias = dict[int, DocumentEmbeddings]
 
 
 class AggregationStrategy(str, Enum):
+    """
+    Determines the aggregation strategy for computing document embeddings from token embeddings.
+
+    - `mean` sets the average of all token embeddings in a document as the document embedding.
+    - `max` sets the maximum of all token embeddings in a document as the document embedding.
+    """
+
     mean = "mean"
     max = "max"  # noqa: A003
 
@@ -43,6 +50,10 @@ class AggregationStrategy(str, Enum):
 
 
 def embeddings_mapping_to_frame(embeddings_mapping: DocumentEmbeddingsMapping) -> pd.DataFrame:
+    """
+    Converts a dictionary of document ids to document embeddings to a pandas DataFrame.
+    The output dataframe has two columns: `document_id` and `embedding`.
+    """
     return (
         pd.Series(embeddings_mapping, name="embedding")
         .to_frame()
@@ -53,9 +64,15 @@ def embeddings_mapping_to_frame(embeddings_mapping: DocumentEmbeddingsMapping) -
 
 @dataclass
 class Embedder(Protocol):
+    """
+    Protocol for embedding models. All embedding models take an embedding model as input
+    and implement a `compute_embeddings_mapping` method.
+    """
+
     embedding_model: EmbeddingModel
 
-    def compute_embeddings_mapping(self) -> np.ndarray:
+    def compute_embeddings_mapping(self) -> DocumentEmbeddingsMapping:
+        """Computes a dictionary of document ids to document embeddings."""
         ...
 
 
@@ -64,7 +81,7 @@ class TFIDFEmbedder:
     """
     Implements `Embedder` Protocol
 
-    Takes TfidfVectorizer as input that has already been fitted on the training corpus.
+    Computes document embeddings with the TF-IDF model.
     """
 
     embedding_model: TfidfVectorizer
@@ -80,9 +97,11 @@ class TFIDFEmbedder:
         Takes a list of cleaned documents (list of strings, one string for each
         document) as input and computes the tfidf token embeddings.
 
-        Output has shape (n_documents, n_tokens_vocab) with - n_documents: number of
-        documents in provided input - n_tokens_vocab: number of tokens in vocabulary
-        that was learned during training
+        Output is a dictionary with document ids as keys and document embeddings as
+        values. Each document embedding has shape (n_tokens_vocab,) with
+
+        - n_tokens_vocab: number of tokens in the vocabulary that was learned during
+          training
         """
         self.embedding_model = self.embedding_model.fit(tokens_mapping.values())
 
@@ -114,6 +133,7 @@ class BM25Embedder:
         as input and computes the bm25 token embeddings.
 
         Output has shape (n_documents_training,) with
+
         - n_documents_training: number of documents in training corpus
         """
         return self.embedding_model.get_scores(tokens)  # type: ignore
@@ -125,8 +145,9 @@ class BM25Embedder:
         Takes a list of tokenized documents (list of lists of strings, one list of
         strings for each document) as input and computes the bm25 token embeddings.
 
-        Output has shape (n_documents_input, n_documents_training) with
-        - n_documents_input: number of documents in provided input
+        Output is a dictionary with document ids as keys and document embeddings as
+        values. Each document embedding has shape (n_documents_training,) with
+
         - n_documents_training: number of documents in training corpus
         """
         return {
@@ -148,7 +169,7 @@ class GensimEmbedder(ABC):
     @abstractmethod
     def compute_word_embeddings_per_document(self, tokens: DocumentTokens) -> np.ndarray:
         """
-        Stacks all word embeddings of documents vertically.
+        Stacks all word embeddings of a single document vertically.
 
         Output has shape (n_tokens_input, n_dimensions) with
         - n_tokens_input: number of tokens in provided input document
@@ -184,9 +205,10 @@ class GensimEmbedder(ABC):
         strings for each document) as input and computes the word2vec or fasttext token
         embeddings.
 
-        Output has shape (n_documents_input, n_dimensions) with - n_documents_input:
-        number of documents in provided input - n_dimensions: dimension of embedding
-        space
+        Output is a dictionary with document ids as keys and document embeddings as
+        values. Each document embedding has shape (n_dimensions,) with
+
+        - n_dimensions: dimension of the embedding space
         """
         return {
             document_id: self.compute_document_embedding(
@@ -197,6 +219,8 @@ class GensimEmbedder(ABC):
 
 
 class Word2VecEmbedder(GensimEmbedder):
+    """Computes document embeddings with the Word2Vec model."""
+
     def __init__(self, embedding_model: KeyedVectors) -> None:
         super().__init__(embedding_model)
 
@@ -208,6 +232,8 @@ class Word2VecEmbedder(GensimEmbedder):
 
 
 class FastTextEmbedder(GensimEmbedder):
+    """Computes document embeddings with the FastText model."""
+
     def __init__(self, embedding_model: FastText) -> None:
         super().__init__(embedding_model)
 
@@ -220,7 +246,7 @@ class BERTEmbedder:
     """
     Implements `Embedder` Protocol
 
-    Takes pretrained BERT model as input.
+    Takes a pretrained BERT model as input.
     """
 
     embedding_model: BertModel
@@ -234,9 +260,12 @@ class BERTEmbedder:
         Takes a tensor of a single tokenized document as input and computes the BERT
         token embeddings.
 
-        Output has shape (n_documents_input, n_dimensions) with - n_documents_input:
-        number of documents in provided input, corresponds to first dimension of
-        `tokens_tensor` input - n_dimensions: dimension of embedding space
+        Output has shape (n_documents_input, n_dimensions) with
+
+        - n_documents_input: number of documents in provided input, corresponds to first
+          dimension of
+        `tokens_tensor` input
+        - n_dimensions: dimension of embedding space
         """
         # outputs is an ordered dictionary with keys `last_hidden_state` and `pooler_output`
         # BertModel expects tensor of shape (batch_size, sequence_length), i.e. add
@@ -261,6 +290,15 @@ class BERTEmbedder:
         tokens_tensor_mapping: DocumentsTokensTensorMapping,
         aggregation_strategy: AggregationStrategy = AggregationStrategy.mean,
     ) -> DocumentEmbeddingsMapping:
+        """
+        Takes a tensor of tokenized documents as input and computes the BERT token
+        embeddings.
+
+        Output is a dictionary with document ids as keys and document embeddings as
+        values. Each document embedding has shape (n_dimensions,) with
+
+        - n_dimensions: dimension of the embedding space
+        """
         embeddings_mapping = {}
 
         with setup_progress_bar() as progress_bar:

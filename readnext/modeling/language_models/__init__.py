@@ -8,13 +8,13 @@ from readnext.modeling.language_models.embedder import (
 )
 from readnext.modeling.language_models.tokenizer import (
     BERTTokenizer,
-    str,
+    SpacyTokenizer,
     StringMapping,
     Tokens,
     TokensMapping,
     TokensTensor,
     TokensTensorMapping,
-    SpacyTokenizer,
+    str,
 )
 
 __all__ = [

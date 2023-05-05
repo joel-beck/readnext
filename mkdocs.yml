@@ -7,6 +7,8 @@ repo_url: https://github.com/joel-beck/readnext
 
 theme:
   name: material
+  icon:
+    logo: material/meteor # built-in icon search at https://squidfunk.github.io/mkdocs-material/reference/icons-emojis/?h=ic#search # noqa
   features:
     - content.code.copy # Adds a copy button to code blocks
     - content.tabs.link # Allows linking to specific tabs via URLs

@@ -31,15 +31,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - uses: actions/cache@v3
-        with:
-          key: mkdocs-material-${{ github.ref }}
-          path: .cache
-          restore-keys: |
-            mkdocs-material-
+      - name: Install production dependencies
+        run: pdm install
 
-      - run: pip install mkdocs-material
-
-      - run: mkdocs gh-deploy --force
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and deploy docs to GitHub Pages
+        run: pdm deploy

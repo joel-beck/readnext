@@ -50,9 +50,7 @@ test = "pytest"
 test-ci = "pytest --ignore tests/test_data"
 pre = "pre-commit run --all-files"
 serve = "mkdocs serve"
-# use `pdm run build` since `pdm build` is a built-in command to build the package
-build = "mkdocs build"
-deploy = "mkdocs gh-deploy"
+deploy = { shell = "mkdocs build && mkdocs gh-deploy" }
 
 [tool.pdm.dev-dependencies]
 dev = [

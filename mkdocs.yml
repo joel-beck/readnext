@@ -44,13 +44,8 @@ markdown_extensions:
   - md_in_html # Allows embedding Markdown inside HTML tags
   - pymdownx.details # Enables collapsible content sections using the details HTML tag
   - pymdownx.emoji: # Adds support for emojis in Markdown
-      emoji_index:
-        !!python/name:materialx.emoji.twemoji # Sets the emoji source to Twemoji
-
-
-      emoji_generator:
-        !!python/name:materialx.emoji.to_svg # Generates emojis as SVG images
-
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
 
   - pymdownx.highlight # Adds syntax highlighting to code blocks
   - pymdownx.inlinehilite # Enables inline code highlighting for non-block code

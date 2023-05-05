@@ -17,16 +17,15 @@ from readnext.utils import (
 )
 
 # each document is represented as a list of tokens
-DocumentTokens: TypeAlias = list[str]
-DocumentTokensMapping: TypeAlias = dict[int, DocumentTokens]
+Tokens: TypeAlias = list[str]
+TokensMapping: TypeAlias = dict[int, Tokens]
 
 # each document is represented as a string of tokens separated by whitespace
-DocumentString: TypeAlias = str
-DocumentStringMapping: TypeAlias = dict[int, DocumentString]
+StringMapping: TypeAlias = dict[int, str]
 
 # each document is represented as a tensor of token ids
-DocumentsTokensTensor: TypeAlias = torch.Tensor
-DocumentsTokensTensorMapping: TypeAlias = dict[int, DocumentsTokensTensor]
+TokensTensor: TypeAlias = torch.Tensor
+TokensTensorMapping: TypeAlias = dict[int, TokensTensor]
 
 
 @dataclass
@@ -36,17 +35,17 @@ class ListTokenizer(ABC):
     documents_info: DocumentsInfo
 
     @abstractmethod
-    def tokenize(self) -> DocumentTokensMapping:
+    def tokenize(self) -> TokensMapping:
         ...
 
     @staticmethod
     @abstractmethod
-    def save_tokens_mapping(path: Path, tokens_list: DocumentTokensMapping) -> None:
+    def save_tokens_mapping(path: Path, tokens_list: TokensMapping) -> None:
         ...
 
     @staticmethod
     @abstractmethod
-    def load_tokens_mapping(path: Path) -> DocumentTokensMapping:
+    def load_tokens_mapping(path: Path) -> TokensMapping:
         ...
 
 
@@ -57,17 +56,17 @@ class TensorTokenizer(ABC):
     documents_info: DocumentsInfo
 
     @abstractmethod
-    def tokenize(self) -> DocumentsTokensTensorMapping:
+    def tokenize(self) -> TokensTensorMapping:
         ...
 
     @staticmethod
     @abstractmethod
-    def save_tokens_mapping(path: Path, tokens_tensor: DocumentsTokensTensorMapping) -> None:
+    def save_tokens_mapping(path: Path, tokens_tensor: TokensTensorMapping) -> None:
         ...
 
     @staticmethod
     @abstractmethod
-    def load_tokens_mapping(path: Path) -> DocumentsTokensTensorMapping:
+    def load_tokens_mapping(path: Path) -> TokensTensorMapping:
         ...
 
 
@@ -88,7 +87,7 @@ class SpacyTokenizer(ListTokenizer):
     def clean_spacy_doc(
         self,
         spacy_doc: Doc,
-    ) -> DocumentTokens:
+    ) -> Tokens:
         """
         Cleans a single spacy document by removing stopwords, punctuation, and
         non-alphanumeric tokens.
@@ -109,12 +108,12 @@ class SpacyTokenizer(ListTokenizer):
 
         return clean_tokens
 
-    def clean_document(self, document: DocumentString) -> DocumentTokens:
+    def clean_document(self, document: str) -> Tokens:
         """Tokenizes and cleans a single abstract."""
         spacy_doc = self.to_spacy_doc(document)
         return self.clean_spacy_doc(spacy_doc)
 
-    def tokenize(self) -> DocumentTokensMapping:
+    def tokenize(self) -> TokensMapping:
         """
         Tokenizes and cleans multiple abstracts. Gnereates a mapping of document ids to
         tokens.
@@ -130,7 +129,7 @@ class SpacyTokenizer(ListTokenizer):
 
         return tokenized_abstracts_mapping
 
-    def to_strings(self) -> DocumentStringMapping:
+    def to_strings(self) -> StringMapping:
         """
         Generates a mapping of document ids to strings from raw abstracts. Required
         since `TfidfVectorizer` expects a list of strings, not a list of lists of
@@ -140,8 +139,8 @@ class SpacyTokenizer(ListTokenizer):
 
     @staticmethod
     def strings_from_tokens(
-        tokens_mapping: DocumentTokensMapping,
-    ) -> DocumentStringMapping:
+        tokens_mapping: TokensMapping,
+    ) -> StringMapping:
         """
         Converts a mapping of document ids to tokens (list of string) into a mapping of
         document ids to strings. Required since `TfidfVectorizer` expects a list of
@@ -150,12 +149,12 @@ class SpacyTokenizer(ListTokenizer):
         return {document_id: " ".join(tokens) for document_id, tokens in tokens_mapping.items()}
 
     @staticmethod
-    def save_tokens_mapping(path: Path, tokens_mapping: DocumentTokensMapping) -> None:
+    def save_tokens_mapping(path: Path, tokens_mapping: TokensMapping) -> None:
         """Save a mapping of document ids to tokens to a pickle file."""
         save_object_to_pickle(tokens_mapping, path)
 
     @staticmethod
-    def load_tokens_mapping(path: Path) -> DocumentTokensMapping:
+    def load_tokens_mapping(path: Path) -> TokensMapping:
         """Load a mapping of document ids to tokens from a pickle file."""
         return load_object_from_pickle(path)  # type: ignore
 
@@ -167,7 +166,7 @@ class BERTTokenizer(TensorTokenizer):
     documents_info: DocumentsInfo
     bert_tokenizer: BertTokenizerFast
 
-    def tokenize(self) -> DocumentsTokensTensorMapping:
+    def tokenize(self) -> TokensTensorMapping:
         """
         Tokenizes multiple abstracts into token ids. Generates a mapping of document ids
         to token ids.
@@ -186,13 +185,11 @@ class BERTTokenizer(TensorTokenizer):
         return dict(zip(self.documents_info.document_ids, tokenized_abstracts))  # type: ignore
 
     @staticmethod
-    def save_tokens_mapping(
-        path: Path, tokens_tensor_mapping: DocumentsTokensTensorMapping
-    ) -> None:
+    def save_tokens_mapping(path: Path, tokens_tensor_mapping: TokensTensorMapping) -> None:
         """Save a mapping of document ids to token ids to a pytorch file."""
         torch.save(tokens_tensor_mapping, path)
 
     @staticmethod
-    def load_tokens_mapping(path: Path) -> DocumentsTokensTensorMapping:
+    def load_tokens_mapping(path: Path) -> TokensTensorMapping:
         """Load a mapping of document ids to token ids from a pytorch file."""
         return torch.load(path)  # type: ignore

@@ -17,6 +17,8 @@ repos:
       - id: check-toml
         stages: [commit]
       - id: check-yaml
+        # does not raise error for lines starting with !!
+        args: ["--unsafe"]
         stages: [commit]
       - id: debug-statements
         stages: [commit]
@@ -39,14 +41,14 @@ repos:
       - id: black
         stages: [commit]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.261
+    rev: v0.0.265
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix, --show-fixes]
         stages: [commit]
         exclude: ^pyproject\.toml$
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
+    rev: v3.3.2
     hooks:
       - id: pyupgrade
         args: [--py310-plus]
@@ -58,6 +60,6 @@ repos:
         args: [--ignore-missing-imports]
         stages: [push]
   - repo: https://github.com/pdm-project/pdm
-    rev: 2.5.2
+    rev: 2.5.3
     hooks:
       - id: pdm-lock-check

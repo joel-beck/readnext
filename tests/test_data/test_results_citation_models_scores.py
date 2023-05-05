@@ -1,6 +1,7 @@
 import pandas as pd
 import pytest
 from pandas.api.types import is_integer_dtype
+from pandas.testing import assert_frame_equal
 
 from readnext.config import ResultsPaths
 from readnext.modeling import DocumentInfo, DocumentScore
@@ -113,3 +114,20 @@ def test_bibliographic_coupling_scores_most_cited(
     assert first_document_info.author == ""
     assert first_document_info.abstract == ""
     assert first_document_info.arxiv_labels == []
+
+
+def test_that_test_data_mimics_real_data(
+    co_citation_analysis_scores_most_cited: pd.DataFrame,
+    bibliographic_coupling_scores_most_cited: pd.DataFrame,
+    test_co_citation_analysis_scores_most_cited: pd.DataFrame,
+    test_bibliographic_coupling_scores_most_cited: pd.DataFrame,
+) -> None:
+    assert_frame_equal(
+        co_citation_analysis_scores_most_cited.head(100),
+        test_co_citation_analysis_scores_most_cited.head(100),
+    )
+
+    assert_frame_equal(
+        bibliographic_coupling_scores_most_cited.head(100),
+        test_bibliographic_coupling_scores_most_cited,
+    )

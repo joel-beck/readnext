@@ -12,18 +12,18 @@ from transformers import BertModel
 
 # do not import from .language_models to avoid circular imports
 from readnext.modeling.language_models.tokenizer import (
-    DocumentsTokensTensor,
-    DocumentsTokensTensorMapping,
-    DocumentStringMapping,
-    DocumentTokens,
-    DocumentTokensMapping,
+    StringMapping,
+    Tokens,
+    TokensMapping,
+    TokensTensor,
+    TokensTensorMapping,
 )
 from readnext.utils import setup_progress_bar
 
 EmbeddingModel: TypeAlias = TfidfVectorizer | BM25Okapi | KeyedVectors | FastText | BertModel
 
-DocumentEmbeddings: TypeAlias = np.ndarray
-DocumentEmbeddingsMapping: TypeAlias = dict[int, DocumentEmbeddings]
+Embedding: TypeAlias = np.ndarray
+EmbeddingsMapping: TypeAlias = dict[int, Embedding]
 
 
 class AggregationStrategy(str, Enum):
@@ -49,7 +49,7 @@ class AggregationStrategy(str, Enum):
         return self == self.max
 
 
-def embeddings_mapping_to_frame(embeddings_mapping: DocumentEmbeddingsMapping) -> pd.DataFrame:
+def embeddings_mapping_to_frame(embeddings_mapping: EmbeddingsMapping) -> pd.DataFrame:
     """
     Converts a dictionary of document ids to document embeddings to a pandas DataFrame.
     The output dataframe has two columns: `document_id` and `embedding`.
@@ -71,7 +71,7 @@ class Embedder(Protocol):
 
     embedding_model: EmbeddingModel
 
-    def compute_embeddings_mapping(self) -> DocumentEmbeddingsMapping:
+    def compute_embeddings_mapping(self) -> EmbeddingsMapping:
         """Computes a dictionary of document ids to document embeddings."""
         ...
 
@@ -86,13 +86,11 @@ class TFIDFEmbedder:
 
     embedding_model: TfidfVectorizer
 
-    def fit_embedding_model(self, tokens_mapping: DocumentStringMapping) -> None:
+    def fit_embedding_model(self, tokens_mapping: StringMapping) -> None:
         self.embedding_model = self.embedding_model.fit(tokens_mapping.values())
 
     # one row per document, one column per token in vocabulary
-    def compute_embeddings_mapping(
-        self, tokens_mapping: DocumentStringMapping
-    ) -> DocumentEmbeddingsMapping:
+    def compute_embeddings_mapping(self, tokens_mapping: StringMapping) -> EmbeddingsMapping:
         """
         Takes a list of cleaned documents (list of strings, one string for each
         document) as input and computes the tfidf token embeddings.
@@ -127,7 +125,7 @@ class BM25Embedder:
 
     embedding_model: BM25Okapi
 
-    def compute_embedding_single_document(self, tokens: DocumentTokens) -> np.ndarray:
+    def compute_embedding_single_document(self, tokens: Tokens) -> np.ndarray:
         """
         Takes a single tokenized document (list of strings, one string for each token)
         as input and computes the bm25 token embeddings.
@@ -138,9 +136,7 @@ class BM25Embedder:
         """
         return self.embedding_model.get_scores(tokens)  # type: ignore
 
-    def compute_embeddings_mapping(
-        self, tokens_mapping: DocumentTokensMapping
-    ) -> DocumentEmbeddingsMapping:
+    def compute_embeddings_mapping(self, tokens_mapping: TokensMapping) -> EmbeddingsMapping:
         """
         Takes a list of tokenized documents (list of lists of strings, one list of
         strings for each document) as input and computes the bm25 token embeddings.
@@ -167,7 +163,7 @@ class GensimEmbedder(ABC):
     embedding_model: KeyedVectors | FastText
 
     @abstractmethod
-    def compute_word_embeddings_per_document(self, tokens: DocumentTokens) -> np.ndarray:
+    def compute_word_embeddings_per_document(self, tokens: Tokens) -> np.ndarray:
         """
         Stacks all word embeddings of a single document vertically.
 
@@ -197,9 +193,9 @@ class GensimEmbedder(ABC):
 
     def compute_embeddings_mapping(
         self,
-        tokens_mapping: DocumentTokensMapping,
+        tokens_mapping: TokensMapping,
         aggregation_strategy: AggregationStrategy = AggregationStrategy.mean,
-    ) -> DocumentEmbeddingsMapping:
+    ) -> EmbeddingsMapping:
         """
         Takes a list of tokenized documents (list of lists of strings, one list of
         strings for each document) as input and computes the word2vec or fasttext token
@@ -224,7 +220,7 @@ class Word2VecEmbedder(GensimEmbedder):
     def __init__(self, embedding_model: KeyedVectors) -> None:
         super().__init__(embedding_model)
 
-    def compute_word_embeddings_per_document(self, tokens: DocumentTokens) -> np.ndarray:
+    def compute_word_embeddings_per_document(self, tokens: Tokens) -> np.ndarray:
         # exclude any individual unknown tokens
         return np.vstack(
             [self.embedding_model[token] for token in tokens if token in self.embedding_model]  # type: ignore # noqa: E501
@@ -237,7 +233,7 @@ class FastTextEmbedder(GensimEmbedder):
     def __init__(self, embedding_model: FastText) -> None:
         super().__init__(embedding_model)
 
-    def compute_word_embeddings_per_document(self, tokens: DocumentTokens) -> np.ndarray:
+    def compute_word_embeddings_per_document(self, tokens: Tokens) -> np.ndarray:
         return self.embedding_model.wv[tokens]  # type: ignore
 
 
@@ -253,9 +249,9 @@ class BERTEmbedder:
 
     def compute_embeddings_single_document(
         self,
-        tokens_tensor: DocumentsTokensTensor,
+        tokens_tensor: TokensTensor,
         aggregation_strategy: AggregationStrategy = AggregationStrategy.mean,
-    ) -> DocumentEmbeddings:
+    ) -> Embedding:
         """
         Takes a tensor of a single tokenized document as input and computes the BERT
         token embeddings.
@@ -274,7 +270,7 @@ class BERTEmbedder:
 
         # first element of outputs is the last hidden state of the [CLS] token
         # dimension: num_documents x num_tokens_per_document x embedding_dimension
-        document_embeddings: DocumentsTokensTensor = outputs.last_hidden_state
+        document_embeddings: TokensTensor = outputs.last_hidden_state
 
         if aggregation_strategy.is_mean:
             document_embedding = document_embeddings.mean(dim=1)
@@ -287,9 +283,9 @@ class BERTEmbedder:
 
     def compute_embeddings_mapping(
         self,
-        tokens_tensor_mapping: DocumentsTokensTensorMapping,
+        tokens_tensor_mapping: TokensTensorMapping,
         aggregation_strategy: AggregationStrategy = AggregationStrategy.mean,
-    ) -> DocumentEmbeddingsMapping:
+    ) -> EmbeddingsMapping:
         """
         Takes a tensor of tokenized documents as input and computes the BERT token
         embeddings.

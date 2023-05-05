@@ -1,6 +1,7 @@
 import pandas as pd
 import pytest
 from pandas.api.types import is_integer_dtype, is_string_dtype
+from pandas.testing import assert_frame_equal
 
 from readnext.config import DataPaths
 from readnext.utils import load_df_from_pickle
@@ -85,3 +86,13 @@ def test_semanticscholar_tags(
     ## 22 unique tags in total
     unique_semanticscholar_tags = set(semanticscholar_tags.sum())
     assert len(unique_semanticscholar_tags) == 22
+
+
+def test_that_test_data_mimics_real_data(
+    documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> None:
+    assert_frame_equal(
+        documents_authors_labels_citations_most_cited.head(100),
+        test_documents_authors_labels_citations_most_cited,
+    )

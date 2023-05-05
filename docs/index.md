@@ -4,21 +4,18 @@
 
     This documentation is a work in progress - the content will continuously be updated and extended.
 
+Welcome to the `readnext` documentation! ☀️
 
----
+The `readnext` package provides a hybrid recommender system for computer science papers.
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+It is part of my master's thesis at the University of Göttingen supervised by [Corinna Breitinger](https://gipplab.org/team/corinna-breitinger/) and [Terry Ruas](https://gipplab.org/team/dr-terry-lima-ruas/).
 
-## Commands
+Here, you'll find everything you need to know about the project's background, as well as step-by-step instructions on how to install, use the package for your own needs, and reproduce the results of my thesis:
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+- [Setup](setup.md): Discover project requirements, installation instructions, data setup guides, environment variable configurations, and an overview of the development workflow.
 
-## Project layout
+- [Quick Guide](quick-guide.md): Get a birds-eye view of the project with a concise schematic overview.
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+- [Background](background.md): Dive into the details of the citation-based methods and language models utilized in this project, and learn how they can help quantify document similarity.
+
+- [User Guide](user-guide.md): Explore the package structure, its dependencies on third-party packages, and how to use `readnext` to reproduce the findings of my thesis.

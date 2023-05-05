@@ -18,7 +18,7 @@
     git clone https://github.com/joel-beck/readnext.git
 
     # via SSH
-    git@github.com:joel-beck/readnext.git
+    git clone ssh://git@github.com:joel-beck/readnext.git
 
     # via GitHub CLI
     gh repo clone joel-beck/readnext
@@ -52,8 +52,10 @@ The following built-in and custom user scripts are useful for the development wo
 -  `pdm add -dG dev <package name>`: Add and install a new development dependency to the project.
     They are automatically added to the `[tool.pdm.dev-dependencies]` section of the `pyproject.toml` file.
 -  `pdm remove <package name>`: Remove and uninstall a dependency from the project.
+-  `pdm format`: Format the entire project with [black](https://github.com/psf/black).
+    The black configuration is specified in the `[tool.black]` section of the `pyproject.toml` file.
 -  `pdm lint`: Lint the entire project with the [ruff](https://github.com/charliermarsh/ruff) linter.
-    The ruff configuration is specified in the `[tool.ruff.*]` section of the `pyproject.toml` file.
+    The ruff configuration is specified in the `[tool.ruff.*]` sections of the `pyproject.toml` file.
 -  `pdm check`: Static type checking with [mypy](https://github.com/python/mypy).
     The mypy configuration is specified in the `[tool.mypy]` section of the `pyproject.toml` file.
 -  `pdm test`: Run all unit tests with [pytest](https://github.com/pytest-dev/pytest).

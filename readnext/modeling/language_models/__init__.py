@@ -14,7 +14,6 @@ from readnext.modeling.language_models.tokenizer import (
     TokensMapping,
     TokensTensor,
     TokensTensorMapping,
-    str,
 )
 
 __all__ = [
@@ -25,11 +24,10 @@ __all__ = [
     "Word2VecEmbedder",
     "embeddings_mapping_to_frame",
     "BERTTokenizer",
-    "TokensTensor",
-    "TokensTensorMapping",
-    "str",
+    "SpacyTokenizer",
     "StringMapping",
     "Tokens",
     "TokensMapping",
-    "SpacyTokenizer",
+    "TokensTensor",
+    "TokensTensorMapping",
 ]

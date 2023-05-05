@@ -48,7 +48,7 @@ check = "mypy ."
 test = "pytest"
 test-cov = "pytest --cov=readnext --cov-config=.coveragerc"
 # do not test data files in CI since the data files only exist locally
-test-ci = "pytest --ignore tests/test_data"
+test-ci = "pytest --ignore tests/test_data --cov=readnext --cov-config=.coveragerc --cov-report=xml"
 pre = "pre-commit run --all-files"
 serve = "mkdocs serve"
 deploy = { shell = "mkdocs build && mkdocs gh-deploy" }

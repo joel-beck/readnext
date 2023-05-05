@@ -1,5 +1,6 @@
 site_name: readnext
 site_description: A Hybrid Recommender System for Computer Science Papers
+site_url: https://joel-beck.github.io/readnext/
 
 repo_name: readnext
 repo_url: https://github.com/joel-beck/readnext

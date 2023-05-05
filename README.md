@@ -87,7 +87,7 @@ TODO: Add more information here
 
 The flow of the hybrid recommender system to generate recommendations is visualized in the following diagram:
 
-![](./static/hybrid-architecture.png)
+![](docs/assets/hybrid-architecture.png)
 
 In the first step, the metadata, the bibliography and the abstract of the query document are extracted.
 

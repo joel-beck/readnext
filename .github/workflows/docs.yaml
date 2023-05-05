@@ -8,6 +8,8 @@ on:
 
 permissions:
   pull-requests: write
+  pages: write
+  id-token: write
 
 jobs:
   deploy:
@@ -39,3 +41,5 @@ jobs:
       - run: pip install mkdocs-material
 
       - run: mkdocs gh-deploy --force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

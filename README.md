@@ -9,9 +9,8 @@ The `readnext` package provides a hybrid recommender system for computer science
 It is part of my master's thesis at the University of Göttingen supervised by [Corinna Breitinger](https://gipplab.org/team/corinna-breitinger/) and [Terry Ruas](https://gipplab.org/team/dr-terry-lima-ruas/).
 
 The project is under active development.
-Below you find a quick guide with the project background and installation instructions.
-
-Comprehensive documentation with detailed explanations of how the package is structured and can be used to reproduce the results of my thesis will follow soon 🥳
+Below you find a quick guide with installation instructions.
+For more detailed information, please refer to the [documentation](https://joel-beck.github.io/readnext/).
 
 
 ## Setup

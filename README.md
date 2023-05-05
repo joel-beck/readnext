@@ -2,8 +2,9 @@
 
 ![Pre-Commit](https://github.com/joel-beck/readnext/actions/workflows/pre-commit.yaml/badge.svg)
 ![Tests](https://github.com/joel-beck/readnext/actions/workflows/tests.yaml/badge.svg)
-[![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
+[![pdm-managed](https://img.shields.io/static/v1?label=pdm&message=managed&color=blueviolet&style=flat)](https://pdm.fming.dev)
 [![Docs](https://img.shields.io/static/v1?label=docs&message=mkdocs&color=blue&style=flat)](https://joel-beck.github.io/readnext/)
+[![License](https://img.shields.io/static/v1?label=license&message=MIT&color=green&style=flat)](https://github.com/joel-beck/readnext)
 
 
 The `readnext` package provides a hybrid recommender system for computer science papers.

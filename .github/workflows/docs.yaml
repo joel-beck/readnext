@@ -1,13 +1,10 @@
-name: mkdocs
+name: Publish Docs with MkDocs via GitHub Pages
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
-permissions:
-  pull-requests: write
 
 jobs:
   deploy:
@@ -17,25 +14,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macOS-latest]
+        os: [ubuntu-latest]
         python-version: ["3.10"]
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      - name: Set up PDM
-        uses: pdm-project/setup-pdm@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - uses: actions/cache@v3
-        with:
-          key: mkdocs-material-${{ github.ref }}
-          path: .cache
-          restore-keys: |
-            mkdocs-material-
-
-      - run: pip install mkdocs-material
-
-      - run: mkdocs gh-deploy --force
+      - name: Deploy MkDocs
+        # see https://github.com/marketplace/actions/deploy-mkdocs
+        uses: mhausenblas/mkdocs-deploy-gh-pages@1.26
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

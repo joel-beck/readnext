@@ -9,16 +9,19 @@ theme:
   name: material
   icon:
     logo: material/meteor # built-in icon search at https://squidfunk.github.io/mkdocs-material/reference/icons-emojis/?h=ic#search # noqa
+    repo: fontawesome/brands/github
   features:
     - content.code.copy # Adds a copy button to code blocks
     - content.tabs.link # Allows linking to specific tabs via URLs
     - navigation.expand # Expands the navigation menu for nested sections
+    - navigation.footer # Displays a footer navigation menu
     - navigation.instant # Enables instant navigation without page reloads
-    - navigation.sections # Organizes the menu into sections based on headers
     - navigation.tracking # Tracks the user's progress through the documentation
     - search.highlight # Highlights search terms in the search results
+    - search.share # Enables sharing of search results via URL
     - search.suggest # Provides search suggestions while typing in the search bar
     - toc.follow # Automatically updates the table of contents as the user scrolls
+    - toc.integrate # Integrates the table of contents into the navigation
   palette:
     - media: "(prefers-color-scheme: light)" # Light Mode
       scheme: default
@@ -37,38 +40,44 @@ plugins:
   - search # Enables search functionality
 
 markdown_extensions:
-  - admonition # Enables collapsible blocks with styled titles for notes, warnings, etc.
-  - attr_list # Allows adding HTML attributes to elements using a consistent syntax
-  - footnotes # Adds support for footnotes in Markdown
-  - markdown.extensions.attr_list # Alternative syntax for adding HTML attributes to elements
-  - md_in_html # Allows embedding Markdown inside HTML tags
-  - pymdownx.details # Enables collapsible content sections using the details HTML tag
-  - pymdownx.emoji: # Adds support for emojis in Markdown
+  - admonition # Enables collapsible blocks with styled titles for notes, warnings, etc. in the documentation
+  - footnotes # Adds support for footnotes in the Markdown files
+  - pymdownx.arithmatex:
+      generic: true # Enables generic output for math expressions using MathJax
+  - pymdownx.betterem # Improves the handling of italic and bold text in Markdown
+  - pymdownx.caret # Adds support for inserting the caret character (^) in Markdown text
+  - pymdownx.details # Enables collapsible content sections using the details HTML tag in Markdown
+  - pymdownx.emoji: # Adds support for emojis in Markdown files
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
-
-  - pymdownx.highlight # Adds syntax highlighting to code blocks
-  - pymdownx.inlinehilite # Enables inline code highlighting for non-block code
-  - pymdownx.keys # Enables rendering of keyboard keys in Markdown
-  - pymdownx.magiclink # Automatically converts URLs and email addresses to links
+  - pymdownx.highlight: # Adds syntax highlighting to code blocks in Markdown
+      use_pygments: true
+      line_spans: __span
+  - pymdownx.inlinehilite # Enables inline code highlighting for non-block code in Markdown
+  - pymdownx.keys # Enables rendering of keyboard keys in Markdown text
+  - pymdownx.magiclink # Automatically converts URLs and email addresses to links in Markdown
+  - pymdownx.mark # Adds support for marking text with a highlight effect in Markdown
+  - pymdownx.smartsymbols # Converts certain text symbols to their corresponding HTML entities
   - pymdownx.snippets # Allows including reusable content snippets in Markdown files
-  - pymdownx.superfences: # Enhances fenced code blocks with custom features
-      custom_fences:
-        - name: mermaid # Adds support for Mermaid diagrams in Markdown
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.superfences # Enhances Markdown's fenced code block support
   - pymdownx.tabbed: # Enables tabbed content sections in Markdown
-      alternate_style: true # Sets an alternate style for tabs
+      alternate_style: true
   - pymdownx.tasklist: # Adds support for task lists in Markdown
-      custom_checkbox: true # Enables custom checkboxes for task lists
-  - tables # Adds support for tables in Markdown
-  - toc: # Generates a table of contents based on headings
-      permalink: "🔗&#xFE0E;" # Adds a permalink to each heading for easy linking
+      custom_checkbox: true
+  - pymdownx.tilde # Adds support for strikethrough text using tilde (~~) syntax in Markdown
+  - tables # Adds support for tables in Markdown files
+  - toc:
+      permalink: "🔗&#xFE0E;" # Adds a permalink to each heading for easy linking in the documentation
 
 extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/joel-beck/readnext
+
+extra_javascript:
+  - javascripts/mathjax.js # Enables MathJax support for LaTeX math equations
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 nav: # Navigation menu structure
   - Introduction: index.md

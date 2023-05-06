@@ -82,6 +82,6 @@ extra_javascript:
 nav: # Navigation menu structure
   - Introduction: index.md
   - Setup: setup.md
-  - Quick Guide: quick-guide.md
+  - Overview: overview.md
   - Background: background.md
   - User Guide: user-guide.md

@@ -12,7 +12,7 @@ Here, you'll find everything you need to know about the project's background, as
 
 - [Setup](setup.md): Discover project requirements, installation instructions, data setup guides, environment variable configurations, and an overview of the development workflow.
 
-- [Quick Guide](quick-guide.md): Get a high-level perspective of the project with a concise schematic overview.
+- [Overview](overview.md): Get a high-level perspective of the project with a concise schematic overview.
 
 - [Background](background.md): Dive into the details of the citation-based methods and language models utilized in this project, and learn how they can help quantify document similarity.
 

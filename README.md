@@ -89,10 +89,10 @@ Arxiv labels are extracted from the [arxiv-metadata-oai-snapshot.json](https://w
 
 `readnext` needs to know the locations of local data and model files in your file system, which can be stored in any directory.
 User-specific information is provided through environment variables.
-The .env-template file in the project root directory contains a template for the expected environment variables with default values (except for the Semantic Scholar API key):
+The `.env_template` file in the project root directory contains a template for the expected environment variables with default values (except for the Semantic Scholar API key):
 
 ```bash
-# .env-template
+# .env_template
 DOCUMENTS_METADATA_FILENAME="2022-11-30-papers.jsonl"
 AUTHORS_METADATA_FILENAME="2022-11-30-authors.jsonl"
 

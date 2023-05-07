@@ -70,7 +70,7 @@ The hybrid recommender combines the citation recommender and the language recomm
 **Mean Average Precision (MAP)** is used as the evaluation metric, as it considers the order of recommendations, includes all items on the list, and works with binary labels. The MAP averages Average Precision (AP) scores across the entire corpus, enabling comparison between different recommender systems.
 
 
-## Inference: Getting Recommendations
+## Inference: Retrieving Recommendations
 
 When it comes to inference, our goal is to obtain a list of recommendations for a single query document.
 For example, a user might have just read or is currently reading a paper, and now they want to find other papers that may interest them.
@@ -88,7 +88,7 @@ From the database, you can retrieve any piece of information, including individu
 
 !!! info
 
-    This aspect of the project is still a work in progress.
+    This part of the project is still a work in progress.
     We'll soon add detailed documentation on how users can get recommendations for unseen papers 🚀
 
 When the query document isn't part of the training corpus, the inference process is a bit more complex.

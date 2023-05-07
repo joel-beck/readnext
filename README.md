@@ -201,5 +201,3 @@ The hybrid recommender combines the citation recommender and the language recomm
 ### Evaluation
 
 **Mean Average Precision (MAP)** is used as the evaluation metric, as it considers the order of recommendations, includes all items on the list, and works with binary labels. The MAP averages Average Precision (AP) scores across the entire corpus, enabling comparison between different recommender systems.
-
-

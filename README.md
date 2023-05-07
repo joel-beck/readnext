@@ -137,7 +137,7 @@ Explanation of the environment variables:
 ## Overview
 
 The following diagram presents a high-level overview of the hybrid recommender system for papers in the training corpus.
-Check out the [documentation](https://joel-beck.github.io/readnext/overview/#inference) for more information how the hybrid recommender works during inference for unseen papers.
+Check out the [documentation](https://joel-beck.github.io/readnext/overview/#inference-retrieving-recommendations) for more information how the hybrid recommender works during inference for unseen papers.
 
 ![Hybrid recommender system schematic](./docs/assets/hybrid-architecture.png)
 

@@ -59,7 +59,7 @@ Check out the [documentation](https://joel-beck.github.io/readnext/) for backgro
     git clone https://github.com/joel-beck/readnext.git
 
     # via SSH
-    git@github.com:joel-beck/readnext.git
+    git clone ssh://git@github.com:joel-beck/readnext.git
 
     # via GitHub CLI
     gh repo clone joel-beck/readnext

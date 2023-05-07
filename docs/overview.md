@@ -2,7 +2,7 @@
 
 This section elucidates the hybrid recommender's recommendation process during training and inference phases.
 
-## Training
+## Training: Precomputing Features
 
 The following diagram presents a high-level overview of the hybrid recommender system for papers in the training corpus:
 
@@ -70,32 +70,31 @@ The hybrid recommender combines the citation recommender and the language recomm
 **Mean Average Precision (MAP)** is used as the evaluation metric, as it considers the order of recommendations, includes all items on the list, and works with binary labels. The MAP averages Average Precision (AP) scores across the entire corpus, enabling comparison between different recommender systems.
 
 
-## Inference
+## Inference: Getting Recommendations
 
-At inference time we are interested in a list of recommendations for a single query document.
-The query document could e.g. be a paper that a user has just read or is currently reading and he now wants to find papers that he might be interested in reading next.
+When it comes to inference, our goal is to obtain a list of recommendations for a single query document.
+For example, a user might have just read or is currently reading a paper, and now they want to find other papers that may interest them.
 
-There are two cases to distinguish depending on whether the query document is part of the training corpus or not.
+We need to consider two scenarios, depending on whether the query document is part of the training corpus or not.
 
+### Query Document in the Training Corpus
 
-### Query Document contained in the Training Corpus
+If the query document is part of the training corpus, getting recommendations is a breeze – it's just a quick lookup of precomputed values.
+The user needs to supply a unique identifier for the query document, which could be the document ID within the D3 dataset, the Semantic Scholar URL of the paper, or in most cases, even the paper's title.
 
-If the query document is contained in the training corpus, inference is a simple lookup of precomputed values and thus very fast.
-The user has to provide a unique identifier of the query document: this can be the document id within the D3 dataset, the Semantic Scholar url to the paper or, in most cases, even the title of the paper.
+From the database, you can retrieve any piece of information, including individual features, abstract embeddings, pairwise co-citation analysis, bibliographic coupling, cosine similarity scores, and the final recommendation list.
 
-Then, any piece of information including individual features, abstract embeddings, pairwise co-citation analysis, bibliographic coupling and cosine similarity scores as well as the final recommendation list can be retrieved from the database.
-
-
-### Query Document not contained in the Training Corpus
+### Query Document Not in the Training Corpus
 
 !!! info
 
-    This part of the project is still work in progress.
-    Documentation of how users can retrieve recommendations for unseen papers will be added soon 🚀
+    This aspect of the project is still a work in progress.
+    We'll soon add documentation on how users can get recommendations for unseen papers 🚀
 
-If the query document is not contained in the training corpus, inference is more involved:
-In principle, all model inputs including the query document's abstract, global document characteristics, arvix labels as well as full lists of citing and cited papers have to be provided by the user.
+When the query document isn't part of the training corpus, the inference process is a bit more complex.
+Ideally, users should provide all model inputs, such as the query document's abstract, global document characteristics, arxiv labels, and complete lists of citing and cited papers.
 
-Since particularly the citation information is usually not aesily accessible, the objective is to retrieve this information automatically from the Semantic Scholar API given only the query document's Semantic Scholar url.
+Since citation information can be hard to come by, our goal is to automatically fetch this data from the Semantic Scholar API using only the query document's Semantic Scholar URL.
 
-Note that in any case, inference is significantly slower for unseen papers than for papers contained in the training corpus since abstract embeddings and pairwise co-citation analysis, bibliographic coupling and cosine similarity scores with respect to all other papers in the training corpus have to be computed from scratch.
+Keep in mind that inference will be considerably slower for unseen papers compared to those in the training corpus.
+This is because abstract embeddings and pairwise co-citation analysis, bibliographic coupling, and cosine similarity scores concerning all other papers in the training corpus need to be calculated from scratch.

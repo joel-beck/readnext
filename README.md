@@ -17,6 +17,27 @@ Below you find the installation instructions and a brief overview of the package
 Check out the [documentation](https://joel-beck.github.io/readnext/) for background information about the citation-based methods and language models that are used in this project as well as a comprehensive user guide.
 
 
+## Table of Contents <!-- omit from toc -->
+
+- [Setup](#setup)
+    - [Requirements](#requirements)
+    - [Installation](#installation)
+    - [Data and Models](#data-and-models)
+        - [D3 Dataset](#d3-dataset)
+        - [Citation Information](#citation-information)
+        - [Arxiv Labels](#arxiv-labels)
+    - [Environment Variables](#environment-variables)
+- [Overview](#overview)
+    - [Citation Recommender](#citation-recommender)
+        - [Global Document Features](#global-document-features)
+        - [Citation-Based Features](#citation-based-features)
+        - [Feature Weighting](#feature-weighting)
+    - [Language Recommender](#language-recommender)
+    - [Hybrid Recommender](#hybrid-recommender)
+    - [Evaluation](#evaluation)
+
+
+
 ## Setup
 
 ### Requirements
@@ -123,11 +144,11 @@ Check out the [documentation](https://joel-beck.github.io/readnext/overview/#inf
 The primary concept involves a **Citation Recommender** that combines global document features and citation-based features, and a **Language Recommender** that generates embeddings from paper abstracts.
 The hybrid recommender integrates these components in a *cascade* fashion, with one recommender initially producing a candidate list, which is then re-ranked by the second recommender to yield the final recommendations.
 
-#### Citation Recommender
+### Citation Recommender
 
 The **Citation Recommender** extracts five features from each training document:
 
-##### Global Document Features
+#### Global Document Features
 
 These features are derived from the document metadata in the D3 dataset.
 
@@ -142,7 +163,7 @@ These features are derived from the document metadata in the D3 dataset.
 
 Note that global document features are identical for each query document.
 
-##### Citation-Based Features
+#### Citation-Based Features
 
 These features are obtained from the citation data retrieved from the Semantic Scholar API and are *pairwise features* computed for each pair of documents in the training corpus.
 
@@ -152,11 +173,11 @@ These features are obtained from the citation data retrieved from the Semantic S
 - **Bibliographic Coupling**:
     Counts shared *cited* papers. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
 
-##### Feature Weighting
+#### Feature Weighting
 
 To combine features linearly, documents are first *ranked* by each feature. Then, a linear combination of these ranks is calculated to produce a weighted ranking, where papers with the lowest weighted rank are recommended. The weight vector yielding the best performance (Mean Average Precision) is selected.
 
-#### Language Recommender
+### Language Recommender
 
 The **Language Recommender** encodes paper abstracts into embedding vectors to capture semantic meaning. Papers with embeddings most similar to the query document (measured by cosine similarity) are recommended.
 
@@ -173,11 +194,11 @@ Abstracts are preprocessed and tokenized using the `spaCy` library. **Eight lang
 
 All static and contextual embedding models are pre-trained on extensive text corpora.
 
-#### Hybrid Recommender
+### Hybrid Recommender
 
 The hybrid recommender combines the citation recommender and the language recommender in a *cascade* fashion. Both component orders are considered, and evaluation scores are computed to determine the best component order and if the cascade approach improves performance.
 
-#### Evaluation
+### Evaluation
 
 **Mean Average Precision (MAP)** is used as the evaluation metric, as it considers the order of recommendations, includes all items on the list, and works with binary labels. The MAP averages Average Precision (AP) scores across the entire corpus, enabling comparison between different recommender systems.
 

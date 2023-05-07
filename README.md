@@ -13,19 +13,20 @@ The `readnext` package provides a hybrid recommender system for computer science
 It is part of my master's thesis at the University of Göttingen supervised by [Corinna Breitinger](https://gipplab.org/team/corinna-breitinger/) and [Terry Ruas](https://gipplab.org/team/dr-terry-lima-ruas/).
 
 The project is under active development.
-Below you find a quick guide with installation instructions.
-For more detailed information, please refer to the [documentation](https://joel-beck.github.io/readnext/).
+Below you find the installation instructions and a brief overview of the package.
+Check out the [documentation](https://joel-beck.github.io/readnext/) for background information about the citation-based methods and language models that are used in this project as well as a comprehensive user guide.
 
 
 ## Setup
 
 ### Requirements
 
--   This project uses [pdm](https://pdm.fming.dev/) as a package and dependency manager.
+-   This project utilizes [pdm](https://pdm.fming.dev/) for package and dependency management.
     To install `pdm`, follow the [installation instructions](https://pdm.fming.dev/latest/#installation) on the pdm website.
 -   This project requires Python 3.10.
     Earlier versions of Python are not supported.
-    Higher versions will be supported in the future once the `torch` and `transformers` libraries are fully compatible with Python 3.11 and higher.
+    Future support for higher versions will be available once the `torch` and `transformers` libraries are fully compatible with Python 3.11 and beyond.
+
 
 
 ### Installation
@@ -52,102 +53,132 @@ For more detailed information, please refer to the [documentation](https://joel-
 
 That's it! 🎉
 
-
-### Data & Environment Variables
-
-TODO:
-- Explain and give examples of a `.env` file
-- Give instructions how to download the D3 dataset to run all scripts and reproduce the results
-
-### Workflow
-
-Pdm provides the option to define [user scripts](https://pdm.fming.dev/latest/usage/scripts/) that can be run from the command line.
-They are specified in the `pyproject.toml` file in the `[tool.pdm.scripts]` section.
-
-The following built-in and custom user scripts are useful for the development workflow:
-
--  `pdm add <package name>`: Add and install a new (production) dependency to the project.
-    They are automatically added to the `[project]` -> `dependencies` section of the `pyproject.toml` file.
--  `pdm add -dG dev <package name>`: Add and install a new development dependency to the project.
-    They are automatically added to the `[tool.pdm.dev-dependencies]` section of the `pyproject.toml` file.
--  `pdm remove <package name>`: Remove and uninstall a dependency from the project.
--  `pdm lint`: Lint the entire project with the [ruff](https://github.com/charliermarsh/ruff) linter.
-    The ruff configuration is specified in the `[tool.ruff.*]` section of the `pyproject.toml` file.
--  `pdm check`: Static type checking with [mypy](https://github.com/python/mypy).
-    The mypy configuration is specified in the `[tool.mypy]` section of the `pyproject.toml` file.
--  `pdm test`: Run all unit tests with [pytest](https://github.com/pytest-dev/pytest).
-    The pytest configuration is specified in the `[tool.pytest.ini_options]` section of the `pyproject.toml` file.
--  `pdm pre`: Run [pre-commit](https://github.com/pre-commit/pre-commit) on all files.
-    All pre-commit hooks are specified in the `.pre-commit-config.yaml` file in the project root directory.
+If you are interested in customizing the `readnext` package to your own needs, learn about some tips for an efficient development workflow in the [documentation](https://joel-beck.github.io/readnext/setup/#development-workflow).
 
 
 
-## Quick Guide
+### Data and Models
 
-Given a query document, the goal of the hybrid recommender is to propose a list of papers that are related to the query document and, thus, might be interesting follow-up reads.
+To execute all scripts and reproduce project results, the following **local downloads** are necessary:
 
-TODO: Add more information here
+- [D3 papers and authors dataset](https://zenodo.org/record/7071698#.ZFZnCi9ByLc)
+- [Arxiv dataset from Kaggle](https://www.kaggle.com/datasets/Cornell-University/arxiv)
+- Pretrained [word2vec-google-news-300 Word2Vec model](https://github.com/RaRe-Technologies/gensim-data) from Gensim
+- Pretrained [glove-wiki-gigaword-300 GloVe model](https://github.com/RaRe-Technologies/gensim-data) from Gensim
+- Pretrained [English FastText model](https://fasttext.cc/docs/en/crawl-vectors.html#models) from FastText website
 
-The flow of the hybrid recommender system to generate recommendations is visualized in the following diagram:
 
-![](docs/assets/hybrid-architecture.png)
+#### D3 Dataset
 
-In the first step, the metadata, the bibliography and the abstract of the query document are extracted.
+The hybrid recommender system's training data originates from multiple sources.
+The [D3 DBLP Discovery Dataset](https://github.com/jpwahle/lrec22-d3-dataset/tree/main) serves as the foundation, offering information about computer science papers and their authors.
+This dataset provides global document features for the text-independent recommender as well as paper abstracts for the content-based recommender.
 
-The metadata is used to identify the paper and retrieve a list of documents that cite the query document (here called the *citing* papers).
-In contrast, the bibliography contains all papers that are cited by the query document (here called the *cited* papers).
+#### Citation Information
 
-Based on the list of citing and cited papers of the query document, the overlap of citing and cited papers of all documents in the training corpus is calculated.
-This procedure is known as *co-citation analysis* and *bibliographic coupling*, respectively.
+The D3 dataset only includes total citation and reference counts for each paper.
+To obtain individual citations and references, the [Semantic Scholar API](https://api.semanticscholar.org/api-docs/graph) is employed. A private API key is recommended for a higher request rate.
 
-#### Component 1: The Citation Recommender
+#### Arxiv Labels
 
-Next, separate rankings of all documents in the training corpus are created based on the following five features:
+Arxiv categories act as labels for the recommender system. If two papers share at least one arxiv label, the recommendation is considered relevant, and irrelevant otherwise.
+Arxiv labels are extracted from the [arxiv-metadata-oai-snapshot.json](https://www.kaggle.com/datasets/Cornell-University/arxiv) dataset on Kaggle.
 
-- **Publication Date**: More recent papers are rewarded by this feature and ranked higher.
-- **Paper Citation Count**: Papers with a higher citation count are ranked higher.
-- **Author Citation Count**: For each paper, the author with the highest lifetime citation count across all publications is identified. Papers with more popular authors in terms of citation count are ranked higher.
-- **Co-Citation Analysis**: Papers with a higher number of common citing papers are ranked higher.
-- **Bibliographic Coupling**: Papers with a higher number of common cited papers are ranked higher.
 
-These individual rankings are then combined by the Citation Recommender into a single ranking using a linear combination of the individual ranks.
-The top-n ranked papers are recommended to the user.
-The weights of the Citation Recommender are chosen from a discrete set of weight vectors to maximize the Mean Average Precision of the generated recommendations.
+### Environment Variables
 
-#### Component 2: The Language Recommender
+`readnext` needs to know the locations of local data and model files in your file system, which can be stored in any directory.
+User-specific information is provided through environment variables.
+The `.env_template` file in the project root directory contains a template for the expected environment variables with default values (except for the Semantic Scholar API key):
 
-The raw abstract of the query document is first tokenized and preprocessed.
-The tokens are then passed to each of the following 8 language models to generate a document embedding vector:
+```bash
+# .env_template
+DOCUMENTS_METADATA_FILENAME="2022-11-30-papers.jsonl"
+AUTHORS_METADATA_FILENAME="2022-11-30-authors.jsonl"
 
-- **TF-IDF**
-- **BM25**
-- **Word2Vec**
-- **GloVe**
-- **FastText**
-- **BERT**
-- **SciBERT**
-- **Longformer**
+SEMANTICSCHOLAR_API_KEY="ABC123"
 
-From the query document embedding vector, the cosine similarity to the embedding vectors of all documents in the training corpus is calculated.
-The top-n papers with the highest cosine similarity are recommended to the user.
+DATA_DIRPATH="data"
+MODELS_DIRPATH="models"
+RESULTS_DIRPATH = "results"
+```
+
+Explanation of the environment variables:
+
+-  `DOCUMENTS_METADATA_FILENAME` and `AUTHORS_METADATA_FILENAME` correspond to the downloaded D3 dataset files.
+-  `SEMANTICSCHOLAR_API_KEY` represents the API key for the Semantic Scholar API.
+-  `DATA_DIRPATH` is the directory path for all local data files, including downloaded and generated data files.
+-  `MODELS_DIRPATH` is the directory path for all pretrained model files.
+-  `RESULTS_DIRPATH` is the directory path for all stored result files, such as tokenized abstracts, numeric embeddings of abstracts, and precomputed co-citation analysis, bibliographic coupling, and cosine similarity scores.
+
+
+
+## Overview
+
+The following diagram presents a high-level overview of the hybrid recommender system for papers in the training corpus.
+Check out the [documentation](https://joel-beck.github.io/readnext/overview/#inference) for more information how the hybrid recommender works during inference for unseen papers.
+
+![Hybrid recommender system schematic](./docs/assets/hybrid-architecture.png)
+
+The primary concept involves a **Citation Recommender** that combines global document features and citation-based features, and a **Language Recommender** that generates embeddings from paper abstracts.
+The hybrid recommender integrates these components in a *cascade* fashion, with one recommender initially producing a candidate list, which is then re-ranked by the second recommender to yield the final recommendations.
+
+#### Citation Recommender
+
+The **Citation Recommender** extracts five features from each training document:
+
+##### Global Document Features
+
+These features are derived from the document metadata in the D3 dataset.
+
+- **Publication Date**:
+    A *novelty* metric. Recent publications score higher, as they build upon earlier papers and compare their findings with existing results.
+
+- **Paper Citation Count**:
+    A *document popularity* metric. Papers with more citations are considered more valuable and relevant.
+
+- **Author Citation Count**:
+    An *author popularity* metric. Authors with higher total citations across their publications are deemed more important in the research community.
+
+Note that global document features are identical for each query document.
+
+##### Citation-Based Features
+
+These features are obtained from the citation data retrieved from the Semantic Scholar API and are *pairwise features* computed for each pair of documents in the training corpus.
+
+- **Co-Citation Analysis**:
+    Counts shared *citing* papers. Candidate documents with higher co-citation analysis scores are considered more relevant to the query document.
+
+- **Bibliographic Coupling**:
+    Counts shared *cited* papers. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
+
+##### Feature Weighting
+
+To combine features linearly, documents are first *ranked* by each feature. Then, a linear combination of these ranks is calculated to produce a weighted ranking, where papers with the lowest weighted rank are recommended. The weight vector yielding the best performance (Mean Average Precision) is selected.
+
+#### Language Recommender
+
+The **Language Recommender** encodes paper abstracts into embedding vectors to capture semantic meaning. Papers with embeddings most similar to the query document (measured by cosine similarity) are recommended.
+
+Abstracts are preprocessed and tokenized using the `spaCy` library. **Eight language models across three categories** are considered:
+
+1. **Keyword-based models**:
+    TF-IDF (implemented using `scikit-learn` library) and BM25.
+
+2. **Static embedding models**:
+    Word2Vec, fastText, and GloVe (all implemented using their `gensim` interface).
+
+3. **Contextual embedding models**:
+    BERT, SciBERT, and Longformer (all provided by the `transformers` library).
+
+All static and contextual embedding models are pre-trained on extensive text corpora.
 
 #### Hybrid Recommender
 
-The Citation Recommender and the Language Recommender are combined into a Hybrid Recommender with the *cascade* strategy.
-First, one of the two recommenders is used to generate a list of candidate papers.
-Then, the other recommender re-ranks this candidate list and generates the final recommendations.
+The hybrid recommender combines the citation recommender and the language recommender in a *cascade* fashion. Both component orders are considered, and evaluation scores are computed to determine the best component order and if the cascade approach improves performance.
 
-Both orderings of the recommenders are tested and evaluated.
-The ordering with the highest Mean Average Precision is chosen as the final Hybrid Recommender.
-The hybrid recommender scores are also compared to the scores of the candidate list to determine if the re-ranking step improved the recommendations.
+#### Evaluation
+
+**Mean Average Precision (MAP)** is used as the evaluation metric, as it considers the order of recommendations, includes all items on the list, and works with binary labels. The MAP averages Average Precision (AP) scores across the entire corpus, enabling comparison between different recommender systems.
 
 
-## Background
-
-### Citation Models
-
-
-### Language Models
-
-
-## Repository Structure

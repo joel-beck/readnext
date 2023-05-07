@@ -1,8 +1,8 @@
 # Overview
 
-This chapter elucidates the hybrid recommender's recommendation process during training and inference phases.
+This section elucidates the hybrid recommender's recommendation process during training and inference phases.
 
-## Training
+## Training: Precomputing Features
 
 The following diagram presents a high-level overview of the hybrid recommender system for papers in the training corpus:
 
@@ -70,4 +70,31 @@ The hybrid recommender combines the citation recommender and the language recomm
 **Mean Average Precision (MAP)** is used as the evaluation metric, as it considers the order of recommendations, includes all items on the list, and works with binary labels. The MAP averages Average Precision (AP) scores across the entire corpus, enabling comparison between different recommender systems.
 
 
-## Inference
+## Inference: Getting Recommendations
+
+When it comes to inference, our goal is to obtain a list of recommendations for a single query document.
+For example, a user might have just read or is currently reading a paper, and now they want to find other papers that may interest them.
+
+We need to consider two scenarios, depending on whether the query document is part of the training corpus or not.
+
+### Query Document in the Training Corpus
+
+If the query document is part of the training corpus, getting recommendations is fast – it's just a simple lookup of precomputed values!
+The user needs to supply a unique identifier for the query document, which could be the document ID within the D3 dataset, the Semantic Scholar URL of the paper, or in most cases, even the paper's title.
+
+From the database, you can retrieve any piece of information, including individual features, abstract embeddings, pairwise co-citation analysis, bibliographic coupling, cosine similarity scores, and the final recommendation list.
+
+### Query Document Not in the Training Corpus
+
+!!! info
+
+    This aspect of the project is still a work in progress.
+    We'll soon add detailed documentation on how users can get recommendations for unseen papers 🚀
+
+When the query document isn't part of the training corpus, the inference process is a bit more complex.
+In principle, users have to provide all model inputs, such as the query document's abstract, global document characteristics, arxiv labels, and complete lists of citing and cited papers.
+
+Since citation information might not be readily available, our goal is to automatically fetch this data from the Semantic Scholar API using only the query document's Semantic Scholar URL.
+
+Keep in mind that inference will be considerably slower for unseen papers compared to those in the training corpus.
+This is because abstract embeddings and pairwise co-citation analysis, bibliographic coupling, and cosine similarity scores concerning all other papers in the training corpus need to be computed from scratch.

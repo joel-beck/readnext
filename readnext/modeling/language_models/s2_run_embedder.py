@@ -24,21 +24,23 @@ def main() -> None:
         ResultsPaths.language_models.spacy_tokenized_abstracts_mapping_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    spacy_tokens_list_mapping = slice_mapping(spacy_tokens_list_mapping, size=1000)
+    spacy_tokens_list_mapping = slice_mapping(spacy_tokens_list_mapping, size=100)
 
-    spacy_tokens_string_mapping = SpacyTokenizer.strings_from_tokens(spacy_tokens_list_mapping)
+    spacy_tokens_string_mapping = SpacyTokenizer.string_mapping_from_tokens_mapping(
+        spacy_tokens_list_mapping
+    )
 
-    bert_tokens_tensor_mapping = BERTTokenizer.load_tokens_mapping(
-        ResultsPaths.language_models.bert_tokenized_abstracts_mapping_most_cited_pt
+    bert_token_ids_mapping = BERTTokenizer.load_tokens_mapping(
+        ResultsPaths.language_models.bert_tokenized_abstracts_mapping_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    bert_tokens_tensor_mapping = slice_mapping(bert_tokens_tensor_mapping, size=1000)
+    bert_token_ids_mapping = slice_mapping(bert_token_ids_mapping, size=100)
 
-    scibert_tokens_tensor_mapping = BERTTokenizer.load_tokens_mapping(
-        ResultsPaths.language_models.scibert_tokenized_abstracts_mapping_most_cited_pt
+    scibert_token_ids_mapping = BERTTokenizer.load_tokens_mapping(
+        ResultsPaths.language_models.scibert_tokenized_abstracts_mapping_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    scibert_tokens_tensor_mapping = slice_mapping(scibert_tokens_tensor_mapping, size=1000)
+    scibert_token_ids_mapping = slice_mapping(scibert_token_ids_mapping, size=100)
 
     tfidf_model = TfidfVectorizer()
     tfidf_embedder = TFIDFEmbedder(tfidf_model)
@@ -82,7 +84,7 @@ def main() -> None:
 
     bert_model = BertModel.from_pretrained(ModelVersions.bert)  # type: ignore
     bert_embedder = BERTEmbedder(bert_model)  # type: ignore
-    bert_embeddings_mapping = bert_embedder.compute_embeddings_mapping(bert_tokens_tensor_mapping)
+    bert_embeddings_mapping = bert_embedder.compute_embeddings_mapping(bert_token_ids_mapping)
     save_df_to_pickle(
         embeddings_mapping_to_frame(bert_embeddings_mapping),
         ResultsPaths.language_models.bert_embeddings_mapping_most_cited_pkl,
@@ -90,7 +92,7 @@ def main() -> None:
 
     scibert_model = BertModel.from_pretrained(ModelVersions.scibert)  # type: ignore
     scibert_embedder = BERTEmbedder(scibert_model)  # type: ignore
-    scibert_embeddings = scibert_embedder.compute_embeddings_mapping(scibert_tokens_tensor_mapping)
+    scibert_embeddings = scibert_embedder.compute_embeddings_mapping(scibert_token_ids_mapping)
     save_df_to_pickle(
         embeddings_mapping_to_frame(scibert_embeddings),
         ResultsPaths.language_models.scibert_embeddings_mapping_most_cited_pkl,

@@ -60,7 +60,7 @@ def test_tfidf_embeddings_most_cited(
 
     # check embedding dimension for all documents
     assert all(
-        len(embedding) == 9166 for embedding in tfidf_embeddings_mapping_most_cited["embedding"]
+        len(embedding) == 2037 for embedding in tfidf_embeddings_mapping_most_cited["embedding"]
     )
 
 

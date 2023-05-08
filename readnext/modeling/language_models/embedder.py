@@ -5,6 +5,7 @@ from typing import Protocol, TypeAlias
 
 import numpy as np
 import pandas as pd
+import torch
 from gensim.models import FastText, KeyedVectors
 from rank_bm25 import BM25Okapi
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -13,10 +14,10 @@ from transformers import BertModel
 # do not import from .language_models to avoid circular imports
 from readnext.modeling.language_models.tokenizer import (
     StringMapping,
+    TokenIds,
     Tokens,
+    TokensIdMapping,
     TokensMapping,
-    TokensTensor,
-    TokensTensorMapping,
 )
 from readnext.utils import setup_progress_bar
 
@@ -103,10 +104,13 @@ class TFIDFEmbedder:
         """
         self.embedding_model = self.embedding_model.fit(tokens_mapping.values())
 
-        return {
-            document_id: self.embedding_model.transform([document]).toarray()[0]
-            for document_id, document in tokens_mapping.items()
-        }
+        with setup_progress_bar() as progress_bar:
+            return {
+                document_id: self.embedding_model.transform([document]).toarray()[0]
+                for document_id, document in progress_bar.track(
+                    tokens_mapping.items(), total=len(tokens_mapping)
+                )
+            }
 
 
 # TODO: Can we compute document embeddings with bm25 just like with tfidf wothout
@@ -206,12 +210,16 @@ class GensimEmbedder(ABC):
 
         - n_dimensions: dimension of the embedding space
         """
-        return {
-            document_id: self.compute_document_embedding(
-                self.compute_word_embeddings_per_document(tokens), aggregation_strategy
-            )
-            for document_id, tokens in tokens_mapping.items()
-        }
+
+        with setup_progress_bar() as progress_bar:
+            return {
+                document_id: self.compute_document_embedding(
+                    self.compute_word_embeddings_per_document(tokens), aggregation_strategy
+                )
+                for document_id, tokens in progress_bar.track(
+                    tokens_mapping.items(), total=len(tokens_mapping)
+                )
+            }
 
 
 class Word2VecEmbedder(GensimEmbedder):
@@ -249,7 +257,7 @@ class BERTEmbedder:
 
     def compute_embeddings_single_document(
         self,
-        tokens_tensor: TokensTensor,
+        token_ids: TokenIds,
         aggregation_strategy: AggregationStrategy = AggregationStrategy.mean,
     ) -> Embedding:
         """
@@ -264,13 +272,11 @@ class BERTEmbedder:
         - n_dimensions: dimension of embedding space
         """
         # outputs is an ordered dictionary with keys `last_hidden_state` and `pooler_output`
-        # BertModel expects tensor of shape (batch_size, sequence_length), i.e. add
-        # batch dimension to `tokens_tensor`
-        outputs = self.embedding_model(tokens_tensor.unsqueeze(0))
+        outputs = self.embedding_model(torch.tensor([token_ids]))
 
         # first element of outputs is the last hidden state of the [CLS] token
         # dimension: num_documents x num_tokens_per_document x embedding_dimension
-        document_embeddings: TokensTensor = outputs.last_hidden_state
+        document_embeddings: torch.Tensor = outputs.last_hidden_state
 
         if aggregation_strategy.is_mean:
             document_embedding = document_embeddings.mean(dim=1)
@@ -283,7 +289,7 @@ class BERTEmbedder:
 
     def compute_embeddings_mapping(
         self,
-        tokens_tensor_mapping: TokensTensorMapping,
+        tokens_tensor_mapping: TokensIdMapping,
         aggregation_strategy: AggregationStrategy = AggregationStrategy.mean,
     ) -> EmbeddingsMapping:
         """

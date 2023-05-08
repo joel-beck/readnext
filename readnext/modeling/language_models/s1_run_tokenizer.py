@@ -16,6 +16,11 @@ def main() -> None:
     documents_authors_labels_citations_most_cited = pd.read_pickle(
         DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
     )
+    # NOTE: Remove to train on full data
+    documents_authors_labels_citations_most_cited = (
+        documents_authors_labels_citations_most_cited.head(1000)
+    )
+
     documents_info = documents_info_from_df(documents_authors_labels_citations_most_cited)
 
     # requires downloading the model first with `python -m spacy download
@@ -28,11 +33,13 @@ def main() -> None:
         spacy_tokenized_abstracts,
     )
 
-    bert_tokenizer_transformers = BertTokenizerFast.from_pretrained(ModelVersions.bert)
+    bert_tokenizer_transformers = BertTokenizerFast.from_pretrained(
+        ModelVersions.bert, do_lower_case=True, clean_text=True
+    )
     bert_tokenizer = BERTTokenizer(documents_info, bert_tokenizer_transformers)
     bert_tokenized_abstracts = bert_tokenizer.tokenize()
     bert_tokenizer.save_tokens_mapping(
-        ResultsPaths.language_models.bert_tokenized_abstracts_mapping_most_cited_pt,
+        ResultsPaths.language_models.bert_tokenized_abstracts_mapping_most_cited_pkl,
         bert_tokenized_abstracts,
     )
 
@@ -40,7 +47,7 @@ def main() -> None:
     scibert_tokenizer = BERTTokenizer(documents_info, scibert_tokenizer_transformers)
     scibert_tokenized_abstracts = scibert_tokenizer.tokenize()
     scibert_tokenizer.save_tokens_mapping(
-        ResultsPaths.language_models.scibert_tokenized_abstracts_mapping_most_cited_pt,
+        ResultsPaths.language_models.scibert_tokenized_abstracts_mapping_most_cited_pkl,
         scibert_tokenized_abstracts,
     )
 

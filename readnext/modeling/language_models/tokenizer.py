@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TypeAlias
+from typing import TypeAlias, cast
 
 import torch
 from spacy.language import Language
@@ -24,8 +24,9 @@ TokensMapping: TypeAlias = dict[int, Tokens]
 StringMapping: TypeAlias = dict[int, str]
 
 # each document is represented as a tensor of token ids
-TokensTensor: TypeAlias = torch.Tensor
-TokensTensorMapping: TypeAlias = dict[int, TokensTensor]
+TokenIds: TypeAlias = list[int]
+TokensIdMapping: TypeAlias = dict[int, list[int]]
+TokensTensorMapping: TypeAlias = dict[int, torch.Tensor]
 
 
 @dataclass
@@ -56,18 +57,34 @@ class TensorTokenizer(ABC):
     documents_info: DocumentsInfo
 
     @abstractmethod
-    def tokenize(self) -> TokensTensorMapping:
+    def tokenize(self) -> TokensIdMapping:
         ...
 
     @staticmethod
     @abstractmethod
-    def save_tokens_mapping(path: Path, tokens_tensor: TokensTensorMapping) -> None:
+    def save_tokens_mapping(path: Path, tokens_tensor: TokensIdMapping) -> None:
         ...
 
     @staticmethod
     @abstractmethod
-    def load_tokens_mapping(path: Path) -> TokensTensorMapping:
+    def load_tokens_mapping(path: Path) -> TokensIdMapping:
         ...
+
+
+@dataclass
+class TextProcessingSteps:
+    """
+    Defines all possible text processing steps that can be applied to a document.
+    """
+
+    remove_non_alphanumeric: bool = True
+    remove_non_ascii: bool = True
+    remove_digits: bool = True
+    remove_punctuation: bool = True
+    remove_whitespace: bool = True
+    remove_stopwords: bool = True
+    to_lowercase: bool = True
+    lemmatize: bool = True
 
 
 @dataclass
@@ -76,9 +93,7 @@ class SpacyTokenizer(ListTokenizer):
 
     documents_info: DocumentsInfo
     spacy_model: Language
-    remove_stopwords: bool = True
-    remove_punctuation: bool = True
-    remove_non_alphanumeric: bool = False
+    text_processing_steps: TextProcessingSteps = TextProcessingSteps()  # noqa
 
     def to_spacy_doc(self, document: str) -> Doc:
         """Converts a single abstract into a spacy document."""
@@ -95,16 +110,35 @@ class SpacyTokenizer(ListTokenizer):
         clean_tokens = []
         # use for loop instead of list comprehension to allow disabling of individual filters
         for token in spacy_doc:
-            if self.remove_stopwords and token.is_stop:
+            # initialize token_text such that lemmatisation and lowercasing can be
+            # applied independently of each other
+            token_text = token.text
+
+            if self.text_processing_steps.remove_non_alphanumeric and not token.is_alpha:
                 continue
 
-            if self.remove_punctuation and token.is_punct:
+            if self.text_processing_steps.remove_non_ascii and not token.is_ascii:
                 continue
 
-            if self.remove_non_alphanumeric and not token.is_alpha:
+            if self.text_processing_steps.remove_digits and token.is_digit:
                 continue
 
-            clean_tokens.append(token.text)
+            if self.text_processing_steps.remove_punctuation and token.is_punct:
+                continue
+
+            if self.text_processing_steps.remove_whitespace and token.is_space:
+                continue
+
+            if self.text_processing_steps.remove_stopwords and token.is_stop:
+                continue
+
+            if self.text_processing_steps.lemmatize:
+                token_text = token.lemma_
+
+            if self.text_processing_steps.to_lowercase:
+                token_text = token_text.lower()
+
+            clean_tokens.append(token_text)
 
         return clean_tokens
 
@@ -138,7 +172,7 @@ class SpacyTokenizer(ListTokenizer):
         return {document_id: " ".join(tokens) for document_id, tokens in self.tokenize().items()}
 
     @staticmethod
-    def strings_from_tokens(
+    def string_mapping_from_tokens_mapping(
         tokens_mapping: TokensMapping,
     ) -> StringMapping:
         """
@@ -166,12 +200,12 @@ class BERTTokenizer(TensorTokenizer):
     documents_info: DocumentsInfo
     bert_tokenizer: BertTokenizerFast
 
-    def tokenize(self) -> TokensTensorMapping:
+    def tokenize(self) -> TokensIdMapping:
         """
         Tokenizes multiple abstracts into token ids. Generates a mapping of document ids
         to token ids.
         """
-        tokenized_abstracts = self.bert_tokenizer(
+        token_ids = self.bert_tokenizer(
             self.documents_info.abstracts,
             # BERT takes 512 dimensional tensors as input
             max_length=512,
@@ -179,17 +213,31 @@ class BERTTokenizer(TensorTokenizer):
             truncation=True,
             # pad shorter documents up to 512 tokens
             padding=True,
-            return_tensors="pt",
+            # return_tensors="pt",
         )["input_ids"]
 
-        return dict(zip(self.documents_info.document_ids, tokenized_abstracts))  # type: ignore
+        return dict(zip(self.documents_info.document_ids, token_ids))  # type: ignore
+
+    def ids_to_tokens(self, token_ids: list[int]) -> list[str]:
+        """Converts a list of token ids into a list of tokens."""
+        return cast(list[str], self.bert_tokenizer.convert_ids_to_tokens(token_ids))
+
+    def id_mapping_to_tokens_mapping(self, tokens_id_mapping: TokensIdMapping) -> TokensMapping:
+        """
+        Converts a mapping of document ids to token ids into a mapping of document ids
+        to tokens.
+        """
+        return {
+            document_id: self.ids_to_tokens(token_ids)
+            for document_id, token_ids in tokens_id_mapping.items()
+        }
 
     @staticmethod
-    def save_tokens_mapping(path: Path, tokens_tensor_mapping: TokensTensorMapping) -> None:
-        """Save a mapping of document ids to token ids to a pytorch file."""
-        torch.save(tokens_tensor_mapping, path)
+    def save_tokens_mapping(path: Path, tokens_id_mapping: TokensIdMapping) -> None:
+        """Save a mapping of document ids to token ids to a pickle file."""
+        save_object_to_pickle(tokens_id_mapping, path)
 
     @staticmethod
-    def load_tokens_mapping(path: Path) -> TokensTensorMapping:
-        """Load a mapping of document ids to token ids from a pytorch file."""
-        return torch.load(path)  # type: ignore
+    def load_tokens_mapping(path: Path) -> TokensIdMapping:
+        """Load a mapping of document ids to token ids from a pickle file."""
+        return load_object_from_pickle(path)  # type: ignore

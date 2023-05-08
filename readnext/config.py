@@ -159,8 +159,8 @@ class LanguageModelsResultsPaths:
     fasttext_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "fasttext_cosine_similarities_most_cited.pkl"
     )
-    bert_tokenized_abstracts_mapping_most_cited_pt: Path = (
-        results_dirpath / "bert_tokenized_abstracts_mapping_most_cited.pt"
+    bert_tokenized_abstracts_mapping_most_cited_pkl: Path = (
+        results_dirpath / "bert_tokenized_abstracts_mapping_most_cited.pkl"
     )
     bert_embeddings_mapping_most_cited_pkl: Path = (
         results_dirpath / "bert_embeddings_mapping_most_cited.pkl"
@@ -168,8 +168,8 @@ class LanguageModelsResultsPaths:
     bert_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "bert_cosine_similarities_most_cited.pkl"
     )
-    scibert_tokenized_abstracts_mapping_most_cited_pt: Path = (
-        results_dirpath / "scibert_tokenized_abstracts_mapping_most_cited.pt"
+    scibert_tokenized_abstracts_mapping_most_cited_pkl: Path = (
+        results_dirpath / "scibert_tokenized_abstracts_mapping_most_cited.pkl"
     )
     scibert_embeddings_mapping_most_cited_pkl: Path = (
         results_dirpath / "scibert_embeddings_mapping_most_cited.pkl"

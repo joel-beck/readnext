@@ -10,10 +10,10 @@ from readnext.modeling.language_models.tokenizer import (
     BERTTokenizer,
     SpacyTokenizer,
     StringMapping,
+    TokenIds,
     Tokens,
+    TokensIdMapping,
     TokensMapping,
-    TokensTensor,
-    TokensTensorMapping,
 )
 
 __all__ = [
@@ -28,6 +28,6 @@ __all__ = [
     "StringMapping",
     "Tokens",
     "TokensMapping",
-    "TokensTensor",
-    "TokensTensorMapping",
+    "TokenIds",
+    "TokensIdMapping",
 ]

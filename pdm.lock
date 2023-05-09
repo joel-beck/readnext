@@ -230,6 +230,15 @@ version = "0.3.6"
 summary = "Distribution utilities"
 
 [[package]]
+name = "en-core-web-sm"
+version = "3.5.0"
+url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.5.0/en_core_web_sm-3.5.0-py3-none-any.whl"
+summary = "English pipeline optimized for CPU. Components: tok2vec, tagger, parser, senter, ner, attribute_ruler, lemmatizer."
+dependencies = [
+    "spacy<3.6.0,>=3.5.0",
+]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.1.1"
 requires_python = ">=3.7"
@@ -1471,7 +1480,7 @@ summary = "Jupyter interactive widgets for Jupyter Notebook"
 [metadata]
 lock_version = "4.2"
 groups = ["default", "dev"]
-content_hash = "sha256:74e9810ad91132c857c190759a609a99caa4f4efd1a3083bcc24de3e589bc98b"
+content_hash = "sha256:daa588bc944bed602ca310e9bac693e56e620540d57d61f21621f7dc2f4f8a05"
 
 [metadata.files]
 "anyio 3.6.2" = [
@@ -1936,6 +1945,9 @@ content_hash = "sha256:74e9810ad91132c857c190759a609a99caa4f4efd1a3083bcc24de3e5
 "distlib 0.3.6" = [
     {url = "https://files.pythonhosted.org/packages/58/07/815476ae605bcc5f95c87a62b95e74a1bce0878bc7a3119bc2bf4178f175/distlib-0.3.6.tar.gz", hash = "sha256:14bad2d9b04d3a36127ac97f30b12a19268f211063d8f8ee4f47108896e11b46"},
     {url = "https://files.pythonhosted.org/packages/76/cb/6bbd2b10170ed991cf64e8c8b85e01f2fb38f95d1bc77617569e0b0b26ac/distlib-0.3.6-py2.py3-none-any.whl", hash = "sha256:f35c4b692542ca110de7ef0bea44d73981caeb34ca0b9b6b2e6d7790dda8f80e"},
+]
+"en-core-web-sm 3.5.0" = [
+    {url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.5.0/en_core_web_sm-3.5.0-py3-none-any.whl", hash = "sha256:0964370218b7e1672a30ac50d72cdc6b16f7c867496f1d60925691188f4d2510"},
 ]
 "exceptiongroup 1.1.1" = [
     {url = "https://files.pythonhosted.org/packages/61/97/17ed81b7a8d24d8f69b62c0db37abbd8c0042d4b3fc429c73dab986e7483/exceptiongroup-1.1.1-py3-none-any.whl", hash = "sha256:232c37c63e4f682982c8b6459f33a8981039e5fb8756b2074364e5055c498c9e"},

@@ -1480,7 +1480,7 @@ summary = "Jupyter interactive widgets for Jupyter Notebook"
 [metadata]
 lock_version = "4.2"
 groups = ["default", "dev"]
-content_hash = "sha256:8e8a82612a2bf105f52fdbe0e27953f29af13afd9d3d32f9afb4b104735cffc3"
+content_hash = "sha256:daa588bc944bed602ca310e9bac693e56e620540d57d61f21621f7dc2f4f8a05"
 
 [metadata.files]
 "anyio 3.6.2" = [

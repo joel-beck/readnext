@@ -8,8 +8,7 @@ from spacy.language import Language
 from spacy.tokens.doc import Doc
 from transformers import BertTokenizerFast
 
-# do not import from .language_models to avoid circular imports
-from readnext.modeling import DocumentsInfo
+from readnext.modeling.document_info import DocumentsInfo
 from readnext.utils import (
     load_object_from_pickle,
     save_object_to_pickle,

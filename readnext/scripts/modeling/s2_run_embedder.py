@@ -1,4 +1,4 @@
-"""Generate maapings of document ids to embeddings for all language models."""
+"""Generate mappings of document ids to embeddings for all language models."""
 
 from gensim.models import KeyedVectors
 from gensim.models.fasttext import load_facebook_model
@@ -7,7 +7,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
 from readnext.config import ModelPaths, ModelVersions, ResultsPaths
-from readnext.modeling.language_models import (
+from readnext.modeling import (
     BERTEmbedder,
     BERTTokenizer,
     FastTextEmbedder,
@@ -68,6 +68,23 @@ def main() -> None:
     save_df_to_pickle(
         embeddings_mapping_to_frame(word2vec_embeddings_mapping),
         ResultsPaths.language_models.word2vec_embeddings_mapping_most_cited_pkl,
+    )
+
+    # requires pre-downloaded model from gensim data repository:
+    # https://github.com/RaRe-Technologies/gensim-data
+    #
+    # download and save model locally with the commands
+    # `import gensim.downloader as api`
+    # `api.load("ModelVersions.glove", return_path=True)`
+    #
+    # then unzip the model file and move it to the local `models` directory
+
+    glove_model = KeyedVectors.load_word2vec_format(ModelPaths.glove, no_header=True)
+    glove_embedder = Word2VecEmbedder(glove_model)
+    glove_embeddings_mapping = glove_embedder.compute_embeddings_mapping(spacy_tokens_list_mapping)
+    save_df_to_pickle(
+        embeddings_mapping_to_frame(glove_embeddings_mapping),
+        ResultsPaths.language_models.glove_embeddings_mapping_most_cited_pkl,
     )
 
     # requires pre-downloaded model from fasttext website:

@@ -12,7 +12,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
 # do not import from .language_models to avoid circular imports
-from readnext.modeling.language_models.tokenizer import (
+from readnext.modeling.tokenizer import (
     StringMapping,
     TokenIds,
     Tokens,
@@ -235,6 +235,19 @@ class Word2VecEmbedder(GensimEmbedder):
         )
 
 
+class GloVeEmbedder(GensimEmbedder):
+    """Computes document embeddings with the GloVe model."""
+
+    def __init__(self, embedding_model: KeyedVectors) -> None:
+        super().__init__(embedding_model)
+
+    def compute_word_embeddings_per_document(self, tokens: Tokens) -> np.ndarray:
+        # exclude any individual unknown tokens
+        return np.vstack(
+            [self.embedding_model[token] for token in tokens if token in self.embedding_model]  # type: ignore # noqa: E501
+        )
+
+
 class FastTextEmbedder(GensimEmbedder):
     """Computes document embeddings with the FastText model."""
 
@@ -271,8 +284,10 @@ class BERTEmbedder:
         `tokens_tensor` input
         - n_dimensions: dimension of embedding space
         """
+        token_ids_tensor = torch.tensor([token_ids])
+
         # outputs is an ordered dictionary with keys `last_hidden_state` and `pooler_output`
-        outputs = self.embedding_model(torch.tensor([token_ids]))
+        outputs = self.embedding_model(token_ids_tensor)
 
         # first element of outputs is the last hidden state of the [CLS] token
         # dimension: num_documents x num_tokens_per_document x embedding_dimension

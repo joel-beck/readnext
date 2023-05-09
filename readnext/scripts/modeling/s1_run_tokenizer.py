@@ -5,11 +5,7 @@ import spacy
 from transformers import BertTokenizerFast
 
 from readnext.config import DataPaths, ModelVersions, ResultsPaths
-from readnext.modeling import documents_info_from_df
-from readnext.modeling.language_models import (
-    BERTTokenizer,
-    SpacyTokenizer,
-)
+from readnext.modeling import BERTTokenizer, SpacyTokenizer, documents_info_from_df
 
 
 def main() -> None:
@@ -23,8 +19,6 @@ def main() -> None:
 
     documents_info = documents_info_from_df(documents_authors_labels_citations_most_cited)
 
-    # requires downloading the model first with `python -m spacy download
-    # <model_version>` from the command line
     spacy_model = spacy.load(ModelVersions.spacy)
     spacy_tokenizer = SpacyTokenizer(documents_info, spacy_model)
     spacy_tokenized_abstracts = spacy_tokenizer.tokenize()

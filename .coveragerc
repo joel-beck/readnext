@@ -6,3 +6,5 @@ omit =
     */__init__.py
     # omit executable scripts in `readnext/scripts` directory from coverage
     readnext/scripts/*
+    # omit loading and saving functions in `readnext/utils/io.py` directory from coverage
+    readnext/utils/io.py

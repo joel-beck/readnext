@@ -3,7 +3,14 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from readnext.modeling import DocumentInfo, DocumentsInfo
+from readnext.modeling import (
+    CitationModelDataConstructor,
+    DocumentInfo,
+    DocumentsInfo,
+    LanguageModelDataConstructor,
+    add_feature_rank_cols,
+    set_missing_publication_dates_to_max_rank,
+)
 from readnext.utils import load_df_from_pickle, load_object_from_pickle
 
 
@@ -11,6 +18,11 @@ from readnext.utils import load_df_from_pickle, load_object_from_pickle
 def root_path() -> Path:
     """Return project root path when pytest is executed from the project root directory."""
     return Path().cwd()
+
+
+@pytest.fixture(scope="session")
+def test_data_size() -> int:
+    return 1000
 
 
 @pytest.fixture(scope="session")
@@ -173,3 +185,56 @@ def documents_info() -> DocumentsInfo:
             ),
         ]
     )
+
+
+@pytest.fixture(scope="module")
+def citation_model_data_constructor(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_co_citation_analysis_scores_most_cited: pd.DataFrame,
+    test_bibliographic_coupling_scores_most_cited: pd.DataFrame,
+) -> CitationModelDataConstructor:
+    query_document_id = 546182
+
+    return CitationModelDataConstructor(
+        query_document_id=query_document_id,
+        documents_data=test_documents_authors_labels_citations_most_cited.pipe(
+            add_feature_rank_cols
+        ).pipe(set_missing_publication_dates_to_max_rank),
+        co_citation_analysis_scores=test_co_citation_analysis_scores_most_cited,
+        bibliographic_coupling_scores=test_bibliographic_coupling_scores_most_cited,
+    )
+
+
+@pytest.fixture(scope="module")
+def language_model_data_constructor(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_tfidf_cosine_similarities_most_cited: pd.DataFrame,
+) -> LanguageModelDataConstructor:
+    query_document_id = 546182
+
+    return LanguageModelDataConstructor(
+        query_document_id=query_document_id,
+        documents_data=test_documents_authors_labels_citations_most_cited.pipe(
+            add_feature_rank_cols
+        ).pipe(set_missing_publication_dates_to_max_rank),
+        cosine_similarities=test_tfidf_cosine_similarities_most_cited,
+    )
+
+
+@pytest.fixture
+def citation_model_data_constructor_new_document_id(
+    citation_model_data_constructor: CitationModelDataConstructor,
+) -> CitationModelDataConstructor:
+    # original query document id is not in co-citation analysis scores and bibliographic
+    # coupling scores data
+    citation_model_data_constructor.query_document_id = 206594692
+    return citation_model_data_constructor
+
+
+@pytest.fixture
+def language_model_data_constructor_new_document_id(
+    language_model_data_constructor: LanguageModelDataConstructor,
+) -> LanguageModelDataConstructor:
+    # original query document id is not in cosine similarity scores data
+    language_model_data_constructor.query_document_id = 206594692
+    return language_model_data_constructor

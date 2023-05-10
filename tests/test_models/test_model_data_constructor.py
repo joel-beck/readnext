@@ -1,48 +1,11 @@
 import pandas as pd
-import pytest
 
 from readnext.modeling import (
     CitationModelDataConstructor,
     DocumentInfo,
     DocumentScore,
     LanguageModelDataConstructor,
-    add_feature_rank_cols,
-    set_missing_publication_dates_to_max_rank,
 )
-
-
-@pytest.fixture(scope="module")
-def citation_model_data_constructor(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
-    test_co_citation_analysis_scores_most_cited: pd.DataFrame,
-    test_bibliographic_coupling_scores_most_cited: pd.DataFrame,
-) -> CitationModelDataConstructor:
-    query_document_id = 546182
-
-    return CitationModelDataConstructor(
-        query_document_id=query_document_id,
-        documents_data=test_documents_authors_labels_citations_most_cited.pipe(
-            add_feature_rank_cols
-        ).pipe(set_missing_publication_dates_to_max_rank),
-        co_citation_analysis_scores=test_co_citation_analysis_scores_most_cited,
-        bibliographic_coupling_scores=test_bibliographic_coupling_scores_most_cited,
-    )
-
-
-@pytest.fixture(scope="module")
-def language_model_data_constructor(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
-    test_tfidf_cosine_similarities_most_cited: pd.DataFrame,
-) -> LanguageModelDataConstructor:
-    query_document_id = 546182
-
-    return LanguageModelDataConstructor(
-        query_document_id=query_document_id,
-        documents_data=test_documents_authors_labels_citations_most_cited.pipe(
-            add_feature_rank_cols
-        ).pipe(set_missing_publication_dates_to_max_rank),
-        cosine_similarities=test_tfidf_cosine_similarities_most_cited,
-    )
 
 
 # SECTION: Tests for CitationModelDataConstructor
@@ -174,13 +137,14 @@ def test_document_scores_to_frame(
 
 
 def test_get_citation_method_scores(
-    citation_model_data_constructor: CitationModelDataConstructor,
+    citation_model_data_constructor_new_document_id: CitationModelDataConstructor,
 ) -> None:
-    # original query document id is not in citation scores data
-    citation_model_data_constructor.query_document_id = 206594692
-
-    citation_method_data = citation_model_data_constructor.co_citation_analysis_scores
-    scores_df = citation_model_data_constructor.get_citation_method_scores(citation_method_data)
+    citation_method_data = (
+        citation_model_data_constructor_new_document_id.co_citation_analysis_scores
+    )
+    scores_df = citation_model_data_constructor_new_document_id.get_citation_method_scores(
+        citation_method_data
+    )
 
     assert isinstance(scores_df, pd.DataFrame)
     assert scores_df.shape[1] == 1
@@ -189,12 +153,11 @@ def test_get_citation_method_scores(
 
 
 def test_get_co_citation_analysis_scores(
-    citation_model_data_constructor: CitationModelDataConstructor,
+    citation_model_data_constructor_new_document_id: CitationModelDataConstructor,
 ) -> None:
-    # original query document id is not in citation scores data
-    citation_model_data_constructor.query_document_id = 206594692
-
-    co_citation_analysis_scores = citation_model_data_constructor.get_co_citation_analysis_scores()
+    co_citation_analysis_scores = (
+        citation_model_data_constructor_new_document_id.get_co_citation_analysis_scores()
+    )
 
     assert isinstance(co_citation_analysis_scores, pd.DataFrame)
     assert co_citation_analysis_scores.shape[1] == 1
@@ -203,13 +166,10 @@ def test_get_co_citation_analysis_scores(
 
 
 def test_get_bibliographic_coupling_scores(
-    citation_model_data_constructor: CitationModelDataConstructor,
+    citation_model_data_constructor_new_document_id: CitationModelDataConstructor,
 ) -> None:
-    # original query document id is not in citation scores data
-    citation_model_data_constructor.query_document_id = 206594692
-
     bibliographic_coupling_scores = (
-        citation_model_data_constructor.get_bibliographic_coupling_scores()
+        citation_model_data_constructor_new_document_id.get_bibliographic_coupling_scores()
     )
 
     assert isinstance(bibliographic_coupling_scores, pd.DataFrame)
@@ -219,40 +179,41 @@ def test_get_bibliographic_coupling_scores(
 
 
 def test_extend_info_matrix_citation_model(
-    citation_model_data_constructor: CitationModelDataConstructor,
+    citation_model_data_constructor_new_document_id: CitationModelDataConstructor,
 ) -> None:
-    # original query document id is not in citation scores data
-    citation_model_data_constructor.query_document_id = 206594692
-
-    info_matrix = citation_model_data_constructor.get_info_matrix()
-    extended_matrix = citation_model_data_constructor.extend_info_matrix(info_matrix)
+    info_matrix = citation_model_data_constructor_new_document_id.get_info_matrix()
+    extended_matrix = citation_model_data_constructor_new_document_id.extend_info_matrix(
+        info_matrix
+    )
 
     assert isinstance(extended_matrix, pd.DataFrame)
-    assert extended_matrix.shape[1] == len(citation_model_data_constructor.info_cols) + 2
+    assert (
+        extended_matrix.shape[1]
+        == len(citation_model_data_constructor_new_document_id.info_cols) + 2
+    )
     assert "co_citation_analysis" in extended_matrix.columns
     assert "bibliographic_coupling" in extended_matrix.columns
 
 
-def test_get_feature_matrix(citation_model_data_constructor: CitationModelDataConstructor) -> None:
-    # original query document id is not in citation scores data
-    citation_model_data_constructor.query_document_id = 206594692
-
-    feature_matrix = citation_model_data_constructor.get_feature_matrix()
+def test_get_feature_matrix(
+    citation_model_data_constructor_new_document_id: CitationModelDataConstructor,
+) -> None:
+    feature_matrix = citation_model_data_constructor_new_document_id.get_feature_matrix()
 
     assert isinstance(feature_matrix, pd.DataFrame)
-    assert feature_matrix.shape[1] == len(citation_model_data_constructor.feature_cols) + 2
+    assert (
+        feature_matrix.shape[1]
+        == len(citation_model_data_constructor_new_document_id.feature_cols) + 2
+    )
     assert "co_citation_analysis_rank" in feature_matrix.columns
     assert "bibliographic_coupling_rank" in feature_matrix.columns
 
 
 # SECTION: Tests for LanguageModelDataConstructor
 def test_get_cosine_similarity_scores(
-    language_model_data_constructor: LanguageModelDataConstructor,
+    language_model_data_constructor_new_document_id: LanguageModelDataConstructor,
 ) -> None:
-    # original query document id is not in cosine similarity scores data
-    language_model_data_constructor.query_document_id = 206594692
-
-    scores_df = language_model_data_constructor.get_cosine_similarity_scores()
+    scores_df = language_model_data_constructor_new_document_id.get_cosine_similarity_scores()
 
     assert isinstance(scores_df, pd.DataFrame)
     assert scores_df.shape[1] == 1
@@ -261,26 +222,25 @@ def test_get_cosine_similarity_scores(
 
 
 def test_extend_info_matrix_language_model(
-    language_model_data_constructor: LanguageModelDataConstructor,
+    language_model_data_constructor_new_document_id: LanguageModelDataConstructor,
 ) -> None:
-    # original query document id is not in cosine similarity scores data
-    language_model_data_constructor.query_document_id = 206594692
-
-    info_matrix = language_model_data_constructor.get_info_matrix()
-    extended_matrix = language_model_data_constructor.extend_info_matrix(info_matrix)
+    info_matrix = language_model_data_constructor_new_document_id.get_info_matrix()
+    extended_matrix = language_model_data_constructor_new_document_id.extend_info_matrix(
+        info_matrix
+    )
 
     assert isinstance(extended_matrix, pd.DataFrame)
-    assert extended_matrix.shape[1] == len(language_model_data_constructor.info_cols) + 1
+    assert (
+        extended_matrix.shape[1]
+        == len(language_model_data_constructor_new_document_id.info_cols) + 1
+    )
     assert "cosine_similarity" in extended_matrix.columns
 
 
 def test_get_cosine_similarity_ranks(
-    language_model_data_constructor: LanguageModelDataConstructor,
+    language_model_data_constructor_new_document_id: LanguageModelDataConstructor,
 ) -> None:
-    # original query document id is not in cosine similarity scores data
-    language_model_data_constructor.query_document_id = 206594692
-
-    ranks_df = language_model_data_constructor.get_cosine_similarity_ranks()
+    ranks_df = language_model_data_constructor_new_document_id.get_cosine_similarity_ranks()
 
     assert isinstance(ranks_df, pd.DataFrame)
     assert ranks_df.shape[1] == 1

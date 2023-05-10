@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from readnext.modeling import CitationModelDataConstructor
+from readnext.modeling import CitationModelDataConstructor, LanguageModelDataConstructor
 from readnext.modeling import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
@@ -28,6 +28,23 @@ def citation_model_data_constructor(
     )
 
 
+@pytest.fixture(scope="module")
+def language_model_data_constructor(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_tfidf_cosine_similarities_most_cited: pd.DataFrame,
+) -> LanguageModelDataConstructor:
+    query_document_id = 546182
+
+    return LanguageModelDataConstructor(
+        query_document_id=query_document_id,
+        documents_data=test_documents_authors_labels_citations_most_cited.pipe(
+            add_feature_rank_cols
+        ).pipe(set_missing_publication_dates_to_max_rank),
+        cosine_similarities=test_tfidf_cosine_similarities_most_cited,
+    )
+
+
+# SECTION: Tests for CitationModelDataConstructor
 def test_initialization(citation_model_data_constructor: CitationModelDataConstructor) -> None:
     assert isinstance(citation_model_data_constructor, CitationModelDataConstructor)
 
@@ -165,6 +182,7 @@ def test_get_citation_method_scores(
     scores_df = citation_model_data_constructor.get_citation_method_scores(citation_method_data)
 
     assert isinstance(scores_df, pd.DataFrame)
+    assert scores_df.shape[1] == 1
     assert "score" in scores_df.columns
     assert scores_df.index.name == "document_id"
 
@@ -175,11 +193,12 @@ def test_get_co_citation_analysis_scores(
     # original query document id is not in citation scores data
     citation_model_data_constructor.query_document_id = 206594692
 
-    scores_df = citation_model_data_constructor.get_co_citation_analysis_scores()
+    co_citation_analysis_scores = citation_model_data_constructor.get_co_citation_analysis_scores()
 
-    assert isinstance(scores_df, pd.DataFrame)
-    assert "co_citation_analysis" in scores_df.columns
-    assert scores_df.index.name == "document_id"
+    assert isinstance(co_citation_analysis_scores, pd.DataFrame)
+    assert co_citation_analysis_scores.shape[1] == 1
+    assert "co_citation_analysis" in co_citation_analysis_scores.columns
+    assert co_citation_analysis_scores.index.name == "document_id"
 
 
 def test_get_bibliographic_coupling_scores(
@@ -188,7 +207,81 @@ def test_get_bibliographic_coupling_scores(
     # original query document id is not in citation scores data
     citation_model_data_constructor.query_document_id = 206594692
 
-    scores_df = citation_model_data_constructor.get_bibliographic_coupling_scores()
+    bibliographic_coupling_scores = (
+        citation_model_data_constructor.get_bibliographic_coupling_scores()
+    )
+
+    assert isinstance(bibliographic_coupling_scores, pd.DataFrame)
+    assert bibliographic_coupling_scores.shape[1] == 1
+    assert "bibliographic_coupling" in bibliographic_coupling_scores.columns
+    assert bibliographic_coupling_scores.index.name == "document_id"
+
+
+def test_extend_info_matrix_citation_model(
+    citation_model_data_constructor: CitationModelDataConstructor,
+) -> None:
+    # original query document id is not in citation scores data
+    citation_model_data_constructor.query_document_id = 206594692
+
+    info_matrix = citation_model_data_constructor.get_info_matrix()
+    extended_matrix = citation_model_data_constructor.extend_info_matrix(info_matrix)
+
+    assert isinstance(extended_matrix, pd.DataFrame)
+    assert extended_matrix.shape[1] == len(citation_model_data_constructor.info_cols) + 2
+    assert "co_citation_analysis" in extended_matrix.columns
+    assert "bibliographic_coupling" in extended_matrix.columns
+
+
+def test_get_feature_matrix(citation_model_data_constructor: CitationModelDataConstructor) -> None:
+    # original query document id is not in citation scores data
+    citation_model_data_constructor.query_document_id = 206594692
+
+    feature_matrix = citation_model_data_constructor.get_feature_matrix()
+
+    assert isinstance(feature_matrix, pd.DataFrame)
+    assert feature_matrix.shape[1] == len(citation_model_data_constructor.feature_cols) + 2
+    assert "co_citation_analysis_rank" in feature_matrix.columns
+    assert "bibliographic_coupling_rank" in feature_matrix.columns
+
+
+# SECTION: Tests for LanguageModelDataConstructor
+def test_get_cosine_similarity_scores(
+    language_model_data_constructor: LanguageModelDataConstructor,
+) -> None:
+    # original query document id is not in cosine similarity scores data
+    language_model_data_constructor.query_document_id = 206594692
+
+    scores_df = language_model_data_constructor.get_cosine_similarity_scores()
+
     assert isinstance(scores_df, pd.DataFrame)
-    assert "bibliographic_coupling" in scores_df.columns
+    assert scores_df.shape[1] == 1
+    assert "cosine_similarity" in scores_df.columns
     assert scores_df.index.name == "document_id"
+
+
+def test_extend_info_matrix_language_model(
+    language_model_data_constructor: LanguageModelDataConstructor,
+) -> None:
+    # original query document id is not in cosine similarity scores data
+    language_model_data_constructor.query_document_id = 206594692
+
+    info_matrix = language_model_data_constructor.get_info_matrix()
+    extended_matrix = language_model_data_constructor.extend_info_matrix(info_matrix)
+
+    assert isinstance(extended_matrix, pd.DataFrame)
+    assert extended_matrix.shape[1] == len(language_model_data_constructor.info_cols) + 1
+    assert "cosine_similarity" in extended_matrix.columns
+
+
+def test_get_cosine_similarity_ranks(
+    language_model_data_constructor: LanguageModelDataConstructor,
+) -> None:
+    # original query document id is not in cosine similarity scores data
+    language_model_data_constructor.query_document_id = 206594692
+
+    ranks_df = language_model_data_constructor.get_cosine_similarity_ranks()
+
+    assert isinstance(ranks_df, pd.DataFrame)
+    assert ranks_df.shape[1] == 1
+    assert "cosine_similarity_rank" in ranks_df.columns
+    assert ranks_df.index.name == "document_id"

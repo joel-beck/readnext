@@ -9,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 
 from readnext.config import DataPaths
-from readnext.data.preprocessing_utils import add_rank
+from readnext.utils.preprocessing import add_rank
 from readnext.utils import setup_progress_bar
 
 

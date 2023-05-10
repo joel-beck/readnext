@@ -1,7 +1,7 @@
 """Generate mappings of document ids to embeddings for all language models."""
 
 from gensim.models.fasttext import load_facebook_model
-from gensim.models.keyedvectors import load_word2vec_format, KeyedVectors
+from gensim.models.keyedvectors import KeyedVectors, load_word2vec_format
 from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 

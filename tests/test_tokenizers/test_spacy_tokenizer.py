@@ -4,8 +4,7 @@ from spacy.language import Language
 from spacy.tokens.doc import Doc
 
 from readnext.config import ModelVersions
-from readnext.modeling import DocumentInfo, DocumentsInfo
-from readnext.modeling import SpacyTokenizer
+from readnext.modeling import DocumentInfo, DocumentsInfo, SpacyTokenizer
 
 
 @pytest.fixture(scope="module")

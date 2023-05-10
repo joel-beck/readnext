@@ -1,12 +1,13 @@
 import pandas as pd
 import pytest
 
-from readnext.modeling import CitationModelDataConstructor, LanguageModelDataConstructor
 from readnext.modeling import (
-    add_feature_rank_cols,
-    set_missing_publication_dates_to_max_rank,
+    CitationModelDataConstructor,
     DocumentInfo,
     DocumentScore,
+    LanguageModelDataConstructor,
+    add_feature_rank_cols,
+    set_missing_publication_dates_to_max_rank,
 )
 
 

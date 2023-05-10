@@ -23,6 +23,13 @@ def word2vec_embeddings_mapping_most_cited() -> pd.DataFrame:
 
 
 @pytest.fixture(scope="module")
+def glove_embeddings_mapping_most_cited() -> pd.DataFrame:
+    return load_object_from_pickle(
+        ResultsPaths.language_models.glove_embeddings_mapping_most_cited_pkl
+    )
+
+
+@pytest.fixture(scope="module")
 def fasttext_embeddings_mapping_most_cited() -> pd.DataFrame:
     return load_object_from_pickle(
         ResultsPaths.language_models.fasttext_embeddings_mapping_most_cited_pkl
@@ -83,6 +90,28 @@ def test_word2vec_embeddings_most_cited(
     # check embedding dimension
     assert all(
         len(embedding) == 300 for embedding in word2vec_embeddings_mapping_most_cited["embedding"]
+    )
+
+
+def test_glove_embeddings_most_cited(
+    glove_embeddings_mapping_most_cited: pd.DataFrame,
+) -> None:
+    assert isinstance(glove_embeddings_mapping_most_cited, pd.DataFrame)
+
+    # check number and names of columns
+    assert glove_embeddings_mapping_most_cited.shape[1] == 2
+    assert glove_embeddings_mapping_most_cited.columns.tolist() == ["document_id", "embedding"]
+
+    # check dtypes of columns
+    assert is_integer_dtype(glove_embeddings_mapping_most_cited["document_id"])
+
+    first_document = glove_embeddings_mapping_most_cited.iloc[0]
+    assert isinstance(first_document["embedding"], np.ndarray)
+    assert first_document["embedding"].dtype == np.float32
+
+    # check embedding dimension
+    assert all(
+        len(embedding) == 300 for embedding in glove_embeddings_mapping_most_cited["embedding"]
     )
 
 

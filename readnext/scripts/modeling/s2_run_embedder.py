@@ -1,13 +1,12 @@
-"""Generate maapings of document ids to embeddings for all language models."""
+"""Generate mappings of document ids to embeddings for all language models."""
 
-from gensim.models import KeyedVectors
 from gensim.models.fasttext import load_facebook_model
-from gensim.models.keyedvectors import load_word2vec_format
+from gensim.models.keyedvectors import KeyedVectors, load_word2vec_format
 from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
 from readnext.config import ModelPaths, ModelVersions, ResultsPaths
-from readnext.modeling.language_models import (
+from readnext.modeling import (
     BERTEmbedder,
     BERTTokenizer,
     FastTextEmbedder,
@@ -68,6 +67,21 @@ def main() -> None:
     save_df_to_pickle(
         embeddings_mapping_to_frame(word2vec_embeddings_mapping),
         ResultsPaths.language_models.word2vec_embeddings_mapping_most_cited_pkl,
+    )
+
+    # requires pre-downloaded `glove.6B` model from Stanford NLP website:
+    # https://nlp.stanford.edu/projects/glove/
+    #
+    # `load_word2vec_format` with `no_header=True` converts the GloVe model to the
+    # word2vec format.
+    # After conversion the user interface of the two models is identical, thus the same
+    # `Word2VecEmbedder` can be used!
+    glove_model: KeyedVectors = load_word2vec_format(ModelPaths.glove, binary=False, no_header=True)
+    glove_embedder = Word2VecEmbedder(glove_model)
+    glove_embeddings_mapping = glove_embedder.compute_embeddings_mapping(spacy_tokens_list_mapping)
+    save_df_to_pickle(
+        embeddings_mapping_to_frame(glove_embeddings_mapping),
+        ResultsPaths.language_models.glove_embeddings_mapping_most_cited_pkl,
     )
 
     # requires pre-downloaded model from fasttext website:

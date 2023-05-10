@@ -2,8 +2,7 @@ import pytest
 from transformers import BertTokenizerFast
 
 from readnext.config import ModelVersions
-from readnext.modeling import DocumentsInfo
-from readnext.modeling.language_models import BERTTokenizer
+from readnext.modeling import BERTTokenizer, DocumentsInfo
 
 
 @pytest.fixture(scope="module")

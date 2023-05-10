@@ -13,8 +13,6 @@ from readnext.modeling import (
     CitationModelDataConstructor,
     LanguageModelData,
     LanguageModelDataConstructor,
-)
-from readnext.modeling.citation_models import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
@@ -59,6 +57,17 @@ def compare_hybrid_scores_by_document_id(
         cosine_similarities=word2vec_cosine_similarities_most_cited,
     )
     word2vec_data = LanguageModelData.from_constructor(word2vec_data_constructor)
+
+    # SUBSECTION: GloVe
+    glove_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.language_models.glove_cosine_similarities_most_cited_pkl
+    )
+    glove_data_constructor = LanguageModelDataConstructor(
+        query_document_id=query_document_id,
+        documents_data=documents_data,
+        cosine_similarities=glove_cosine_similarities_most_cited,
+    )
+    glove_data = LanguageModelData.from_constructor(glove_data_constructor)
 
     # SUBSECTION: FastText
     fasttext_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
@@ -120,6 +129,19 @@ def compare_hybrid_scores_by_document_id(
 
     word2vec_hybrid_score = HybridScore.from_scorer(word2vec_hybrid_scorer)
 
+    # SUBSECTION: GloVe
+    glove_hybrid_scorer = HybridScorer(
+        language_model_name="GloVe",
+        citation_model_data=citation_model_data,
+        language_model_data=glove_data,
+    )
+    glove_hybrid_scorer.fit(AveragePrecision(), n_candidates=30, n_final=30)
+
+    glove_hybrid_scorer.citation_to_language_recommendations
+    glove_hybrid_scorer.language_to_citation_recommendations
+
+    glove_hybrid_score = HybridScore.from_scorer(glove_hybrid_scorer)
+
     # SUBSECTION: FastText
     fasttext_hybrid_scorer = HybridScorer(
         language_model_name="FastText",
@@ -164,6 +186,7 @@ def compare_hybrid_scores_by_document_id(
         compare_hybrid_scores(
             tfidf_hybrid_score,
             word2vec_hybrid_score,
+            glove_hybrid_score,
             fasttext_hybrid_score,
             bert_hybrid_score,
             scibert_hybrid_score,

@@ -12,7 +12,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
 # do not import from .language_models to avoid circular imports
-from readnext.modeling.language_models.tokenizer import (
+from readnext.modeling.tokenizer import (
     StringMapping,
     TokenIds,
     Tokens,
@@ -108,7 +108,9 @@ class TFIDFEmbedder:
             return {
                 document_id: self.embedding_model.transform([document]).toarray()[0]
                 for document_id, document in progress_bar.track(
-                    tokens_mapping.items(), total=len(tokens_mapping)
+                    tokens_mapping.items(),
+                    total=len(tokens_mapping),
+                    description="Computing TF-IDF Embeddings...",
                 )
             }
 
@@ -217,13 +219,28 @@ class GensimEmbedder(ABC):
                     self.compute_word_embeddings_per_document(tokens), aggregation_strategy
                 )
                 for document_id, tokens in progress_bar.track(
-                    tokens_mapping.items(), total=len(tokens_mapping)
+                    tokens_mapping.items(),
+                    total=len(tokens_mapping),
+                    description="Computing Gensim Embeddings...",
                 )
             }
 
 
 class Word2VecEmbedder(GensimEmbedder):
     """Computes document embeddings with the Word2Vec model."""
+
+    def __init__(self, embedding_model: KeyedVectors) -> None:
+        super().__init__(embedding_model)
+
+    def compute_word_embeddings_per_document(self, tokens: Tokens) -> np.ndarray:
+        # exclude any individual unknown tokens
+        return np.vstack(
+            [self.embedding_model[token] for token in tokens if token in self.embedding_model]  # type: ignore # noqa: E501
+        )
+
+
+class GloVeEmbedder(GensimEmbedder):
+    """Computes document embeddings with the GloVe model."""
 
     def __init__(self, embedding_model: KeyedVectors) -> None:
         super().__init__(embedding_model)
@@ -271,8 +288,10 @@ class BERTEmbedder:
         `tokens_tensor` input
         - n_dimensions: dimension of embedding space
         """
+        token_ids_tensor = torch.tensor([token_ids])
+
         # outputs is an ordered dictionary with keys `last_hidden_state` and `pooler_output`
-        outputs = self.embedding_model(torch.tensor([token_ids]))
+        outputs = self.embedding_model(token_ids_tensor)
 
         # first element of outputs is the last hidden state of the [CLS] token
         # dimension: num_documents x num_tokens_per_document x embedding_dimension
@@ -305,7 +324,9 @@ class BERTEmbedder:
 
         with setup_progress_bar() as progress_bar:
             for document_id, tokens_tensor in progress_bar.track(
-                tokens_tensor_mapping.items(), total=len(tokens_tensor_mapping)
+                tokens_tensor_mapping.items(),
+                total=len(tokens_tensor_mapping),
+                description="Computing BERT embeddings...",
             ):
                 embeddings_mapping[document_id] = self.compute_embeddings_single_document(
                     tokens_tensor, aggregation_strategy

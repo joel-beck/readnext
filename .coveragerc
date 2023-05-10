@@ -4,7 +4,5 @@ omit =
     tests/*
     # omit `__init__.py` files from coverage
     */__init__.py
-    # omit executable scripts containing `run` from coverage
-    */*run*.py
-    # omit scripts in `data` directory starting with `s<number>_` from coverage
-    readnext/data/s?_*.py
+    # omit executable scripts in `readnext/scripts` directory from coverage
+    readnext/scripts/*

@@ -6,6 +6,7 @@ from readnext.utils import load_df_from_pickle, save_df_to_pickle
 
 
 def main() -> None:
+    # SUBSECTION: TF-IDF
     tfidf_embeddings_mapping = load_df_from_pickle(
         ResultsPaths.language_models.tfidf_embeddings_mapping_most_cited_pkl
     )
@@ -17,6 +18,7 @@ def main() -> None:
         ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl,
     )
 
+    # SUBSECTION: Word2Vec
     word2vec_embeddings_mapping = load_df_from_pickle(
         ResultsPaths.language_models.word2vec_embeddings_mapping_most_cited_pkl
     )
@@ -28,6 +30,19 @@ def main() -> None:
         ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl,
     )
 
+    # SUBSECTION: GloVe
+    glove_embeddings_mapping = load_df_from_pickle(
+        ResultsPaths.language_models.glove_embeddings_mapping_most_cited_pkl
+    )
+    # NOTE: Remove to train on full data
+    glove_embeddings_mapping = glove_embeddings_mapping.head(100)
+    glove_cosine_similarities = precompute_cosine_similarities(glove_embeddings_mapping)
+    save_df_to_pickle(
+        glove_cosine_similarities,
+        ResultsPaths.language_models.glove_cosine_similarities_most_cited_pkl,
+    )
+
+    # SUBSECTION: FastText
     fasttext_embeddings_mapping = load_df_from_pickle(
         ResultsPaths.language_models.fasttext_embeddings_mapping_most_cited_pkl
     )
@@ -39,6 +54,7 @@ def main() -> None:
         ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl,
     )
 
+    # SUBSECTION: BERT
     bert_embeddings_mapping = load_df_from_pickle(
         ResultsPaths.language_models.bert_embeddings_mapping_most_cited_pkl
     )
@@ -50,6 +66,7 @@ def main() -> None:
         ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl,
     )
 
+    # SUBSECTION: SciBERT
     scibert_embeddings_mapping = load_df_from_pickle(
         ResultsPaths.language_models.scibert_embeddings_mapping_most_cited_pkl
     )

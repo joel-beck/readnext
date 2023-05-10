@@ -13,8 +13,6 @@ from readnext.modeling import (
     CitationModelDataConstructor,
     LanguageModelData,
     LanguageModelDataConstructor,
-)
-from readnext.modeling.citation_models import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
@@ -85,6 +83,18 @@ def main() -> None:
     )
     word2vec_data = LanguageModelData.from_constructor(word2vec_data_constructor)
     LanguageModelScorer.display_top_n(word2vec_data, n=10)
+
+    # SUBSECTION: GloVe
+    glove_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.language_models.glove_cosine_similarities_most_cited_pkl
+    )
+    glove_data_constructor = LanguageModelDataConstructor(
+        query_document_id=query_document_id,
+        documents_data=documents_authors_labels_citations_most_cited,
+        cosine_similarities=glove_cosine_similarities_most_cited,
+    )
+    glove_data = LanguageModelData.from_constructor(glove_data_constructor)
+    LanguageModelScorer.display_top_n(glove_data, n=10)
 
     # SUBSECTION: FastText
     fasttext_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
@@ -267,6 +277,10 @@ def main() -> None:
                 (
                     "Word2Vec",
                     LanguageModelScorer.score_top_n(word2vec_data, CountUniqueLabels(), n=20),
+                ),
+                (
+                    "GloVe",
+                    LanguageModelScorer.score_top_n(glove_data, CountUniqueLabels(), n=20),
                 ),
                 (
                     "FastText",

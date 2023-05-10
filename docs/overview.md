@@ -54,7 +54,7 @@ Abstracts are preprocessed and tokenized using the `spaCy` library. **Eight lang
     TF-IDF (implemented using `scikit-learn` library) and BM25.
 
 2. **Static embedding models**:
-    Word2Vec, fastText, and GloVe (all implemented using their `gensim` interface).
+    Word2Vec, GloVe, and fastText (all implemented using their `gensim` interface).
 
 3. **Contextual embedding models**:
     BERT, SciBERT, and Longformer (all provided by the `transformers` library).

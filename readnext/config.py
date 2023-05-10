@@ -109,6 +109,7 @@ class ModelVersions:
 
     spacy: str = "en_core_web_sm"
     word2vec: str = "word2vec-google-news-300"
+    glove: str = "glove.6B.300d"
     fasttext: str = "cc.en.300.bin"
     bert: str = "bert-base-uncased"
     scibert: str = "allenai/scibert_scivocab_uncased"
@@ -119,6 +120,7 @@ class ModelPaths:
     """Sets file paths to pretrained models."""
 
     word2vec: Path = models_dirpath / ModelVersions.word2vec
+    glove: Path = models_dirpath / f"{ModelVersions.glove}.txt"
     fasttext: Path = models_dirpath / ModelVersions.fasttext
 
 
@@ -152,6 +154,12 @@ class LanguageModelsResultsPaths:
     )
     word2vec_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "word2vec_cosine_similarities_most_cited.pkl"
+    )
+    glove_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "glove_embeddings_mapping_most_cited.pkl"
+    )
+    glove_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "glove_cosine_similarities_most_cited.pkl"
     )
     fasttext_embeddings_mapping_most_cited_pkl: Path = (
         results_dirpath / "fasttext_embeddings_mapping_most_cited.pkl"

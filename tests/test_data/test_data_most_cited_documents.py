@@ -89,10 +89,11 @@ def test_semanticscholar_tags(
 
 
 def test_that_test_data_mimics_real_data(
+    test_data_size: int,
     documents_authors_labels_citations_most_cited: pd.DataFrame,
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
 ) -> None:
     assert_frame_equal(
-        documents_authors_labels_citations_most_cited.head(100),
+        documents_authors_labels_citations_most_cited.head(test_data_size),
         test_documents_authors_labels_citations_most_cited,
     )

@@ -101,6 +101,7 @@ def test_scibert_tokenized_abstracts_most_cited(
 
 
 def test_that_test_data_mimics_real_data(
+    test_data_size: int,
     spacy_tokenized_abstracts_mapping_most_cited: TokensMapping,
     bert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
     scibert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
@@ -109,16 +110,16 @@ def test_that_test_data_mimics_real_data(
     test_scibert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
 ) -> None:
     assert (
-        slice_mapping(spacy_tokenized_abstracts_mapping_most_cited, 100)
+        slice_mapping(spacy_tokenized_abstracts_mapping_most_cited, test_data_size)
         == test_spacy_tokenized_abstracts_mapping_most_cited
     )
 
     assert (
-        slice_mapping(bert_tokenized_abstracts_mapping_most_cited, 100)
+        slice_mapping(bert_tokenized_abstracts_mapping_most_cited, test_data_size)
         == test_bert_tokenized_abstracts_mapping_most_cited
     )
 
     assert (
-        slice_mapping(scibert_tokenized_abstracts_mapping_most_cited, 100)
+        slice_mapping(scibert_tokenized_abstracts_mapping_most_cited, test_data_size)
         == test_scibert_tokenized_abstracts_mapping_most_cited
     )

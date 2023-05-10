@@ -1,8 +1,7 @@
 """Generate mappings of document ids to embeddings for all language models."""
 
-from gensim.models import KeyedVectors
 from gensim.models.fasttext import load_facebook_model
-from gensim.models.keyedvectors import load_word2vec_format
+from gensim.models.keyedvectors import load_word2vec_format, KeyedVectors
 from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
@@ -70,16 +69,14 @@ def main() -> None:
         ResultsPaths.language_models.word2vec_embeddings_mapping_most_cited_pkl,
     )
 
-    # requires pre-downloaded model from gensim data repository:
-    # https://github.com/RaRe-Technologies/gensim-data
+    # requires pre-downloaded `glove.6B` model from Stanford NLP website:
+    # https://nlp.stanford.edu/projects/glove/
     #
-    # download and save model locally with the commands
-    # `import gensim.downloader as api`
-    # `api.load("ModelVersions.glove", return_path=True)`
-    #
-    # then unzip the model file and move it to the local `models` directory
-
-    glove_model = KeyedVectors.load_word2vec_format(ModelPaths.glove, no_header=True)
+    # `load_word2vec_format` with `no_header=True` converts the GloVe model to the
+    # word2vec format.
+    # After conversion the user interface of the two models is identical, thus the same
+    # `Word2VecEmbedder` can be used!
+    glove_model: KeyedVectors = load_word2vec_format(ModelPaths.glove, binary=False, no_header=True)
     glove_embedder = Word2VecEmbedder(glove_model)
     glove_embeddings_mapping = glove_embedder.compute_embeddings_mapping(spacy_tokens_list_mapping)
     save_df_to_pickle(

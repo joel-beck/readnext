@@ -109,7 +109,7 @@ class ModelVersions:
 
     spacy: str = "en_core_web_sm"
     word2vec: str = "word2vec-google-news-300"
-    glove: str = "glove-wiki-gigaword-300"
+    glove: str = "glove.6B.300d"
     fasttext: str = "cc.en.300.bin"
     bert: str = "bert-base-uncased"
     scibert: str = "allenai/scibert_scivocab_uncased"

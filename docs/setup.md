@@ -51,7 +51,7 @@ That's it! 🎉
     - [D3 papers and authors dataset](https://zenodo.org/record/7071698#.ZFZnCi9ByLc)
     - [Arxiv dataset from Kaggle](https://www.kaggle.com/datasets/Cornell-University/arxiv)
     - Pretrained [word2vec-google-news-300 Word2Vec model](https://github.com/RaRe-Technologies/gensim-data) from Gensim
-    - Pretrained [glove-wiki-gigaword-300 GloVe model](https://github.com/RaRe-Technologies/gensim-data) from Gensim
+    - Pretrained [glove.6B GloVe model](https://nlp.stanford.edu/projects/glove/) from Stanford NLP website
     - Pretrained [English FastText model](https://fasttext.cc/docs/en/crawl-vectors.html#models) from FastText website
 
 

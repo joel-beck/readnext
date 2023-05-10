@@ -64,6 +64,7 @@ def test_model_versions() -> None:
     model_versions = ModelVersions()
     assert isinstance(model_versions.spacy, str)
     assert isinstance(model_versions.word2vec, str)
+    assert isinstance(model_versions.glove, str)
     assert isinstance(model_versions.fasttext, str)
     assert isinstance(model_versions.bert, str)
     assert isinstance(model_versions.scibert, str)
@@ -72,6 +73,7 @@ def test_model_versions() -> None:
 def test_model_paths() -> None:
     model_paths = ModelPaths()
     assert isinstance(model_paths.word2vec, Path)
+    assert isinstance(model_paths.glove, Path)
     assert isinstance(model_paths.fasttext, Path)
 
 
@@ -98,6 +100,8 @@ def test_language_models_results_paths() -> None:
     assert isinstance(
         language_models_results_paths.word2vec_cosine_similarities_most_cited_pkl, Path
     )
+    assert isinstance(language_models_results_paths.glove_embeddings_mapping_most_cited_pkl, Path)
+    assert isinstance(language_models_results_paths.glove_cosine_similarities_most_cited_pkl, Path)
     assert isinstance(
         language_models_results_paths.fasttext_embeddings_mapping_most_cited_pkl, Path
     )

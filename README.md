@@ -85,7 +85,7 @@ To execute all scripts and reproduce project results, the following **local down
 - [D3 papers and authors dataset](https://zenodo.org/record/7071698#.ZFZnCi9ByLc)
 - [Arxiv dataset from Kaggle](https://www.kaggle.com/datasets/Cornell-University/arxiv)
 - Pretrained [word2vec-google-news-300 Word2Vec model](https://github.com/RaRe-Technologies/gensim-data) from Gensim
-- Pretrained [glove-wiki-gigaword-300 GloVe model](https://github.com/RaRe-Technologies/gensim-data) from Gensim
+- Pretrained [glove.6B GloVe model](https://nlp.stanford.edu/projects/glove/) from Stanford NLP website
 - Pretrained [English FastText model](https://fasttext.cc/docs/en/crawl-vectors.html#models) from FastText website
 
 
@@ -187,7 +187,7 @@ Abstracts are preprocessed and tokenized using the `spaCy` library. **Eight lang
     TF-IDF (implemented using `scikit-learn` library) and BM25.
 
 2. **Static embedding models**:
-    Word2Vec, fastText, and GloVe (all implemented using their `gensim` interface).
+    Word2Vec, GloVe, and fastText (all implemented using their `gensim` interface).
 
 3. **Contextual embedding models**:
     BERT, SciBERT, and Longformer (all provided by the `transformers` library).

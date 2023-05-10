@@ -108,7 +108,9 @@ class TFIDFEmbedder:
             return {
                 document_id: self.embedding_model.transform([document]).toarray()[0]
                 for document_id, document in progress_bar.track(
-                    tokens_mapping.items(), total=len(tokens_mapping)
+                    tokens_mapping.items(),
+                    total=len(tokens_mapping),
+                    description="Computing TF-IDF Embeddings...",
                 )
             }
 
@@ -217,7 +219,9 @@ class GensimEmbedder(ABC):
                     self.compute_word_embeddings_per_document(tokens), aggregation_strategy
                 )
                 for document_id, tokens in progress_bar.track(
-                    tokens_mapping.items(), total=len(tokens_mapping)
+                    tokens_mapping.items(),
+                    total=len(tokens_mapping),
+                    description="Computing Gensim Embeddings...",
                 )
             }
 
@@ -320,7 +324,9 @@ class BERTEmbedder:
 
         with setup_progress_bar() as progress_bar:
             for document_id, tokens_tensor in progress_bar.track(
-                tokens_tensor_mapping.items(), total=len(tokens_tensor_mapping)
+                tokens_tensor_mapping.items(),
+                total=len(tokens_tensor_mapping),
+                description="Computing BERT embeddings...",
             ):
                 embeddings_mapping[document_id] = self.compute_embeddings_single_document(
                     tokens_tensor, aggregation_strategy

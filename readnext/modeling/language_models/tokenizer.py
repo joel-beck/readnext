@@ -19,9 +19,6 @@ from readnext.utils import (
 Tokens: TypeAlias = list[str]
 TokensMapping: TypeAlias = dict[int, Tokens]
 
-# each document is represented as a string of tokens separated by whitespace
-StringMapping: TypeAlias = dict[int, str]
-
 # each document is represented as a tensor of token ids
 TokenIds: TypeAlias = list[int]
 TokensIdMapping: TypeAlias = dict[int, list[int]]
@@ -161,25 +158,6 @@ class SpacyTokenizer(ListTokenizer):
                 tokenized_abstracts_mapping[document_id] = self.clean_document(abstract)
 
         return tokenized_abstracts_mapping
-
-    def to_strings(self) -> StringMapping:
-        """
-        Generates a mapping of document ids to strings from raw abstracts. Required
-        since `TfidfVectorizer` expects a list of strings, not a list of lists of
-        strings.
-        """
-        return {document_id: " ".join(tokens) for document_id, tokens in self.tokenize().items()}
-
-    @staticmethod
-    def string_mapping_from_tokens_mapping(
-        tokens_mapping: TokensMapping,
-    ) -> StringMapping:
-        """
-        Converts a mapping of document ids to tokens (list of string) into a mapping of
-        document ids to strings. Required since `TfidfVectorizer` expects a list of
-        strings, not a list of lists of strings.
-        """
-        return {document_id: " ".join(tokens) for document_id, tokens in tokens_mapping.items()}
 
     @staticmethod
     def save_tokens_mapping(path: Path, tokens_mapping: TokensMapping) -> None:

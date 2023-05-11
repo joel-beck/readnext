@@ -149,6 +149,12 @@ class LanguageModelsResultsPaths:
     tfidf_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "tfidf_cosine_similarities_most_cited.pkl"
     )
+    bm25_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "bm25_embeddings_mapping_most_cited.pkl"
+    )
+    bm25_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "bm25_cosine_similarities_most_cited.pkl"
+    )
     word2vec_embeddings_mapping_most_cited_pkl: Path = (
         results_dirpath / "word2vec_embeddings_mapping_most_cited.pkl"
     )

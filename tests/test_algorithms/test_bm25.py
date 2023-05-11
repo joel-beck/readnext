@@ -1,6 +1,15 @@
 import numpy as np
 
-from readnext.modeling.language_models import Tokens, bm25, bm25_idf, bm25_tf, df, tf
+from readnext.modeling.language_models import (
+    Tokens,
+    bm25,
+    bm25_idf,
+    bm25_single_term,
+    bm25_tf,
+    df,
+    learn_vocabulary,
+    tf,
+)
 
 
 def test_bm25_tf(document_tokens: Tokens, document_corpus: list[Tokens]) -> None:
@@ -68,11 +77,13 @@ def test_bm25(document_tokens: Tokens, document_corpus: list[Tokens]) -> None:
     k = 1.5
     b = 0.75
     delta = 1.0
+    corpus_vocabulary = learn_vocabulary(document_corpus)
     expected_bm25 = np.array(
         [
-            bm25_tf(term, document_tokens, document_corpus, k, b, delta)
-            * bm25_idf(term, document_corpus)
-            for term in document_tokens
+            bm25_single_term(term, document_tokens, document_corpus, k, b, delta)
+            if term in document_tokens
+            else 0
+            for term in corpus_vocabulary
         ]
     )
     np.testing.assert_array_equal(
@@ -83,11 +94,28 @@ def test_bm25(document_tokens: Tokens, document_corpus: list[Tokens]) -> None:
     document_tokens = ["e", "f", "g"]
     expected_bm25 = np.array(
         [
-            bm25_tf(term, document_tokens, document_corpus, k, b, delta)
-            * bm25_idf(term, document_corpus)
-            for term in document_tokens
+            bm25_single_term(term, document_tokens, document_corpus, k, b, delta)
+            if term in document_tokens
+            else 0
+            for term in corpus_vocabulary
         ]
     )
     np.testing.assert_array_equal(
         bm25(document_tokens, document_corpus, k, b, delta), expected_bm25
+    )
+
+    # Test corpus with empty documents
+    document_corpus_with_empty_docs: list[list[str]] = [[], ["a", "b"], [], ["c", "d", "e"], []]
+    document_tokens = ["a", "b", "c"]
+    corpus_vocabulary = learn_vocabulary(document_corpus_with_empty_docs)
+    expected_bm25 = np.array(
+        [
+            bm25_single_term(term, document_tokens, document_corpus_with_empty_docs, k, b, delta)
+            if term in document_tokens
+            else 0
+            for term in corpus_vocabulary
+        ]
+    )
+    np.testing.assert_array_equal(
+        bm25(document_tokens, document_corpus_with_empty_docs, k, b, delta), expected_bm25
     )

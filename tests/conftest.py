@@ -57,6 +57,20 @@ def test_bibliographic_coupling_scores_most_cited(root_path: Path) -> pd.DataFra
 
 
 @pytest.fixture(scope="session")
+def test_bm25_cosine_similarities_most_cited(root_path: Path) -> pd.DataFrame:
+    return load_df_from_pickle(
+        root_path / "tests" / "data" / "test_bm25_cosine_similarities_most_cited.pkl"
+    )
+
+
+@pytest.fixture(scope="session")
+def test_bm25_embeddings_mapping_most_cited(root_path: Path) -> dict:
+    return load_object_from_pickle(
+        root_path / "tests" / "data" / "test_bm25_embeddings_mapping_most_cited.pkl"
+    )
+
+
+@pytest.fixture(scope="session")
 def test_co_citation_analysis_scores_most_cited(root_path: Path) -> pd.DataFrame:
     return load_df_from_pickle(
         root_path / "tests" / "data" / "test_co_citation_analysis_scores_most_cited.pkl"

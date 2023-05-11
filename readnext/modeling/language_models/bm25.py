@@ -7,7 +7,7 @@ from collections.abc import Sequence
 
 import numpy as np
 
-from readnext.modeling.language_models.tfidf import df, tf
+from readnext.modeling.language_models.tfidf import df, learn_vocabulary, tf
 from readnext.modeling.language_models.tokenizer import Tokens
 
 
@@ -52,6 +52,24 @@ def bm25_idf(term: str, document_corpus: Sequence[Tokens]) -> float:
     return np.log(numerator / denominator)
 
 
+def bm25_single_term(
+    term: str,
+    document_tokens: Tokens,
+    document_corpus: Sequence[Tokens],
+    k: float,
+    b: float,
+    delta: float,
+) -> float:
+    """
+    BM25+: BM25+ Term Frequency * BM25+ Inverse Document Frequency
+
+    Computes the BM25+ vector for a single term.
+    """
+    return bm25_tf(term, document_tokens, document_corpus, k, b, delta) * bm25_idf(
+        term, document_corpus
+    )
+
+
 def bm25(
     document_tokens: Tokens,
     document_corpus: Sequence[Tokens],
@@ -60,17 +78,18 @@ def bm25(
     delta: float = 1.0,
 ) -> np.ndarray:
     """
-    BM25+: BM25+ Term Frequency * BM25+ Inverse Document Frequency
-
     Default values are taken from the `rank_bm25` package:
     https://github.com/dorianbrown/rank_bm25/blob/990470ebbe6b28c18216fd1a8b18fe7446237dd6/rank_bm25.py#L176
 
     Computes the BM25+ vector for a single document.
     """
+    corpus_vocabulary = learn_vocabulary(document_corpus)
+
     return np.array(
         [
-            bm25_tf(term, document_tokens, document_corpus, k, b, delta)
-            * bm25_idf(term, document_corpus)
-            for term in document_tokens
+            bm25_single_term(term, document_tokens, document_corpus, k, b, delta)
+            if term in document_tokens
+            else 0
+            for term in corpus_vocabulary
         ]
     )

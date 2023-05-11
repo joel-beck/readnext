@@ -13,6 +13,8 @@ from readnext.modeling import (
     CitationModelDataConstructor,
     LanguageModelData,
     LanguageModelDataConstructor,
+)
+from readnext.modeling.citation_models import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
@@ -46,6 +48,17 @@ def compare_hybrid_scores_by_document_id(
         cosine_similarities=tfidf_cosine_similarities_most_cited,
     )
     tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
+
+    # SUBSECTION: BM25
+    bm25_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.language_models.bm25_cosine_similarities_most_cited_pkl
+    )
+    bm25_data_constructor = LanguageModelDataConstructor(
+        query_document_id=query_document_id,
+        documents_data=documents_data,
+        cosine_similarities=bm25_cosine_similarities_most_cited,
+    )
+    bm25_data = LanguageModelData.from_constructor(bm25_data_constructor)
 
     # SUBSECTION: Word2Vec
     word2vec_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
@@ -116,6 +129,19 @@ def compare_hybrid_scores_by_document_id(
 
     tfidf_hybrid_score = HybridScore.from_scorer(tfidf_hybrid_scorer)
 
+    # SUBSECTION: BM25
+    bm25_hybrid_scorer = HybridScorer(
+        language_model_name="Tf-Idf",
+        citation_model_data=citation_model_data,
+        language_model_data=bm25_data,
+    )
+    bm25_hybrid_scorer.fit(AveragePrecision(), n_candidates=30, n_final=30)
+
+    bm25_hybrid_scorer.citation_to_language_recommendations
+    bm25_hybrid_scorer.language_to_citation_recommendations
+
+    bm25_hybrid_score = HybridScore.from_scorer(bm25_hybrid_scorer)
+
     # SUBSECTION: Word2Vec
     word2vec_hybrid_scorer = HybridScorer(
         language_model_name="Word2Vec",
@@ -185,6 +211,7 @@ def compare_hybrid_scores_by_document_id(
     return (
         compare_hybrid_scores(
             tfidf_hybrid_score,
+            bm25_hybrid_score,
             word2vec_hybrid_score,
             glove_hybrid_score,
             fasttext_hybrid_score,

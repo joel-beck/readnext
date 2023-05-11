@@ -16,6 +16,11 @@ def tfidf_cosine_similarities_most_cited() -> pd.DataFrame:
 
 
 @pytest.fixture(scope="module")
+def bm25_cosine_similarities_most_cited() -> pd.DataFrame:
+    return load_df_from_pickle(ResultsPaths.language_models.bm25_cosine_similarities_most_cited_pkl)
+
+
+@pytest.fixture(scope="module")
 def word2vec_cosine_similarities_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(
         ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl
@@ -75,6 +80,53 @@ def test_tfidf_cosine_similarities_most_cited(
     )
 
     unique_index_ids = set(tfidf_cosine_similarities_most_cited.index.tolist())
+    unique_document_ids = {
+        document_score.document_info.document_id for document_score in first_document_scores
+    }
+    assert len(unique_index_ids - unique_document_ids) == 1
+
+    # check data types of document scores
+    first_document_score: DocumentScore = first_document_scores[0]
+    assert isinstance(first_document_score, DocumentScore)
+
+    first_document_info: DocumentInfo = first_document_score.document_info
+    assert isinstance(first_document_info, DocumentInfo)
+
+    # check that only document_id of document_info is set
+    assert isinstance(first_document_info.document_id, int)
+    assert first_document_info.title == ""
+    assert first_document_info.author == ""
+    assert first_document_info.abstract == ""
+    assert first_document_info.arxiv_labels == []
+
+
+def test_bm25_cosine_similarities_most_cited(
+    bm25_cosine_similarities_most_cited: pd.DataFrame,
+) -> None:
+    assert isinstance(bm25_cosine_similarities_most_cited, pd.DataFrame)
+
+    # check number and names of columns and index
+    assert bm25_cosine_similarities_most_cited.shape[1] == 1
+    assert bm25_cosine_similarities_most_cited.index.name == "document_id"
+    assert bm25_cosine_similarities_most_cited.columns.tolist() == ["scores"]
+
+    # check document id data type
+    assert is_integer_dtype(bm25_cosine_similarities_most_cited.index)
+
+    # check document scores column
+    first_document_scores: list[DocumentScore] = bm25_cosine_similarities_most_cited["scores"].iloc[
+        0
+    ]
+    assert isinstance(first_document_scores, list)
+
+    # check that scores for all documents in training corpus are present except for the
+    # query document
+    assert all(
+        len(document_scores) == (len(bm25_cosine_similarities_most_cited) - 1)
+        for document_scores in bm25_cosine_similarities_most_cited["scores"]
+    )
+
+    unique_index_ids = set(bm25_cosine_similarities_most_cited.index.tolist())
     unique_document_ids = {
         document_score.document_info.document_id for document_score in first_document_scores
     }
@@ -331,13 +383,16 @@ def test_scibert_cosine_similarities_most_cited(
 
 
 def test_that_test_data_mimics_real_data(
+    test_data_size: int,
     tfidf_cosine_similarities_most_cited: pd.DataFrame,
+    bm25_cosine_similarities_most_cited: pd.DataFrame,
     word2vec_cosine_similarities_most_cited: pd.DataFrame,
     glove_cosine_similarities_most_cited: pd.DataFrame,
     fasttext_cosine_similarities_most_cited: pd.DataFrame,
     bert_cosine_similarities_most_cited: pd.DataFrame,
     scibert_cosine_similarities_most_cited: pd.DataFrame,
     test_tfidf_cosine_similarities_most_cited: pd.DataFrame,
+    test_bm25_cosine_similarities_most_cited: pd.DataFrame,
     test_word2vec_cosine_similarities_most_cited: pd.DataFrame,
     test_glove_cosine_similarities_most_cited: pd.DataFrame,
     test_fasttext_cosine_similarities_most_cited: pd.DataFrame,
@@ -345,29 +400,35 @@ def test_that_test_data_mimics_real_data(
     test_scibert_cosine_similarities_most_cited: pd.DataFrame,
 ) -> None:
     assert_frame_equal(
-        tfidf_cosine_similarities_most_cited.head(100), test_tfidf_cosine_similarities_most_cited
+        tfidf_cosine_similarities_most_cited.head(test_data_size),
+        test_tfidf_cosine_similarities_most_cited,
+    )
+    assert_frame_equal(
+        bm25_cosine_similarities_most_cited.head(test_data_size),
+        test_bm25_cosine_similarities_most_cited,
     )
 
     assert_frame_equal(
-        word2vec_cosine_similarities_most_cited.head(100),
+        word2vec_cosine_similarities_most_cited.head(test_data_size),
         test_word2vec_cosine_similarities_most_cited,
     )
 
     assert_frame_equal(
-        glove_cosine_similarities_most_cited.head(100),
+        glove_cosine_similarities_most_cited.head(test_data_size),
         test_glove_cosine_similarities_most_cited,
     )
 
     assert_frame_equal(
-        fasttext_cosine_similarities_most_cited.head(100),
+        fasttext_cosine_similarities_most_cited.head(test_data_size),
         test_fasttext_cosine_similarities_most_cited,
     )
 
     assert_frame_equal(
-        bert_cosine_similarities_most_cited.head(100), test_bert_cosine_similarities_most_cited
+        bert_cosine_similarities_most_cited.head(test_data_size),
+        test_bert_cosine_similarities_most_cited,
     )
 
     assert_frame_equal(
-        scibert_cosine_similarities_most_cited.head(100),
+        scibert_cosine_similarities_most_cited.head(test_data_size),
         test_scibert_cosine_similarities_most_cited,
     )

@@ -48,12 +48,36 @@ def idf(term: str, document_corpus: Sequence[Tokens]) -> float:
     return np.log((numerator / denominator) + 1)
 
 
-def tfidf(document_tokens: Tokens, document_corpus: Sequence[Tokens]) -> np.ndarray:
+def tfidf_single_term(
+    term: str, document_tokens: Tokens, document_corpus: Sequence[Tokens]
+) -> float:
     """
     TF-IDF: tf(t, d) * idf(t)
 
-    Computes the TF-IDF vector for a single document.
+    Computes the TF-IDF score for a single term.
     """
+    return tf(term, document_tokens) * idf(term, document_corpus)
+
+
+def learn_vocabulary(document_corpus: Sequence[Tokens]) -> Tokens:
+    """
+    Returns a sorted list of all unique terms in the document corpus.
+    """
+    return sorted({term for document_tokens in document_corpus for term in document_tokens})
+
+
+def tfidf(document_tokens: Tokens, document_corpus: Sequence[Tokens]) -> np.ndarray:
+    """
+    Computes the TF-IDF vector for a single document. The output is a sparse vector
+    which length equals the vocabulary size of the document corpus.
+    """
+    corpus_vocabulary = learn_vocabulary(document_corpus)
+
     return np.array(
-        [tf(term, document_tokens) * idf(term, document_corpus) for term in document_tokens]
+        [
+            tfidf_single_term(term, document_tokens, document_corpus)
+            if term in document_tokens
+            else 0
+            for term in corpus_vocabulary
+        ]
     )

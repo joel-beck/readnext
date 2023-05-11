@@ -113,6 +113,7 @@ class ModelVersions:
     fasttext: str = "cc.en.300.bin"
     bert: str = "bert-base-uncased"
     scibert: str = "allenai/scibert_scivocab_uncased"
+    longformer: str = "allenai/longformer-base-4096"
 
 
 @dataclass
@@ -190,6 +191,15 @@ class LanguageModelsResultsPaths:
     )
     scibert_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "scibert_cosine_similarities_most_cited.pkl"
+    )
+    longformer_tokenized_abstracts_mapping_most_cited_pkl: Path = (
+        results_dirpath / "longformer_tokenized_abstracts_mapping_most_cited.pkl"
+    )
+    longformer_embeddings_mapping_most_cited_pkl: Path = (
+        results_dirpath / "longformer_embeddings_mapping_most_cited.pkl"
+    )
+    longformer_cosine_similarities_most_cited_pkl: Path = (
+        results_dirpath / "longformer_cosine_similarities_most_cited.pkl"
     )
 
 

@@ -146,6 +146,18 @@ def main() -> None:
     scibert_data = LanguageModelData.from_constructor(scibert_data_constructor)
     LanguageModelScorer.display_top_n(scibert_data, n=10)
 
+    # SUBSECTION: Longformer
+    longformer_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl
+    )
+    longformer_data_constructor = LanguageModelDataConstructor(
+        query_document_id=query_document_id,
+        documents_data=documents_authors_labels_citations_most_cited,
+        cosine_similarities=longformer_cosine_similarities_most_cited,
+    )
+    longformer_data = LanguageModelData.from_constructor(longformer_data_constructor)
+    LanguageModelScorer.display_top_n(longformer_data, n=10)
+
     # SECTION: Evaluate Scores
     average_precision_scores = (
         pd.DataFrame(
@@ -319,6 +331,10 @@ def main() -> None:
                 (
                     "SciBERT",
                     LanguageModelScorer.score_top_n(scibert_data, CountUniqueLabels(), n=20),
+                ),
+                (
+                    "Longformer",
+                    LanguageModelScorer.score_top_n(longformer_data, CountUniqueLabels(), n=20),
                 ),
             ],
             columns=["Feature", "Number of Unique Labels"],

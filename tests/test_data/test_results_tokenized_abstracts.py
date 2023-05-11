@@ -26,6 +26,13 @@ def scibert_tokenized_abstracts_mapping_most_cited() -> TokensIdMapping:
     )
 
 
+@pytest.fixture(scope="module")
+def longformer_tokenized_abstracts_mapping_most_cited() -> TokensIdMapping:
+    return load_object_from_pickle(
+        ResultsPaths.language_models.longformer_tokenized_abstracts_mapping_most_cited_pkl
+    )
+
+
 def test_spacy_tokenized_abstracts_most_cited(
     spacy_tokenized_abstracts_mapping_most_cited: TokensMapping,
 ) -> None:
@@ -100,14 +107,42 @@ def test_scibert_tokenized_abstracts_most_cited(
     assert all(token_id != 0 for token_id in single_abstract_ids[:252])
 
 
+def test_longformer_tokenized_abstracts_most_cited(
+    longformer_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
+) -> None:
+    assert isinstance(longformer_tokenized_abstracts_mapping_most_cited, dict)
+
+    # check that keys are integers
+    assert all(isinstance(key, int) for key in longformer_tokenized_abstracts_mapping_most_cited)
+
+    # check that tokenized abstract ids are lists of integers
+    single_abstract_ids = longformer_tokenized_abstracts_mapping_most_cited[206594692]
+    assert isinstance(single_abstract_ids, list)
+    assert all(isinstance(token_id, int) for token_id in single_abstract_ids)
+
+    # check that length of token ids is 1006
+    assert len(single_abstract_ids) == 1006
+
+    # check the same for all abstracts
+    assert all(
+        len(abstract_ids) == 1006
+        for abstract_ids in longformer_tokenized_abstracts_mapping_most_cited.values()
+    )
+    # remaining tokens are not 0 but 1 for longformer! Check that from the 261st token
+    # all remaining tokens are 1
+    assert all(token_id == 1 for token_id in single_abstract_ids[261:])
+
+
 def test_that_test_data_mimics_real_data(
     test_data_size: int,
     spacy_tokenized_abstracts_mapping_most_cited: TokensMapping,
     bert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
     scibert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
+    longformer_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
     test_spacy_tokenized_abstracts_mapping_most_cited: TokensMapping,
     test_bert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
     test_scibert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
+    test_longformer_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
 ) -> None:
     assert (
         slice_mapping(spacy_tokenized_abstracts_mapping_most_cited, test_data_size)
@@ -122,4 +157,9 @@ def test_that_test_data_mimics_real_data(
     assert (
         slice_mapping(scibert_tokenized_abstracts_mapping_most_cited, test_data_size)
         == test_scibert_tokenized_abstracts_mapping_most_cited
+    )
+
+    assert (
+        slice_mapping(longformer_tokenized_abstracts_mapping_most_cited, test_data_size)
+        == test_longformer_tokenized_abstracts_mapping_most_cited
     )

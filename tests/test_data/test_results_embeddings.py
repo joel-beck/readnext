@@ -55,6 +55,13 @@ def scibert_embeddings_mapping_most_cited() -> pd.DataFrame:
     )
 
 
+@pytest.fixture(scope="module")
+def longformer_embeddings_mapping_most_cited() -> pd.DataFrame:
+    return load_df_from_pickle(
+        ResultsPaths.language_models.longformer_embeddings_mapping_most_cited_pkl
+    )
+
+
 def test_tfidf_embeddings_most_cited(
     tfidf_embeddings_mapping_most_cited: pd.DataFrame,
 ) -> None:
@@ -207,17 +214,41 @@ def test_scibert_embeddings_most_cited(
     )
 
 
+def test_longformer_embeddings_most_cited(
+    longformer_embeddings_mapping_most_cited: pd.DataFrame,
+) -> None:
+    assert isinstance(longformer_embeddings_mapping_most_cited, pd.DataFrame)
+
+    # check number and names of columns
+    assert longformer_embeddings_mapping_most_cited.shape[1] == 2
+    assert longformer_embeddings_mapping_most_cited.columns.tolist() == ["document_id", "embedding"]
+
+    # check dtypes of columns
+    assert is_integer_dtype(longformer_embeddings_mapping_most_cited["document_id"])
+
+    first_document = longformer_embeddings_mapping_most_cited.iloc[0]
+    assert isinstance(first_document["embedding"], np.ndarray)
+    assert first_document["embedding"].dtype == np.float32
+
+    # check embedding dimension
+    assert all(
+        len(embedding) == 768 for embedding in longformer_embeddings_mapping_most_cited["embedding"]
+    )
+
+
 def test_that_test_data_mimics_real_data(
     tfidf_embeddings_mapping_most_cited: pd.DataFrame,
     word2vec_embeddings_mapping_most_cited: pd.DataFrame,
     fasttext_embeddings_mapping_most_cited: pd.DataFrame,
     bert_embeddings_mapping_most_cited: pd.DataFrame,
     scibert_embeddings_mapping_most_cited: pd.DataFrame,
+    longformer_embeddings_mapping_most_cited: pd.DataFrame,
     test_tfidf_embeddings_mapping_most_cited: pd.DataFrame,
     test_word2vec_embeddings_mapping_most_cited: pd.DataFrame,
     test_fasttext_embeddings_mapping_most_cited: pd.DataFrame,
     test_bert_embeddings_mapping_most_cited: pd.DataFrame,
     test_scibert_embeddings_mapping_most_cited: pd.DataFrame,
+    test_longformer_embeddings_mapping_most_cited: pd.DataFrame,
 ) -> None:
     assert_frame_equal(
         tfidf_embeddings_mapping_most_cited.head(100), test_tfidf_embeddings_mapping_most_cited
@@ -241,4 +272,9 @@ def test_that_test_data_mimics_real_data(
     assert_frame_equal(
         scibert_embeddings_mapping_most_cited.head(100),
         test_scibert_embeddings_mapping_most_cited,
+    )
+
+    assert_frame_equal(
+        longformer_embeddings_mapping_most_cited.head(100),
+        test_longformer_embeddings_mapping_most_cited,
     )

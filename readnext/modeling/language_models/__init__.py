@@ -2,6 +2,7 @@ from readnext.modeling.language_models.bm25 import bm25, bm25_idf, bm25_single_t
 from readnext.modeling.language_models.embedder import (
     BERTEmbedder,
     FastTextEmbedder,
+    LongformerEmbedder,
     TFIDFEmbedder,
     Word2VecEmbedder,
     embeddings_mapping_to_frame,
@@ -16,6 +17,7 @@ from readnext.modeling.language_models.tfidf import (
 )
 from readnext.modeling.language_models.tokenizer import (
     BERTTokenizer,
+    LongformerTokenizer,
     SpacyTokenizer,
     TokenIds,
     Tokens,
@@ -26,6 +28,7 @@ from readnext.modeling.language_models.tokenizer import (
 __all__ = [
     "BERTEmbedder",
     "FastTextEmbedder",
+    "LongformerEmbedder",
     "TFIDFEmbedder",
     "Word2VecEmbedder",
     "embeddings_mapping_to_frame",
@@ -40,6 +43,7 @@ __all__ = [
     "tfidf",
     "tfidf_single_term",
     "BERTTokenizer",
+    "LongformerTokenizer",
     "SpacyTokenizer",
     "TokenIds",
     "Tokens",

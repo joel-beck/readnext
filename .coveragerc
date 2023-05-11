@@ -1,10 +1,20 @@
 [run]
 omit =
-    # omit files in tests directory from coverage
+    # exclude files in tests directory from coverage
     tests/*
-    # omit `__init__.py` files from coverage
+    # exclude `__init__.py` files from coverage
     */__init__.py
-    # omit executable scripts in `readnext/scripts` directory from coverage
+    # exclude executable scripts in `readnext/scripts` directory from coverage
     readnext/scripts/*
-    # omit loading and saving functions in `readnext/utils/io.py` directory from coverage
+    # exclude loading and saving functions in `readnext/utils/io.py` directory from coverage
     readnext/utils/io.py
+
+[report]
+exclude_lines =
+    if __name__ == .__main__.:
+    class .*\bProtocol\):
+    @(abc\.)?abstractmethod
+    @overload
+    def __repr__
+    def __str__
+    if TYPE_CHECKING:

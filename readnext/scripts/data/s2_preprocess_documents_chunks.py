@@ -9,8 +9,7 @@ from pathlib import Path
 import pandas as pd
 
 from readnext.config import DataPaths
-from readnext.utils import setup_progress_bar
-from readnext.utils.preprocessing import add_rank
+from readnext.utils import add_rank, setup_progress_bar
 
 
 def flatten_list_of_dicts(list_of_dicts: list[dict], key: str) -> list[str]:

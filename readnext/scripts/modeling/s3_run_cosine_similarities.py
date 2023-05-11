@@ -18,6 +18,18 @@ def main() -> None:
         ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl,
     )
 
+    # SUBSECTION: BM25
+    bm25_embeddings_mapping = load_df_from_pickle(
+        ResultsPaths.language_models.bm25_embeddings_mapping_most_cited_pkl
+    )
+    # NOTE: Remove to train on full data
+    bm25_embeddings_mapping = bm25_embeddings_mapping.head(100)
+    bm25_cosine_similarities = precompute_cosine_similarities(bm25_embeddings_mapping)
+    save_df_to_pickle(
+        bm25_cosine_similarities,
+        ResultsPaths.language_models.bm25_cosine_similarities_most_cited_pkl,
+    )
+
     # SUBSECTION: Word2Vec
     word2vec_embeddings_mapping = load_df_from_pickle(
         ResultsPaths.language_models.word2vec_embeddings_mapping_most_cited_pkl

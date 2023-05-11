@@ -131,17 +131,11 @@ class TFIDFEmbedder(Embedder):
     """
 
     keyword_algorithm: KeywordAlgorithm
-    aggregation_strategy: AggregationStrategy = AggregationStrategy.mean
 
     def compute_embeddings_single_document(
         self, document_tokens: Tokens, tokens_mapping: TokensMapping
     ) -> np.ndarray:
-        word_embeddings_per_document = self.keyword_algorithm(
-            document_tokens, list(tokens_mapping.values())
-        )
-        return self.word_embeddings_to_document_embedding(
-            word_embeddings_per_document, self.aggregation_strategy
-        )
+        return self.keyword_algorithm(document_tokens, list(tokens_mapping.values()))
 
     def compute_embeddings_mapping(self, tokens_mapping: TokensMapping) -> EmbeddingsMapping:
         """
@@ -202,17 +196,19 @@ class GensimEmbedder(Embedder):
         - n_dimensions: dimension of the embedding space
         """
 
+        embeddings_mapping = {}
+
         with setup_progress_bar() as progress_bar:
-            return {
-                document_id: self.word_embeddings_to_document_embedding(
+            for document_id, tokens in progress_bar.track(
+                tokens_mapping.items(),
+                total=len(tokens_mapping),
+                description="Computing Gensim Embeddings...",
+            ):
+                embeddings_mapping[document_id] = self.word_embeddings_to_document_embedding(
                     self.compute_embeddings_single_document(tokens), self.aggregation_strategy
                 )
-                for document_id, tokens in progress_bar.track(
-                    tokens_mapping.items(),
-                    total=len(tokens_mapping),
-                    description="Computing Gensim Embeddings...",
-                )
-            }
+
+        return embeddings_mapping
 
 
 class Word2VecEmbedder(GensimEmbedder):

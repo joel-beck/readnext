@@ -4,7 +4,8 @@ from spacy.language import Language
 from spacy.tokens.doc import Doc
 
 from readnext.config import ModelVersions
-from readnext.modeling import DocumentInfo, DocumentsInfo, SpacyTokenizer
+from readnext.modeling import DocumentInfo, DocumentsInfo
+from readnext.modeling.language_models import SpacyTokenizer
 
 
 @pytest.fixture(scope="module")
@@ -91,36 +92,6 @@ def test_tokenize(spacy_tokenizer: SpacyTokenizer, tokenized_abstracts: list[lis
 
     assert list(tokens_mapping.keys()) == [1, 2, 3]
     assert list(tokens_mapping.values()) == tokenized_abstracts
-
-
-def test_to_strings(
-    spacy_tokenizer: SpacyTokenizer, tokenized_abstracts_strings: list[str]
-) -> None:
-    string_mapping = spacy_tokenizer.to_strings()
-    assert isinstance(string_mapping, dict)
-
-    assert all(isinstance(key, int) for key in string_mapping)
-    assert all(isinstance(value, str) for value in string_mapping.values())
-
-    assert list(string_mapping.keys()) == [1, 2, 3]
-    assert list(string_mapping.values()) == tokenized_abstracts_strings
-
-
-def test_strings_from_tokens(
-    tokenized_abstracts: list[list[str]], tokenized_abstracts_strings: list[str]
-) -> None:
-    tokens_mapping = dict(enumerate(tokenized_abstracts, start=1))
-    string_mapping_from_tokens_mapping = SpacyTokenizer.string_mapping_from_tokens_mapping(
-        tokens_mapping
-    )
-
-    assert isinstance(string_mapping_from_tokens_mapping, dict)
-
-    assert all(isinstance(key, int) for key in string_mapping_from_tokens_mapping)
-    assert all(isinstance(value, str) for value in string_mapping_from_tokens_mapping.values())
-
-    assert list(string_mapping_from_tokens_mapping.keys()) == [1, 2, 3]
-    assert list(string_mapping_from_tokens_mapping.values()) == tokenized_abstracts_strings
 
 
 def test_tokenize_empty_abstract(spacy_model: Language) -> None:

@@ -5,7 +5,8 @@ import spacy
 from transformers import BertTokenizerFast
 
 from readnext.config import DataPaths, ModelVersions, ResultsPaths
-from readnext.modeling import BERTTokenizer, SpacyTokenizer, documents_info_from_df
+from readnext.modeling import documents_info_from_df
+from readnext.modeling.language_models import BERTTokenizer, SpacyTokenizer
 
 
 def main() -> None:

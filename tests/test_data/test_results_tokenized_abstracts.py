@@ -1,7 +1,7 @@
 import pytest
 
 from readnext.config import ResultsPaths
-from readnext.modeling import TokensIdMapping, TokensMapping
+from readnext.modeling.language_models import TokensIdMapping, TokensMapping
 from readnext.utils import load_object_from_pickle, slice_mapping
 
 

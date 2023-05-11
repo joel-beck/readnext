@@ -16,6 +16,13 @@ def tfidf_embeddings_mapping_most_cited() -> pd.DataFrame:
 
 
 @pytest.fixture(scope="module")
+def bm25_embeddings_mapping_most_cited() -> pd.DataFrame:
+    return load_object_from_pickle(
+        ResultsPaths.language_models.bm25_embeddings_mapping_most_cited_pkl
+    )
+
+
+@pytest.fixture(scope="module")
 def word2vec_embeddings_mapping_most_cited() -> pd.DataFrame:
     return load_object_from_pickle(
         ResultsPaths.language_models.word2vec_embeddings_mapping_most_cited_pkl
@@ -64,10 +71,29 @@ def test_tfidf_embeddings_most_cited(
     assert isinstance(first_document["embedding"], np.ndarray)
     # only embedding of type float64 instead of float32
     assert first_document["embedding"].dtype == np.float64
-
-    # check embedding dimension for all documents
     assert all(
-        len(embedding) == 2037 for embedding in tfidf_embeddings_mapping_most_cited["embedding"]
+        len(embedding) == 2049 for embedding in tfidf_embeddings_mapping_most_cited["embedding"]
+    )
+
+
+def test_bm25_embeddings_most_cited(
+    bm25_embeddings_mapping_most_cited: pd.DataFrame,
+) -> None:
+    assert isinstance(bm25_embeddings_mapping_most_cited, pd.DataFrame)
+
+    # check number and names of columns
+    assert bm25_embeddings_mapping_most_cited.shape[1] == 2
+    assert bm25_embeddings_mapping_most_cited.columns.tolist() == ["document_id", "embedding"]
+
+    # check dtypes of columns
+    assert is_integer_dtype(bm25_embeddings_mapping_most_cited["document_id"])
+
+    first_document = bm25_embeddings_mapping_most_cited.iloc[0]
+    assert isinstance(first_document["embedding"], np.ndarray)
+    # only embedding of type float64 instead of float32
+    assert first_document["embedding"].dtype == np.float64
+    assert all(
+        len(embedding) == 2049 for embedding in bm25_embeddings_mapping_most_cited["embedding"]
     )
 
 

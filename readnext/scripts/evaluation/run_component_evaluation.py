@@ -13,6 +13,8 @@ from readnext.modeling import (
     CitationModelDataConstructor,
     LanguageModelData,
     LanguageModelDataConstructor,
+)
+from readnext.modeling.citation_models import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
@@ -71,6 +73,18 @@ def main() -> None:
     )
     tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
     LanguageModelScorer.display_top_n(tfidf_data, n=10)
+
+    # SUBSECTION: BM25
+    bm25_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.language_models.bm25_cosine_similarities_most_cited_pkl
+    )
+    bm25_data_constructor = LanguageModelDataConstructor(
+        query_document_id=query_document_id,
+        documents_data=documents_authors_labels_citations_most_cited,
+        cosine_similarities=bm25_cosine_similarities_most_cited,
+    )
+    bm25_data = LanguageModelData.from_constructor(bm25_data_constructor)
+    LanguageModelScorer.display_top_n(bm25_data, n=10)
 
     # SUBSECTION: Word2Vec
     word2vec_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
@@ -192,8 +206,16 @@ def main() -> None:
                     LanguageModelScorer.score_top_n(tfidf_data, AveragePrecision(), n=20),
                 ),
                 (
+                    "BM25",
+                    LanguageModelScorer.score_top_n(bm25_data, AveragePrecision(), n=20),
+                ),
+                (
                     "Word2Vec",
                     LanguageModelScorer.score_top_n(word2vec_data, AveragePrecision(), n=20),
+                ),
+                (
+                    "GloVe",
+                    LanguageModelScorer.score_top_n(glove_data, AveragePrecision(), n=20),
                 ),
                 (
                     "FastText",
@@ -273,6 +295,10 @@ def main() -> None:
                 (
                     "TF-IDF",
                     LanguageModelScorer.score_top_n(tfidf_data, CountUniqueLabels(), n=20),
+                ),
+                (
+                    "BM25",
+                    LanguageModelScorer.score_top_n(bm25_data, CountUniqueLabels(), n=20),
                 ),
                 (
                     "Word2Vec",

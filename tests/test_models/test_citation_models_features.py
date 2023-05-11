@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
-from readnext.modeling import (
+from readnext.modeling.citation_models import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )

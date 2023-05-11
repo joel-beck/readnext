@@ -8,9 +8,12 @@ from readnext.modeling import (
     DocumentInfo,
     DocumentsInfo,
     LanguageModelDataConstructor,
+)
+from readnext.modeling.citation_models import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
+from readnext.modeling.language_models import Tokens
 from readnext.utils import load_df_from_pickle, load_object_from_pickle
 
 
@@ -50,6 +53,20 @@ def test_bert_tokenized_abstracts_mapping_most_cited(root_path: Path) -> dict:
 def test_bibliographic_coupling_scores_most_cited(root_path: Path) -> pd.DataFrame:
     return load_df_from_pickle(
         root_path / "tests" / "data" / "test_bibliographic_coupling_scores_most_cited.pkl"
+    )
+
+
+@pytest.fixture(scope="session")
+def test_bm25_cosine_similarities_most_cited(root_path: Path) -> pd.DataFrame:
+    return load_df_from_pickle(
+        root_path / "tests" / "data" / "test_bm25_cosine_similarities_most_cited.pkl"
+    )
+
+
+@pytest.fixture(scope="session")
+def test_bm25_embeddings_mapping_most_cited(root_path: Path) -> dict:
+    return load_object_from_pickle(
+        root_path / "tests" / "data" / "test_bm25_embeddings_mapping_most_cited.pkl"
     )
 
 
@@ -238,3 +255,17 @@ def language_model_data_constructor_new_document_id(
     # original query document id is not in cosine similarity scores data
     language_model_data_constructor.query_document_id = 206594692
     return language_model_data_constructor
+
+
+@pytest.fixture
+def document_tokens() -> Tokens:
+    return ["a", "b", "c", "a", "b", "c", "d", "d", "d"]
+
+
+@pytest.fixture
+def document_corpus() -> list[Tokens]:
+    return [
+        ["a", "b", "c", "d", "d", "d"],
+        ["a", "b", "b", "c", "c", "c", "d"],
+        ["a", "a", "a", "b", "c", "d"],
+    ]

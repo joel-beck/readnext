@@ -2,32 +2,29 @@
 
 from gensim.models.fasttext import load_facebook_model
 from gensim.models.keyedvectors import KeyedVectors, load_word2vec_format
-from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertModel
 
 from readnext.config import ModelPaths, ModelVersions, ResultsPaths
-from readnext.modeling import (
+from readnext.modeling.language_models import (
     BERTEmbedder,
     BERTTokenizer,
     FastTextEmbedder,
     SpacyTokenizer,
     TFIDFEmbedder,
     Word2VecEmbedder,
+    bm25,
     embeddings_mapping_to_frame,
+    tfidf,
 )
 from readnext.utils import save_df_to_pickle, slice_mapping
 
 
 def main() -> None:
-    spacy_tokens_list_mapping = SpacyTokenizer.load_tokens_mapping(
+    spacy_tokens_mapping = SpacyTokenizer.load_tokens_mapping(
         ResultsPaths.language_models.spacy_tokenized_abstracts_mapping_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    spacy_tokens_list_mapping = slice_mapping(spacy_tokens_list_mapping, size=100)
-
-    spacy_tokens_string_mapping = SpacyTokenizer.string_mapping_from_tokens_mapping(
-        spacy_tokens_list_mapping
-    )
+    spacy_tokens_mapping = slice_mapping(spacy_tokens_mapping, size=100)
 
     bert_token_ids_mapping = BERTTokenizer.load_tokens_mapping(
         ResultsPaths.language_models.bert_tokenized_abstracts_mapping_most_cited_pkl
@@ -41,14 +38,19 @@ def main() -> None:
     # NOTE: Remove to train on full data
     scibert_token_ids_mapping = slice_mapping(scibert_token_ids_mapping, size=100)
 
-    tfidf_model = TfidfVectorizer()
-    tfidf_embedder = TFIDFEmbedder(tfidf_model)
-    tfidf_embeddings_mapping = tfidf_embedder.compute_embeddings_mapping(
-        spacy_tokens_string_mapping
-    )
+    tfidf_embedder = TFIDFEmbedder(keyword_algorithm=tfidf)
+    tfidf_embeddings_mapping = tfidf_embedder.compute_embeddings_mapping(spacy_tokens_mapping)
     save_df_to_pickle(
         embeddings_mapping_to_frame(tfidf_embeddings_mapping),
         ResultsPaths.language_models.tfidf_embeddings_mapping_most_cited_pkl,
+    )
+
+    # interface of tfidf and bm25 is identical, thus the same embedder can be used
+    bm25_embedder = TFIDFEmbedder(keyword_algorithm=bm25)
+    bm25_embeddings_mapping = bm25_embedder.compute_embeddings_mapping(spacy_tokens_mapping)
+    save_df_to_pickle(
+        embeddings_mapping_to_frame(bm25_embeddings_mapping),
+        ResultsPaths.language_models.bm25_embeddings_mapping_most_cited_pkl,
     )
 
     # requires pre-downloaded model from gensim data repository:
@@ -61,9 +63,7 @@ def main() -> None:
     # then unzip the model file and move it to the local `models` directory
     word2vec_model: KeyedVectors = load_word2vec_format(ModelPaths.word2vec, binary=True)
     word2vec_embedder = Word2VecEmbedder(word2vec_model)
-    word2vec_embeddings_mapping = word2vec_embedder.compute_embeddings_mapping(
-        spacy_tokens_list_mapping
-    )
+    word2vec_embeddings_mapping = word2vec_embedder.compute_embeddings_mapping(spacy_tokens_mapping)
     save_df_to_pickle(
         embeddings_mapping_to_frame(word2vec_embeddings_mapping),
         ResultsPaths.language_models.word2vec_embeddings_mapping_most_cited_pkl,
@@ -78,7 +78,7 @@ def main() -> None:
     # `Word2VecEmbedder` can be used!
     glove_model: KeyedVectors = load_word2vec_format(ModelPaths.glove, binary=False, no_header=True)
     glove_embedder = Word2VecEmbedder(glove_model)
-    glove_embeddings_mapping = glove_embedder.compute_embeddings_mapping(spacy_tokens_list_mapping)
+    glove_embeddings_mapping = glove_embedder.compute_embeddings_mapping(spacy_tokens_mapping)
     save_df_to_pickle(
         embeddings_mapping_to_frame(glove_embeddings_mapping),
         ResultsPaths.language_models.glove_embeddings_mapping_most_cited_pkl,
@@ -88,9 +88,7 @@ def main() -> None:
     # https://fasttext.cc/docs/en/crawl-vectors.html#models
     fasttext_model = load_facebook_model(ModelPaths.fasttext)
     fasttext_embedder = FastTextEmbedder(fasttext_model)
-    fasttext_embeddings_mapping = fasttext_embedder.compute_embeddings_mapping(
-        spacy_tokens_list_mapping
-    )
+    fasttext_embeddings_mapping = fasttext_embedder.compute_embeddings_mapping(spacy_tokens_mapping)
     save_df_to_pickle(
         embeddings_mapping_to_frame(fasttext_embeddings_mapping),
         ResultsPaths.language_models.fasttext_embeddings_mapping_most_cited_pkl,

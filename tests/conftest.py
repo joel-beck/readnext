@@ -11,6 +11,7 @@ from readnext.modeling import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
+from readnext.modeling.language_models import Tokens
 from readnext.utils import load_df_from_pickle, load_object_from_pickle
 
 
@@ -238,3 +239,17 @@ def language_model_data_constructor_new_document_id(
     # original query document id is not in cosine similarity scores data
     language_model_data_constructor.query_document_id = 206594692
     return language_model_data_constructor
+
+
+@pytest.fixture
+def document_tokens() -> Tokens:
+    return ["a", "b", "c", "a", "b", "c", "d", "d", "d"]
+
+
+@pytest.fixture
+def document_corpus() -> list[Tokens]:
+    return [
+        ["a", "b", "c", "d", "d", "d"],
+        ["a", "b", "b", "c", "c", "c", "d"],
+        ["a", "a", "a", "b", "c", "d"],
+    ]

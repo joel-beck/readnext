@@ -6,7 +6,7 @@ from readnext.modeling.language_models.embedder import (
     Word2VecEmbedder,
     embeddings_mapping_to_frame,
 )
-from readnext.modeling.language_models.tfidf import df, tf, tfidf
+from readnext.modeling.language_models.tfidf import df, idf, tf, tfidf
 from readnext.modeling.language_models.tokenizer import (
     BERTTokenizer,
     SpacyTokenizer,
@@ -26,6 +26,7 @@ __all__ = [
     "bm25_idf",
     "bm25_tf",
     "df",
+    "idf",
     "tf",
     "tfidf",
     "BERTTokenizer",

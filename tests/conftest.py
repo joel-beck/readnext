@@ -8,6 +8,8 @@ from readnext.modeling import (
     DocumentInfo,
     DocumentsInfo,
     LanguageModelDataConstructor,
+)
+from readnext.modeling.citation_models import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )

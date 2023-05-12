@@ -12,7 +12,7 @@ from collections.abc import Sequence
 
 import numpy as np
 
-from readnext.modeling.language_models.tokenizer import Tokens
+from readnext.modeling.language_models.tokenizer_list import Tokens
 
 
 def tf(term: str, document_tokens: Tokens) -> float:

@@ -90,6 +90,18 @@ def main() -> None:
         ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl,
     )
 
+    # SUBSECTION: Longformer
+    longformer_embeddings_mapping = load_df_from_pickle(
+        ResultsPaths.language_models.longformer_embeddings_mapping_most_cited_pkl
+    )
+    # NOTE: Remove to train on full data
+    longformer_embeddings_mapping = longformer_embeddings_mapping.head(100)
+    longformer_cosine_similarities = precompute_cosine_similarities(longformer_embeddings_mapping)
+    save_df_to_pickle(
+        longformer_cosine_similarities,
+        ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl,
+    )
+
 
 if __name__ == "__main__":
     main()

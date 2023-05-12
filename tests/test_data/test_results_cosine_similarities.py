@@ -53,6 +53,13 @@ def scibert_cosine_similarities_most_cited() -> pd.DataFrame:
     )
 
 
+@pytest.fixture(scope="module")
+def longformer_cosine_similarities_most_cited() -> pd.DataFrame:
+    return load_df_from_pickle(
+        ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl
+    )
+
+
 def test_tfidf_cosine_similarities_most_cited(
     tfidf_cosine_similarities_most_cited: pd.DataFrame,
 ) -> None:
@@ -382,6 +389,53 @@ def test_scibert_cosine_similarities_most_cited(
     assert first_document_info.arxiv_labels == []
 
 
+def test_longformer_cosine_similarities_most_cited(
+    longformer_cosine_similarities_most_cited: pd.DataFrame,
+) -> None:
+    assert isinstance(longformer_cosine_similarities_most_cited, pd.DataFrame)
+
+    # check number and names of columns and index
+    assert longformer_cosine_similarities_most_cited.shape[1] == 1
+    assert longformer_cosine_similarities_most_cited.index.name == "document_id"
+    assert longformer_cosine_similarities_most_cited.columns.tolist() == ["scores"]
+
+    # check document id data type
+    assert is_integer_dtype(longformer_cosine_similarities_most_cited.index)
+
+    # check document scores column
+    first_document_scores: list[DocumentScore] = longformer_cosine_similarities_most_cited[
+        "scores"
+    ].iloc[0]
+    assert isinstance(first_document_scores, list)
+
+    # check that scores for all documents in training corpus are present except for the
+    # query document
+    assert all(
+        len(document_scores) == (len(longformer_cosine_similarities_most_cited) - 1)
+        for document_scores in longformer_cosine_similarities_most_cited["scores"]
+    )
+
+    unique_index_ids = set(longformer_cosine_similarities_most_cited.index.tolist())
+    unique_document_ids = {
+        document_score.document_info.document_id for document_score in first_document_scores
+    }
+    assert len(unique_index_ids - unique_document_ids) == 1
+
+    # check data types of document scores
+    first_document_score: DocumentScore = first_document_scores[0]
+    assert isinstance(first_document_score, DocumentScore)
+
+    first_document_info: DocumentInfo = first_document_score.document_info
+    assert isinstance(first_document_info, DocumentInfo)
+
+    # check that only document_id of document_info is set
+    assert isinstance(first_document_info.document_id, int)
+    assert first_document_info.title == ""
+    assert first_document_info.author == ""
+    assert first_document_info.abstract == ""
+    assert first_document_info.arxiv_labels == []
+
+
 def test_that_test_data_mimics_real_data(
     test_data_size: int,
     tfidf_cosine_similarities_most_cited: pd.DataFrame,
@@ -391,6 +445,7 @@ def test_that_test_data_mimics_real_data(
     fasttext_cosine_similarities_most_cited: pd.DataFrame,
     bert_cosine_similarities_most_cited: pd.DataFrame,
     scibert_cosine_similarities_most_cited: pd.DataFrame,
+    longformer_cosine_similarities_most_cited: pd.DataFrame,
     test_tfidf_cosine_similarities_most_cited: pd.DataFrame,
     test_bm25_cosine_similarities_most_cited: pd.DataFrame,
     test_word2vec_cosine_similarities_most_cited: pd.DataFrame,
@@ -398,6 +453,7 @@ def test_that_test_data_mimics_real_data(
     test_fasttext_cosine_similarities_most_cited: pd.DataFrame,
     test_bert_cosine_similarities_most_cited: pd.DataFrame,
     test_scibert_cosine_similarities_most_cited: pd.DataFrame,
+    test_longformer_cosine_similarities_most_cited: pd.DataFrame,
 ) -> None:
     assert_frame_equal(
         tfidf_cosine_similarities_most_cited.head(test_data_size),
@@ -431,4 +487,9 @@ def test_that_test_data_mimics_real_data(
     assert_frame_equal(
         scibert_cosine_similarities_most_cited.head(test_data_size),
         test_scibert_cosine_similarities_most_cited,
+    )
+
+    assert_frame_equal(
+        longformer_cosine_similarities_most_cited.head(test_data_size),
+        test_longformer_cosine_similarities_most_cited,
     )

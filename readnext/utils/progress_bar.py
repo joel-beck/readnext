@@ -11,8 +11,10 @@ from rich.progress import (
 def setup_progress_bar() -> Progress:
     """Setup a pretty `rich` progress bar."""
     return Progress(
-        TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+        TextColumn("[progress.description]{task.description}"),
         BarColumn(),
+        TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+        TextColumn("•"),
         MofNCompleteColumn(),
         TextColumn("•"),
         TimeElapsedColumn(),

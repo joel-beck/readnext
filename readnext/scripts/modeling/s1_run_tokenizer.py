@@ -2,11 +2,11 @@
 
 import pandas as pd
 import spacy
-from transformers import BertTokenizerFast
+from transformers import BertTokenizerFast, LongformerTokenizerFast
 
 from readnext.config import DataPaths, ModelVersions, ResultsPaths
 from readnext.modeling import documents_info_from_df
-from readnext.modeling.language_models import BERTTokenizer, SpacyTokenizer
+from readnext.modeling.language_models import BERTTokenizer, LongformerTokenizer, SpacyTokenizer
 
 
 def main() -> None:
@@ -44,6 +44,16 @@ def main() -> None:
     scibert_tokenizer.save_tokens_mapping(
         ResultsPaths.language_models.scibert_tokenized_abstracts_mapping_most_cited_pkl,
         scibert_tokenized_abstracts,
+    )
+
+    longformer_tokenizer_transformers = LongformerTokenizerFast.from_pretrained(
+        ModelVersions.longformer
+    )
+    longformer_tokenizer = LongformerTokenizer(documents_info, longformer_tokenizer_transformers)
+    longformer_tokenized_abstracts = longformer_tokenizer.tokenize()
+    longformer_tokenizer.save_tokens_mapping(
+        ResultsPaths.language_models.longformer_tokenized_abstracts_mapping_most_cited_pkl,
+        longformer_tokenized_abstracts,
     )
 
 

@@ -115,6 +115,17 @@ def compare_hybrid_scores_by_document_id(
     )
     scibert_data = LanguageModelData.from_constructor(scibert_data_constructor)
 
+    # SUBSECTION: Longformer
+    longformer_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+        ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl
+    )
+    longformer_data_constructor = LanguageModelDataConstructor(
+        query_document_id=query_document_id,
+        documents_data=documents_data,
+        cosine_similarities=longformer_cosine_similarities_most_cited,
+    )
+    longformer_data = LanguageModelData.from_constructor(longformer_data_constructor)
+
     # SECTION: Hybrid Models
     # SUBSECTION: TF-IDF
     tfidf_hybrid_scorer = HybridScorer(
@@ -207,6 +218,19 @@ def compare_hybrid_scores_by_document_id(
 
     scibert_hybrid_score = HybridScore.from_scorer(scibert_hybrid_scorer)
 
+    # SUBSECTION: Longformer
+    longformer_hybrid_scorer = HybridScorer(
+        language_model_name="Longformer",
+        citation_model_data=citation_model_data,
+        language_model_data=longformer_data,
+    )
+    longformer_hybrid_scorer.fit(AveragePrecision(), n_candidates=30, n_final=30)
+
+    longformer_hybrid_scorer.citation_to_language_recommendations
+    longformer_hybrid_scorer.language_to_citation_recommendations
+
+    longformer_hybrid_score = HybridScore.from_scorer(longformer_hybrid_scorer)
+
     # SECTION: Compare Scores
     return (
         compare_hybrid_scores(
@@ -217,6 +241,7 @@ def compare_hybrid_scores_by_document_id(
             fasttext_hybrid_score,
             bert_hybrid_score,
             scibert_hybrid_score,
+            longformer_hybrid_score,
         )
         .assign(query_document_id=query_document_id)
         .set_index("query_document_id")

@@ -11,12 +11,8 @@ from gensim.models import FastText, KeyedVectors
 from transformers import BertModel, LongformerModel
 
 # do not import from .language_models to avoid circular imports
-from readnext.modeling.language_models.tokenizer import (
-    TokenIds,
-    Tokens,
-    TokensIdMapping,
-    TokensMapping,
-)
+from readnext.modeling.language_models.tokenizer_list import Tokens, TokensMapping
+from readnext.modeling.language_models.tokenizer_tensor import TokenIds, TokensIdMapping
 from readnext.utils import setup_progress_bar
 
 Embedding: TypeAlias = np.ndarray

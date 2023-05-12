@@ -15,14 +15,12 @@ from readnext.modeling.language_models.tfidf import (
     tfidf,
     tfidf_single_term,
 )
-from readnext.modeling.language_models.tokenizer import (
+from readnext.modeling.language_models.tokenizer_list import SpacyTokenizer, Tokens, TokensMapping
+from readnext.modeling.language_models.tokenizer_tensor import (
     BERTTokenizer,
     LongformerTokenizer,
-    SpacyTokenizer,
     TokenIds,
-    Tokens,
     TokensIdMapping,
-    TokensMapping,
 )
 
 __all__ = [

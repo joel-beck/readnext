@@ -16,6 +16,10 @@ from tqdm import tqdm
 from typing_extensions import TypedDict
 
 from readnext.config import DataPaths
+from readnext.utils import (
+    get_paper_id_from_semanticscholar_url,
+    get_semanticscholar_url_from_paper_id,
+)
 
 
 class SemanticScholarCitation(TypedDict):
@@ -41,18 +45,6 @@ class SemanticScholarResponse:
     references: list[SemanticScholarReference] | None
 
 
-def get_id_from_url(semanticscholar_url: str) -> str:
-    """Paper ID is the last part of the URL after the final forward slash"""
-    return semanticscholar_url.rsplit("/", 1)[-1]
-
-
-def get_url_from_id(semanticscholar_id: str | None) -> str:
-    if semanticscholar_id is None:
-        return ""
-
-    return f"https://semanticscholar.org/paper/{semanticscholar_id}"
-
-
 def send_semanticscholar_request(
     semanticscholar_id: str, headers: dict[str, str]
 ) -> SemanticScholarResponse:
@@ -72,7 +64,7 @@ def get_paper_citations(semanticscholar_response: SemanticScholarResponse) -> li
         return []
 
     return [
-        get_url_from_id(citation.get("paperId", None))
+        get_semanticscholar_url_from_paper_id(citation.get("paperId", None))
         for citation in semanticscholar_response.citations
         if citation.get("paperId", None) is not None
     ]
@@ -83,7 +75,7 @@ def get_paper_references(semanticscholar_response: SemanticScholarResponse) -> l
         return []
 
     return [
-        get_url_from_id(reference.get("paperId", None))
+        get_semanticscholar_url_from_paper_id(reference.get("paperId", None))
         for reference in semanticscholar_response.references
         if reference.get("paperId", None) is not None
     ]
@@ -112,7 +104,9 @@ def main() -> None:
 
     documents_authors_labels_citations = documents_authors_labels.assign(
         semanticscholar_request=lambda df: df["semanticscholar_url"].progress_apply(
-            lambda url: send_semanticscholar_request(get_id_from_url(url), request_headers)
+            lambda url: send_semanticscholar_request(
+                get_paper_id_from_semanticscholar_url(url), request_headers
+            )
         ),
         citations=lambda df: df["semanticscholar_request"].apply(get_paper_citations),
         references=lambda df: df["semanticscholar_request"].apply(get_paper_references),

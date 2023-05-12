@@ -9,6 +9,7 @@ from readnext.modeling.language_models.embedder_torch import (
     BERTEmbedder,
     LongformerEmbedder,
 )
+from readnext.modeling.language_models.model_choice import LanguageModelChoice
 from readnext.modeling.language_models.tfidf import (
     df,
     idf,
@@ -36,6 +37,7 @@ __all__ = [
     "bm25_idf",
     "bm25_single_term",
     "bm25_tf",
+    "LanguageModelChoice",
     "df",
     "idf",
     "learn_vocabulary",

@@ -135,6 +135,7 @@ class SpacyTokenizer(ListTokenizer):
             for document_id, abstract in progress_bar.track(
                 zip(self.documents_info.document_ids, self.documents_info.abstracts),
                 total=len(self.documents_info.document_ids),
+                description=f"{self.__class__.__name__}:",
             ):
                 tokenized_abstracts_mapping[document_id] = self.clean_document(abstract)
 

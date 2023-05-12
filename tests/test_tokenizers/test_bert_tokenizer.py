@@ -1,9 +1,11 @@
+from typing import cast
+
 import pytest
 from transformers import BertTokenizerFast
 
 from readnext.config import ModelVersions
 from readnext.modeling import DocumentsInfo
-from readnext.modeling.language_models import BERTTokenizer
+from readnext.modeling.language_models import BERTTokenizer, TokenIds, Tokens
 
 
 @pytest.fixture(scope="module")
@@ -23,7 +25,7 @@ def bert_tokenizer(
 
 
 @pytest.fixture(scope="module")
-def tokenized_abstracts() -> list[list[str]]:
+def tokenized_abstracts() -> list[Tokens]:
     return [
         [
             "[CLS]",
@@ -165,8 +167,44 @@ def test_tokenize(bert_tokenizer: BERTTokenizer) -> None:
     assert list(token_ids_mapping.keys()) == [1, 2, 3]
 
 
+def test_ids_to_tokens(bert_tokenizer: BERTTokenizer) -> None:
+    # Prepare some token ids
+    assert bert_tokenizer.tensor_tokenizer.cls_token_id is not None
+    assert bert_tokenizer.tensor_tokenizer.sep_token_id is not None
+    assert bert_tokenizer.tensor_tokenizer.pad_token_id is not None
+
+    tokens_ids: TokenIds = [
+        bert_tokenizer.tensor_tokenizer.cls_token_id,  # [CLS]
+        cast(int, bert_tokenizer.tensor_tokenizer.convert_tokens_to_ids("abstract")),
+        cast(int, bert_tokenizer.tensor_tokenizer.convert_tokens_to_ids("1")),
+        bert_tokenizer.tensor_tokenizer.sep_token_id,  # [SEP]
+        bert_tokenizer.tensor_tokenizer.pad_token_id,  # [PAD]
+    ]
+
+    # Expected output
+    expected_tokens: Tokens = [
+        "[CLS]",
+        "abstract",
+        "1",
+        "[SEP]",
+        "[PAD]",
+    ]
+
+    # Test functionality and types
+    actual_tokens: Tokens = bert_tokenizer.ids_to_tokens(tokens_ids)
+    assert actual_tokens == expected_tokens
+    assert all(isinstance(token, str) for token in actual_tokens)
+
+    # Test empty list
+    assert bert_tokenizer.ids_to_tokens([]) == []
+
+    # Test single-item list
+    single_token_id: TokenIds = [bert_tokenizer.tensor_tokenizer.cls_token_id]
+    assert bert_tokenizer.ids_to_tokens(single_token_id) == ["[CLS]"]
+
+
 def test_id_mapping_to_tokens_mapping(
-    bert_tokenizer: BERTTokenizer, tokenized_abstracts: list[list[str]]
+    bert_tokenizer: BERTTokenizer, tokenized_abstracts: list[Tokens]
 ) -> None:
     token_ids_mapping = bert_tokenizer.tokenize()
     tokens_mapping = bert_tokenizer.id_mapping_to_tokens_mapping(token_ids_mapping)

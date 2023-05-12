@@ -121,7 +121,7 @@ class TFIDFEmbedder(Embedder):
             for document_id, document_tokens in progress_bar.track(
                 tokens_mapping.items(),
                 total=len(tokens_mapping),
-                description="Computing TF-IDF Embeddings...",
+                description=f"{self.__class__.__name__}:",
             ):
                 embeddings_mapping[document_id] = self.compute_embeddings_single_document(
                     document_tokens, tokens_mapping
@@ -170,7 +170,7 @@ class GensimEmbedder(Embedder):
             for document_id, tokens in progress_bar.track(
                 tokens_mapping.items(),
                 total=len(tokens_mapping),
-                description="Computing Gensim Embeddings...",
+                description=f"{self.__class__.__name__}:",
             ):
                 embeddings_mapping[document_id] = self.word_embeddings_to_document_embedding(
                     self.compute_embeddings_single_document(tokens), self.aggregation_strategy
@@ -272,7 +272,7 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
             for document_id, tokens_tensor in progress_bar.track(
                 tokens_tensor_mapping.items(),
                 total=len(tokens_tensor_mapping),
-                description="Computing Transformer embeddings...",
+                description=f"{self.__class__.__name__}:",
             ):
                 embeddings_mapping[document_id] = self.compute_embeddings_single_document(
                     tokens_tensor

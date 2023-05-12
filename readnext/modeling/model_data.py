@@ -36,6 +36,10 @@ class ModelData(ABC, Generic[TModelDataConstructor]):
     def __getitem__(self, indices: pd.Index) -> Self:
         """Specify how to index or slice a `ModelData` instance."""
 
+    @abstractmethod
+    def __repr__(self) -> str:
+        """Specify how to represent a `ModelData` instance as a string."""
+
 
 @dataclass
 class CitationModelData(ModelData):
@@ -63,6 +67,33 @@ class CitationModelData(ModelData):
             self.feature_matrix.loc[indices],
         )
 
+    def __repr__(self) -> str:
+        query_document_repr = f"query_document={self.query_document!r}"
+
+        info_matrix_repr = (
+            f"info_matrix=[pd.DataFrame, shape={self.info_matrix.shape}, "
+            f"index={self.info_matrix.index.name}, columns={self.info_matrix.columns}]"
+        )
+
+        feature_matrix_repr = (
+            f"feature_matrix=[pd.DataFrame, shape={self.feature_matrix.shape}, "
+            f"index={self.feature_matrix.index.name}, columns={self.feature_matrix.columns}]"
+        )
+
+        integer_labels_repr = (
+            f"integer_labels=[pd.Series, shape={self.integer_labels.shape}, "
+            f"name={self.integer_labels.name}]"
+        )
+
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"  {query_document_repr},\n"
+            f"  {info_matrix_repr},\n"
+            f"  {feature_matrix_repr},\n"
+            f"  {integer_labels_repr}\n"
+            ")"
+        )
+
 
 @dataclass
 class LanguageModelData(ModelData):
@@ -88,4 +119,32 @@ class LanguageModelData(ModelData):
             self.info_matrix.loc[indices],
             self.integer_labels.loc[indices],
             self.cosine_similarity_ranks.loc[indices],
+        )
+
+    def __repr__(self) -> str:
+        query_document_repr = f"query_document={self.query_document!r}"
+
+        info_matrix_repr = (
+            f"info_matrix=[pd.DataFrame, shape={self.info_matrix.shape}, "
+            f"index={self.info_matrix.index.name}, columns={self.info_matrix.columns}]"
+        )
+
+        cosine_similarity_ranks_repr = (
+            f"cosine_similarity_ranks=[pd.DataFrame, shape={self.cosine_similarity_ranks.shape}, "
+            f"index={self.cosine_similarity_ranks.index.name}, "
+            f"columns={self.cosine_similarity_ranks.columns}]"
+        )
+
+        integer_labels_repr = (
+            f"integer_labels=[pd.Series, shape={self.integer_labels.shape}, "
+            f"name={self.integer_labels.name}]"
+        )
+
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"  {query_document_repr},\n"
+            f"  {info_matrix_repr},\n"
+            f"  {cosine_similarity_ranks_repr},\n"
+            f"  {integer_labels_repr}\n"
+            ")"
         )

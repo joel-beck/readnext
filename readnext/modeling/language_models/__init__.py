@@ -1,11 +1,13 @@
 from readnext.modeling.language_models.bm25 import bm25, bm25_idf, bm25_single_term, bm25_tf
 from readnext.modeling.language_models.embedder import (
-    BERTEmbedder,
     FastTextEmbedder,
-    LongformerEmbedder,
     TFIDFEmbedder,
     Word2VecEmbedder,
     embeddings_mapping_to_frame,
+)
+from readnext.modeling.language_models.embedder_torch import (
+    BERTEmbedder,
+    LongformerEmbedder,
 )
 from readnext.modeling.language_models.tfidf import (
     df,

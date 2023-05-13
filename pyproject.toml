@@ -49,6 +49,8 @@ test = "pytest"
 test-cov = "pytest --cov=readnext --cov-config=.coveragerc"
 # do not test data files in CI since the data files only exist locally
 test-ci = "pytest --ignore tests/test_data --cov=readnext --cov-config=.coveragerc --cov-report=xml"
+test-slow = "pytest -m 'slow'" # run all tests marked with `@pytest.mark.slow`
+test-fast = "pytest -m 'not slow'" # run all tests except those marked with `@pytest.mark.slow`
 pre = "pre-commit run --all-files"
 serve = "mkdocs serve"
 deploy = { shell = "mkdocs build && mkdocs gh-deploy" }
@@ -110,6 +112,9 @@ testpaths = ["tests"]
 # command line options for pytest
 addopts = "--verbose"
 filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning"]
+markers = [
+    "slow: marks tests as slow (run with `pytest -m 'slow', exclude with `pytest -m 'not slow'`)",
+]
 
 [tool.ruff]
 line-length = 100
@@ -154,8 +159,18 @@ select = [
 # - `N806` (variable in function should be lowercase)
 # - `PD015` (use `.merge()` instead of `pd.merge()`, incorrect for Series)
 # - `PD901` (don't use `df` as a variable name)
+# - `RUF007` (prefer `itertools.pairwise()` over `zip()` when iterating over successive pairs)
 # - "RUF100" (unused `noqa`)
-ignore = ["ANN101", "ANN102", "N803", "N806", "PD015", "PD901", "RUF100"]
+ignore = [
+    "ANN101",
+    "ANN102",
+    "N803",
+    "N806",
+    "PD015",
+    "PD901",
+    "RUF007",
+    "RUF100"
+]
 # Never try to fix
 # - `F401` (unused imports)
 # - `F841` (unused variables)

@@ -7,7 +7,7 @@ from readnext.config import DataPaths
 from readnext.utils import load_df_from_pickle
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def documents_authors_labels_citations_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(DataPaths.merged.documents_authors_labels_citations_most_cited_pkl)
 

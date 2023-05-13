@@ -8,60 +8,61 @@ from readnext.config import ResultsPaths
 from readnext.utils import load_df_from_pickle, load_object_from_pickle
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def tfidf_embeddings_mapping_most_cited() -> pd.DataFrame:
     return load_object_from_pickle(
         ResultsPaths.language_models.tfidf_embeddings_mapping_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def bm25_embeddings_mapping_most_cited() -> pd.DataFrame:
     return load_object_from_pickle(
         ResultsPaths.language_models.bm25_embeddings_mapping_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def word2vec_embeddings_mapping_most_cited() -> pd.DataFrame:
     return load_object_from_pickle(
         ResultsPaths.language_models.word2vec_embeddings_mapping_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def glove_embeddings_mapping_most_cited() -> pd.DataFrame:
     return load_object_from_pickle(
         ResultsPaths.language_models.glove_embeddings_mapping_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def fasttext_embeddings_mapping_most_cited() -> pd.DataFrame:
     return load_object_from_pickle(
         ResultsPaths.language_models.fasttext_embeddings_mapping_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def bert_embeddings_mapping_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(ResultsPaths.language_models.bert_embeddings_mapping_most_cited_pkl)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def scibert_embeddings_mapping_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(
         ResultsPaths.language_models.scibert_embeddings_mapping_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def longformer_embeddings_mapping_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(
         ResultsPaths.language_models.longformer_embeddings_mapping_most_cited_pkl
     )
 
 
+@pytest.mark.slow
 def test_tfidf_embeddings_most_cited(
     tfidf_embeddings_mapping_most_cited: pd.DataFrame,
 ) -> None:
@@ -79,10 +80,11 @@ def test_tfidf_embeddings_most_cited(
     # only embedding of type float64 instead of float32
     assert first_document["embedding"].dtype == np.float64
     assert all(
-        len(embedding) == 2049 for embedding in tfidf_embeddings_mapping_most_cited["embedding"]
+        len(embedding) == 6578 for embedding in tfidf_embeddings_mapping_most_cited["embedding"]
     )
 
 
+@pytest.mark.slow
 def test_bm25_embeddings_most_cited(
     bm25_embeddings_mapping_most_cited: pd.DataFrame,
 ) -> None:
@@ -100,10 +102,11 @@ def test_bm25_embeddings_most_cited(
     # only embedding of type float64 instead of float32
     assert first_document["embedding"].dtype == np.float64
     assert all(
-        len(embedding) == 2049 for embedding in bm25_embeddings_mapping_most_cited["embedding"]
+        len(embedding) == 6578 for embedding in bm25_embeddings_mapping_most_cited["embedding"]
     )
 
 
+@pytest.mark.slow
 def test_word2vec_embeddings_most_cited(
     word2vec_embeddings_mapping_most_cited: pd.DataFrame,
 ) -> None:
@@ -126,6 +129,7 @@ def test_word2vec_embeddings_most_cited(
     )
 
 
+@pytest.mark.slow
 def test_glove_embeddings_most_cited(
     glove_embeddings_mapping_most_cited: pd.DataFrame,
 ) -> None:
@@ -148,6 +152,7 @@ def test_glove_embeddings_most_cited(
     )
 
 
+@pytest.mark.slow
 def test_fasttext_embeddings_most_cited(
     fasttext_embeddings_mapping_most_cited: pd.DataFrame,
 ) -> None:
@@ -170,6 +175,7 @@ def test_fasttext_embeddings_most_cited(
     )
 
 
+@pytest.mark.slow
 def test_bert_embeddings_most_cited(
     bert_embeddings_mapping_most_cited: pd.DataFrame,
 ) -> None:
@@ -192,6 +198,7 @@ def test_bert_embeddings_most_cited(
     )
 
 
+@pytest.mark.slow
 def test_scibert_embeddings_most_cited(
     scibert_embeddings_mapping_most_cited: pd.DataFrame,
 ) -> None:
@@ -214,6 +221,7 @@ def test_scibert_embeddings_most_cited(
     )
 
 
+@pytest.mark.slow
 def test_longformer_embeddings_most_cited(
     longformer_embeddings_mapping_most_cited: pd.DataFrame,
 ) -> None:
@@ -236,7 +244,9 @@ def test_longformer_embeddings_most_cited(
     )
 
 
+@pytest.mark.slow
 def test_that_test_data_mimics_real_data(
+    test_data_size: int,
     tfidf_embeddings_mapping_most_cited: pd.DataFrame,
     word2vec_embeddings_mapping_most_cited: pd.DataFrame,
     fasttext_embeddings_mapping_most_cited: pd.DataFrame,
@@ -251,30 +261,31 @@ def test_that_test_data_mimics_real_data(
     test_longformer_embeddings_mapping_most_cited: pd.DataFrame,
 ) -> None:
     assert_frame_equal(
-        tfidf_embeddings_mapping_most_cited.head(100), test_tfidf_embeddings_mapping_most_cited
+        tfidf_embeddings_mapping_most_cited.head(test_data_size),
+        test_tfidf_embeddings_mapping_most_cited,
     )
 
     assert_frame_equal(
-        word2vec_embeddings_mapping_most_cited.head(100),
+        word2vec_embeddings_mapping_most_cited.head(test_data_size),
         test_word2vec_embeddings_mapping_most_cited,
     )
 
     assert_frame_equal(
-        fasttext_embeddings_mapping_most_cited.head(100),
+        fasttext_embeddings_mapping_most_cited.head(test_data_size),
         test_fasttext_embeddings_mapping_most_cited,
     )
 
     assert_frame_equal(
-        bert_embeddings_mapping_most_cited.head(100),
+        bert_embeddings_mapping_most_cited.head(test_data_size),
         test_bert_embeddings_mapping_most_cited,
     )
 
     assert_frame_equal(
-        scibert_embeddings_mapping_most_cited.head(100),
+        scibert_embeddings_mapping_most_cited.head(test_data_size),
         test_scibert_embeddings_mapping_most_cited,
     )
 
     assert_frame_equal(
-        longformer_embeddings_mapping_most_cited.head(100),
+        longformer_embeddings_mapping_most_cited.head(test_data_size),
         test_longformer_embeddings_mapping_most_cited,
     )

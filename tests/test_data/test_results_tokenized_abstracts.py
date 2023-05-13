@@ -5,34 +5,35 @@ from readnext.modeling.language_models import TokensIdMapping, TokensMapping
 from readnext.utils import load_object_from_pickle, slice_mapping
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def spacy_tokenized_abstracts_mapping_most_cited() -> TokensMapping:
     return load_object_from_pickle(
         ResultsPaths.language_models.spacy_tokenized_abstracts_mapping_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def bert_tokenized_abstracts_mapping_most_cited() -> TokensIdMapping:
     return load_object_from_pickle(
         ResultsPaths.language_models.bert_tokenized_abstracts_mapping_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def scibert_tokenized_abstracts_mapping_most_cited() -> TokensIdMapping:
     return load_object_from_pickle(
         ResultsPaths.language_models.scibert_tokenized_abstracts_mapping_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def longformer_tokenized_abstracts_mapping_most_cited() -> TokensIdMapping:
     return load_object_from_pickle(
         ResultsPaths.language_models.longformer_tokenized_abstracts_mapping_most_cited_pkl
     )
 
 
+@pytest.mark.slow
 def test_spacy_tokenized_abstracts_most_cited(
     spacy_tokenized_abstracts_mapping_most_cited: TokensMapping,
 ) -> None:
@@ -52,6 +53,7 @@ def test_spacy_tokenized_abstracts_most_cited(
     )
 
 
+@pytest.mark.slow
 def test_bert_tokenized_abstracts_most_cited(
     bert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
 ) -> None:
@@ -80,6 +82,7 @@ def test_bert_tokenized_abstracts_most_cited(
     assert all(token_id != 0 for token_id in single_abstract_ids[:254])
 
 
+@pytest.mark.slow
 def test_scibert_tokenized_abstracts_most_cited(
     scibert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
 ) -> None:
@@ -107,6 +110,7 @@ def test_scibert_tokenized_abstracts_most_cited(
     assert all(token_id != 0 for token_id in single_abstract_ids[:252])
 
 
+@pytest.mark.slow
 def test_longformer_tokenized_abstracts_most_cited(
     longformer_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
 ) -> None:
@@ -133,6 +137,7 @@ def test_longformer_tokenized_abstracts_most_cited(
     assert all(token_id == 1 for token_id in single_abstract_ids[261:])
 
 
+@pytest.mark.slow
 def test_that_test_data_mimics_real_data(
     test_data_size: int,
     spacy_tokenized_abstracts_mapping_most_cited: TokensMapping,

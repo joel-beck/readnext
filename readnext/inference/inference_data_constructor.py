@@ -5,7 +5,7 @@ from typing import cast
 import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
-from readnext.evaluation.scoring import HybridScorer
+from readnext.evaluation.scoring import FeatureWeights, HybridScorer
 from readnext.modeling import (
     CitationModelData,
     CitationModelDataConstructor,
@@ -45,6 +45,7 @@ class Features:
     co_citation_analysis: pd.Series
     bibliographic_coupling: pd.Series
     cosine_similarity: pd.Series
+    feature_weights: FeatureWeights
 
 
 @dataclass
@@ -78,6 +79,7 @@ class InferenceDataConstructor:
     arxiv_url: str | None = None
     paper_title: str | None = None
     language_model_choice: LanguageModelChoice
+    feature_weights: FeatureWeights
 
     _documents_data: pd.DataFrame = field(init=False)
     _co_citation_analysis_scores: pd.DataFrame = field(init=False)
@@ -241,6 +243,7 @@ class InferenceDataConstructor:
             self._citation_model_data.info_matrix["co_citation_analysis"],
             self._citation_model_data.info_matrix["bibliographic_coupling"],
             self._language_model_data.info_matrix["cosine_similarity"],
+            self.feature_weights,
         )
 
     def collect_ranks(self) -> Ranks:
@@ -265,7 +268,7 @@ class InferenceDataConstructor:
             citation_model_data=self._citation_model_data,
             language_model_data=self._language_model_data,
         )
-        hybrid_scorer.recommend()
+        hybrid_scorer.recommend(feature_weights=self.feature_weights)
 
         return Recommendations(
             citation_to_language_candidates=hybrid_scorer.citation_to_language_candidates,

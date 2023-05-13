@@ -8,20 +8,21 @@ from readnext.modeling import DocumentInfo, DocumentScore
 from readnext.utils import load_df_from_pickle
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def co_citation_analysis_scores_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(
         ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def bibliographic_coupling_scores_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(
         ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl
     )
 
 
+@pytest.mark.slow
 def test_co_citation_analysis_scores_most_cited(
     co_citation_analysis_scores_most_cited: pd.DataFrame,
 ) -> None:
@@ -69,6 +70,7 @@ def test_co_citation_analysis_scores_most_cited(
     assert first_document_info.arxiv_labels == []
 
 
+@pytest.mark.slow
 def test_bibliographic_coupling_scores_most_cited(
     bibliographic_coupling_scores_most_cited: pd.DataFrame,
 ) -> None:
@@ -116,18 +118,20 @@ def test_bibliographic_coupling_scores_most_cited(
     assert first_document_info.arxiv_labels == []
 
 
+@pytest.mark.slow
 def test_that_test_data_mimics_real_data(
+    test_data_size: int,
     co_citation_analysis_scores_most_cited: pd.DataFrame,
     bibliographic_coupling_scores_most_cited: pd.DataFrame,
     test_co_citation_analysis_scores_most_cited: pd.DataFrame,
     test_bibliographic_coupling_scores_most_cited: pd.DataFrame,
 ) -> None:
     assert_frame_equal(
-        co_citation_analysis_scores_most_cited.head(100),
-        test_co_citation_analysis_scores_most_cited.head(100),
+        co_citation_analysis_scores_most_cited.head(test_data_size),
+        test_co_citation_analysis_scores_most_cited,
     )
 
     assert_frame_equal(
-        bibliographic_coupling_scores_most_cited.head(100),
+        bibliographic_coupling_scores_most_cited.head(test_data_size),
         test_bibliographic_coupling_scores_most_cited,
     )

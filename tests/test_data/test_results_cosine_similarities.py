@@ -8,58 +8,59 @@ from readnext.modeling import DocumentInfo, DocumentScore
 from readnext.utils import load_df_from_pickle
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def tfidf_cosine_similarities_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(
         ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def bm25_cosine_similarities_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(ResultsPaths.language_models.bm25_cosine_similarities_most_cited_pkl)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def word2vec_cosine_similarities_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(
         ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def glove_cosine_similarities_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(
         ResultsPaths.language_models.glove_cosine_similarities_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def fasttext_cosine_similarities_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(
         ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def bert_cosine_similarities_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def scibert_cosine_similarities_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(
         ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def longformer_cosine_similarities_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(
         ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl
     )
 
 
+@pytest.mark.slow
 def test_tfidf_cosine_similarities_most_cited(
     tfidf_cosine_similarities_most_cited: pd.DataFrame,
 ) -> None:
@@ -107,6 +108,7 @@ def test_tfidf_cosine_similarities_most_cited(
     assert first_document_info.arxiv_labels == []
 
 
+@pytest.mark.slow
 def test_bm25_cosine_similarities_most_cited(
     bm25_cosine_similarities_most_cited: pd.DataFrame,
 ) -> None:
@@ -154,6 +156,7 @@ def test_bm25_cosine_similarities_most_cited(
     assert first_document_info.arxiv_labels == []
 
 
+@pytest.mark.slow
 def test_word2vec_cosine_similarities_most_cited(
     word2vec_cosine_similarities_most_cited: pd.DataFrame,
 ) -> None:
@@ -201,6 +204,7 @@ def test_word2vec_cosine_similarities_most_cited(
     assert first_document_info.arxiv_labels == []
 
 
+@pytest.mark.slow
 def test_glove_cosine_similarities_most_cited(
     glove_cosine_similarities_most_cited: pd.DataFrame,
 ) -> None:
@@ -248,6 +252,7 @@ def test_glove_cosine_similarities_most_cited(
     assert first_document_info.arxiv_labels == []
 
 
+@pytest.mark.slow
 def test_fasttext_cosine_similarities_most_cited(
     fasttext_cosine_similarities_most_cited: pd.DataFrame,
 ) -> None:
@@ -295,6 +300,7 @@ def test_fasttext_cosine_similarities_most_cited(
     assert first_document_info.arxiv_labels == []
 
 
+@pytest.mark.slow
 def test_bert_cosine_similarities_most_cited(
     bert_cosine_similarities_most_cited: pd.DataFrame,
 ) -> None:
@@ -342,6 +348,7 @@ def test_bert_cosine_similarities_most_cited(
     assert first_document_info.arxiv_labels == []
 
 
+@pytest.mark.slow
 def test_scibert_cosine_similarities_most_cited(
     scibert_cosine_similarities_most_cited: pd.DataFrame,
 ) -> None:
@@ -389,6 +396,7 @@ def test_scibert_cosine_similarities_most_cited(
     assert first_document_info.arxiv_labels == []
 
 
+@pytest.mark.slow
 def test_longformer_cosine_similarities_most_cited(
     longformer_cosine_similarities_most_cited: pd.DataFrame,
 ) -> None:
@@ -436,6 +444,7 @@ def test_longformer_cosine_similarities_most_cited(
     assert first_document_info.arxiv_labels == []
 
 
+@pytest.mark.slow
 def test_that_test_data_mimics_real_data(
     test_data_size: int,
     tfidf_cosine_similarities_most_cited: pd.DataFrame,

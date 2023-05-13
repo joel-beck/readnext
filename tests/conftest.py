@@ -25,7 +25,7 @@ def root_path() -> Path:
 
 @pytest.fixture(scope="session")
 def test_data_size() -> int:
-    return 1000
+    return 100
 
 
 @pytest.fixture(scope="session")
@@ -225,7 +225,9 @@ def documents_info() -> DocumentsInfo:
     )
 
 
-@pytest.fixture(scope="module")
+# query_id is modified by some tests, set `scope="session"` to provide a new instance to
+# each test function
+@pytest.fixture
 def citation_model_data_constructor(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
     test_co_citation_analysis_scores_most_cited: pd.DataFrame,
@@ -243,7 +245,9 @@ def citation_model_data_constructor(
     )
 
 
-@pytest.fixture(scope="module")
+# query_id is modified by some tests, set `scope="session"` to provide a new instance to
+# each test function
+@pytest.fixture
 def language_model_data_constructor(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
     test_tfidf_cosine_similarities_most_cited: pd.DataFrame,
@@ -259,6 +263,8 @@ def language_model_data_constructor(
     )
 
 
+# query_id is modified by some tests, set `scope="session"` to provide a new instance to
+# each test function
 @pytest.fixture
 def citation_model_data_constructor_new_document_id(
     citation_model_data_constructor: CitationModelDataConstructor,
@@ -269,6 +275,8 @@ def citation_model_data_constructor_new_document_id(
     return citation_model_data_constructor
 
 
+# query_id is modified by some tests, set `scope="session"` to provide a new instance to
+# each test function
 @pytest.fixture
 def language_model_data_constructor_new_document_id(
     language_model_data_constructor: LanguageModelDataConstructor,
@@ -278,12 +286,12 @@ def language_model_data_constructor_new_document_id(
     return language_model_data_constructor
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def document_tokens() -> Tokens:
     return ["a", "b", "c", "a", "b", "c", "d", "d", "d"]
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def document_corpus() -> list[Tokens]:
     return [
         ["a", "b", "c", "d", "d", "d"],

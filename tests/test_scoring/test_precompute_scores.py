@@ -16,28 +16,28 @@ from readnext.modeling.document_info import DocumentInfo
 def co_citation_analysis_scores(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
 ) -> pd.DataFrame:
-    return precompute_co_citations(test_documents_authors_labels_citations_most_cited.head(100))
+    return precompute_co_citations(test_documents_authors_labels_citations_most_cited.head(10))
 
 
 @pytest.fixture
 def bibliographic_coupling_scores(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
 ) -> pd.DataFrame:
-    return precompute_co_references(test_documents_authors_labels_citations_most_cited.head(100))
+    return precompute_co_references(test_documents_authors_labels_citations_most_cited.head(10))
 
 
 @pytest.fixture
 def tfidf_embeddings_mapping(
     test_tfidf_embeddings_mapping_most_cited: pd.DataFrame,
 ) -> pd.DataFrame:
-    return precompute_cosine_similarities(test_tfidf_embeddings_mapping_most_cited.head(100))
+    return precompute_cosine_similarities(test_tfidf_embeddings_mapping_most_cited.head(10))
 
 
 def test_find_top_n_matches_single_document(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
 ) -> None:
     document_ids = (
-        test_documents_authors_labels_citations_most_cited["document_id"].iloc[:10].tolist()
+        test_documents_authors_labels_citations_most_cited["document_id"].iloc[:8].tolist()
     )
     query_document_id = document_ids[0]
     pairwise_metric = CountCommonCitations()

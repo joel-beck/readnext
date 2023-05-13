@@ -26,25 +26,25 @@ def main() -> None:
         ResultsPaths.language_models.spacy_tokenized_abstracts_mapping_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    spacy_tokens_mapping = slice_mapping(spacy_tokens_mapping, size=100)
+    spacy_tokens_mapping = slice_mapping(spacy_tokens_mapping, size=1000)
 
     bert_token_ids_mapping = BERTTokenizer.load_tokens_mapping(
         ResultsPaths.language_models.bert_tokenized_abstracts_mapping_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    bert_token_ids_mapping = slice_mapping(bert_token_ids_mapping, size=100)
+    bert_token_ids_mapping = slice_mapping(bert_token_ids_mapping, size=1000)
 
     scibert_token_ids_mapping = BERTTokenizer.load_tokens_mapping(
         ResultsPaths.language_models.scibert_tokenized_abstracts_mapping_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    scibert_token_ids_mapping = slice_mapping(scibert_token_ids_mapping, size=100)
+    scibert_token_ids_mapping = slice_mapping(scibert_token_ids_mapping, size=1000)
 
     longformer_token_ids_mapping = LongformerTokenizer.load_tokens_mapping(
         ResultsPaths.language_models.longformer_tokenized_abstracts_mapping_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    longformer_token_ids_mapping = slice_mapping(longformer_token_ids_mapping, size=100)
+    longformer_token_ids_mapping = slice_mapping(longformer_token_ids_mapping, size=1000)
 
     tfidf_embedder = TFIDFEmbedder(keyword_algorithm=tfidf)
     tfidf_embeddings_mapping = tfidf_embedder.compute_embeddings_mapping(spacy_tokens_mapping)

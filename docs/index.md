@@ -7,6 +7,7 @@
 Welcome to the `readnext` documentation! ☀️
 
 The `readnext` package provides a hybrid recommender system for computer science papers.
+Its main objective is to suggest relevant research papers based on a given query document you might be currently exploring, streamlining your journey to discover more intriguing academic literature.
 
 Here, you'll find everything you need to know about the project's background, as well as step-by-step instructions on how to install, use the package for your own needs, and reproduce the results of my thesis:
 
@@ -16,4 +17,8 @@ Here, you'll find everything you need to know about the project's background, as
 
 - [Background](background.md): Dive into the details of the citation-based methods and language models utilized in this project, and learn how they can help quantify document similarity.
 
-- [User Guide](user-guide.md): Explore the package structure, its dependencies on third-party packages, and how to use `readnext` to reproduce the findings of my thesis.
+- [Reproducibility](reproducibility.md): A comprehensive guide to ensure the results presented in the thesis can be reproduced and validated with precision and ease.
+
+- [Inference](inference.md): Instructions on how to employ the package for inference, enabling you to extract recommendations for any query document.
+
+- [Development](development.md): Detailed guidance on tailoring the package to your needs, including how to extend features, incorporate individual language models, and utilize diverse metrics for evaluation.

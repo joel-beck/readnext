@@ -1,8 +1,8 @@
 from readnext.utils.convert_id_urls import (
     get_arxiv_id_from_arxiv_url,
     get_arxiv_url_from_arxiv_id,
-    get_paper_id_from_semanticscholar_url,
-    get_semanticscholar_url_from_paper_id,
+    get_semanticscholar_id_from_semanticscholar_url,
+    get_semanticscholar_url_from_semanticscholar_id,
 )
 from readnext.utils.io import (
     load_df_from_pickle,
@@ -17,8 +17,8 @@ from readnext.utils.utils import slice_mapping
 __all__ = [
     "get_arxiv_id_from_arxiv_url",
     "get_arxiv_url_from_arxiv_id",
-    "get_paper_id_from_semanticscholar_url",
-    "get_semanticscholar_url_from_paper_id",
+    "get_semanticscholar_id_from_semanticscholar_url",
+    "get_semanticscholar_url_from_semanticscholar_id",
     "load_df_from_pickle",
     "load_object_from_pickle",
     "save_df_to_pickle",

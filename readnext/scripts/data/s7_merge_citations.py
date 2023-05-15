@@ -17,8 +17,8 @@ from typing_extensions import TypedDict
 
 from readnext.config import DataPaths
 from readnext.utils import (
-    get_paper_id_from_semanticscholar_url,
-    get_semanticscholar_url_from_paper_id,
+    get_semanticscholar_id_from_semanticscholar_url,
+    get_semanticscholar_url_from_semanticscholar_id,
 )
 
 
@@ -64,7 +64,7 @@ def get_paper_citations(semanticscholar_response: SemanticScholarResponse) -> li
         return []
 
     return [
-        get_semanticscholar_url_from_paper_id(citation.get("paperId", None))
+        get_semanticscholar_url_from_semanticscholar_id(citation.get("paperId", None))
         for citation in semanticscholar_response.citations
         if citation.get("paperId", None) is not None
     ]
@@ -75,7 +75,7 @@ def get_paper_references(semanticscholar_response: SemanticScholarResponse) -> l
         return []
 
     return [
-        get_semanticscholar_url_from_paper_id(reference.get("paperId", None))
+        get_semanticscholar_url_from_semanticscholar_id(reference.get("paperId", None))
         for reference in semanticscholar_response.references
         if reference.get("paperId", None) is not None
     ]
@@ -105,7 +105,7 @@ def main() -> None:
     documents_authors_labels_citations = documents_authors_labels.assign(
         semanticscholar_request=lambda df: df["semanticscholar_url"].progress_apply(
             lambda url: send_semanticscholar_request(
-                get_paper_id_from_semanticscholar_url(url), request_headers
+                get_semanticscholar_id_from_semanticscholar_url(url), request_headers
             )
         ),
         citations=lambda df: df["semanticscholar_request"].apply(get_paper_citations),

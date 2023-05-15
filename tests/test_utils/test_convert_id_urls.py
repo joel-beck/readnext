@@ -3,8 +3,8 @@ import pytest
 from readnext.utils import (
     get_arxiv_id_from_arxiv_url,
     get_arxiv_url_from_arxiv_id,
-    get_paper_id_from_semanticscholar_url,
-    get_semanticscholar_url_from_paper_id,
+    get_semanticscholar_id_from_semanticscholar_url,
+    get_semanticscholar_url_from_semanticscholar_id,
 )
 
 
@@ -32,17 +32,23 @@ def arxiv_id() -> str:
 def test_get_paper_id_from_semanticscholar_url(
     semanticscholar_url: str, semanticscholar_id: str
 ) -> None:
-    assert get_paper_id_from_semanticscholar_url(semanticscholar_url) == semanticscholar_id
-    assert get_paper_id_from_semanticscholar_url("https://semanticscholar.org/paper/") == ""
-    assert get_paper_id_from_semanticscholar_url("") == ""
+    assert (
+        get_semanticscholar_id_from_semanticscholar_url(semanticscholar_url) == semanticscholar_id
+    )
+    assert (
+        get_semanticscholar_id_from_semanticscholar_url("https://semanticscholar.org/paper/") == ""
+    )
+    assert get_semanticscholar_id_from_semanticscholar_url("") == ""
 
 
 # test get_semanticscholar_url_from_paper_id function
 def test_get_semanticscholar_url_from_paper_id(
     semanticscholar_url: str, semanticscholar_id: str
 ) -> None:
-    assert get_semanticscholar_url_from_paper_id(semanticscholar_id) == semanticscholar_url
-    assert get_semanticscholar_url_from_paper_id(None) == ""
+    assert (
+        get_semanticscholar_url_from_semanticscholar_id(semanticscholar_id) == semanticscholar_url
+    )
+    assert get_semanticscholar_url_from_semanticscholar_id(None) == ""
 
 
 # test get_arxiv_id_from_arxiv_url function

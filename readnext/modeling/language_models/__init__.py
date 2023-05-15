@@ -18,7 +18,12 @@ from readnext.modeling.language_models.tfidf import (
     tfidf,
     tfidf_single_term,
 )
-from readnext.modeling.language_models.tokenizer_list import SpacyTokenizer, Tokens, TokensMapping
+from readnext.modeling.language_models.tokenizer_list import (
+    SpacyTokenizer,
+    TextProcessingSteps,
+    Tokens,
+    TokensMapping,
+)
 from readnext.modeling.language_models.tokenizer_tensor import (
     BERTTokenizer,
     LongformerTokenizer,
@@ -47,6 +52,7 @@ __all__ = [
     "BERTTokenizer",
     "LongformerTokenizer",
     "SpacyTokenizer",
+    "TextProcessingSteps",
     "TokenIds",
     "Tokens",
     "TokensIdMapping",

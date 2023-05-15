@@ -17,7 +17,10 @@ from readnext.modeling.citation_models import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
-from readnext.modeling.language_models import LanguageModelChoice
+from readnext.modeling.language_models import (
+    LanguageModelChoice,
+    load_cosine_similarities_from_choice,
+)
 from readnext.utils import (
     get_arxiv_id_from_arxiv_url,
     get_arxiv_url_from_arxiv_id,
@@ -167,30 +170,8 @@ class InferenceDataConstructor:
             ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl
         )
 
-    def get_cosine_similarities_path(self) -> Path:
-        match self.language_model_choice:
-            case LanguageModelChoice.tfidf:
-                return ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl
-            case LanguageModelChoice.bm25:
-                return ResultsPaths.language_models.bm25_cosine_similarities_most_cited_pkl
-            case LanguageModelChoice.word2vec:
-                return ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl
-            case LanguageModelChoice.glove:
-                return ResultsPaths.language_models.glove_cosine_similarities_most_cited_pkl
-            case LanguageModelChoice.fasttext:
-                return ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl
-            case LanguageModelChoice.bert:
-                return ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl
-            case LanguageModelChoice.scibert:
-                return ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl
-            case LanguageModelChoice.longformer:
-                return ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl
-            case _:
-                raise ValueError(f"Invalid language model choice: {self.language_model_choice}")
-
     def set_cosine_similarities(self) -> None:
-        cosine_similarities_path = self.get_cosine_similarities_path()
-        self._cosine_similarities = load_df_from_pickle(cosine_similarities_path)
+        self._cosine_similarities = load_cosine_similarities_from_choice(self.language_model_choice)
 
     def set_citation_model_data(self) -> None:
         assert self.query_id is not None

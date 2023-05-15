@@ -165,9 +165,7 @@ class GensimEmbedder(Embedder):
                 total=len(self.tokens_mapping),
                 description=f"{self.__class__.__name__}:",
             ):
-                embeddings_mapping[document_id] = self.word_embeddings_to_document_embedding(
-                    self.compute_embedding_single_document(tokens), self.aggregation_strategy
-                )
+                embeddings_mapping[document_id] = self.compute_embedding_single_document(tokens)
 
         return embeddings_mapping
 
@@ -180,8 +178,12 @@ class Word2VecEmbedder(GensimEmbedder):
 
     def compute_embedding_single_document(self, document_tokens: Tokens) -> np.ndarray:
         # exclude any individual unknown tokens
-        return np.vstack(
+        stacked_word_embeddings = np.vstack(
             [self.embedding_model[token] for token in document_tokens if token in self.embedding_model]  # type: ignore # noqa: E501
+        )
+
+        return self.word_embeddings_to_document_embedding(
+            stacked_word_embeddings, self.aggregation_strategy
         )
 
 
@@ -192,4 +194,4 @@ class FastTextEmbedder(GensimEmbedder):
         super().__init__(embedding_model, tokens_mapping)
 
     def compute_embedding_single_document(self, document_tokens: Tokens) -> np.ndarray:
-        return self.embedding_model.wv[document_tokens]  # type: ignore
+        return self.word_embeddings_to_document_embedding(self.embedding_model.wv[document_tokens], self.aggregation_strategy)  # type: ignore

@@ -72,12 +72,12 @@ class CitationModelData(ModelData):
 
         info_matrix_repr = (
             f"info_matrix=[pd.DataFrame, shape={self.info_matrix.shape}, "
-            f"index={self.info_matrix.index.name}, columns={self.info_matrix.columns}]"
+            f"index={self.info_matrix.index.name}, columns={self.info_matrix.columns.to_list()}]"
         )
 
         feature_matrix_repr = (
             f"feature_matrix=[pd.DataFrame, shape={self.feature_matrix.shape}, "
-            f"index={self.feature_matrix.index.name}, columns={self.feature_matrix.columns}]"
+            f"index={self.feature_matrix.index.name}, columns={self.feature_matrix.columns.to_list()}]"
         )
 
         integer_labels_repr = (
@@ -126,13 +126,13 @@ class LanguageModelData(ModelData):
 
         info_matrix_repr = (
             f"info_matrix=[pd.DataFrame, shape={self.info_matrix.shape}, "
-            f"index={self.info_matrix.index.name}, columns={self.info_matrix.columns}]"
+            f"index={self.info_matrix.index.name}, columns={self.info_matrix.columns.to_list()}]"
         )
 
         cosine_similarity_ranks_repr = (
             f"cosine_similarity_ranks=[pd.DataFrame, shape={self.cosine_similarity_ranks.shape}, "
             f"index={self.cosine_similarity_ranks.index.name}, "
-            f"columns={self.cosine_similarity_ranks.columns}]"
+            f"columns={self.cosine_similarity_ranks.columns.to_list()}]"
         )
 
         integer_labels_repr = (

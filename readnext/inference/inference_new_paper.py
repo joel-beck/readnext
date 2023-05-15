@@ -142,7 +142,6 @@ assert response.abstract is not None
 query_document_info = DocumentInfo(document_id=-1, abstract=response.abstract)
 
 query_embedding_function = select_query_embedding_function(language_model_choice)
-
 query_abstract_embedding = query_embedding_function(query_document_info)
 
 candidate_embeddings: pd.DataFrame = load_embeddings_from_choice(language_model_choice)

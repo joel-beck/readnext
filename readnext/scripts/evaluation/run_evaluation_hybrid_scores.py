@@ -18,6 +18,7 @@ from readnext.modeling.citation_models import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
+from readnext.utils import load_df_from_pickle
 
 
 def compare_hybrid_scores_by_document_id(
@@ -39,7 +40,8 @@ def compare_hybrid_scores_by_document_id(
 
     # SECTION: Language Models
     # SUBSECTION: TF-IDF
-    tfidf_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+
+    tfidf_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
         ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl
     )
     tfidf_data_constructor = LanguageModelDataConstructor(
@@ -50,7 +52,7 @@ def compare_hybrid_scores_by_document_id(
     tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
 
     # SUBSECTION: BM25
-    bm25_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+    bm25_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
         ResultsPaths.language_models.bm25_cosine_similarities_most_cited_pkl
     )
     bm25_data_constructor = LanguageModelDataConstructor(
@@ -61,7 +63,7 @@ def compare_hybrid_scores_by_document_id(
     bm25_data = LanguageModelData.from_constructor(bm25_data_constructor)
 
     # SUBSECTION: Word2Vec
-    word2vec_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+    word2vec_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
         ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl
     )
     word2vec_data_constructor = LanguageModelDataConstructor(
@@ -72,7 +74,7 @@ def compare_hybrid_scores_by_document_id(
     word2vec_data = LanguageModelData.from_constructor(word2vec_data_constructor)
 
     # SUBSECTION: GloVe
-    glove_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+    glove_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
         ResultsPaths.language_models.glove_cosine_similarities_most_cited_pkl
     )
     glove_data_constructor = LanguageModelDataConstructor(
@@ -83,7 +85,7 @@ def compare_hybrid_scores_by_document_id(
     glove_data = LanguageModelData.from_constructor(glove_data_constructor)
 
     # SUBSECTION: FastText
-    fasttext_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+    fasttext_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
         ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl
     )
     fasttext_data_constructor = LanguageModelDataConstructor(
@@ -94,7 +96,7 @@ def compare_hybrid_scores_by_document_id(
     fasttext_data = LanguageModelData.from_constructor(fasttext_data_constructor)
 
     # SUBSECTION: BERT
-    bert_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+    bert_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
         ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl
     )
     bert_data_constructor = LanguageModelDataConstructor(
@@ -105,7 +107,7 @@ def compare_hybrid_scores_by_document_id(
     bert_data = LanguageModelData.from_constructor(bert_data_constructor)
 
     # SUBSECTION: SciBERT
-    scibert_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+    scibert_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
         ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl
     )
     scibert_data_constructor = LanguageModelDataConstructor(
@@ -116,7 +118,7 @@ def compare_hybrid_scores_by_document_id(
     scibert_data = LanguageModelData.from_constructor(scibert_data_constructor)
 
     # SUBSECTION: Longformer
-    longformer_cosine_similarities_most_cited: pd.DataFrame = pd.read_pickle(
+    longformer_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
         ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl
     )
     longformer_data_constructor = LanguageModelDataConstructor(
@@ -250,7 +252,7 @@ def compare_hybrid_scores_by_document_id(
 
 
 def main() -> None:
-    documents_authors_labels_citations_most_cited: pd.DataFrame = pd.read_pickle(
+    documents_authors_labels_citations_most_cited: pd.DataFrame = load_df_from_pickle(
         DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
     ).set_index("document_id")
     # NOTE: Remove to evaluate on full data
@@ -258,11 +260,11 @@ def main() -> None:
         documents_authors_labels_citations_most_cited.head(1000)
     )
 
-    bibliographic_coupling_scores_most_cited: pd.DataFrame = pd.read_pickle(
+    bibliographic_coupling_scores_most_cited: pd.DataFrame = load_df_from_pickle(
         ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl
     )
 
-    co_citation_analysis_scores_most_cited: pd.DataFrame = pd.read_pickle(
+    co_citation_analysis_scores_most_cited: pd.DataFrame = load_df_from_pickle(
         ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl
     )
 

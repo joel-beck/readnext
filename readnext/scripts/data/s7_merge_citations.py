@@ -8,6 +8,7 @@ the existing dataframe.
 import os
 import sys
 from dataclasses import dataclass
+from pathlib import Path
 
 import pandas as pd
 import requests
@@ -19,6 +20,8 @@ from readnext.config import DataPaths
 from readnext.utils import (
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
+    load_df_from_pickle,
+    save_df_to_pickle,
 )
 
 
@@ -96,7 +99,7 @@ def main() -> None:
     SEMANTICSCHOLAR_API_KEY = os.getenv("SEMANTICSCHOLAR_API_KEY", "")
     request_headers = {"x-api-key": SEMANTICSCHOLAR_API_KEY}
 
-    documents_authors_labels: pd.DataFrame = pd.read_pickle(
+    documents_authors_labels: pd.DataFrame = load_df_from_pickle(
         DataPaths.merged.documents_authors_labels_pkl
     )
     if USE_SUBSET:
@@ -113,8 +116,11 @@ def main() -> None:
     ).drop(columns=["semanticscholar_request"])
 
     # subtract one from subset end since upper bound of slice is exclusive
-    documents_authors_labels_citations.to_pickle(
-        f"{DataPaths.merged.documents_authors_labels_citations_chunks_stem}_{SUBSET_START}_{SUBSET_END-1}.pkl"
+    save_df_to_pickle(
+        documents_authors_labels_citations,
+        Path(
+            f"{DataPaths.merged.documents_authors_labels_citations_chunks_stem}_{SUBSET_START}_{SUBSET_END-1}.pkl"
+        ),
     )
 
 

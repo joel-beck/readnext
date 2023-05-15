@@ -8,7 +8,7 @@ from pathlib import Path
 import pandas as pd
 
 from readnext.config import DataPaths
-from readnext.utils import setup_progress_bar
+from readnext.utils import load_df_from_pickle, save_df_to_pickle, setup_progress_bar
 
 
 def add_labels(df: pd.DataFrame) -> pd.DataFrame:
@@ -37,8 +37,8 @@ def remove_non_cs_documents(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def merge_labels_chunk(filepath: Path, chunk_index: int) -> None:
-    documents_preprocessed_chunk: pd.DataFrame = pd.read_pickle(filepath)
-    arxiv_id_labels = pd.read_pickle(DataPaths.arxiv.id_labels_pkl)
+    documents_preprocessed_chunk: pd.DataFrame = load_df_from_pickle(filepath)
+    arxiv_id_labels = load_df_from_pickle(DataPaths.arxiv.id_labels_pkl)
 
     documents_labels_chunk = (
         documents_preprocessed_chunk.merge(arxiv_id_labels, on="arxiv_id", how="left")
@@ -47,8 +47,9 @@ def merge_labels_chunk(filepath: Path, chunk_index: int) -> None:
         .pipe(remove_non_cs_documents)
     )
 
-    documents_labels_chunk.to_pickle(
-        f"{DataPaths.merged.documents_labels_chunk_stem}_{chunk_index}.pkl"
+    save_df_to_pickle(
+        documents_labels_chunk,
+        Path(f"{DataPaths.merged.documents_labels_chunk_stem}_{chunk_index}.pkl"),
     )
 
 

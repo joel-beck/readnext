@@ -6,7 +6,7 @@ author id.
 import pandas as pd
 
 from readnext.config import DataPaths
-from readnext.utils import add_rank
+from readnext.utils import add_rank, load_df_from_pickle, save_df_to_pickle
 
 
 def add_author_ranks(authors: pd.DataFrame) -> pd.DataFrame:
@@ -38,8 +38,8 @@ def remove_incomplete_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> None:
-    documents_labels: pd.DataFrame = pd.read_pickle(DataPaths.merged.documents_labels_pkl)
-    authors: pd.DataFrame = pd.read_pickle(DataPaths.d3.authors.full_pkl)
+    documents_labels: pd.DataFrame = load_df_from_pickle(DataPaths.merged.documents_labels_pkl)
+    authors: pd.DataFrame = load_df_from_pickle(DataPaths.d3.authors.full_pkl)
 
     output_columns = [
         "document_id",
@@ -105,7 +105,7 @@ def main() -> None:
         select_most_popular_author, author_popularity_metric="citationcount_author"
     ).pipe(remove_incomplete_data)
 
-    documents_authors_labels.to_pickle(DataPaths.merged.documents_authors_labels_pkl)
+    save_df_to_pickle(documents_authors_labels, DataPaths.merged.documents_authors_labels_pkl)
 
 
 if __name__ == "__main__":

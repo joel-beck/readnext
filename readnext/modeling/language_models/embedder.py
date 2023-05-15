@@ -194,4 +194,7 @@ class FastTextEmbedder(GensimEmbedder):
         super().__init__(embedding_model, tokens_mapping)
 
     def compute_embedding_single_document(self, document_tokens: Tokens) -> np.ndarray:
-        return self.word_embeddings_to_document_embedding(self.embedding_model.wv[document_tokens], self.aggregation_strategy)  # type: ignore
+        return self.word_embeddings_to_document_embedding(
+            self.embedding_model.wv[document_tokens],
+            self.aggregation_strategy,
+        )  # type: ignore

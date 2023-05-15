@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import cast
 
 import pandas as pd
@@ -77,7 +76,7 @@ class Recommendations:
 
 @dataclass(kw_only=True)
 class InferenceDataConstructor:
-    query_id: int | None = None
+    query_document_id: int | None = None
     semanticscholar_url: str | None = None
     arxiv_url: str | None = None
     paper_title: str | None = None
@@ -138,22 +137,22 @@ class InferenceDataConstructor:
         return cast(str, self._documents_data.loc[id, "title"])
 
     def set_identifiers(self) -> None:
-        if self.query_id is not None:
-            self.semanticscholar_url = self.semanticscholar_url_from_id(self.query_id)
-            self.arxiv_url = self.arxiv_url_from_id(self.query_id)
-            self.paper_title = self.title_from_id(self.query_id)
+        if self.query_document_id is not None:
+            self.semanticscholar_url = self.semanticscholar_url_from_id(self.query_document_id)
+            self.arxiv_url = self.arxiv_url_from_id(self.query_document_id)
+            self.paper_title = self.title_from_id(self.query_document_id)
         elif self.semanticscholar_url is not None:
-            self.query_id = self.id_from_semanticscholar_url(self.semanticscholar_url)
-            self.arxiv_url = self.arxiv_url_from_id(self.query_id)
-            self.paper_title = self.title_from_id(self.query_id)
+            self.query_document_id = self.id_from_semanticscholar_url(self.semanticscholar_url)
+            self.arxiv_url = self.arxiv_url_from_id(self.query_document_id)
+            self.paper_title = self.title_from_id(self.query_document_id)
         elif self.arxiv_url is not None:
-            self.query_id = self.id_from_arxiv_url(self.arxiv_url)
-            self.semanticscholar_url = self.semanticscholar_url_from_id(self.query_id)
-            self.paper_title = self.title_from_id(self.query_id)
+            self.query_document_id = self.id_from_arxiv_url(self.arxiv_url)
+            self.semanticscholar_url = self.semanticscholar_url_from_id(self.query_document_id)
+            self.paper_title = self.title_from_id(self.query_document_id)
         elif self.paper_title is not None:
-            self.query_id = self.id_from_title(self.paper_title)
-            self.semanticscholar_url = self.semanticscholar_url_from_id(self.query_id)
-            self.arxiv_url = self.arxiv_url_from_id(self.query_id)
+            self.query_document_id = self.id_from_title(self.paper_title)
+            self.semanticscholar_url = self.semanticscholar_url_from_id(self.query_document_id)
+            self.arxiv_url = self.arxiv_url_from_id(self.query_document_id)
 
     def set_documents_data(self) -> None:
         self._documents_data = load_df_from_pickle(
@@ -174,10 +173,10 @@ class InferenceDataConstructor:
         self._cosine_similarities = load_cosine_similarities_from_choice(self.language_model_choice)
 
     def set_citation_model_data(self) -> None:
-        assert self.query_id is not None
+        assert self.query_document_id is not None
 
         citation_model_data_constructor = CitationModelDataConstructor(
-            query_document_id=self.query_id,
+            query_document_id=self.query_document_id,
             documents_data=self._documents_data.pipe(add_feature_rank_cols).pipe(
                 set_missing_publication_dates_to_max_rank
             ),
@@ -189,10 +188,10 @@ class InferenceDataConstructor:
         )
 
     def set_language_model_data(self) -> None:
-        assert self.query_id is not None
+        assert self.query_document_id is not None
 
         language_model_data_constructor = LanguageModelDataConstructor(
-            query_document_id=self.query_id,
+            query_document_id=self.query_document_id,
             documents_data=self._documents_data,
             cosine_similarities=self._cosine_similarities,
         )
@@ -201,13 +200,13 @@ class InferenceDataConstructor:
         )
 
     def collect_document_identifiers(self) -> DocumentIdentifiers:
-        assert self.query_id is not None
+        assert self.query_document_id is not None
         assert self.semanticscholar_url is not None
         assert self.arxiv_url is not None
         assert self.paper_title is not None
 
         return DocumentIdentifiers(
-            d3_document_id=self.query_id,
+            d3_document_id=self.query_document_id,
             semanticscholar_url=self.semanticscholar_url,
             arxiv_url=self.arxiv_url,
             paper_title=self.paper_title,

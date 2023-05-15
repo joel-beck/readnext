@@ -77,7 +77,8 @@ class CitationModelData(ModelData):
 
         feature_matrix_repr = (
             f"feature_matrix=[pd.DataFrame, shape={self.feature_matrix.shape}, "
-            f"index={self.feature_matrix.index.name}, columns={self.feature_matrix.columns.to_list()}]"
+            f"index={self.feature_matrix.index.name}, "
+            f"columns={self.feature_matrix.columns.to_list()}]"
         )
 
         integer_labels_repr = (

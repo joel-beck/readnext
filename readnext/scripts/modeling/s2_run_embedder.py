@@ -119,7 +119,7 @@ def main() -> None:
     )
 
     longformer_model = LongformerModel.from_pretrained(ModelVersions.longformer)  # type: ignore
-    longformer_embedder = LongformerEmbedder(longformer_model, longformer_token_ids_mapping)  # type: ignore
+    longformer_embedder = LongformerEmbedder(longformer_model, longformer_token_ids_mapping)  # type: ignore # noqa: E501
     longformer_embeddings = longformer_embedder.compute_embeddings_mapping()
     save_df_to_pickle(
         embeddings_mapping_to_frame(longformer_embeddings),

@@ -12,7 +12,7 @@ def main() -> None:
 
     # SUBSECTION: Input is query ID
     inference_data_constructor_query_id = InferenceDataConstructor(
-        query_id=query_id,
+        query_document_id=query_id,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
     )

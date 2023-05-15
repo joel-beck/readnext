@@ -117,15 +117,6 @@ response = send_semanticscholar_request(
     arxiv_id=get_arxiv_id_from_arxiv_url(arxiv_url), request_headers=request_headers
 )
 
-assert response.paper_id is not None
-assert response.abstract is not None
-
-query_document_info = DocumentInfo(
-    document_id=int(response.paper_id),
-    abstract=response.abstract,
-)
-query_documents_info = DocumentsInfo(documents_info=[query_document_info])
-
 query_citation_urls = (
     [
         get_semanticscholar_url_from_semanticscholar_id(citation["paperId"])
@@ -155,10 +146,25 @@ num_common_references: list[int] = [
     for candidate_reference_urls in documents_authors_labels_citations_most_cited["references"]
 ]
 
+
+assert response.abstract is not None
+
+# set document id of unseen document to -1
+query_document_info = DocumentInfo(document_id=-1, abstract=response.abstract)
+query_documents_info = DocumentsInfo(documents_info=[query_document_info])
+
 spacy_model = spacy.load(ModelVersions.spacy)
 spacy_tokenizer = SpacyTokenizer(documents_info=query_documents_info, spacy_model=spacy_model)
 
-query_abstract_tokens_mapping = spacy_tokenizer.tokenize()
+query_abstract_tokenized = spacy_tokenizer.tokenize_single_document(query_document_info.abstract)
+query_abstract_tokens_mapping = {query_document_info.document_id: query_abstract_tokenized}
 
-tfidf_embedder = TFIDFEmbedder(keyword_algorithm=tfidf)
-tfidf_embeddings_mapping = tfidf_embedder.compute_embeddings_mapping(query_abstract_tokens_mapping)
+tfidf_embedder = TFIDFEmbedder(
+    keyword_algorithm=tfidf, tokens_mapping=query_abstract_tokens_mapping
+)
+
+# TODO: Does not work since it must have the same dimensions as the training document
+# embeddings
+query_abstract_embedding = tfidf_embedder.compute_embedding_single_document(
+    query_abstract_tokenized
+)

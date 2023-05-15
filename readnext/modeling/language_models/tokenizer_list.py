@@ -25,6 +25,10 @@ class ListTokenizer(ABC):
     documents_info: DocumentsInfo
 
     @abstractmethod
+    def tokenize_single_document(self, document: str) -> Tokens:
+        ...
+
+    @abstractmethod
     def tokenize(self) -> TokensMapping:
         ...
 
@@ -110,7 +114,7 @@ class SpacyTokenizer(ListTokenizer):
 
         return clean_tokens
 
-    def clean_document(self, document: str) -> Tokens:
+    def tokenize_single_document(self, document: str) -> Tokens:
         """Tokenizes and cleans a single abstract."""
         spacy_doc = self.to_spacy_doc(document)
         return self.clean_spacy_doc(spacy_doc)
@@ -128,6 +132,6 @@ class SpacyTokenizer(ListTokenizer):
                 total=len(self.documents_info.document_ids),
                 description=f"{self.__class__.__name__}:",
             ):
-                tokenized_abstracts_mapping[document_id] = self.clean_document(abstract)
+                tokenized_abstracts_mapping[document_id] = self.tokenize_single_document(abstract)
 
         return tokenized_abstracts_mapping

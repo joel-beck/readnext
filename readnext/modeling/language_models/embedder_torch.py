@@ -26,6 +26,7 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
     """
 
     torch_model: TTorchModel
+    tokens_tensor_mapping: TokensIdMapping
     aggregation_strategy: AggregationStrategy = AggregationStrategy.mean
 
     @staticmethod
@@ -47,10 +48,10 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
 
         raise ValueError(f"Aggregation strategy `{aggregation_strategy}` is not implemented.")
 
-    def compute_embeddings_single_document(self, token_ids: TokenIds) -> Embedding:
+    def compute_embedding_single_document(self, token_ids: TokenIds) -> Embedding:
         """
         Takes a tensor of a single tokenized document as input and computes the BERT or
-        Longformer token embeddings.
+        Longformer token embedding.
 
         Output has shape (n_documents_input, n_dimensions) with
 
@@ -70,9 +71,7 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
 
         return document_embedding.squeeze(0).detach().numpy()
 
-    def compute_embeddings_mapping(
-        self, tokens_tensor_mapping: TokensIdMapping
-    ) -> EmbeddingsMapping:
+    def compute_embeddings_mapping(self) -> EmbeddingsMapping:
         """
         Takes a tensor of tokenized documents as input and computes the BERT or
         Longformer token embeddings.
@@ -86,11 +85,11 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
 
         with setup_progress_bar() as progress_bar:
             for document_id, tokens_tensor in progress_bar.track(
-                tokens_tensor_mapping.items(),
-                total=len(tokens_tensor_mapping),
+                self.tokens_tensor_mapping.items(),
+                total=len(self.tokens_tensor_mapping),
                 description=f"{self.__class__.__name__}:",
             ):
-                embeddings_mapping[document_id] = self.compute_embeddings_single_document(
+                embeddings_mapping[document_id] = self.compute_embedding_single_document(
                     tokens_tensor
                 )
 

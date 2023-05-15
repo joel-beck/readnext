@@ -23,14 +23,21 @@ TTorchTokenizer = TypeVar("TTorchTokenizer", bound=BertTokenizerFast | Longforme
 
 @dataclass
 class TensorTokenizer(ABC, Generic[TTorchTokenizer]):
-    """Base class to tokenize abstracts into a tensor of token ids."""
+    """Base class to tokenize document abstracts into a tensor of token ids."""
 
     documents_info: DocumentsInfo
     tensor_tokenizer: TTorchTokenizer
 
     @abstractmethod
+    def tokenize_into_ids(self, document: str) -> TokenIds:
+        """Tokenizes one or multiple document abstracts into token ids."""
+
+    @abstractmethod
     def tokenize(self) -> TokensIdMapping:
-        ...
+        """
+        Tokenizes multiple document abstracts into token ids. Generates a mapping of
+        document ids to token ids.
+        """
 
     def ids_to_tokens(self, token_ids: TokenIds) -> Tokens:
         """Converts a list of token ids into a list of tokens."""
@@ -63,22 +70,21 @@ class BERTTokenizer(TensorTokenizer):
 
     tensor_tokenizer: BertTokenizerFast
 
-    def tokenize(self) -> TokensIdMapping:
-        """
-        Tokenizes multiple abstracts into token ids. Generates a mapping of document ids
-        to token ids.
-        """
-        token_ids = self.tensor_tokenizer(
-            self.documents_info.abstracts,
+    def tokenize_into_ids(self, document: str | list[str]) -> TokenIds:
+        return self.tensor_tokenizer(
+            document,
             # BERT takes 512 dimensional tensors as input
             max_length=512,
             # truncate longer documents down to 512 tokens
             truncation=True,
             # pad shorter documents up to 512 tokens
             padding=True,
-            # return_tensors="pt",
-        )["input_ids"]
+        )[
+            "input_ids"
+        ]  # type: ignore
 
+    def tokenize(self) -> TokensIdMapping:
+        token_ids = self.tokenize_into_ids(self.documents_info.abstracts)
         return dict(zip(self.documents_info.document_ids, token_ids))  # type: ignore
 
 
@@ -88,17 +94,18 @@ class LongformerTokenizer(TensorTokenizer):
 
     tensor_tokenizer: LongformerTokenizerFast
 
-    def tokenize(self) -> TokensIdMapping:
-        """
-        Tokenizes multiple abstracts into token ids. Generates a mapping of document ids
-        to token ids.
-        """
-        token_ids = self.tensor_tokenizer(
-            self.documents_info.abstracts,
+    def tokenize_into_ids(self, document: str | list[str]) -> TokenIds:
+        return self.tensor_tokenizer(
+            document,
             # Longformer can handle up to 4096 tokens
             max_length=4096,
             truncation=True,
             padding=True,
-        )["input_ids"]
+        )[
+            "input_ids"
+        ]  # type: ignore
+
+    def tokenize(self) -> TokensIdMapping:
+        token_ids = self.tokenize_into_ids(self.documents_info.abstracts)
 
         return dict(zip(self.documents_info.document_ids, token_ids))  # type: ignore

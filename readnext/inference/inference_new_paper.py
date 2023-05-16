@@ -15,7 +15,7 @@ from readnext.inference.inference_new_paper_base import (
     QueryLanguageModelDataConstructor,
     send_semanticscholar_request,
 )
-from readnext.inference.inference_new_paper_language import select_query_embedding_function
+from readnext.inference.inference_new_paper_language_models import select_query_embedding_function
 from readnext.modeling import (
     CitationModelData,
     DocumentInfo,
@@ -89,11 +89,11 @@ for document_id, candidate_citation_urls in documents_authors_labels_citations_m
     "citations"
 ].items():
     document_info = DocumentInfo(document_id=document_id)
-    score = CountCommonCitations.count_common_values(
+    common_citations = CountCommonCitations.count_common_values(
         query_common_citations_urls, candidate_citation_urls
     )
 
-    document_score = DocumentScore(document_info=document_info, score=score)
+    document_score = DocumentScore(document_info=document_info, score=common_citations)
     num_common_citations.append(document_score)
 
 
@@ -109,11 +109,11 @@ for document_id, candidate_reference_urls in documents_authors_labels_citations_
     "references"
 ].items():
     document_info = DocumentInfo(document_id=document_id)
-    score = CountCommonReferences.count_common_values(
+    common_references = CountCommonReferences.count_common_values(
         query_common_references_urls, candidate_reference_urls
     )
 
-    document_score = DocumentScore(document_info=document_info, score=score)
+    document_score = DocumentScore(document_info=document_info, score=common_references)
     num_common_references.append(document_score)
 
 query_bibliographic_coupling_scores = pd.DataFrame(
@@ -152,9 +152,9 @@ for document_id, candidate_embedding in zip(
     candidate_embeddings["document_id"], candidate_embeddings["embedding"]
 ):
     document_info = DocumentInfo(document_id=document_id)
-    score = CosineSimilarity.score(query_abstract_embedding, candidate_embedding)
+    cosine_similarity = CosineSimilarity.score(query_abstract_embedding, candidate_embedding)
 
-    document_score = DocumentScore(document_info=document_info, score=score)
+    document_score = DocumentScore(document_info=document_info, score=cosine_similarity)
     cosine_similarity_scores.append(document_score)
 
 query_cosine_similarities = pd.DataFrame(

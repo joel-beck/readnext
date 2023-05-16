@@ -4,11 +4,11 @@ import pandas as pd
 
 from readnext.config import DataPaths
 from readnext.evaluation.scoring import FeatureWeights, HybridScorer
-from readnext.inference.attribute_getter.attribute_getter_seen import SeenPaperAttributeGetter
 from readnext.inference.attribute_getter.attribute_getter_base import (
-    DocumentIdentifiers,
     AttributeGetter,
+    DocumentIdentifier,
 )
+from readnext.inference.attribute_getter.attribute_getter_seen import SeenPaperAttributeGetter
 from readnext.modeling import (
     CitationModelData,
     DocumentInfo,
@@ -16,9 +16,9 @@ from readnext.modeling import (
 )
 from readnext.modeling.language_models import LanguageModelChoice
 from readnext.utils import (
-    load_df_from_pickle,
-    get_semanticscholar_url_from_semanticscholar_id,
     get_arxiv_id_from_arxiv_url,
+    get_semanticscholar_url_from_semanticscholar_id,
+    load_df_from_pickle,
 )
 
 
@@ -139,8 +139,8 @@ class InferenceDataConstructor:
         print("Query document is not contained in training data.")
         raise NotImplementedError
 
-    def collect_document_identifiers(self) -> DocumentIdentifiers:
-        return self.attribute_getter.get_identifiers()
+    def collect_document_identifiers(self) -> DocumentIdentifier:
+        return self.attribute_getter.get_identifier()
 
     def collect_document_info(self) -> DocumentInfo:
         return self._citation_model_data.query_document

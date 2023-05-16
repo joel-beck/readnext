@@ -1,8 +1,8 @@
 from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference import InferenceData, InferenceDataConstructor, LanguageModelChoice
 from readnext.utils import (
-    get_semanticscholar_id_from_semanticscholar_url,
     get_arxiv_id_from_arxiv_url,
+    get_semanticscholar_id_from_semanticscholar_url,
 )
 
 

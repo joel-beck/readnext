@@ -1,37 +1,12 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import pandas as pd
 
-from readnext.config import ResultsPaths
 from readnext.evaluation.scoring import FeatureWeights
-from readnext.modeling import (
-    CitationModelData,
-    CitationModelDataConstructor,
-    LanguageModelData,
-    LanguageModelDataConstructor,
-)
-from readnext.modeling.citation_models import (
-    add_feature_rank_cols,
-    set_missing_publication_dates_to_max_rank,
-)
-from readnext.modeling.language_models import (
-    LanguageModelChoice,
-    load_cosine_similarities_from_choice,
-)
-from readnext.utils import load_df_from_pickle
-
-
-@dataclass(kw_only=True)
-class DocumentIdentifiers:
-    semanticscholar_id: str
-    semanticscholar_url: str
-    arxiv_id: str
-    arxiv_url: str
-
-
-class NonUniqueError(Exception):
-    """Raise when a non-unique document identifier is encountered."""
+from readnext.inference.document_identifier import DocumentIdentifier
+from readnext.modeling import CitationModelData, LanguageModelData
+from readnext.modeling.language_models import LanguageModelChoice
 
 
 @dataclass(kw_only=True)
@@ -50,7 +25,21 @@ class AttributeGetter(ABC):
     documents_data: pd.DataFrame
 
     @abstractmethod
-    def get_identifiers(self) -> DocumentIdentifiers:
+    def get_identifier_from_semanticscholar_id(self, semanticscholar_id: str) -> DocumentIdentifier:
+        ...
+
+    @abstractmethod
+    def get_identifier_from_semanticscholar_url(
+        self, semanticscholar_url: str
+    ) -> DocumentIdentifier:
+        ...
+
+    @abstractmethod
+    def get_identifier_from_arxiv_id(self, arxiv_id: str) -> DocumentIdentifier:
+        ...
+
+    @abstractmethod
+    def get_identifier_from_arxiv_url(self, arxiv_url: str) -> DocumentIdentifier:
         ...
 
     @abstractmethod
@@ -72,3 +61,18 @@ class AttributeGetter(ABC):
     @abstractmethod
     def get_language_model_data(self) -> LanguageModelData:
         ...
+
+    def get_identifier(self) -> DocumentIdentifier:
+        if self.semanticscholar_id is not None:
+            return self.get_identifier_from_semanticscholar_id(self.semanticscholar_id)
+
+        if self.semanticscholar_url is not None:
+            return self.get_identifier_from_semanticscholar_url(self.semanticscholar_url)
+
+        if self.arxiv_id is not None:
+            return self.get_identifier_from_arxiv_id(self.arxiv_id)
+
+        if self.arxiv_url is not None:
+            return self.get_identifier_from_arxiv_url(self.arxiv_url)
+
+        raise ValueError("No identifier provided.")

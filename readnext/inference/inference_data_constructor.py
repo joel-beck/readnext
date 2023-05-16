@@ -4,10 +4,10 @@ import pandas as pd
 
 from readnext.config import DataPaths
 from readnext.evaluation.scoring import FeatureWeights, HybridScorer
-from readnext.inference.inference_data_attribute_getter import (
+from readnext.inference.attribute_getter.attribute_getter_seen import SeenPaperAttributeGetter
+from readnext.inference.attribute_getter.attribute_getter_base import (
     DocumentIdentifiers,
-    InferenceDataAttributeGetter,
-    InferenceDataAttributeGetterSeenPaper,
+    AttributeGetter,
 )
 from readnext.modeling import (
     CitationModelData,
@@ -15,7 +15,11 @@ from readnext.modeling import (
     LanguageModelData,
 )
 from readnext.modeling.language_models import LanguageModelChoice
-from readnext.utils import load_df_from_pickle
+from readnext.utils import (
+    load_df_from_pickle,
+    get_semanticscholar_url_from_semanticscholar_id,
+    get_arxiv_id_from_arxiv_url,
+)
 
 
 @dataclass
@@ -55,14 +59,14 @@ class Recommendations:
 
 @dataclass(kw_only=True)
 class InferenceDataConstructor:
-    query_document_id: int | None = None
+    semanticscholar_id: str | None = None
     semanticscholar_url: str | None = None
+    arxiv_id: str | None = None
     arxiv_url: str | None = None
-    paper_title: str | None = None
     language_model_choice: LanguageModelChoice
     feature_weights: FeatureWeights
 
-    attribute_getter: InferenceDataAttributeGetter = field(init=False)
+    attribute_getter: AttributeGetter = field(init=False)
 
     _documents_data: pd.DataFrame = field(init=False)
     _co_citation_analysis_scores: pd.DataFrame = field(init=False)
@@ -100,20 +104,39 @@ class InferenceDataConstructor:
     # from e.g. the arxiv url! Change the order of the methods to move initialization
     # the query document id before instantiating the attribute getter.
     def query_document_in_training_data(self) -> bool:
-        return self.query_document_id in self._documents_data.index
+        if self.semanticscholar_id is not None:
+            semanticscholar_url = get_semanticscholar_url_from_semanticscholar_id(
+                self.semanticscholar_id
+            )
+            return semanticscholar_url in self._documents_data["semanticscholar_url"].to_list()
 
-    def get_attribute_getter(self) -> InferenceDataAttributeGetter:
+        if self.semanticscholar_url is not None:
+            return self.semanticscholar_url in self._documents_data["semanticscholar_url"].to_list()
+
+        if self.arxiv_id is not None:
+            return self.arxiv_id in self._documents_data["arxiv_id"].to_list()
+
+        if self.arxiv_url is not None:
+            arxiv_id = get_arxiv_id_from_arxiv_url(self.arxiv_url)
+            return arxiv_id in self._documents_data["arxiv_id"].to_list()
+
+        raise ValueError("No query document identifier provided.")
+
+    def get_attribute_getter(self) -> AttributeGetter:
         if self.query_document_in_training_data():
-            return InferenceDataAttributeGetterSeenPaper(
-                query_document_id=self.query_document_id,
+            print("Query document is contained in training data.")
+
+            return SeenPaperAttributeGetter(
+                semanticscholar_id=self.semanticscholar_id,
                 semanticscholar_url=self.semanticscholar_url,
+                arxiv_id=self.arxiv_id,
                 arxiv_url=self.arxiv_url,
-                paper_title=self.paper_title,
                 language_model_choice=self.language_model_choice,
                 feature_weights=self.feature_weights,
                 documents_data=self._documents_data,
             )
 
+        print("Query document is not contained in training data.")
         raise NotImplementedError
 
     def collect_document_identifiers(self) -> DocumentIdentifiers:

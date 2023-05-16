@@ -1,3 +1,9 @@
+from readnext.inference.attribute_getter.attribute_getter_unseen_base import (
+    QueryCitationModelDataConstructor,
+    QueryLanguageModelDataConstructor,
+    send_semanticscholar_request,
+)
+from readnext.modeling import DocumentInfo
 import os
 
 import pandas as pd
@@ -10,12 +16,9 @@ from readnext.evaluation.metrics import (
     CountCommonReferences,
 )
 from readnext.evaluation.scoring import HybridScorer
-from readnext.inference.inference_new_paper_base import (
-    QueryCitationModelDataConstructor,
-    QueryLanguageModelDataConstructor,
-    send_semanticscholar_request,
+from readnext.inference.attribute_getter.attribute_getter_unseen_language_models import (
+    select_query_embedding_function,
 )
-from readnext.inference.inference_new_paper_language_models import select_query_embedding_function
 from readnext.modeling import (
     CitationModelData,
     DocumentInfo,
@@ -34,10 +37,13 @@ from readnext.utils import (
     load_df_from_pickle,
 )
 
+
 # BOOKMARK: Inputs
+semanticscholar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
 semanticscholar_url = (
     "https://www.semanticscholar.org/paper/204e3073870fae3d05bcbc2f6a8e263d9b72e776"
 )
+arxiv_id = "1706.03762"
 arxiv_url = "https://arxiv.org/abs/1706.03762"
 language_model_choice = LanguageModelChoice.word2vec
 

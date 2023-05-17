@@ -7,8 +7,8 @@ from readnext.utils.convert_id_urls import (
 from readnext.utils.io import (
     load_df_from_pickle,
     load_object_from_pickle,
-    save_df_to_pickle,
-    save_object_to_pickle,
+    write_df_to_pickle,
+    write_object_to_pickle,
 )
 from readnext.utils.preprocessing import add_rank
 from readnext.utils.progress_bar import setup_progress_bar
@@ -21,8 +21,8 @@ __all__ = [
     "get_semanticscholar_url_from_semanticscholar_id",
     "load_df_from_pickle",
     "load_object_from_pickle",
-    "save_df_to_pickle",
-    "save_object_to_pickle",
+    "write_df_to_pickle",
+    "write_object_to_pickle",
     "add_rank",
     "setup_progress_bar",
     "slice_mapping",

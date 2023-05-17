@@ -99,14 +99,17 @@ def fasttest_embed_query(query_document_info: DocumentInfo) -> Embedding:
     return fasttext_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
 
+# TODO
 def bert_embed_query(query_document_info: DocumentInfo) -> Embedding:
     pass
 
 
+# TODO
 def scibert_embed_query(query_document_info: DocumentInfo) -> Embedding:
     pass
 
 
+# TODO
 def longformer_embed_query(query_document_info: DocumentInfo) -> Embedding:
     pass
 

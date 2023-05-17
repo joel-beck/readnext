@@ -10,7 +10,7 @@ from readnext.modeling.document_info import DocumentsInfo
 from readnext.modeling.language_models.tokenizer_list import Tokens, TokensMapping
 from readnext.utils import (
     load_object_from_pickle,
-    save_object_to_pickle,
+    write_object_to_pickle,
 )
 
 # each document is represented as a tensor of token ids
@@ -56,7 +56,7 @@ class TensorTokenizer(ABC, Generic[TTorchTokenizer]):
     @staticmethod
     def save_tokens_mapping(path: Path, tokens_id_mapping: TokensIdMapping) -> None:
         """Save a mapping of document ids to token ids to a pickle file."""
-        save_object_to_pickle(tokens_id_mapping, path)
+        write_object_to_pickle(tokens_id_mapping, path)
 
     @staticmethod
     def load_tokens_mapping(path: Path) -> TokensIdMapping:

@@ -9,7 +9,7 @@ from spacy.tokens.doc import Doc
 from readnext.modeling.document_info import DocumentsInfo
 from readnext.utils import (
     load_object_from_pickle,
-    save_object_to_pickle,
+    write_object_to_pickle,
     setup_progress_bar,
 )
 
@@ -35,7 +35,7 @@ class ListTokenizer(ABC):
     @staticmethod
     def save_tokens_mapping(path: Path, tokens_mapping: TokensMapping) -> None:
         """Save a mapping of document ids to tokens to a pickle file."""
-        save_object_to_pickle(tokens_mapping, path)
+        write_object_to_pickle(tokens_mapping, path)
 
     @staticmethod
     def load_tokens_mapping(path: Path) -> TokensMapping:

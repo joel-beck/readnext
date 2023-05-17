@@ -48,6 +48,8 @@ class SemanticscholarRequest:
         self.semanticscholar_api_key = os.getenv("SEMANTICSCHOLAR_API_KEY", "")
         self.request_headers = {"x-api-key": self.semanticscholar_api_key}
 
+    # TODO: Explore more fields from request. Is there a way to get the arxiv id when
+    # the semanticscholar id is passend and vice versa?
     def get_request_url_from_semanticscholar_id(self, semanticscholar_id: str) -> str:
         return f"https://api.semanticscholar.org/graph/v1/paper/{semanticscholar_id}?fields=abstract,citations,references,title"
 

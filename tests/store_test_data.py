@@ -13,7 +13,7 @@ from readnext.config import DataPaths, ResultsPaths
 from readnext.utils import (
     load_df_from_pickle,
     save_df_to_pickle,
-    save_object_to_pickle,
+    write_object_to_pickle,
     setup_progress_bar,
     slice_mapping,
 )
@@ -68,7 +68,7 @@ def main() -> None:
                 continue
 
             if isinstance(obj, dict):
-                save_object_to_pickle(slice_mapping(obj, size=TEST_DATA_SIZE), destination_path)
+                write_object_to_pickle(slice_mapping(obj, size=TEST_DATA_SIZE), destination_path)
 
 
 if __name__ == "__main__":

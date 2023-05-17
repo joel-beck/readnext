@@ -3,37 +3,35 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+from readnext.utils.decorators import (
+    dataframe_loader,
+    object_loader,
+    dataframe_writer,
+    object_writer,
+)
 
 
-def save_object_to_pickle(obj: Any, path: Path, verbose: bool = True) -> None:  # type: ignore # noqa
-    """Save any Python object to a pickle file."""
-    if verbose:
-        print(f"Saving object to {path.name}...")
-
+@object_writer
+def write_object_to_pickle(obj: Any, path: Path) -> None:  # type: ignore # noqa
+    """Write any Python object to a pickle file."""
     with path.open("wb") as f:
         pickle.dump(obj, f)
 
 
-def load_object_from_pickle(path: Path, verbose: bool = True) -> Any:  # type: ignore # noqa
+@object_loader
+def load_object_from_pickle(path: Path) -> Any:  # type: ignore # noqa
     """Load any Python object from a pickle file."""
-    if verbose:
-        print(f"Loading object from {path.name}...")
-
     with path.open("rb") as f:
         return pickle.load(f)  # type: ignore
 
 
-def save_df_to_pickle(df: pd.DataFrame, path: Path, verbose: bool = True) -> None:
-    """Save a Pandas DataFrame to a pickle file."""
-    if verbose:
-        print(f"Saving DataFrame to {path.name}...")
-
+@dataframe_writer
+def write_df_to_pickle(df: pd.DataFrame, path: Path) -> None:
+    """Write a Pandas DataFrame to a pickle file."""
     df.to_pickle(path)
 
 
-def load_df_from_pickle(path: Path, verbose: bool = True) -> pd.DataFrame:
+@dataframe_loader
+def load_df_from_pickle(path: Path) -> pd.DataFrame:
     """Load a Pandas DataFrame from a pickle file."""
-    if verbose:
-        print(f"Loading DataFrame from {path.name}...")
-
     return pd.read_pickle(path)

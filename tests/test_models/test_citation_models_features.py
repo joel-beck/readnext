@@ -2,13 +2,12 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
-from readnext.modeling.citation_models import (
+from readnext.data import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
 
 
-# Test data fixture
 @pytest.fixture
 def test_data() -> pd.DataFrame:
     data = {
@@ -19,7 +18,6 @@ def test_data() -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
-# Test cases for add_feature_rank_cols
 def test_add_feature_rank_cols(test_data: pd.DataFrame) -> None:
     expected_data = {
         "publication_date": test_data["publication_date"],
@@ -34,7 +32,6 @@ def test_add_feature_rank_cols(test_data: pd.DataFrame) -> None:
     assert_frame_equal(result_df, expected_df)
 
 
-# Test cases for set_missing_publication_dates_to_max_rank
 def test_set_missing_publication_dates_to_max_rank(test_data: pd.DataFrame) -> None:
     input_data = test_data.assign(publication_date_rank=[1.0, 2.0, None])
     expected_data = {
@@ -48,14 +45,12 @@ def test_set_missing_publication_dates_to_max_rank(test_data: pd.DataFrame) -> N
     assert_frame_equal(result_df, expected_df)
 
 
-# Edge case: No missing publication dates
 def test_set_missing_publication_dates_to_max_rank_no_missing(test_data: pd.DataFrame) -> None:
     input_data = test_data.assign(publication_date_rank=[1.0, 2.0, 3.0])
     result_df = set_missing_publication_dates_to_max_rank(input_data)
     assert_frame_equal(result_df, input_data)
 
 
-# Test data fixture with more rows and different ranking cases
 @pytest.fixture
 def extended_test_data() -> pd.DataFrame:
     data = {
@@ -72,7 +67,6 @@ def extended_test_data() -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
-# Test cases for add_feature_rank_cols with extended test data
 def test_add_feature_rank_cols_extended(extended_test_data: pd.DataFrame) -> None:
     expected_data = {
         "publication_date": extended_test_data["publication_date"],
@@ -87,7 +81,6 @@ def test_add_feature_rank_cols_extended(extended_test_data: pd.DataFrame) -> Non
     assert_frame_equal(result_df, expected_df)
 
 
-# Test cases for set_missing_publication_dates_to_max_rank with extended test data
 def test_set_missing_publication_dates_to_max_rank_extended(
     extended_test_data: pd.DataFrame,
 ) -> None:
@@ -103,7 +96,6 @@ def test_set_missing_publication_dates_to_max_rank_extended(
     assert_frame_equal(result_df, expected_df)
 
 
-# Edge case: All missing publication dates
 def test_set_missing_publication_dates_to_max_rank_all_missing(test_data: pd.DataFrame) -> None:
     input_data = test_data.assign(
         publication_date=[None, None, None], publication_date_rank=[None, None, None]

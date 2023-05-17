@@ -119,6 +119,10 @@ class LanguageModelData(ModelData):
             self.query_document,
             self.info_matrix.loc[indices],
             self.integer_labels.loc[indices],
+            # This line raises an IndexError if at least one of the indices is not
+            # present in the cosine similarity ranks dataframe. This might occur when
+            # the full documents data with 10000 documents is used but the cosine
+            # similarity ranks are only precomputed for the top 1000 documents.
             self.cosine_similarity_ranks.loc[indices],
         )
 

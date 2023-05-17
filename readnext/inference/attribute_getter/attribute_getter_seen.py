@@ -3,6 +3,10 @@ from dataclasses import dataclass, field
 import pandas as pd
 
 from readnext.config import ResultsPaths
+from readnext.data import (
+    add_feature_rank_cols,
+    set_missing_publication_dates_to_max_rank,
+)
 from readnext.inference.attribute_getter.attribute_getter_base import (
     AttributeGetter,
     DocumentIdentifier,
@@ -13,10 +17,6 @@ from readnext.modeling import (
     CitationModelDataConstructor,
     LanguageModelData,
     LanguageModelDataConstructor,
-)
-from readnext.modeling.citation_models import (
-    add_feature_rank_cols,
-    set_missing_publication_dates_to_max_rank,
 )
 from readnext.modeling.language_models import (
     load_cosine_similarities_from_choice,
@@ -33,6 +33,8 @@ class SeenPaperAttributeGetter(AttributeGetter):
 
     def __post_init__(self) -> None:
         self.input_converter = InferenceDataInputConverter(documents_data=self.documents_data)
+        # TODO: Find a nicer way to set the `query_document_id` attribute.
+        self.get_identifier()
 
     def get_identifier_from_semanticscholar_id(self, semanticscholar_id: str) -> DocumentIdentifier:
         self.query_document_id = self.input_converter.get_query_id_from_semanticscholar_id(

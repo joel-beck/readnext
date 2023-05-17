@@ -4,11 +4,12 @@ import pandas as pd
 
 from readnext.config import DataPaths
 from readnext.evaluation.scoring import FeatureWeights, HybridScorer
+from readnext.inference import DocumentIdentifier
 from readnext.inference.attribute_getter.attribute_getter_base import (
     AttributeGetter,
-    DocumentIdentifier,
 )
 from readnext.inference.attribute_getter.attribute_getter_seen import SeenPaperAttributeGetter
+from readnext.inference.attribute_getter.attribute_getter_unseen import UnseenPaperAttributeGetter
 from readnext.modeling import (
     CitationModelData,
     DocumentInfo,
@@ -96,13 +97,14 @@ class InferenceDataConstructor:
         self._language_model_data = self.attribute_getter.get_language_model_data()
 
     def get_documents_data(self) -> pd.DataFrame:
-        return load_df_from_pickle(
-            DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
-        ).set_index("document_id")
+        # NOTE: For now the data is limited to the first 1000 documents. This number
+        # must match the number of precomputed embeddings, cosine similarities, etc!
+        return (
+            load_df_from_pickle(DataPaths.merged.documents_authors_labels_citations_most_cited_pkl)
+            .set_index("document_id")
+            .head(1000)
+        )
 
-    # TODO: If the query document id is not provided as an input, it is not yet inferred
-    # from e.g. the arxiv url! Change the order of the methods to move initialization
-    # the query document id before instantiating the attribute getter.
     def query_document_in_training_data(self) -> bool:
         if self.semanticscholar_id is not None:
             semanticscholar_url = get_semanticscholar_url_from_semanticscholar_id(
@@ -137,7 +139,15 @@ class InferenceDataConstructor:
             )
 
         print("Query document is not contained in training data.")
-        raise NotImplementedError
+        return UnseenPaperAttributeGetter(
+            semanticscholar_id=self.semanticscholar_id,
+            semanticscholar_url=self.semanticscholar_url,
+            arxiv_id=self.arxiv_id,
+            arxiv_url=self.arxiv_url,
+            language_model_choice=self.language_model_choice,
+            feature_weights=self.feature_weights,
+            documents_data=self._documents_data,
+        )
 
     def collect_document_identifiers(self) -> DocumentIdentifier:
         return self.attribute_getter.get_identifier()

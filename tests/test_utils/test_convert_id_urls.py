@@ -29,7 +29,7 @@ def arxiv_id() -> str:
 
 
 # test get_paper_id_from_semanticscholar_url function
-def test_get_paper_id_from_semanticscholar_url(
+def test_get_semanticscholar_id_from_semanticscholar_url(
     semanticscholar_url: str, semanticscholar_id: str
 ) -> None:
     assert (
@@ -42,7 +42,7 @@ def test_get_paper_id_from_semanticscholar_url(
 
 
 # test get_semanticscholar_url_from_paper_id function
-def test_get_semanticscholar_url_from_paper_id(
+def test_get_semanticscholar_url_from_semanticscholar_id(
     semanticscholar_url: str, semanticscholar_id: str
 ) -> None:
     assert (

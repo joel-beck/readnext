@@ -15,44 +15,76 @@ def main() -> None:
     arxiv_id = get_arxiv_id_from_arxiv_url(arxiv_url)
 
     # SUBSECTION: Input is semanticscholar ID
+    # TODO: Here the query document is NOT found in the training data
     inference_data_constructor_semanticscholar_id = InferenceDataConstructor(
         semanticscholar_id=semanticscholar_id,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
     )
-    inference_data_query_id = InferenceData.from_constructor(
+    inference_data_from_semanticscholar_id = InferenceData.from_constructor(
         inference_data_constructor_semanticscholar_id
     )
-    print(inference_data_query_id.recommendations.citation_to_language_candidates)
+
+    print(inference_data_from_semanticscholar_id.document_identifiers)
+    print(inference_data_from_semanticscholar_id.document_info)
+    print(inference_data_from_semanticscholar_id.features)
+    print(inference_data_from_semanticscholar_id.ranks)
+    print(inference_data_from_semanticscholar_id.labels)
+    print(inference_data_from_semanticscholar_id.recommendations.citation_to_language)
 
     # SUBSECTION: Input is semanticscholar URL
+    # TODO: Here the query document IS found in the training data
     inference_data_constructor_semanticscholar_url = InferenceDataConstructor(
         semanticscholar_url=semanticscholar_url,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
     )
-    inference_data_semanticscholar_url = InferenceData.from_constructor(
+    inference_data_from_semanticscholar_url = InferenceData.from_constructor(
         inference_data_constructor_semanticscholar_url
     )
-    print(inference_data_semanticscholar_url.recommendations.citation_to_language_candidates)
+
+    print(inference_data_from_semanticscholar_url.document_identifiers)
+    print(inference_data_from_semanticscholar_url.document_info)
+    print(inference_data_from_semanticscholar_url.features)
+    print(inference_data_from_semanticscholar_url.ranks)
+    print(inference_data_from_semanticscholar_url.labels)
+    print(inference_data_from_semanticscholar_url.recommendations.citation_to_language)
 
     # SUBSECTION: Input is arxiv ID
+    # TODO: Here the query document IS found in the training data
     inference_data_constructor_arxiv_id = InferenceDataConstructor(
         arxiv_id=arxiv_id,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
     )
-    inference_data_arxiv_url = InferenceData.from_constructor(inference_data_constructor_arxiv_id)
-    print(inference_data_arxiv_url.recommendations.citation_to_language_candidates)
+    inference_data_from_arxiv_id = InferenceData.from_constructor(
+        inference_data_constructor_arxiv_id
+    )
+
+    print(inference_data_from_arxiv_id.document_identifiers)
+    print(inference_data_from_arxiv_id.document_info)
+    print(inference_data_from_arxiv_id.features)
+    print(inference_data_from_arxiv_id.ranks)
+    print(inference_data_from_arxiv_id.labels)
+    print(inference_data_from_arxiv_id.recommendations.citation_to_language)
 
     # SUBSECTION: Input is arxiv URL
+    # TODO: Here the query document IS found in the training data
     inference_data_constructor_arxiv_url = InferenceDataConstructor(
         arxiv_url=arxiv_url,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
     )
-    inference_data_arxiv_url = InferenceData.from_constructor(inference_data_constructor_arxiv_url)
-    print(inference_data_arxiv_url.recommendations.citation_to_language_candidates)
+    inference_data_from_arxiv_url = InferenceData.from_constructor(
+        inference_data_constructor_arxiv_url
+    )
+
+    print(inference_data_from_arxiv_url.document_identifiers)
+    print(inference_data_from_arxiv_url.document_info)
+    print(inference_data_from_arxiv_url.features)
+    print(inference_data_from_arxiv_url.ranks)
+    print(inference_data_from_arxiv_url.labels)
+    print(inference_data_from_arxiv_url.recommendations.citation_to_language)
 
 
 if __name__ == "__main__":

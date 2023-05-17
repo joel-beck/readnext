@@ -3,6 +3,7 @@ from readnext.inference import InferenceData, InferenceDataConstructor, Language
 from readnext.utils import (
     get_arxiv_id_from_arxiv_url,
     get_semanticscholar_id_from_semanticscholar_url,
+    get_semanticscholar_url_from_semanticscholar_id,
 )
 
 
@@ -11,11 +12,11 @@ def main() -> None:
         "https://www.semanticscholar.org/paper/204e3073870fae3d05bcbc2f6a8e263d9b72e776"
     )
     semanticscholar_id = get_semanticscholar_id_from_semanticscholar_url(semanticscholar_url)
+    get_semanticscholar_url_from_semanticscholar_id(semanticscholar_id)
     arxiv_url = "https://arxiv.org/abs/1706.03762"
     arxiv_id = get_arxiv_id_from_arxiv_url(arxiv_url)
 
     # SUBSECTION: Input is semanticscholar ID
-    # TODO: Here the query document is NOT found in the training data
     inference_data_constructor_semanticscholar_id = InferenceDataConstructor(
         semanticscholar_id=semanticscholar_id,
         language_model_choice=LanguageModelChoice.tfidf,
@@ -33,7 +34,6 @@ def main() -> None:
     print(inference_data_from_semanticscholar_id.recommendations.citation_to_language)
 
     # SUBSECTION: Input is semanticscholar URL
-    # TODO: Here the query document IS found in the training data
     inference_data_constructor_semanticscholar_url = InferenceDataConstructor(
         semanticscholar_url=semanticscholar_url,
         language_model_choice=LanguageModelChoice.tfidf,
@@ -51,7 +51,6 @@ def main() -> None:
     print(inference_data_from_semanticscholar_url.recommendations.citation_to_language)
 
     # SUBSECTION: Input is arxiv ID
-    # TODO: Here the query document IS found in the training data
     inference_data_constructor_arxiv_id = InferenceDataConstructor(
         arxiv_id=arxiv_id,
         language_model_choice=LanguageModelChoice.tfidf,
@@ -69,7 +68,6 @@ def main() -> None:
     print(inference_data_from_arxiv_id.recommendations.citation_to_language)
 
     # SUBSECTION: Input is arxiv URL
-    # TODO: Here the query document IS found in the training data
     inference_data_constructor_arxiv_url = InferenceDataConstructor(
         arxiv_url=arxiv_url,
         language_model_choice=LanguageModelChoice.tfidf,

@@ -12,7 +12,7 @@ def get_semanticscholar_url_from_semanticscholar_id(semanticscholar_id: str | No
     string if the paper ID is None.
     """
     return (
-        f"https://semanticscholar.org/paper/{semanticscholar_id}"
+        f"https://www.semanticscholar.org/paper/{semanticscholar_id}"
         if semanticscholar_id is not None
         else ""
     )

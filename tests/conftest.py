@@ -3,15 +3,15 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from readnext.data import (
+    add_feature_rank_cols,
+    set_missing_publication_dates_to_max_rank,
+)
 from readnext.modeling import (
     CitationModelDataConstructor,
     DocumentInfo,
     DocumentsInfo,
     LanguageModelDataConstructor,
-)
-from readnext.data import (
-    add_feature_rank_cols,
-    set_missing_publication_dates_to_max_rank,
 )
 from readnext.modeling.language_models import Tokens
 from readnext.utils import load_df_from_pickle, load_object_from_pickle

@@ -3,23 +3,24 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+
 from readnext.utils.decorators import (
     dataframe_loader,
-    object_loader,
     dataframe_writer,
+    object_loader,
     object_writer,
 )
 
 
 @object_writer
-def write_object_to_pickle(obj: Any, path: Path) -> None:  # type: ignore # noqa
+def write_object_to_pickle(obj: Any, path: Path) -> None:
     """Write any Python object to a pickle file."""
     with path.open("wb") as f:
         pickle.dump(obj, f)
 
 
 @object_loader
-def load_object_from_pickle(path: Path) -> Any:  # type: ignore # noqa
+def load_object_from_pickle(path: Path) -> Any:
     """Load any Python object from a pickle file."""
     with path.open("rb") as f:
         return pickle.load(f)  # type: ignore

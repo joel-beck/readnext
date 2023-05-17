@@ -21,7 +21,7 @@ from readnext.utils import (
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
     load_df_from_pickle,
-    save_df_to_pickle,
+    write_df_to_pickle,
 )
 
 
@@ -116,7 +116,7 @@ def main() -> None:
     ).drop(columns=["semanticscholar_request"])
 
     # subtract one from subset end since upper bound of slice is exclusive
-    save_df_to_pickle(
+    write_df_to_pickle(
         documents_authors_labels_citations,
         Path(
             f"{DataPaths.merged.documents_authors_labels_citations_chunks_stem}_{SUBSET_START}_{SUBSET_END-1}.pkl"

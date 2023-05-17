@@ -9,8 +9,8 @@ from spacy.tokens.doc import Doc
 from readnext.modeling.document_info import DocumentsInfo
 from readnext.utils import (
     load_object_from_pickle,
-    write_object_to_pickle,
     setup_progress_bar,
+    write_object_to_pickle,
 )
 
 # each document is represented as a list of tokens

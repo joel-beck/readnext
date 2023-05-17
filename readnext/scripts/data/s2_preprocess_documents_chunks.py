@@ -9,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 
 from readnext.config import DataPaths
-from readnext.utils import add_rank, load_df_from_pickle, save_df_to_pickle, setup_progress_bar
+from readnext.utils import add_rank, load_df_from_pickle, setup_progress_bar, write_df_to_pickle
 
 
 def flatten_list_of_dicts(list_of_dicts: list[dict], key: str) -> list[str]:
@@ -58,7 +58,7 @@ def preprocess_document_chunk(filepath: Path, chunk_index: int) -> None:
         arxiv_id=extract_arxiv_id(documents_long_format)
     ).loc[lambda df: df["arxiv_id"].notna()]
 
-    save_df_to_pickle(
+    write_df_to_pickle(
         documents_long_format_arxiv,
         Path(f"{DataPaths.d3.documents.preprocessed_chunks_stem}_{chunk_index}.pkl"),
     )

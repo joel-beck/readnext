@@ -8,7 +8,7 @@ from pathlib import Path
 import pandas as pd
 
 from readnext.config import DataPaths
-from readnext.utils import load_df_from_pickle, save_df_to_pickle, setup_progress_bar
+from readnext.utils import load_df_from_pickle, setup_progress_bar, write_df_to_pickle
 
 
 def add_labels(df: pd.DataFrame) -> pd.DataFrame:
@@ -47,7 +47,7 @@ def merge_labels_chunk(filepath: Path, chunk_index: int) -> None:
         .pipe(remove_non_cs_documents)
     )
 
-    save_df_to_pickle(
+    write_df_to_pickle(
         documents_labels_chunk,
         Path(f"{DataPaths.merged.documents_labels_chunk_stem}_{chunk_index}.pkl"),
     )

@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 
 import requests
 from dotenv import load_dotenv
+from pydantic import BaseModel, Field
 from typing_extensions import TypedDict
 
 from readnext.utils import (
@@ -29,9 +30,8 @@ class SemanticScholarJson(TypedDict):
     references: list[SemanticScholarReference]
 
 
-@dataclass
-class SemanticScholarResponse:
-    semanticscholar_id: str | None
+class SemanticScholarResponse(BaseModel):
+    semanticscholar_id: str | None = Field(alias="paperId")
     title: str | None
     abstract: str | None
     citations: list[SemanticScholarCitation] | None
@@ -61,13 +61,14 @@ class SemanticscholarRequest:
             request_url, headers=self.request_headers
         ).json()
 
-        return SemanticScholarResponse(
-            semanticscholar_id=response.get("paperId", None),
-            title=response.get("title", None),
-            abstract=response.get("abstract", None),
-            citations=response.get("citations", None),
-            references=response.get("references", None),
-        )
+        # return SemanticScholarResponse(
+        #     semanticscholar_id=response.get("paperId", None),
+        #     title=response.get("title", None),
+        #     abstract=response.get("abstract", None),
+        #     citations=response.get("citations", None),
+        #     references=response.get("references", None),
+        # )
+        return SemanticScholarResponse(**response)
 
     def from_semanticscholar_id(self, semanticscholar_id: str) -> SemanticScholarResponse:
         request_url = self.get_request_url_from_semanticscholar_id(semanticscholar_id)

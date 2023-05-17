@@ -19,6 +19,7 @@ dependencies = [
     "torch>=2.0.0",
     "tqdm>=4.65.0",
     "transformers>=4.27.4",
+    "pydantic>=1.10.7",
 ]
 requires-python = "==3.10.*"
 readme = "README.md"
@@ -82,7 +83,7 @@ include = '\.pyi?$'
 ignore_missing_imports = true
 # Disallow dynamic typing
 disallow_any_expr = false
-disallow_any_explicit = true
+disallow_any_explicit = false
 # Untyped definitions and calls
 disallow_untyped_calls = true
 disallow_untyped_defs = true
@@ -155,6 +156,7 @@ select = [
 ]
 # - `ANN101` (missing type annotation for `self` in method)
 # - `ANN102` (missing type annotation for `cls` in classmethod)
+# - `ANN401` (Dynamically typed expressions (typing.Any) are disallowed)
 # - `N803` (argument name should be lowercase)
 # - `N806` (variable in function should be lowercase)
 # - `PD015` (use `.merge()` instead of `pd.merge()`, incorrect for Series)
@@ -164,6 +166,7 @@ select = [
 ignore = [
     "ANN101",
     "ANN102",
+    "ANN401",
     "N803",
     "N806",
     "PD015",

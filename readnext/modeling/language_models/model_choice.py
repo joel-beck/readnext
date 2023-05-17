@@ -9,14 +9,14 @@ from readnext.utils import load_df_from_pickle
 
 
 class LanguageModelChoice(Enum):
-    tfidf = "tfidf"
-    bm25 = "bm25"
-    word2vec = "word2vec"
-    glove = "glove"
-    fasttext = "fasttext"
-    bert = "bert"
-    scibert = "scibert"
-    longformer = "longformer"
+    tfidf = "TF-IDF"
+    bm25 = "BM25"
+    word2vec = "Word2Vec"
+    glove = "GloVe"
+    fasttext = "FastText"
+    bert = "BERT"
+    scibert = "SciBERT"
+    longformer = "Longformer"
 
     def __str__(self) -> str:
         return self.value

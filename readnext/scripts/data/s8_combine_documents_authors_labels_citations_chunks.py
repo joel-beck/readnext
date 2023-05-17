@@ -6,7 +6,7 @@ dataframe.
 import pandas as pd
 
 from readnext.config import DataPaths
-from readnext.utils import load_df_from_pickle, save_df_to_pickle, setup_progress_bar
+from readnext.utils import load_df_from_pickle, setup_progress_bar, write_df_to_pickle
 
 
 def main() -> None:
@@ -34,7 +34,7 @@ def main() -> None:
     #     (df_combined["citations"].apply(len) == 0) | (df_combined["references"].apply(len) == 0)
     # ]
 
-    save_df_to_pickle(df_combined, path_documents_authors_labels_citations)
+    write_df_to_pickle(df_combined, path_documents_authors_labels_citations)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,8 @@
 import functools
-from typing import Callable, Any, Literal
-from pathlib import Path
+from collections.abc import Callable
 from enum import Enum
+from pathlib import Path
+from typing import Any, Literal
 
 
 class Operation(Enum):
@@ -26,7 +27,7 @@ def decorator_factory(
     operation: Operation,
 ) -> Callable:
     @functools.wraps(func)
-    def wrapper(path: Path, *args: Any, **kwargs: Any) -> Any:  # type: ignore
+    def wrapper(path: Path, *args: Any, **kwargs: Any) -> Any:
         message_func = loading_message if operation == Operation.LOADING else writing_message
         print(message_func(path, data_type), end=" ")
 

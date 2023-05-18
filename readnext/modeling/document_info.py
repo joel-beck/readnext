@@ -9,7 +9,7 @@ from typing_extensions import Self
 class DocumentInfo:
     """Collects information about a single document/paper."""
 
-    document_id: int
+    d3_document_id: int
     title: str = ""
     author: str = ""
     arxiv_labels: list[str] = field(default_factory=list)
@@ -17,7 +17,7 @@ class DocumentInfo:
 
     def __str__(self) -> str:
         return (
-            f"Document {self.document_id}\n"
+            f"Document {self.d3_document_id}\n"
             "---------------------\n"
             f"Title: {self.title}\n"
             f"Author: {self.author}\n"
@@ -32,7 +32,9 @@ class DocumentsInfo:
     documents_info: list[DocumentInfo]
 
     def __post_init__(self) -> None:
-        self.document_ids = [document_info.document_id for document_info in self.documents_info]
+        self.d3_document_ids = [
+            document_info.d3_document_id for document_info in self.documents_info
+        ]
         self.titles = [document_info.title for document_info in self.documents_info]
         self.abstracts = [document_info.abstract for document_info in self.documents_info]
 
@@ -78,7 +80,7 @@ def documents_info_from_df(df: pd.DataFrame) -> DocumentsInfo:
 
     return DocumentsInfo(
         [
-            DocumentInfo(document_id=document_id, title=title, abstract=abstract)
-            for document_id, title, abstract in zip(document_ids, titles, abstracts)
+            DocumentInfo(d3_document_id=d3_document_id, title=title, abstract=abstract)
+            for d3_document_id, title, abstract in zip(document_ids, titles, abstracts)
         ]
     )

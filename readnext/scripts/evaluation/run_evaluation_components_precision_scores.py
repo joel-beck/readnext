@@ -23,7 +23,7 @@ from readnext.utils import load_df_from_pickle
 
 def main() -> None:
     # evaluation for a single query document
-    query_document_id = 206594692
+    query_d3_document_id = 206594692
 
     # SECTION: Get Raw Data
     documents_authors_labels_citations_most_cited: pd.DataFrame = load_df_from_pickle(
@@ -45,7 +45,7 @@ def main() -> None:
     # SECTION: Get Model Data
     # SUBSECTION: Citation Models
     citation_model_data_constructor = CitationModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_authors_labels_citations_most_cited.pipe(
             add_feature_rank_cols
         ).pipe(set_missing_publication_dates_to_max_rank),
@@ -61,7 +61,7 @@ def main() -> None:
         ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl
     )
     tfidf_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
         cosine_similarities=tfidf_cosine_similarities_most_cited,
     )
@@ -73,7 +73,7 @@ def main() -> None:
         ResultsPaths.language_models.bm25_cosine_similarities_most_cited_pkl
     )
     bm25_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
         cosine_similarities=bm25_cosine_similarities_most_cited,
     )
@@ -85,7 +85,7 @@ def main() -> None:
         ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl
     )
     word2vec_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
         cosine_similarities=word2vec_cosine_similarities_most_cited,
     )
@@ -97,7 +97,7 @@ def main() -> None:
         ResultsPaths.language_models.glove_cosine_similarities_most_cited_pkl
     )
     glove_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
         cosine_similarities=glove_cosine_similarities_most_cited,
     )
@@ -109,7 +109,7 @@ def main() -> None:
         ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl
     )
     fasttext_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
         cosine_similarities=fasttext_cosine_similarities_most_cited,
     )
@@ -121,7 +121,7 @@ def main() -> None:
         ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl
     )
     bert_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
         cosine_similarities=bert_cosine_similarities_most_cited,
     )
@@ -133,7 +133,7 @@ def main() -> None:
         ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl
     )
     scibert_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
         cosine_similarities=scibert_cosine_similarities_most_cited,
     )
@@ -145,7 +145,7 @@ def main() -> None:
         ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl
     )
     longformer_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_authors_labels_citations_most_cited,
         cosine_similarities=longformer_cosine_similarities_most_cited,
     )

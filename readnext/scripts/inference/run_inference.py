@@ -26,7 +26,7 @@ def main() -> None:
         inference_data_constructor_semanticscholar_id
     )
 
-    print(inference_data_from_semanticscholar_id.document_identifiers)
+    print(inference_data_from_semanticscholar_id.document_identifier)
     print(inference_data_from_semanticscholar_id.document_info)
     print(inference_data_from_semanticscholar_id.features)
     print(inference_data_from_semanticscholar_id.ranks)
@@ -43,7 +43,7 @@ def main() -> None:
         inference_data_constructor_semanticscholar_url
     )
 
-    print(inference_data_from_semanticscholar_url.document_identifiers)
+    print(inference_data_from_semanticscholar_url.document_identifier)
     print(inference_data_from_semanticscholar_url.document_info)
     print(inference_data_from_semanticscholar_url.features)
     print(inference_data_from_semanticscholar_url.ranks)
@@ -60,7 +60,7 @@ def main() -> None:
         inference_data_constructor_arxiv_id
     )
 
-    print(inference_data_from_arxiv_id.document_identifiers)
+    print(inference_data_from_arxiv_id.document_identifier)
     print(inference_data_from_arxiv_id.document_info)
     print(inference_data_from_arxiv_id.features)
     print(inference_data_from_arxiv_id.ranks)
@@ -77,7 +77,7 @@ def main() -> None:
         inference_data_constructor_arxiv_url
     )
 
-    print(inference_data_from_arxiv_url.document_identifiers)
+    print(inference_data_from_arxiv_url.document_identifier)
     print(inference_data_from_arxiv_url.document_info)
     print(inference_data_from_arxiv_url.features)
     print(inference_data_from_arxiv_url.ranks)

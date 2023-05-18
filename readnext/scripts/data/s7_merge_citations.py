@@ -22,9 +22,6 @@ from readnext.utils import (
 
 
 def get_paper_citations(semanticscholar_response: SemanticScholarResponse) -> list[str]:
-    if semanticscholar_response.citations is None:
-        return []
-
     return [
         get_semanticscholar_url_from_semanticscholar_id(citation.get("paperId", None))
         for citation in semanticscholar_response.citations
@@ -33,9 +30,6 @@ def get_paper_citations(semanticscholar_response: SemanticScholarResponse) -> li
 
 
 def get_paper_references(semanticscholar_response: SemanticScholarResponse) -> list[str]:
-    if semanticscholar_response.references is None:
-        return []
-
     return [
         get_semanticscholar_url_from_semanticscholar_id(reference.get("paperId", None))
         for reference in semanticscholar_response.references

@@ -29,68 +29,72 @@ class SeenPaperAttributeGetter(AttributeGetter):
     """Get data attributes for a paper that is contained in the training data."""
 
     input_converter: InferenceDataInputConverter = field(init=False)
-    query_document_id: int = field(init=False)
 
     def __post_init__(self) -> None:
+        # must be called *before* `super().__post_init__()` since
+        # `super().__post_init__()` already used the input converter
         self.input_converter = InferenceDataInputConverter(documents_data=self.documents_data)
-        # TODO: Find a nicer way to set the `query_document_id` attribute.
-        self.get_identifier()
+        super().__post_init__()
 
     def get_identifier_from_semanticscholar_id(self, semanticscholar_id: str) -> DocumentIdentifier:
-        self.query_document_id = self.input_converter.get_query_id_from_semanticscholar_id(
+        d3_document_id = self.input_converter.get_d3_document_id_from_semanticscholar_id(
             semanticscholar_id
         )
 
         return DocumentIdentifier(
+            d3_document_id=d3_document_id,
             semanticscholar_id=semanticscholar_id,
-            semanticscholar_url=self.input_converter.get_semanticscholar_url_from_query_id(
-                self.query_document_id
+            semanticscholar_url=self.input_converter.get_semanticscholar_url_from_d3_document_id(
+                d3_document_id
             ),
-            arxiv_id=self.input_converter.get_arxiv_id_from_query_id(self.query_document_id),
-            arxiv_url=self.input_converter.get_arxiv_url_from_query_id(self.query_document_id),
+            arxiv_id=self.input_converter.get_arxiv_id_from_d3_document_id(d3_document_id),
+            arxiv_url=self.input_converter.get_arxiv_url_from_d3_document_id(d3_document_id),
         )
 
     def get_identifier_from_semanticscholar_url(
         self, semanticscholar_url: str
     ) -> DocumentIdentifier:
-        self.query_document_id = self.input_converter.get_query_id_from_semanticscholar_url(
+        d3_document_id = self.input_converter.get_d3_document_id_from_semanticscholar_url(
             semanticscholar_url
         )
 
         return DocumentIdentifier(
-            semanticscholar_id=self.input_converter.get_semanticscholar_id_from_query_id(
-                self.query_document_id
+            d3_document_id=d3_document_id,
+            semanticscholar_id=self.input_converter.get_semanticscholar_id_from_d3_document_id(
+                d3_document_id
             ),
             semanticscholar_url=semanticscholar_url,
-            arxiv_id=self.input_converter.get_arxiv_id_from_query_id(self.query_document_id),
-            arxiv_url=self.input_converter.get_arxiv_url_from_query_id(self.query_document_id),
+            arxiv_id=self.input_converter.get_arxiv_id_from_d3_document_id(d3_document_id),
+            arxiv_url=self.input_converter.get_arxiv_url_from_d3_document_id(d3_document_id),
         )
 
     def get_identifier_from_arxiv_id(self, arxiv_id: str) -> DocumentIdentifier:
-        self.query_document_id = self.input_converter.get_query_id_from_arxiv_id(arxiv_id)
+        d3_document_id = self.input_converter.get_d3_document_id_from_arxiv_id(arxiv_id)
 
         return DocumentIdentifier(
-            semanticscholar_id=self.input_converter.get_semanticscholar_id_from_query_id(
-                self.query_document_id
+            d3_document_id=d3_document_id,
+            semanticscholar_id=self.input_converter.get_semanticscholar_id_from_d3_document_id(
+                d3_document_id
             ),
-            semanticscholar_url=self.input_converter.get_semanticscholar_url_from_query_id(
-                self.query_document_id
+            semanticscholar_url=self.input_converter.get_semanticscholar_url_from_d3_document_id(
+                d3_document_id
             ),
             arxiv_id=arxiv_id,
-            arxiv_url=self.input_converter.get_arxiv_url_from_query_id(self.query_document_id),
+            arxiv_url=self.input_converter.get_arxiv_url_from_d3_document_id(d3_document_id),
         )
 
     def get_identifier_from_arxiv_url(self, arxiv_url: str) -> DocumentIdentifier:
-        self.query_document_id = self.input_converter.get_query_id_from_arxiv_url(arxiv_url)
+        d3_document_id = self.input_converter.get_d3_document_id_from_arxiv_url(arxiv_url)
 
         return DocumentIdentifier(
-            semanticscholar_id=self.input_converter.get_semanticscholar_id_from_query_id(
-                self.query_document_id
+            d3_document_id=d3_document_id,
+            semanticscholar_id=self.input_converter.get_semanticscholar_id_from_d3_document_id(
+                d3_document_id
             ),
-            semanticscholar_url=self.input_converter.get_semanticscholar_url_from_query_id(
-                self.query_document_id
+            semanticscholar_url=self.input_converter.get_semanticscholar_url_from_d3_document_id(
+                d3_document_id
             ),
-            arxiv_id=self.input_converter.get_arxiv_id_from_query_id(self.query_document_id),
+            arxiv_id=self.input_converter.get_arxiv_id_from_d3_document_id(d3_document_id),
             arxiv_url=arxiv_url,
         )
 
@@ -108,10 +112,10 @@ class SeenPaperAttributeGetter(AttributeGetter):
         return load_cosine_similarities_from_choice(self.language_model_choice)
 
     def get_citation_model_data(self) -> CitationModelData:
-        assert self.query_document_id is not None
+        assert self.identifier.d3_document_id is not None
 
         citation_model_data_constructor = CitationModelDataConstructor(
-            query_document_id=self.query_document_id,
+            d3_document_id=self.identifier.d3_document_id,
             documents_data=self.documents_data.pipe(add_feature_rank_cols).pipe(
                 set_missing_publication_dates_to_max_rank
             ),
@@ -121,10 +125,10 @@ class SeenPaperAttributeGetter(AttributeGetter):
         return CitationModelData.from_constructor(citation_model_data_constructor)
 
     def get_language_model_data(self) -> LanguageModelData:
-        assert self.query_document_id is not None
+        assert self.identifier.d3_document_id is not None
 
         language_model_data_constructor = LanguageModelDataConstructor(
-            query_document_id=self.query_document_id,
+            d3_document_id=self.identifier.d3_document_id,
             documents_data=self.documents_data,
             cosine_similarities=self.get_cosine_similarities(),
         )

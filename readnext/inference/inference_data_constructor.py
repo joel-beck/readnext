@@ -126,7 +126,7 @@ class InferenceDataConstructor:
 
     def get_attribute_getter(self) -> AttributeGetter:
         if self.query_document_in_training_data():
-            print("Query document is contained in training data.")
+            print(">>> Query document is contained in training data <<<")
 
             return SeenPaperAttributeGetter(
                 semanticscholar_id=self.semanticscholar_id,
@@ -138,7 +138,7 @@ class InferenceDataConstructor:
                 documents_data=self._documents_data,
             )
 
-        print("Query document is not contained in training data.")
+        print(">>> Query document is not contained in training data <<<")
         return UnseenPaperAttributeGetter(
             semanticscholar_id=self.semanticscholar_id,
             semanticscholar_url=self.semanticscholar_url,
@@ -149,8 +149,8 @@ class InferenceDataConstructor:
             documents_data=self._documents_data,
         )
 
-    def collect_document_identifiers(self) -> DocumentIdentifier:
-        return self.attribute_getter.get_identifier()
+    def collect_document_identifier(self) -> DocumentIdentifier:
+        return self.attribute_getter.identifier
 
     def collect_document_info(self) -> DocumentInfo:
         return self._citation_model_data.query_document

@@ -45,12 +45,12 @@ class TensorTokenizer(ABC, Generic[TTorchTokenizer]):
 
     def id_mapping_to_tokens_mapping(self, tokens_id_mapping: TokensIdMapping) -> TokensMapping:
         """
-        Converts a mapping of document ids to token ids into a mapping of document ids
-        to tokens.
+        Converts a mapping of document ids to token ids into a mapping of D3 document
+        ids to tokens.
         """
         return {
-            document_id: self.ids_to_tokens(token_ids)
-            for document_id, token_ids in tokens_id_mapping.items()
+            d3_document_id: self.ids_to_tokens(token_ids)
+            for d3_document_id, token_ids in tokens_id_mapping.items()
         }
 
     @staticmethod
@@ -85,7 +85,7 @@ class BERTTokenizer(TensorTokenizer):
 
     def tokenize(self) -> TokensIdMapping:
         token_ids = self.tokenize_into_ids(self.documents_info.abstracts)
-        return dict(zip(self.documents_info.document_ids, token_ids))  # type: ignore
+        return dict(zip(self.documents_info.d3_document_ids, token_ids))  # type: ignore
 
 
 @dataclass
@@ -108,4 +108,4 @@ class LongformerTokenizer(TensorTokenizer):
     def tokenize(self) -> TokensIdMapping:
         token_ids = self.tokenize_into_ids(self.documents_info.abstracts)
 
-        return dict(zip(self.documents_info.document_ids, token_ids))  # type: ignore
+        return dict(zip(self.documents_info.d3_document_ids, token_ids))  # type: ignore

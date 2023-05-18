@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import pandas as pd
 
@@ -23,6 +23,11 @@ class AttributeGetter(ABC):
     language_model_choice: LanguageModelChoice
     feature_weights: FeatureWeights
     documents_data: pd.DataFrame
+
+    identifier: DocumentIdentifier = field(init=False)
+
+    def __post_init__(self) -> None:
+        self.identifier = self.get_identifier()
 
     @abstractmethod
     def get_identifier_from_semanticscholar_id(self, semanticscholar_id: str) -> DocumentIdentifier:

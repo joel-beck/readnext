@@ -19,7 +19,7 @@ class ModelDataConstructor(ABC):
     list of feature names with information about the candidate documents as input.
     """
 
-    query_document_id: int
+    d3_document_id: int
     documents_data: pd.DataFrame
     info_cols: list[str]
     query_document: DocumentInfo = field(init=False)
@@ -37,14 +37,14 @@ class ModelDataConstructor(ABC):
 
     def collect_query_document(self) -> DocumentInfo:
         """Extract and collect the query document information from the documents data."""
-        query_document_title = str(self.documents_data.loc[self.query_document_id, "title"])
-        query_document_author = str(self.documents_data.loc[self.query_document_id, "author"])
+        query_document_title = str(self.documents_data.loc[self.d3_document_id, "title"])
+        query_document_author = str(self.documents_data.loc[self.d3_document_id, "author"])
         query_document_labels = cast(
-            list[str], self.documents_data.loc[self.query_document_id, "arxiv_labels"]
+            list[str], self.documents_data.loc[self.d3_document_id, "arxiv_labels"]
         )
 
         return DocumentInfo(
-            document_id=self.query_document_id,
+            d3_document_id=self.d3_document_id,
             title=query_document_title,
             author=query_document_author,
             arxiv_labels=query_document_labels,
@@ -52,7 +52,7 @@ class ModelDataConstructor(ABC):
 
     def exclude_query_document(self, df: pd.DataFrame) -> pd.DataFrame:
         """Exclude the query document from the documents data."""
-        return df.loc[df.index != self.query_document_id]
+        return df.loc[df.index != self.d3_document_id]
 
     def filter_documents_data(self) -> pd.DataFrame:
         """
@@ -103,7 +103,7 @@ class ModelDataConstructor(ABC):
         return pd.DataFrame(
             [
                 {
-                    "document_id": document_score.document_info.document_id,
+                    "document_id": document_score.document_info.d3_document_id,
                     "score": document_score.score,
                 }
                 for document_score in document_scores
@@ -144,9 +144,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
         converts them to a dataframe with a single `score` column and the document ids
         as index.
         """
-        document_scores: list[DocumentScore] = citation_method_data.loc[
-            self.query_document_id
-        ].item()
+        document_scores: list[DocumentScore] = citation_method_data.loc[self.d3_document_id].item()
 
         return self.document_scores_to_frame(document_scores)
 
@@ -217,7 +215,7 @@ class LanguageModelDataConstructor(ModelDataConstructor):
         `cosine_similarity` column and the document ids as index.
         """
         document_scores: list[DocumentScore] = self.cosine_similarities.loc[
-            self.query_document_id
+            self.d3_document_id
         ].item()
 
         return self.document_scores_to_frame(document_scores).rename(

@@ -12,8 +12,8 @@ from readnext.modeling import (
 def test_initialization(citation_model_data_constructor: CitationModelDataConstructor) -> None:
     assert isinstance(citation_model_data_constructor, CitationModelDataConstructor)
 
-    assert isinstance(citation_model_data_constructor.query_document_id, int)
-    assert citation_model_data_constructor.query_document_id == 546182
+    assert isinstance(citation_model_data_constructor.d3_document_id, int)
+    assert citation_model_data_constructor.d3_document_id == 546182
 
     assert isinstance(citation_model_data_constructor.documents_data, pd.DataFrame)
     assert citation_model_data_constructor.documents_data.shape[1] == 26
@@ -30,8 +30,8 @@ def test_initialization(citation_model_data_constructor: CitationModelDataConstr
 def test_collect_query_document(
     citation_model_data_constructor: CitationModelDataConstructor,
 ) -> None:
-    assert isinstance(citation_model_data_constructor.query_document.document_id, int)
-    assert citation_model_data_constructor.query_document.document_id == 546182
+    assert isinstance(citation_model_data_constructor.query_document.d3_document_id, int)
+    assert citation_model_data_constructor.query_document.d3_document_id == 546182
 
     assert isinstance(citation_model_data_constructor.query_document.title, str)
     assert (
@@ -54,7 +54,7 @@ def test_exclude_query_document(
     )
 
     assert isinstance(excluded_df, pd.DataFrame)
-    assert citation_model_data_constructor.query_document_id not in excluded_df.index
+    assert citation_model_data_constructor.d3_document_id not in excluded_df.index
 
 
 def test_filter_documents_data(
@@ -63,20 +63,20 @@ def test_filter_documents_data(
     filtered_df = citation_model_data_constructor.filter_documents_data()
 
     assert isinstance(filtered_df, pd.DataFrame)
-    assert citation_model_data_constructor.query_document_id not in filtered_df.index
+    assert citation_model_data_constructor.d3_document_id not in filtered_df.index
 
 
 def test_get_info_matrix(citation_model_data_constructor: CitationModelDataConstructor) -> None:
     info_matrix = citation_model_data_constructor.get_info_matrix()
 
     assert isinstance(info_matrix, pd.DataFrame)
-    assert citation_model_data_constructor.query_document_id not in info_matrix.index
+    assert citation_model_data_constructor.d3_document_id not in info_matrix.index
     assert all(col in info_matrix.columns for col in citation_model_data_constructor.info_cols)
 
 
 def test_extend_info_matrix(citation_model_data_constructor: CitationModelDataConstructor) -> None:
     # original query document id is not in citation scores data
-    citation_model_data_constructor.query_document_id = 206594692
+    citation_model_data_constructor.d3_document_id = 206594692
 
     info_matrix = citation_model_data_constructor.get_info_matrix()
     extended_matrix = citation_model_data_constructor.extend_info_matrix(info_matrix)
@@ -118,13 +118,13 @@ def test_document_scores_to_frame(
     document_scores = [
         DocumentScore(
             document_info=DocumentInfo(
-                document_id=1, title="A", author="A.A", arxiv_labels=["cs.CV"]
+                d3_document_id=1, title="A", author="A.A", arxiv_labels=["cs.CV"]
             ),
             score=0.5,
         ),
         DocumentScore(
             document_info=DocumentInfo(
-                document_id=2, title="B", author="B.B", arxiv_labels=["stat.ML"]
+                d3_document_id=2, title="B", author="B.B", arxiv_labels=["stat.ML"]
             ),
             score=0.3,
         ),

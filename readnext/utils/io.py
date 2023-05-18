@@ -6,14 +6,16 @@ import pandas as pd
 
 from readnext.utils.decorators import (
     dataframe_loader,
-    dataframe_writer,
+    # dataframe_writer,
     object_loader,
-    object_writer,
 )
 
 
-@object_writer
-def write_object_to_pickle(obj: Any, path: Path) -> None:
+# @object_writer
+def write_object_to_pickle(
+    obj: Any,
+    path: Path,
+) -> None:
     """Write any Python object to a pickle file."""
     with path.open("wb") as f:
         pickle.dump(obj, f)
@@ -26,8 +28,11 @@ def load_object_from_pickle(path: Path) -> Any:
         return pickle.load(f)  # type: ignore
 
 
-@dataframe_writer
-def write_df_to_pickle(df: pd.DataFrame, path: Path) -> None:
+# @dataframe_writer
+def write_df_to_pickle(
+    df: pd.DataFrame,
+    path: Path,
+) -> None:
     """Write a Pandas DataFrame to a pickle file."""
     df.to_pickle(path)
 

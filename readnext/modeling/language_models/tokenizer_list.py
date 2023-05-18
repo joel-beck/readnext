@@ -127,11 +127,13 @@ class SpacyTokenizer(ListTokenizer):
         tokenized_abstracts_mapping = {}
 
         with setup_progress_bar() as progress_bar:
-            for document_id, abstract in progress_bar.track(
-                zip(self.documents_info.document_ids, self.documents_info.abstracts),
-                total=len(self.documents_info.document_ids),
+            for d3_document_id, abstract in progress_bar.track(
+                zip(self.documents_info.d3_document_ids, self.documents_info.abstracts),
+                total=len(self.documents_info.d3_document_ids),
                 description=f"{self.__class__.__name__}:",
             ):
-                tokenized_abstracts_mapping[document_id] = self.tokenize_single_document(abstract)
+                tokenized_abstracts_mapping[d3_document_id] = self.tokenize_single_document(
+                    abstract
+                )
 
         return tokenized_abstracts_mapping

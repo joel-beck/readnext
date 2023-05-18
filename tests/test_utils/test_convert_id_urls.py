@@ -10,7 +10,7 @@ from readnext.utils import (
 
 @pytest.fixture
 def semanticscholar_url() -> str:
-    return "https://semanticscholar.org/paper/5cc2cfb77c9643760f4e7e18"
+    return "https://www.semanticscholar.org/paper/5cc2cfb77c9643760f4e7e18"
 
 
 @pytest.fixture
@@ -36,7 +36,8 @@ def test_get_semanticscholar_id_from_semanticscholar_url(
         get_semanticscholar_id_from_semanticscholar_url(semanticscholar_url) == semanticscholar_id
     )
     assert (
-        get_semanticscholar_id_from_semanticscholar_url("https://semanticscholar.org/paper/") == ""
+        get_semanticscholar_id_from_semanticscholar_url("https://www.semanticscholar.org/paper/")
+        == ""
     )
     assert get_semanticscholar_id_from_semanticscholar_url("") == ""
 

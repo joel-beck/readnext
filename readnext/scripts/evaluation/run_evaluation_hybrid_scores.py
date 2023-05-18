@@ -6,6 +6,10 @@ both hybrid recommender component orders for a given query document.
 import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
+from readnext.data import (
+    add_feature_rank_cols,
+    set_missing_publication_dates_to_max_rank,
+)
 from readnext.evaluation.metrics import AveragePrecision
 from readnext.evaluation.scoring import HybridScore, HybridScorer, compare_hybrid_scores
 from readnext.modeling import (
@@ -14,22 +18,18 @@ from readnext.modeling import (
     LanguageModelData,
     LanguageModelDataConstructor,
 )
-from readnext.modeling.citation_models import (
-    add_feature_rank_cols,
-    set_missing_publication_dates_to_max_rank,
-)
 from readnext.utils import load_df_from_pickle
 
 
 def compare_hybrid_scores_by_document_id(
-    query_document_id: int,
+    query_d3_document_id: int,
     documents_data: pd.DataFrame,
     co_citation_analysis_scores: pd.DataFrame,
     bibliographic_coupling_scores: pd.DataFrame,
 ) -> pd.DataFrame:
     # SECTION: Citation Models
     citation_model_data_constructor = CitationModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_data.pipe(add_feature_rank_cols).pipe(
             set_missing_publication_dates_to_max_rank
         ),
@@ -45,7 +45,7 @@ def compare_hybrid_scores_by_document_id(
         ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl
     )
     tfidf_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=tfidf_cosine_similarities_most_cited,
     )
@@ -56,7 +56,7 @@ def compare_hybrid_scores_by_document_id(
         ResultsPaths.language_models.bm25_cosine_similarities_most_cited_pkl
     )
     bm25_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=bm25_cosine_similarities_most_cited,
     )
@@ -67,7 +67,7 @@ def compare_hybrid_scores_by_document_id(
         ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl
     )
     word2vec_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=word2vec_cosine_similarities_most_cited,
     )
@@ -78,7 +78,7 @@ def compare_hybrid_scores_by_document_id(
         ResultsPaths.language_models.glove_cosine_similarities_most_cited_pkl
     )
     glove_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=glove_cosine_similarities_most_cited,
     )
@@ -89,7 +89,7 @@ def compare_hybrid_scores_by_document_id(
         ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl
     )
     fasttext_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=fasttext_cosine_similarities_most_cited,
     )
@@ -100,7 +100,7 @@ def compare_hybrid_scores_by_document_id(
         ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl
     )
     bert_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=bert_cosine_similarities_most_cited,
     )
@@ -111,7 +111,7 @@ def compare_hybrid_scores_by_document_id(
         ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl
     )
     scibert_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=scibert_cosine_similarities_most_cited,
     )
@@ -122,7 +122,7 @@ def compare_hybrid_scores_by_document_id(
         ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl
     )
     longformer_data_constructor = LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=longformer_cosine_similarities_most_cited,
     )
@@ -245,8 +245,8 @@ def compare_hybrid_scores_by_document_id(
             scibert_hybrid_score,
             longformer_hybrid_score,
         )
-        .assign(query_document_id=query_document_id)
-        .set_index("query_document_id")
+        .assign(query_d3_document_id=query_d3_document_id)
+        .set_index("query_d3_document_id")
         .rename_axis(index="Query Document ID")
     )
 
@@ -272,12 +272,12 @@ def main() -> None:
     average_precision_scores = pd.concat(
         [
             compare_hybrid_scores_by_document_id(
-                query_document_id,
+                query_d3_document_id,
                 documents_authors_labels_citations_most_cited,
                 co_citation_analysis_scores_most_cited,
                 bibliographic_coupling_scores_most_cited,
             )
-            for query_document_id in documents_authors_labels_citations_most_cited.head(
+            for query_d3_document_id in documents_authors_labels_citations_most_cited.head(
                 5
             ).index.to_numpy()
         ]

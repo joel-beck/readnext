@@ -51,7 +51,7 @@ def test_co_citation_analysis_scores_most_cited(
 
     unique_index_ids = set(co_citation_analysis_scores_most_cited.index.tolist())
     unique_document_ids = {
-        document_score.document_info.document_id for document_score in first_document_scores
+        document_score.document_info.d3_document_id for document_score in first_document_scores
     }
     assert len(unique_index_ids - unique_document_ids) == 1
 
@@ -63,7 +63,7 @@ def test_co_citation_analysis_scores_most_cited(
     assert isinstance(first_document_info, DocumentInfo)
 
     # check that only document_id of document_info is set
-    assert isinstance(first_document_info.document_id, int)
+    assert isinstance(first_document_info.d3_document_id, int)
     assert first_document_info.title == ""
     assert first_document_info.author == ""
     assert first_document_info.abstract == ""
@@ -99,7 +99,7 @@ def test_bibliographic_coupling_scores_most_cited(
 
     unique_index_ids = set(bibliographic_coupling_scores_most_cited.index.tolist())
     unique_document_ids = {
-        document_score.document_info.document_id for document_score in first_document_scores
+        document_score.document_info.d3_document_id for document_score in first_document_scores
     }
     assert len(unique_index_ids - unique_document_ids) == 1
 
@@ -111,7 +111,7 @@ def test_bibliographic_coupling_scores_most_cited(
     assert isinstance(first_document_info, DocumentInfo)
 
     # check that only document_id of document_info is set
-    assert isinstance(first_document_info.document_id, int)
+    assert isinstance(first_document_info.d3_document_id, int)
     assert first_document_info.title == ""
     assert first_document_info.author == ""
     assert first_document_info.abstract == ""

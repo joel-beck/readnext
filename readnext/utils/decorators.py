@@ -21,6 +21,7 @@ def writing_message(path: Path, data_type: Any) -> str:
     return f"Writing {data_type} to {path.name}..."
 
 
+# TODO: Type correctly to identify multiple arguments of wrapped function correctly!
 def decorator_factory(
     func: Callable,
     data_type: Literal["Object", "Data Frame"],
@@ -29,7 +30,7 @@ def decorator_factory(
     @functools.wraps(func)
     def wrapper(path: Path, *args: Any, **kwargs: Any) -> Any:
         message_func = loading_message if operation == Operation.LOADING else writing_message
-        print(message_func(path, data_type), end=" ")
+        print(message_func(path=path, data_type=data_type), end=" ")
 
         result = func(path, *args, **kwargs)
 

@@ -12,8 +12,8 @@ from readnext.modeling import DocumentInfo, DocumentScore
 
 def find_top_n_matches_single_document(
     input_df: pd.DataFrame,
-    document_ids: list[int],
-    query_document_id: int,
+    candidate_d3_document_ids: list[int],
+    query_d3_document_id: int,
     pairwise_metric: PairwiseMetric,
     n: int,
 ) -> list[DocumentScore]:
@@ -21,11 +21,11 @@ def find_top_n_matches_single_document(
     Find the n documents with the highest pairwise score for a single query document.
     """
     scores = []
-    for document_id in document_ids:
-        if document_id == query_document_id:
+    for d3_document_id in candidate_d3_document_ids:
+        if d3_document_id == query_d3_document_id:
             continue
-        document_info = DocumentInfo(document_id=document_id)
-        score = pairwise_metric.from_df(input_df, query_document_id, document_id)
+        document_info = DocumentInfo(d3_document_id=d3_document_id)
+        score = pairwise_metric.from_df(input_df, query_d3_document_id, d3_document_id)
         scores.append(DocumentScore(document_info=document_info, score=score))
 
     return sorted(scores, key=lambda x: x.score, reverse=True)[:n]
@@ -43,14 +43,14 @@ def precompute_pairwise_scores(
         n = len(input_df)
 
     tqdm.pandas()
-    document_ids = input_df["document_id"].tolist()
+    candidate_d3_document_ids = input_df["document_id"].tolist()
 
     return (
-        pd.DataFrame(data=document_ids, columns=["document_id"])
+        pd.DataFrame(data=candidate_d3_document_ids, columns=["document_id"])
         .assign(
             scores=lambda df: df["document_id"].progress_apply(
-                lambda query_document_id: find_top_n_matches_single_document(
-                    input_df, document_ids, query_document_id, pairwise_metric, n
+                lambda query_d3_document_id: find_top_n_matches_single_document(
+                    input_df, candidate_d3_document_ids, query_d3_document_id, pairwise_metric, n
                 )
             )
         )

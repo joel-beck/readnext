@@ -59,8 +59,8 @@ def preprocess_document_chunk(filepath: Path, chunk_index: int) -> None:
     ).loc[lambda df: df["arxiv_id"].notna()]
 
     write_df_to_pickle(
-        documents_long_format_arxiv,
         Path(f"{DataPaths.d3.documents.preprocessed_chunks_stem}_{chunk_index}.pkl"),
+        documents_long_format_arxiv,
     )
 
 

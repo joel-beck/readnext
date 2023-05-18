@@ -84,12 +84,12 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
         embeddings_mapping = {}
 
         with setup_progress_bar() as progress_bar:
-            for document_id, tokens_tensor in progress_bar.track(
+            for d3_document_id, tokens_tensor in progress_bar.track(
                 self.tokens_tensor_mapping.items(),
                 total=len(self.tokens_tensor_mapping),
                 description=f"{self.__class__.__name__}:",
             ):
-                embeddings_mapping[document_id] = self.compute_embedding_single_document(
+                embeddings_mapping[d3_document_id] = self.compute_embedding_single_document(
                     tokens_tensor
                 )
 

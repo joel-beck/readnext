@@ -28,4 +28,4 @@ def overwrite_collect_query_document(response: SemanticScholarResponse) -> Docum
     title = response.title if response.title is not None else ""
     abstract = response.abstract if response.abstract is not None else ""
 
-    return DocumentInfo(document_id=-1, title=title, abstract=abstract)
+    return DocumentInfo(d3_document_id=-1, title=title, abstract=abstract)

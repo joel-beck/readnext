@@ -45,6 +45,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
     def __post_init__(self) -> None:
         self.semanticscholar_request = SemanticscholarRequest()
         self.response = self.send_semanticscholar_request()
+        super().__post_init__()
 
     def send_semanticscholar_request(self) -> SemanticScholarResponse:
         if self.semanticscholar_id is not None:
@@ -63,34 +64,42 @@ class UnseenPaperAttributeGetter(AttributeGetter):
 
     def get_identifier_from_semanticscholar_id(self, semanticscholar_id: str) -> DocumentIdentifier:
         return DocumentIdentifier(
+            d3_document_id=-1,
             semanticscholar_id=semanticscholar_id,
             semanticscholar_url=get_semanticscholar_url_from_semanticscholar_id(semanticscholar_id),
-            arxiv_id="",
-            arxiv_url="",
+            arxiv_id=self.response.arxiv_id,
+            arxiv_url=get_arxiv_url_from_arxiv_id(self.response.arxiv_id),
         )
 
     def get_identifier_from_semanticscholar_url(
         self, semanticscholar_url: str
     ) -> DocumentIdentifier:
         return DocumentIdentifier(
+            d3_document_id=-1,
             semanticscholar_id=get_semanticscholar_id_from_semanticscholar_url(semanticscholar_url),
             semanticscholar_url=semanticscholar_url,
-            arxiv_id="",
-            arxiv_url="",
+            arxiv_id=self.response.arxiv_id,
+            arxiv_url=get_arxiv_url_from_arxiv_id(self.response.arxiv_id),
         )
 
     def get_identifier_from_arxiv_id(self, arxiv_id: str) -> DocumentIdentifier:
         return DocumentIdentifier(
-            semanticscholar_id="",
-            semanticscholar_url="",
+            d3_document_id=-1,
+            semanticscholar_id=self.response.semanticscholar_id,
+            semanticscholar_url=get_semanticscholar_url_from_semanticscholar_id(
+                self.response.semanticscholar_id
+            ),
             arxiv_id=arxiv_id,
             arxiv_url=get_arxiv_url_from_arxiv_id(arxiv_id),
         )
 
     def get_identifier_from_arxiv_url(self, arxiv_url: str) -> DocumentIdentifier:
         return DocumentIdentifier(
-            semanticscholar_id="",
-            semanticscholar_url="",
+            d3_document_id=-1,
+            semanticscholar_id=self.response.semanticscholar_id,
+            semanticscholar_url=get_semanticscholar_url_from_semanticscholar_id(
+                self.response.semanticscholar_id
+            ),
             arxiv_id=get_arxiv_id_from_arxiv_url(arxiv_url),
             arxiv_url=arxiv_url,
         )
@@ -118,8 +127,8 @@ class UnseenPaperAttributeGetter(AttributeGetter):
     def get_co_citation_analysis_scores(self) -> pd.DataFrame:
         common_citations_scores: list[DocumentScore] = []
 
-        for document_id, candidate_citation_urls in self.documents_data["citations"].items():
-            document_info = DocumentInfo(document_id=document_id)  #   # type: ignore
+        for d3_document_id, candidate_citation_urls in self.documents_data["citations"].items():
+            document_info = DocumentInfo(d3_document_id=d3_document_id)  # type: ignore
 
             query_citation_urls = self.get_query_citation_urls()
             common_citation_urls = CountCommonCitations.count_common_values(
@@ -136,8 +145,8 @@ class UnseenPaperAttributeGetter(AttributeGetter):
     def get_bibliographic_coupling_scores(self) -> pd.DataFrame:
         common_references_scores: list[DocumentScore] = []
 
-        for document_id, candidate_reference_urls in self.documents_data["references"].items():
-            document_info = DocumentInfo(document_id=document_id)  # type: ignore
+        for d3_document_id, candidate_reference_urls in self.documents_data["references"].items():
+            document_info = DocumentInfo(d3_document_id=d3_document_id)  # type: ignore
 
             query_reference_urls = self.get_query_reference_urls()
             common_references = CountCommonReferences.count_common_values(
@@ -154,7 +163,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
     def get_citation_model_data(self) -> CitationModelData:
         citation_model_data_constructor = QueryCitationModelDataConstructor(
             response=self.response,
-            query_document_id=-1,
+            d3_document_id=-1,
             documents_data=self.documents_data.pipe(add_feature_rank_cols)
             .pipe(add_feature_rank_cols)
             .pipe(set_missing_publication_dates_to_max_rank),
@@ -169,7 +178,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
         assert self.response.abstract is not None
 
         return DocumentInfo(
-            document_id=-1,
+            d3_document_id=-1,
             title=self.response.title,
             abstract=self.response.abstract,
         )
@@ -186,7 +195,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
         for candidate_document_id, candidate_embedding in zip(
             candidate_embeddings["document_id"], candidate_embeddings["embedding"]
         ):
-            candidate_document_info = DocumentInfo(document_id=candidate_document_id)
+            candidate_document_info = DocumentInfo(d3_document_id=candidate_document_id)
             cosine_similarity = CosineSimilarity.score(query_embedding, candidate_embedding)
 
             document_score = DocumentScore(
@@ -201,7 +210,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
     def get_language_model_data(self) -> LanguageModelData:
         language_model_data_constructor = QueryLanguageModelDataConstructor(
             response=self.response,
-            query_document_id=-1,
+            d3_document_id=-1,
             documents_data=self.documents_data,
             cosine_similarities=self.get_cosine_similarities(),
         )

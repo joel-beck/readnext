@@ -12,7 +12,6 @@ import pandas as pd
 from readnext.config import DataPaths, ResultsPaths
 from readnext.utils import (
     load_df_from_pickle,
-    setup_progress_bar,
     slice_mapping,
     write_df_to_pickle,
     write_object_to_pickle,
@@ -51,24 +50,21 @@ def main() -> None:
 
     all_paths = [documents_data_most_cited_path, *results_paths]
 
-    with setup_progress_bar() as progress_bar:
-        for path in progress_bar.track(
-            all_paths, total=len(all_paths), description="Storing Test Data..."
-        ):
-            destination_path = test_data_dirpath / f"test_{path.name}"
+    for path in all_paths:
+        destination_path = test_data_dirpath / f"test_{path.name}"
 
-            # consider only pickle files
-            if destination_path.suffix != ".pkl":
-                continue
+        # consider only pickle files
+        if destination_path.suffix != ".pkl":
+            continue
 
-            obj = load_df_from_pickle(path)
+        obj = load_df_from_pickle(path)
 
-            if isinstance(obj, pd.DataFrame):
-                write_df_to_pickle(obj.head(TEST_DATA_SIZE), destination_path)
-                continue
+        if isinstance(obj, pd.DataFrame):
+            write_df_to_pickle(obj.head(TEST_DATA_SIZE), destination_path)
+            continue
 
-            if isinstance(obj, dict):
-                write_object_to_pickle(slice_mapping(obj, size=TEST_DATA_SIZE), destination_path)
+        if isinstance(obj, dict):
+            write_object_to_pickle(slice_mapping(obj, size=TEST_DATA_SIZE), destination_path)
 
 
 if __name__ == "__main__":

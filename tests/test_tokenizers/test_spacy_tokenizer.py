@@ -97,7 +97,7 @@ def test_tokenize(spacy_tokenizer: SpacyTokenizer, tokenized_abstracts: list[lis
 def test_tokenize_empty_abstract(spacy_model: Language) -> None:
     documents_info = DocumentsInfo(
         [
-            DocumentInfo(document_id=1, title="Empty paper", abstract=""),
+            DocumentInfo(d3_document_id=1, title="Empty paper", abstract=""),
         ]
     )
 

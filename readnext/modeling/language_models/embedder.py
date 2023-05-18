@@ -113,12 +113,12 @@ class TFIDFEmbedder(Embedder):
         embeddings_mapping = {}
 
         with setup_progress_bar() as progress_bar:
-            for document_id, document_tokens in progress_bar.track(
+            for d3_document_id, document_tokens in progress_bar.track(
                 self.tokens_mapping.items(),
                 total=len(self.tokens_mapping),
                 description=f"{self.__class__.__name__}:",
             ):
-                embeddings_mapping[document_id] = self.compute_embedding_single_document(
+                embeddings_mapping[d3_document_id] = self.compute_embedding_single_document(
                     document_tokens
                 )
 
@@ -160,12 +160,12 @@ class GensimEmbedder(Embedder):
         embeddings_mapping = {}
 
         with setup_progress_bar() as progress_bar:
-            for document_id, tokens in progress_bar.track(
+            for d3_document_id, tokens in progress_bar.track(
                 self.tokens_mapping.items(),
                 total=len(self.tokens_mapping),
                 description=f"{self.__class__.__name__}:",
             ):
-                embeddings_mapping[document_id] = self.compute_embedding_single_document(tokens)
+                embeddings_mapping[d3_document_id] = self.compute_embedding_single_document(tokens)
 
         return embeddings_mapping
 

@@ -194,7 +194,7 @@ def documents_info() -> DocumentsInfo:
     return DocumentsInfo(
         [
             DocumentInfo(
-                document_id=1,
+                d3_document_id=1,
                 title="Title 1",
                 author="Author 1",
                 abstract="""
@@ -203,7 +203,7 @@ def documents_info() -> DocumentsInfo:
                 """,
             ),
             DocumentInfo(
-                document_id=2,
+                d3_document_id=2,
                 title="Title 2",
                 author="Author 2",
                 abstract="""
@@ -212,7 +212,7 @@ def documents_info() -> DocumentsInfo:
                 """,
             ),
             DocumentInfo(
-                document_id=3,
+                d3_document_id=3,
                 title="Title 3",
                 author="Author 3",
                 abstract="""
@@ -225,7 +225,7 @@ def documents_info() -> DocumentsInfo:
     )
 
 
-# query_id is modified by some tests, set `scope="session"` to provide a new instance to
+# query_d3_document_id is modified by some tests, set `scope="session"` to provide a new instance to
 # each test function
 @pytest.fixture
 def citation_model_data_constructor(
@@ -233,10 +233,10 @@ def citation_model_data_constructor(
     test_co_citation_analysis_scores_most_cited: pd.DataFrame,
     test_bibliographic_coupling_scores_most_cited: pd.DataFrame,
 ) -> CitationModelDataConstructor:
-    query_document_id = 546182
+    query_d3_document_id = 546182
 
     return CitationModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=test_documents_authors_labels_citations_most_cited.pipe(
             add_feature_rank_cols
         ).pipe(set_missing_publication_dates_to_max_rank),
@@ -245,17 +245,17 @@ def citation_model_data_constructor(
     )
 
 
-# query_id is modified by some tests, set `scope="session"` to provide a new instance to
+# query_d3_document_id is modified by some tests, set `scope="session"` to provide a new instance to
 # each test function
 @pytest.fixture
 def language_model_data_constructor(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
     test_tfidf_cosine_similarities_most_cited: pd.DataFrame,
 ) -> LanguageModelDataConstructor:
-    query_document_id = 546182
+    query_d3_document_id = 546182
 
     return LanguageModelDataConstructor(
-        query_document_id=query_document_id,
+        d3_document_id=query_d3_document_id,
         documents_data=test_documents_authors_labels_citations_most_cited.pipe(
             add_feature_rank_cols
         ).pipe(set_missing_publication_dates_to_max_rank),
@@ -263,7 +263,7 @@ def language_model_data_constructor(
     )
 
 
-# query_id is modified by some tests, set `scope="session"` to provide a new instance to
+# query_d3_document_id is modified by some tests, set `scope="session"` to provide a new instance to
 # each test function
 @pytest.fixture
 def citation_model_data_constructor_new_document_id(
@@ -271,18 +271,18 @@ def citation_model_data_constructor_new_document_id(
 ) -> CitationModelDataConstructor:
     # original query document id is not in co-citation analysis scores and bibliographic
     # coupling scores data
-    citation_model_data_constructor.query_document_id = 206594692
+    citation_model_data_constructor.d3_document_id = 206594692
     return citation_model_data_constructor
 
 
-# query_id is modified by some tests, set `scope="session"` to provide a new instance to
+# query_d3_document_id is modified by some tests, set `scope="session"` to provide a new instance to
 # each test function
 @pytest.fixture
 def language_model_data_constructor_new_document_id(
     language_model_data_constructor: LanguageModelDataConstructor,
 ) -> LanguageModelDataConstructor:
     # original query document id is not in cosine similarity scores data
-    language_model_data_constructor.query_document_id = 206594692
+    language_model_data_constructor.d3_document_id = 206594692
     return language_model_data_constructor
 
 

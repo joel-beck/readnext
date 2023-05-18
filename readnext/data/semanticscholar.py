@@ -3,7 +3,6 @@ from dataclasses import dataclass, field
 
 import requests
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field
 from typing_extensions import TypedDict
 
 from readnext.utils import (
@@ -22,20 +21,29 @@ class SemanticScholarReference(TypedDict):
     title: str | None
 
 
+class ExternalIds(TypedDict):
+    ArXiv: str | None
+    DBLP: str | None
+    PubMedCentral: str | None
+
+
 class SemanticScholarJson(TypedDict):
     paperId: str | None  # noqa: N815
     title: str | None
     abstract: str | None
     citations: list[SemanticScholarCitation]
     references: list[SemanticScholarReference]
+    externalIds: ExternalIds  # noqa: N815
 
 
-class SemanticScholarResponse(BaseModel):
-    semanticscholar_id: str | None = Field(alias="paperId")
-    title: str | None
-    abstract: str | None
-    citations: list[SemanticScholarCitation] | None
-    references: list[SemanticScholarReference] | None
+@dataclass(kw_only=True)
+class SemanticScholarResponse:
+    semanticscholar_id: str
+    title: str
+    abstract: str
+    citations: list[SemanticScholarCitation]
+    references: list[SemanticScholarReference]
+    arxiv_id: str
 
 
 @dataclass
@@ -48,8 +56,6 @@ class SemanticscholarRequest:
         self.semanticscholar_api_key = os.getenv("SEMANTICSCHOLAR_API_KEY", "")
         self.request_headers = {"x-api-key": self.semanticscholar_api_key}
 
-    # TODO: Explore more fields from request. Is there a way to get the arxiv id when
-    # the semanticscholar id is passend and vice versa?
     def get_request_url_from_semanticscholar_id(self, semanticscholar_id: str) -> str:
         return f"https://api.semanticscholar.org/graph/v1/paper/{semanticscholar_id}?fields=abstract,citations,references,title"
 
@@ -61,14 +67,18 @@ class SemanticscholarRequest:
             request_url, headers=self.request_headers
         ).json()
 
-        # return SemanticScholarResponse(
-        #     semanticscholar_id=response.get("paperId", None),
-        #     title=response.get("title", None),
-        #     abstract=response.get("abstract", None),
-        #     citations=response.get("citations", None),
-        #     references=response.get("references", None),
-        # )
-        return SemanticScholarResponse(**response)
+        arxiv_id = ""
+        if (external_ids := response.get("externalIds", None)) is not None:
+            arxiv_id = external_ids["ArXiv"] if external_ids["ArXiv"] is not None else ""
+
+        return SemanticScholarResponse(
+            semanticscholar_id=response["paperId"] if response["paperId"] is not None else "",
+            title=response["title"] if response["title"] is not None else "",
+            abstract=response["abstract"] if response["abstract"] is not None else "",
+            citations=response["citations"],
+            references=response["references"],
+            arxiv_id=arxiv_id,
+        )
 
     def from_semanticscholar_id(self, semanticscholar_id: str) -> SemanticScholarResponse:
         request_url = self.get_request_url_from_semanticscholar_id(semanticscholar_id)

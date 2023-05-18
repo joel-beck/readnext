@@ -39,14 +39,14 @@ def test_find_top_n_matches_single_document(
     document_ids = (
         test_documents_authors_labels_citations_most_cited["document_id"].iloc[:8].tolist()
     )
-    query_document_id = document_ids[0]
+    query_d3_document_id = document_ids[0]
     pairwise_metric = CountCommonCitations()
     n = 5
 
     top_n_matches = find_top_n_matches_single_document(
         test_documents_authors_labels_citations_most_cited,
         document_ids,
-        query_document_id,
+        query_d3_document_id,
         pairwise_metric,
         n,
     )
@@ -57,7 +57,7 @@ def test_find_top_n_matches_single_document(
     top_match = top_n_matches[0]
     assert isinstance(top_match, DocumentScore)
     assert isinstance(top_match.document_info, DocumentInfo)
-    assert isinstance(top_match.document_info.document_id, int)
+    assert isinstance(top_match.document_info.d3_document_id, int)
     assert top_match.document_info.title == ""
     assert top_match.document_info.author == ""
     assert top_match.document_info.arxiv_labels == []
@@ -81,7 +81,7 @@ def test_precompute_co_citations(co_citation_analysis_scores: pd.DataFrame) -> N
     first_score = first_scores[0]
     assert isinstance(first_score, DocumentScore)
     assert isinstance(first_score.document_info, DocumentInfo)
-    assert isinstance(first_score.document_info.document_id, int)
+    assert isinstance(first_score.document_info.d3_document_id, int)
     assert first_score.document_info.title == ""
     assert first_score.document_info.author == ""
     assert first_score.document_info.arxiv_labels == []
@@ -103,7 +103,7 @@ def test_precompute_co_references(bibliographic_coupling_scores: pd.DataFrame) -
     first_score = first_scores[0]
     assert isinstance(first_score, DocumentScore)
     assert isinstance(first_score.document_info, DocumentInfo)
-    assert isinstance(first_score.document_info.document_id, int)
+    assert isinstance(first_score.document_info.d3_document_id, int)
     assert first_score.document_info.title == ""
     assert first_score.document_info.author == ""
     assert first_score.document_info.arxiv_labels == []
@@ -125,7 +125,7 @@ def test_precompute_cosine_similarities(tfidf_embeddings_mapping: pd.DataFrame) 
     first_score = first_scores[0]
     assert isinstance(first_score, DocumentScore)
     assert isinstance(first_score.document_info, DocumentInfo)
-    assert isinstance(first_score.document_info.document_id, int)
+    assert isinstance(first_score.document_info.d3_document_id, int)
     assert first_score.document_info.title == ""
     assert first_score.document_info.author == ""
     assert first_score.document_info.arxiv_labels == []

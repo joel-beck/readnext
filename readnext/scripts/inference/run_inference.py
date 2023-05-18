@@ -89,6 +89,7 @@ def main() -> None:
     arxiv_url = "https://arxiv.org/abs/2303.08774"
     arxiv_id = get_arxiv_id_from_arxiv_url(arxiv_url)
 
+    # TODO: Can the console output of loading bert model be suppressed?
     inference_data_unseen_constructor_arxiv_id = InferenceDataConstructor(
         arxiv_url=arxiv_url,
         language_model_choice=LanguageModelChoice.scibert,

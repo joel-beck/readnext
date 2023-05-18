@@ -38,7 +38,9 @@ def main() -> None:
         bert_tokenized_abstracts,
     )
 
-    scibert_tokenizer_transformers = BertTokenizerFast.from_pretrained(ModelVersions.scibert)
+    scibert_tokenizer_transformers = BertTokenizerFast.from_pretrained(
+        ModelVersions.scibert, do_lower_case=True, clean_text=True
+    )
     scibert_tokenizer = BERTTokenizer(documents_info, scibert_tokenizer_transformers)
     scibert_tokenized_abstracts = scibert_tokenizer.tokenize()
     scibert_tokenizer.save_tokens_mapping(

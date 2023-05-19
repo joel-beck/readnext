@@ -1,63 +1,8 @@
-import pytest
-import spacy
 from spacy.language import Language
 from spacy.tokens.doc import Doc
 
-from readnext.config import ModelVersions
 from readnext.modeling import DocumentInfo, DocumentsInfo
 from readnext.modeling.language_models import SpacyTokenizer
-
-
-@pytest.fixture(scope="module")
-def spacy_model() -> Language:
-    return spacy.load(ModelVersions.spacy)
-
-
-@pytest.fixture(scope="module")
-def spacy_tokenizer(documents_info: DocumentsInfo, spacy_model: Language) -> SpacyTokenizer:
-    return SpacyTokenizer(documents_info, spacy_model)
-
-
-@pytest.fixture(scope="module")
-def tokenized_abstracts() -> list[list[str]]:
-    return [
-        [
-            "abstract",
-            "example",
-            "abstract",
-            "character",
-            "contain",
-            "number",
-            "special",
-            "character",
-            "like",
-        ],
-        ["abstract", "example", "abstract", "include", "upper", "case", "letter", "stopword"],
-        [
-            "abstract",
-            "example",
-            "abstract",
-            "mix",
-            "low",
-            "case",
-            "upper",
-            "case",
-            "letter",
-            "punctuation",
-            "bracket",
-            "curly",
-            "brace",
-        ],
-    ]
-
-
-@pytest.fixture(scope="module")
-def tokenized_abstracts_strings() -> list[str]:
-    return [
-        "abstract example abstract character contain number special character like",
-        "abstract example abstract include upper case letter stopword",
-        "abstract example abstract mix low case upper case letter punctuation bracket curly brace",  # noqa: E501
-    ]
 
 
 def test_to_spacy_doc(spacy_tokenizer: SpacyTokenizer, documents_info: DocumentsInfo) -> None:
@@ -70,7 +15,7 @@ def test_to_spacy_doc(spacy_tokenizer: SpacyTokenizer, documents_info: Documents
 def test_clean_spacy_doc(
     spacy_tokenizer: SpacyTokenizer,
     documents_info: DocumentsInfo,
-    tokenized_abstracts: list[list[str]],
+    spacy_tokenized_abstracts: list[list[str]],
 ) -> None:
     docs = [spacy_tokenizer.to_spacy_doc(abstract) for abstract in documents_info.abstracts]
 
@@ -79,10 +24,12 @@ def test_clean_spacy_doc(
     assert all(isinstance(doc, list) for doc in docs_clean)
     assert all(isinstance(token, str) for doc in docs_clean for token in doc)
 
-    assert docs_clean == tokenized_abstracts
+    assert docs_clean == spacy_tokenized_abstracts
 
 
-def test_tokenize(spacy_tokenizer: SpacyTokenizer, tokenized_abstracts: list[list[str]]) -> None:
+def test_tokenize(
+    spacy_tokenizer: SpacyTokenizer, spacy_tokenized_abstracts: list[list[str]]
+) -> None:
     tokens_mapping = spacy_tokenizer.tokenize()
     assert isinstance(tokens_mapping, dict)
 
@@ -91,7 +38,7 @@ def test_tokenize(spacy_tokenizer: SpacyTokenizer, tokenized_abstracts: list[lis
     assert all(isinstance(token, str) for value in tokens_mapping.values() for token in value)
 
     assert list(tokens_mapping.keys()) == [1, 2, 3]
-    assert list(tokens_mapping.values()) == tokenized_abstracts
+    assert list(tokens_mapping.values()) == spacy_tokenized_abstracts
 
 
 def test_tokenize_empty_abstract(spacy_model: Language) -> None:

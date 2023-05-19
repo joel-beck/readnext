@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
-from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from enum import Enum
-from typing import TypeAlias
 
 import numpy as np
 import pandas as pd
@@ -10,12 +8,7 @@ from gensim.models import FastText, KeyedVectors
 
 # do not import from .language_models to avoid circular imports
 from readnext.modeling.language_models.tokenizer_list import Tokens, TokensMapping
-from readnext.utils import setup_progress_bar
-
-Embedding: TypeAlias = np.ndarray
-EmbeddingsMapping: TypeAlias = dict[int, Embedding]
-
-KeywordAlgorithm: TypeAlias = Callable[[Tokens, Sequence[Tokens]], np.ndarray]
+from readnext.utils import EmbeddingsMapping, KeywordAlgorithm, setup_progress_bar
 
 
 class AggregationStrategy(str, Enum):

@@ -1,7 +1,5 @@
 from readnext.modeling.language_models.bm25 import bm25, bm25_idf, bm25_single_term, bm25_tf
 from readnext.modeling.language_models.embedder import (
-    Embedding,
-    EmbeddingsMapping,
     FastTextEmbedder,
     TFIDFEmbedder,
     Word2VecEmbedder,

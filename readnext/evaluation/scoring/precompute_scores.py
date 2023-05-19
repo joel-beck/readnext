@@ -8,6 +8,7 @@ from readnext.evaluation.metrics import (
     PairwiseMetric,
 )
 from readnext.modeling import DocumentInfo, DocumentScore
+from readnext.utils import ScoresFrame
 
 
 def find_top_n_matches_single_document(
@@ -33,7 +34,7 @@ def find_top_n_matches_single_document(
 
 def precompute_pairwise_scores(
     input_df: pd.DataFrame, pairwise_metric: PairwiseMetric, n: int | None
-) -> pd.DataFrame:
+) -> ScoresFrame:
     """
     Precompute and store pairwise scores for all documents in a dataframe with one row
     per query document. The scores are stored as a sorted list of `DocumentScore`
@@ -64,7 +65,7 @@ def precompute_pairwise_scores(
 def precompute_co_citations(
     df: pd.DataFrame,
     n: int | None = None,
-) -> pd.DataFrame:
+) -> ScoresFrame:
     """
     Precompute and store pairwise co-citation scores for all documents in a dataframe
     with one row per query document.
@@ -75,7 +76,7 @@ def precompute_co_citations(
 def precompute_co_references(
     df: pd.DataFrame,
     n: int | None = None,
-) -> pd.DataFrame:
+) -> ScoresFrame:
     """
     Precmopute and store pairwise co-reference scores for all documents in a dataframe
     with one row per query document.
@@ -86,7 +87,7 @@ def precompute_co_references(
 def precompute_cosine_similarities(
     df: pd.DataFrame,
     n: int | None = None,
-) -> pd.DataFrame:
+) -> ScoresFrame:
     """
     Precompute and store pairwise cosine similarity scores for all documents in a
     dataframe with one row per query document.

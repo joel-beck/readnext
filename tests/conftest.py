@@ -2,7 +2,10 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+import spacy
+from spacy.language import Language
 
+from readnext.config import ModelVersions
 from readnext.data import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
@@ -13,8 +16,16 @@ from readnext.modeling import (
     DocumentsInfo,
     LanguageModelDataConstructor,
 )
-from readnext.modeling.language_models import Tokens
-from readnext.utils import load_df_from_pickle, load_object_from_pickle
+from readnext.modeling.language_models import SpacyTokenizer
+from readnext.utils import (
+    EmbeddingsMapping,
+    Tokens,
+    TokensIdMapping,
+    TokensMapping,
+    load_df_from_pickle,
+    load_object_from_pickle,
+    ScoresFrame,
+)
 
 
 @pytest.fixture(scope="session")
@@ -29,49 +40,49 @@ def test_data_size() -> int:
 
 
 @pytest.fixture(scope="session")
-def test_bert_cosine_similarities_most_cited(root_path: Path) -> pd.DataFrame:
+def test_bert_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
     return load_df_from_pickle(
         root_path / "tests" / "data" / "test_bert_cosine_similarities_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_bert_embeddings_mapping_most_cited(root_path: Path) -> dict:
+def test_bert_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_bert_embeddings_mapping_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_bert_tokenized_abstracts_mapping_most_cited(root_path: Path) -> dict:
+def test_bert_tokenized_abstracts_mapping_most_cited(root_path: Path) -> TokensIdMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_bert_tokenized_abstracts_mapping_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_bibliographic_coupling_scores_most_cited(root_path: Path) -> pd.DataFrame:
+def test_bibliographic_coupling_scores_most_cited(root_path: Path) -> ScoresFrame:
     return load_df_from_pickle(
         root_path / "tests" / "data" / "test_bibliographic_coupling_scores_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_bm25_cosine_similarities_most_cited(root_path: Path) -> pd.DataFrame:
+def test_bm25_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
     return load_df_from_pickle(
         root_path / "tests" / "data" / "test_bm25_cosine_similarities_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_bm25_embeddings_mapping_most_cited(root_path: Path) -> dict:
+def test_bm25_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_bm25_embeddings_mapping_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_co_citation_analysis_scores_most_cited(root_path: Path) -> pd.DataFrame:
+def test_co_citation_analysis_scores_most_cited(root_path: Path) -> ScoresFrame:
     return load_df_from_pickle(
         root_path / "tests" / "data" / "test_co_citation_analysis_scores_most_cited.pkl"
     )
@@ -85,108 +96,165 @@ def test_documents_authors_labels_citations_most_cited(root_path: Path) -> pd.Da
 
 
 @pytest.fixture(scope="session")
-def test_fasttext_cosine_similarities_most_cited(root_path: Path) -> pd.DataFrame:
+def test_fasttext_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
     return load_df_from_pickle(
         root_path / "tests" / "data" / "test_fasttext_cosine_similarities_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_fasttext_embeddings_mapping_most_cited(root_path: Path) -> dict:
+def test_fasttext_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_fasttext_embeddings_mapping_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_glove_cosine_similarities_most_cited(root_path: Path) -> pd.DataFrame:
+def test_glove_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
     return load_df_from_pickle(
         root_path / "tests" / "data" / "test_glove_cosine_similarities_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_glove_embeddings_mapping_most_cited(root_path: Path) -> dict:
+def test_glove_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_glove_embeddings_mapping_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_longformer_cosine_similarities_most_cited(root_path: Path) -> pd.DataFrame:
+def test_longformer_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
     return load_df_from_pickle(
         root_path / "tests" / "data" / "test_longformer_cosine_similarities_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_longformer_embeddings_mapping_most_cited(root_path: Path) -> dict:
+def test_longformer_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_longformer_embeddings_mapping_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_longformer_tokenized_abstracts_mapping_most_cited(root_path: Path) -> dict:
+def test_longformer_tokenized_abstracts_mapping_most_cited(root_path: Path) -> TokensIdMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_longformer_tokenized_abstracts_mapping_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_scibert_cosine_similarities_most_cited(root_path: Path) -> pd.DataFrame:
+def test_scibert_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
     return load_df_from_pickle(
         root_path / "tests" / "data" / "test_scibert_cosine_similarities_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_scibert_embeddings_mapping_most_cited(root_path: Path) -> dict:
+def test_scibert_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_scibert_embeddings_mapping_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_scibert_tokenized_abstracts_mapping_most_cited(root_path: Path) -> dict:
+def test_scibert_tokenized_abstracts_mapping_most_cited(root_path: Path) -> TokensIdMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_scibert_tokenized_abstracts_mapping_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_spacy_tokenized_abstracts_mapping_most_cited(root_path: Path) -> pd.DataFrame:
+def test_spacy_tokenized_abstracts_mapping_most_cited(root_path: Path) -> TokensMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_spacy_tokenized_abstracts_mapping_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_tfidf_cosine_similarities_most_cited(root_path: Path) -> pd.DataFrame:
+def test_tfidf_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
     return load_df_from_pickle(
         root_path / "tests" / "data" / "test_tfidf_cosine_similarities_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_tfidf_embeddings_mapping_most_cited(root_path: Path) -> dict:
+def test_tfidf_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_tfidf_embeddings_mapping_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_word2vec_cosine_similarities_most_cited(root_path: Path) -> pd.DataFrame:
+def test_word2vec_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
     return load_df_from_pickle(
         root_path / "tests" / "data" / "test_word2vec_cosine_similarities_most_cited.pkl"
     )
 
 
 @pytest.fixture(scope="session")
-def test_word2vec_embeddings_mapping_most_cited(root_path: Path) -> dict:
+def test_word2vec_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_word2vec_embeddings_mapping_most_cited.pkl"
     )
+
+
+@pytest.fixture(scope="module")
+def spacy_model() -> Language:
+    return spacy.load(ModelVersions.spacy)
+
+
+@pytest.fixture(scope="module")
+def spacy_tokenizer(documents_info: DocumentsInfo, spacy_model: Language) -> SpacyTokenizer:
+    return SpacyTokenizer(documents_info, spacy_model)
+
+
+@pytest.fixture(scope="module")
+def spacy_tokenized_abstracts() -> list[list[str]]:
+    return [
+        [
+            "abstract",
+            "example",
+            "abstract",
+            "character",
+            "contain",
+            "number",
+            "special",
+            "character",
+            "like",
+        ],
+        ["abstract", "example", "abstract", "include", "upper", "case", "letter", "stopword"],
+        [
+            "abstract",
+            "example",
+            "abstract",
+            "mix",
+            "low",
+            "case",
+            "upper",
+            "case",
+            "letter",
+            "punctuation",
+            "bracket",
+            "curly",
+            "brace",
+        ],
+    ]
+
+
+@pytest.fixture(scope="session")
+def document_tokens() -> Tokens:
+    return ["a", "b", "c", "a", "b", "c", "d", "d", "d"]
+
+
+@pytest.fixture(scope="session")
+def document_corpus() -> list[Tokens]:
+    return [
+        ["a", "b", "c", "d", "d", "d"],
+        ["a", "b", "b", "c", "c", "c", "d"],
+        ["a", "a", "a", "b", "c", "d"],
+    ]
 
 
 @pytest.fixture(scope="session")
@@ -230,8 +298,8 @@ def documents_info() -> DocumentsInfo:
 @pytest.fixture
 def citation_model_data_constructor(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
-    test_co_citation_analysis_scores_most_cited: pd.DataFrame,
-    test_bibliographic_coupling_scores_most_cited: pd.DataFrame,
+    test_co_citation_analysis_scores_most_cited: ScoresFrame,
+    test_bibliographic_coupling_scores_most_cited: ScoresFrame,
 ) -> CitationModelDataConstructor:
     query_d3_document_id = 546182
 
@@ -242,24 +310,6 @@ def citation_model_data_constructor(
         ).pipe(set_missing_publication_dates_to_max_rank),
         co_citation_analysis_scores=test_co_citation_analysis_scores_most_cited,
         bibliographic_coupling_scores=test_bibliographic_coupling_scores_most_cited,
-    )
-
-
-# query_d3_document_id is modified by some tests, set `scope="session"` to provide a new instance to
-# each test function
-@pytest.fixture
-def language_model_data_constructor(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
-    test_tfidf_cosine_similarities_most_cited: pd.DataFrame,
-) -> LanguageModelDataConstructor:
-    query_d3_document_id = 546182
-
-    return LanguageModelDataConstructor(
-        d3_document_id=query_d3_document_id,
-        documents_data=test_documents_authors_labels_citations_most_cited.pipe(
-            add_feature_rank_cols
-        ).pipe(set_missing_publication_dates_to_max_rank),
-        cosine_similarities=test_tfidf_cosine_similarities_most_cited,
     )
 
 
@@ -278,23 +328,27 @@ def citation_model_data_constructor_new_document_id(
 # query_d3_document_id is modified by some tests, set `scope="session"` to provide a new instance to
 # each test function
 @pytest.fixture
+def language_model_data_constructor(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_tfidf_cosine_similarities_most_cited: ScoresFrame,
+) -> LanguageModelDataConstructor:
+    query_d3_document_id = 546182
+
+    return LanguageModelDataConstructor(
+        d3_document_id=query_d3_document_id,
+        documents_data=test_documents_authors_labels_citations_most_cited.pipe(
+            add_feature_rank_cols
+        ).pipe(set_missing_publication_dates_to_max_rank),
+        cosine_similarities=test_tfidf_cosine_similarities_most_cited,
+    )
+
+
+# query_d3_document_id is modified by some tests, set `scope="session"` to provide a new instance to
+# each test function
+@pytest.fixture
 def language_model_data_constructor_new_document_id(
     language_model_data_constructor: LanguageModelDataConstructor,
 ) -> LanguageModelDataConstructor:
     # original query document id is not in cosine similarity scores data
     language_model_data_constructor.d3_document_id = 206594692
     return language_model_data_constructor
-
-
-@pytest.fixture(scope="session")
-def document_tokens() -> Tokens:
-    return ["a", "b", "c", "a", "b", "c", "d", "d", "d"]
-
-
-@pytest.fixture(scope="session")
-def document_corpus() -> list[Tokens]:
-    return [
-        ["a", "b", "c", "d", "d", "d"],
-        ["a", "b", "b", "c", "c", "c", "d"],
-        ["a", "a", "a", "b", "c", "d"],
-    ]

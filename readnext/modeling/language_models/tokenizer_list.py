@@ -1,21 +1,18 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TypeAlias
 
 from spacy.language import Language
 from spacy.tokens.doc import Doc
 
 from readnext.modeling.document_info import DocumentsInfo
 from readnext.utils import (
+    Tokens,
+    TokensMapping,
     load_object_from_pickle,
     setup_progress_bar,
     write_object_to_pickle,
 )
-
-# each document is represented as a list of tokens
-Tokens: TypeAlias = list[str]
-TokensMapping: TypeAlias = dict[int, Tokens]
 
 
 @dataclass

@@ -1,6 +1,3 @@
-from collections.abc import Callable
-from typing import TypeAlias
-
 import spacy
 from gensim.models.fasttext import load_facebook_model
 from gensim.models.keyedvectors import KeyedVectors, load_word2vec_format
@@ -11,23 +8,24 @@ from readnext.modeling import DocumentInfo, DocumentsInfo
 from readnext.modeling.language_models import (
     BERTEmbedder,
     BERTTokenizer,
-    Embedding,
     FastTextEmbedder,
     LanguageModelChoice,
     LongformerEmbedder,
     LongformerTokenizer,
     SpacyTokenizer,
     TFIDFEmbedder,
-    TokenIds,
-    Tokens,
-    TokensIdMapping,
-    TokensMapping,
     Word2VecEmbedder,
     bm25,
     tfidf,
 )
-
-QueryEmbeddingFunction: TypeAlias = Callable[[DocumentInfo], Embedding]
+from readnext.utils import (
+    Embedding,
+    QueryEmbeddingFunction,
+    TokenIds,
+    Tokens,
+    TokensIdMapping,
+    TokensMapping,
+)
 
 
 def spacy_load_training_tokens_mapping() -> TokensMapping:

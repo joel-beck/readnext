@@ -1,14 +1,11 @@
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Generic, Literal, TypeAlias, TypeVar
+from typing import Generic, Literal, TypeVar
 
 import numpy as np
 import pandas as pd
-from numpy.typing import NDArray
 
-Vector: TypeAlias = Sequence | NDArray | pd.Series
-EmbeddingVector: TypeAlias = Sequence[float] | NDArray | pd.Series
+from readnext.utils import EmbeddingVector, Vector
 
 TReturn = TypeVar("TReturn", int, float)
 

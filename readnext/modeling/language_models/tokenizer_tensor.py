@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Generic, TypeAlias, TypeVar, cast
+from typing import Generic, TypeVar, cast
 
-import torch
 from transformers import BertTokenizerFast, LongformerTokenizerFast
 
 from readnext.modeling.document_info import DocumentsInfo
@@ -12,11 +11,7 @@ from readnext.utils import (
     load_object_from_pickle,
     write_object_to_pickle,
 )
-
-# each document is represented as a tensor of token ids
-TokenIds: TypeAlias = list[int]
-TokensIdMapping: TypeAlias = dict[int, list[int]]
-TokensTensorMapping: TypeAlias = dict[int, torch.Tensor]
+from readnext.utils.aliases import TokenIds, TokensIdMapping
 
 TTorchTokenizer = TypeVar("TTorchTokenizer", bound=BertTokenizerFast | LongformerTokenizerFast)
 

@@ -1,17 +1,11 @@
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Generic, TypeAlias, TypeVar
+from typing import Generic, TypeVar
 
 import numpy as np
 import pandas as pd
-from numpy.typing import NDArray
 
-IntegerLabelList: TypeAlias = Sequence[int] | NDArray | pd.Series
-IntegerLabelLists: TypeAlias = Sequence[IntegerLabelList]
-
-StringLabelList: TypeAlias = Sequence[str] | pd.Series
-StringLabelLists: TypeAlias = Sequence[StringLabelList] | pd.Series
+from readnext.utils import IntegerLabelList, IntegerLabelLists, StringLabelList, StringLabelLists
 
 TLabelList = TypeVar("TLabelList", IntegerLabelList, StringLabelList)
 TReturn = TypeVar("TReturn", int, float)

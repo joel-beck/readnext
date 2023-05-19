@@ -27,10 +27,8 @@ def bibliographic_coupling_scores(
 
 
 @pytest.fixture
-def tfidf_embeddings_mapping(
-    test_tfidf_embeddings_mapping_most_cited: pd.DataFrame,
-) -> pd.DataFrame:
-    return precompute_cosine_similarities(test_tfidf_embeddings_mapping_most_cited.head(10))
+def tfidf_embeddings(test_tfidf_embeddings_most_cited: pd.DataFrame) -> pd.DataFrame:
+    return precompute_cosine_similarities(test_tfidf_embeddings_most_cited.head(10))
 
 
 def test_find_top_n_matches_single_document(
@@ -112,14 +110,14 @@ def test_precompute_co_references(bibliographic_coupling_scores: pd.DataFrame) -
     assert isinstance(first_score.score, int)
 
 
-def test_precompute_cosine_similarities(tfidf_embeddings_mapping: pd.DataFrame) -> None:
-    assert isinstance(tfidf_embeddings_mapping, pd.DataFrame)
+def test_precompute_cosine_similarities(tfidf_embeddings: pd.DataFrame) -> None:
+    assert isinstance(tfidf_embeddings, pd.DataFrame)
 
-    assert tfidf_embeddings_mapping.shape[1] == 1
-    assert tfidf_embeddings_mapping.columns == ["scores"]
-    assert tfidf_embeddings_mapping.index.name == "document_id"
+    assert tfidf_embeddings.shape[1] == 1
+    assert tfidf_embeddings.columns == ["scores"]
+    assert tfidf_embeddings.index.name == "document_id"
 
-    first_scores = tfidf_embeddings_mapping.iloc[0].item()
+    first_scores = tfidf_embeddings.iloc[0].item()
     assert isinstance(first_scores, list)
 
     first_score = first_scores[0]

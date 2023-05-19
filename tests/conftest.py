@@ -50,6 +50,13 @@ def test_data_size() -> int:
 
 
 @pytest.fixture(scope="session")
+def test_documents_authors_labels_citations_most_cited(root_path: Path) -> pd.DataFrame:
+    return load_df_from_pickle(
+        root_path / "tests" / "data" / "test_documents_authors_labels_citations_most_cited.pkl"
+    )
+
+
+@pytest.fixture(scope="session")
 def test_bert_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
     return load_df_from_pickle(
         root_path / "tests" / "data" / "test_bert_cosine_similarities_most_cited.pkl"
@@ -57,9 +64,9 @@ def test_bert_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
 
 
 @pytest.fixture(scope="session")
-def test_bert_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
+def test_bert_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
-        root_path / "tests" / "data" / "test_bert_embeddings_mapping_most_cited.pkl"
+        root_path / "tests" / "data" / "test_bert_embeddings_most_cited.pkl"
     )
 
 
@@ -85,9 +92,9 @@ def test_bm25_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
 
 
 @pytest.fixture(scope="session")
-def test_bm25_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
+def test_bm25_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
-        root_path / "tests" / "data" / "test_bm25_embeddings_mapping_most_cited.pkl"
+        root_path / "tests" / "data" / "test_bm25_embeddings_most_cited.pkl"
     )
 
 
@@ -99,13 +106,6 @@ def test_co_citation_analysis_scores_most_cited(root_path: Path) -> ScoresFrame:
 
 
 @pytest.fixture(scope="session")
-def test_documents_authors_labels_citations_most_cited(root_path: Path) -> pd.DataFrame:
-    return load_df_from_pickle(
-        root_path / "tests" / "data" / "test_documents_authors_labels_citations_most_cited.pkl"
-    )
-
-
-@pytest.fixture(scope="session")
 def test_fasttext_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
     return load_df_from_pickle(
         root_path / "tests" / "data" / "test_fasttext_cosine_similarities_most_cited.pkl"
@@ -113,9 +113,9 @@ def test_fasttext_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame
 
 
 @pytest.fixture(scope="session")
-def test_fasttext_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
+def test_fasttext_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
-        root_path / "tests" / "data" / "test_fasttext_embeddings_mapping_most_cited.pkl"
+        root_path / "tests" / "data" / "test_fasttext_embeddings_most_cited.pkl"
     )
 
 
@@ -127,9 +127,9 @@ def test_glove_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
 
 
 @pytest.fixture(scope="session")
-def test_glove_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
+def test_glove_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
-        root_path / "tests" / "data" / "test_glove_embeddings_mapping_most_cited.pkl"
+        root_path / "tests" / "data" / "test_glove_embeddings_most_cited.pkl"
     )
 
 
@@ -141,9 +141,9 @@ def test_longformer_cosine_similarities_most_cited(root_path: Path) -> ScoresFra
 
 
 @pytest.fixture(scope="session")
-def test_longformer_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
+def test_longformer_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
-        root_path / "tests" / "data" / "test_longformer_embeddings_mapping_most_cited.pkl"
+        root_path / "tests" / "data" / "test_longformer_embeddings_most_cited.pkl"
     )
 
 
@@ -162,9 +162,9 @@ def test_scibert_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
 
 
 @pytest.fixture(scope="session")
-def test_scibert_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
+def test_scibert_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
-        root_path / "tests" / "data" / "test_scibert_embeddings_mapping_most_cited.pkl"
+        root_path / "tests" / "data" / "test_scibert_embeddings_most_cited.pkl"
     )
 
 
@@ -190,9 +190,9 @@ def test_tfidf_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame:
 
 
 @pytest.fixture(scope="session")
-def test_tfidf_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
+def test_tfidf_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
-        root_path / "tests" / "data" / "test_tfidf_embeddings_mapping_most_cited.pkl"
+        root_path / "tests" / "data" / "test_tfidf_embeddings_most_cited.pkl"
     )
 
 
@@ -204,9 +204,9 @@ def test_word2vec_cosine_similarities_most_cited(root_path: Path) -> ScoresFrame
 
 
 @pytest.fixture(scope="session")
-def test_word2vec_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMapping:
+def test_word2vec_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
-        root_path / "tests" / "data" / "test_word2vec_embeddings_mapping_most_cited.pkl"
+        root_path / "tests" / "data" / "test_word2vec_embeddings_most_cited.pkl"
     )
 
 

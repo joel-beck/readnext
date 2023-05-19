@@ -50,7 +50,7 @@ def main() -> None:
     tfidf_embeddings_mapping = tfidf_embedder.compute_embeddings_mapping()
     write_df_to_pickle(
         embeddings_mapping_to_frame(tfidf_embeddings_mapping),
-        ResultsPaths.language_models.tfidf_embeddings_mapping_most_cited_pkl,
+        ResultsPaths.language_models.tfidf_embeddings_most_cited_pkl,
     )
 
     # interface of tfidf and bm25 is identical, thus the same embedder can be used
@@ -58,7 +58,7 @@ def main() -> None:
     bm25_embeddings_mapping = bm25_embedder.compute_embeddings_mapping()
     write_df_to_pickle(
         embeddings_mapping_to_frame(bm25_embeddings_mapping),
-        ResultsPaths.language_models.bm25_embeddings_mapping_most_cited_pkl,
+        ResultsPaths.language_models.bm25_embeddings_most_cited_pkl,
     )
 
     # requires pre-downloaded model from gensim data repository:
@@ -74,7 +74,7 @@ def main() -> None:
     word2vec_embeddings_mapping = word2vec_embedder.compute_embeddings_mapping()
     write_df_to_pickle(
         embeddings_mapping_to_frame(word2vec_embeddings_mapping),
-        ResultsPaths.language_models.word2vec_embeddings_mapping_most_cited_pkl,
+        ResultsPaths.language_models.word2vec_embeddings_most_cited_pkl,
     )
 
     # requires pre-downloaded `glove.6B` model from Stanford NLP website:
@@ -89,7 +89,7 @@ def main() -> None:
     glove_embeddings_mapping = glove_embedder.compute_embeddings_mapping()
     write_df_to_pickle(
         embeddings_mapping_to_frame(glove_embeddings_mapping),
-        ResultsPaths.language_models.glove_embeddings_mapping_most_cited_pkl,
+        ResultsPaths.language_models.glove_embeddings_most_cited_pkl,
     )
 
     # requires pre-downloaded model from fasttext website:
@@ -99,7 +99,7 @@ def main() -> None:
     fasttext_embeddings_mapping = fasttext_embedder.compute_embeddings_mapping()
     write_df_to_pickle(
         embeddings_mapping_to_frame(fasttext_embeddings_mapping),
-        ResultsPaths.language_models.fasttext_embeddings_mapping_most_cited_pkl,
+        ResultsPaths.language_models.fasttext_embeddings_most_cited_pkl,
     )
 
     bert_model = BertModel.from_pretrained(ModelVersions.bert)  # type: ignore
@@ -107,7 +107,7 @@ def main() -> None:
     bert_embeddings_mapping = bert_embedder.compute_embeddings_mapping()
     write_df_to_pickle(
         embeddings_mapping_to_frame(bert_embeddings_mapping),
-        ResultsPaths.language_models.bert_embeddings_mapping_most_cited_pkl,
+        ResultsPaths.language_models.bert_embeddings_most_cited_pkl,
     )
 
     scibert_model = BertModel.from_pretrained(ModelVersions.scibert)  # type: ignore
@@ -115,7 +115,7 @@ def main() -> None:
     scibert_embeddings = scibert_embedder.compute_embeddings_mapping()
     write_df_to_pickle(
         embeddings_mapping_to_frame(scibert_embeddings),
-        ResultsPaths.language_models.scibert_embeddings_mapping_most_cited_pkl,
+        ResultsPaths.language_models.scibert_embeddings_most_cited_pkl,
     )
 
     longformer_model = LongformerModel.from_pretrained(ModelVersions.longformer)  # type: ignore
@@ -123,7 +123,7 @@ def main() -> None:
     longformer_embeddings = longformer_embedder.compute_embeddings_mapping()
     write_df_to_pickle(
         embeddings_mapping_to_frame(longformer_embeddings),
-        ResultsPaths.language_models.longformer_embeddings_mapping_most_cited_pkl,
+        ResultsPaths.language_models.longformer_embeddings_most_cited_pkl,
     )
 
 

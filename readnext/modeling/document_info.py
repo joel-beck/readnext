@@ -15,6 +15,17 @@ class DocumentInfo:
     arxiv_labels: list[str] = field(default_factory=list)
     abstract: str = ""
 
+    def __repr__(self) -> str:
+        return (
+            f"DocumentInfo(\n"
+            f"  d3_document_id={self.d3_document_id},\n"
+            f"  title={self.title},\n"
+            f"  author={self.author},\n"
+            f"  arxiv_labels={self.arxiv_labels},\n"
+            f"  abstract={self.abstract}\n"
+            ")"
+        )
+
     def __str__(self) -> str:
         return (
             f"Document {self.d3_document_id}\n"

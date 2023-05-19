@@ -16,7 +16,7 @@ from readnext.utils import (
 def word2vec_model_mock() -> Word2VecModelProtocol:
     class Word2VecModelMock:
         def __getitem__(self, document_tokens: Tokens) -> NDArray:  # noqa: ARG002
-            return np.array([1, 2, 3])
+            return np.random.rand(300)
 
         def __contains__(self, document_tokens: Tokens) -> bool:  # noqa: ARG002
             return True
@@ -27,7 +27,7 @@ def word2vec_model_mock() -> Word2VecModelProtocol:
 def word_vectors_model_mock() -> WordVectorsProtocol:
     class WordVectorsModelMock:
         def __getitem__(self, document_tokens: Tokens) -> NDArray:  # noqa: ARG002
-            return np.array([1, 2, 3])
+            return np.random.rand(300)
 
         def __contains__(self, document_tokens: Tokens) -> bool:  # noqa: ARG002
             return True

@@ -1,5 +1,6 @@
 from readnext.modeling.language_models.bm25 import bm25, bm25_idf, bm25_single_term, bm25_tf
 from readnext.modeling.language_models.embedder import (
+    AggregationStrategy,
     FastTextEmbedder,
     TFIDFEmbedder,
     Word2VecEmbedder,
@@ -42,14 +43,13 @@ __all__ = [
     "bm25_idf",
     "bm25_single_term",
     "bm25_tf",
-    "Embedding",
-    "EmbeddingsMapping",
     "FastTextEmbedder",
     "BERTEmbedder",
     "LongformerEmbedder",
     "TFIDFEmbedder",
     "Word2VecEmbedder",
     "embeddings_mapping_to_frame",
+    "AggregationStrategy",
     "get_cosine_similarities_path_from_choice",
     "get_embeddings_path_from_choice",
     "LanguageModelChoice",

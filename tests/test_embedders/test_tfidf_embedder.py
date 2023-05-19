@@ -1,20 +1,7 @@
 import numpy as np
-import pytest
 
-from readnext.modeling.language_models import TFIDFEmbedder, tfidf
-from readnext.utils import Tokens, TokensMapping
-
-
-@pytest.fixture(scope="module")
-def num_unique_corpus_tokens(spacy_tokenized_abstracts: list[Tokens]) -> int:
-    # vocabulary has 18 unique tokens
-    unique_corpus_tokens = {token for tokens in spacy_tokenized_abstracts for token in tokens}
-    return len(unique_corpus_tokens)
-
-
-@pytest.fixture(scope="module")
-def tfidf_embedder(spacy_tokens_mapping: TokensMapping) -> TFIDFEmbedder:
-    return TFIDFEmbedder(keyword_algorithm=tfidf, tokens_mapping=spacy_tokens_mapping)
+from readnext.modeling.language_models import TFIDFEmbedder
+from readnext.utils import Tokens
 
 
 def test_compute_embedding_single_document(

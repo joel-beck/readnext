@@ -26,12 +26,13 @@ all_embeddings = keyword_algorithm_embeddings + gensim_embeddings + torch_embedd
 def test_embeddings_dataframe_structure(embeddings: pd.DataFrame) -> None:
     assert isinstance(embeddings, pd.DataFrame)
 
-    # check number and names of columns
-    assert embeddings.shape[1] == 2
-    assert embeddings.columns.tolist() == ["document_id", "embedding"]
+    # check number and names of columns and index
+    assert embeddings.shape[1] == 1
+    assert embeddings.index.name == "document_id"
+    assert embeddings.columns.tolist() == ["embedding"]
 
-    # check dtypes of columns
-    assert is_integer_dtype(embeddings["document_id"])
+    # check dtypes of index and columns
+    assert is_integer_dtype(embeddings.index)
     assert all(isinstance(embedding, np.ndarray) for embedding in embeddings["embedding"])
 
 

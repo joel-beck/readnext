@@ -1,15 +1,7 @@
 import numpy as np
-import pytest
 
 from readnext.modeling.language_models import FastTextEmbedder
-from readnext.utils import FastTextModelProtocol, Tokens, TokensMapping
-
-
-@pytest.fixture(scope="module")
-def fasttext_embedder(
-    spacy_tokens_mapping: TokensMapping, fasttext_model: FastTextModelProtocol
-) -> FastTextEmbedder:
-    return FastTextEmbedder(spacy_tokens_mapping, fasttext_model)
+from readnext.utils import Tokens
 
 
 def test_compute_embedding_single_document(

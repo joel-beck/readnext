@@ -33,23 +33,29 @@ def find_top_n_matches_single_document(
 
 
 def precompute_pairwise_scores(
-    input_df: pd.DataFrame, pairwise_metric: PairwiseMetric, n: int | None
+    input_df: pd.DataFrame,
+    candidate_d3_document_ids: list[int],
+    pairwise_metric: PairwiseMetric,
+    n: int | None,
 ) -> ScoresFrame:
     """
     Precompute and store pairwise scores for all documents in a dataframe with one row
     per query document. The scores are stored as a sorted list of `DocumentScore`
     objects.
     """
+    tqdm.pandas()
+
     if n is None:
         n = len(input_df)
-
-    tqdm.pandas()
-    candidate_d3_document_ids = input_df["document_id"].tolist()
 
     return (
         pd.DataFrame(data=candidate_d3_document_ids, columns=["document_id"])
         .assign(
-            scores=lambda df: df["document_id"].progress_apply(
+            # the new scoped dataframe inside the first lambda function must have a
+            # different name than the input dataframe since the input dataframe is
+            # passed to the `find_top_n_matches_single_document` function and NOT the
+            # scoped dataframe!
+            scores=lambda new_df: new_df["document_id"].progress_apply(
                 lambda query_d3_document_id: find_top_n_matches_single_document(
                     input_df, candidate_d3_document_ids, query_d3_document_id, pairwise_metric, n
                 )
@@ -69,8 +75,11 @@ def precompute_co_citations(
     """
     Precompute and store pairwise co-citation scores for all documents in a dataframe
     with one row per query document.
+
+    The input dataframe is the full documents data.
     """
-    return precompute_pairwise_scores(df, CountCommonCitations(), n)
+    candidate_d3_document_ids = df["document_id"].tolist()
+    return precompute_pairwise_scores(df, candidate_d3_document_ids, CountCommonCitations(), n)
 
 
 def precompute_co_references(
@@ -80,8 +89,11 @@ def precompute_co_references(
     """
     Precmopute and store pairwise co-reference scores for all documents in a dataframe
     with one row per query document.
+
+    The input dataframe is the full documents data.
     """
-    return precompute_pairwise_scores(df, CountCommonReferences(), n)
+    candidate_d3_document_ids = df["document_id"].tolist()
+    return precompute_pairwise_scores(df, candidate_d3_document_ids, CountCommonReferences(), n)
 
 
 def precompute_cosine_similarities(
@@ -91,5 +103,9 @@ def precompute_cosine_similarities(
     """
     Precompute and store pairwise cosine similarity scores for all documents in a
     dataframe with one row per query document.
+
+    The input dataframe has a single column named `embedding` and the index is named
+    `document_id`.
     """
-    return precompute_pairwise_scores(df, CosineSimilarity(), n)
+    candidate_d3_document_ids = df.index.tolist()
+    return precompute_pairwise_scores(df, candidate_d3_document_ids, CosineSimilarity(), n)

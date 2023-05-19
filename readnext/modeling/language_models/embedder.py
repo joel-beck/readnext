@@ -4,11 +4,16 @@ from enum import Enum
 
 import numpy as np
 import pandas as pd
-from gensim.models import FastText, KeyedVectors
 
 # do not import from .language_models to avoid circular imports
 from readnext.modeling.language_models.tokenizer_list import Tokens, TokensMapping
-from readnext.utils import EmbeddingsMapping, KeywordAlgorithm, setup_progress_bar
+from readnext.utils import (
+    EmbeddingsMapping,
+    FastTextModelProtocol,
+    KeywordAlgorithm,
+    Word2VecModelProtocol,
+    setup_progress_bar,
+)
 
 
 class AggregationStrategy(str, Enum):
@@ -37,13 +42,13 @@ class AggregationStrategy(str, Enum):
 def embeddings_mapping_to_frame(embeddings_mapping: EmbeddingsMapping) -> pd.DataFrame:
     """
     Converts a dictionary of document ids to document embeddings to a pandas DataFrame.
-    The output dataframe has two columns: `document_id` and `embedding`.
+    The output dataframe has one column named `embedding` and the index named
+    `document_id`.
     """
     return (
         pd.Series(embeddings_mapping, name="embedding")
         .to_frame()
         .rename_axis("document_id", axis="index")
-        .reset_index(drop=False)
     )
 
 
@@ -124,7 +129,6 @@ class GensimEmbedder(Embedder):
     Takes pretrained Word2Vec (`KeyedVectors` in gensim) or FastText model as input.
     """
 
-    embedding_model: KeyedVectors | FastText
     tokens_mapping: TokensMapping
     aggregation_strategy: AggregationStrategy = AggregationStrategy.mean
 
@@ -166,8 +170,11 @@ class GensimEmbedder(Embedder):
 class Word2VecEmbedder(GensimEmbedder):
     """Computes document embeddings with the Word2Vec model."""
 
-    def __init__(self, embedding_model: KeyedVectors, tokens_mapping: TokensMapping) -> None:
-        super().__init__(embedding_model, tokens_mapping)
+    def __init__(
+        self, tokens_mapping: TokensMapping, embedding_model: Word2VecModelProtocol
+    ) -> None:
+        super().__init__(tokens_mapping)
+        self.embedding_model = embedding_model
 
     def compute_embedding_single_document(self, document_tokens: Tokens) -> np.ndarray:
         # exclude any individual unknown tokens
@@ -183,8 +190,11 @@ class Word2VecEmbedder(GensimEmbedder):
 class FastTextEmbedder(GensimEmbedder):
     """Computes document embeddings with the FastText model."""
 
-    def __init__(self, embedding_model: FastText, tokens_mapping: TokensMapping) -> None:
-        super().__init__(embedding_model, tokens_mapping)
+    def __init__(
+        self, tokens_mapping: TokensMapping, embedding_model: FastTextModelProtocol
+    ) -> None:
+        super().__init__(tokens_mapping)
+        self.embedding_model = embedding_model
 
     def compute_embedding_single_document(self, document_tokens: Tokens) -> np.ndarray:
         return self.word_embeddings_to_document_embedding(

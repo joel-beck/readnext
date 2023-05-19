@@ -70,7 +70,7 @@ def main() -> None:
     #
     # then unzip the model file and move it to the local `models` directory
     word2vec_model: KeyedVectors = load_word2vec_format(ModelPaths.word2vec, binary=True)
-    word2vec_embedder = Word2VecEmbedder(word2vec_model, spacy_tokens_mapping)
+    word2vec_embedder = Word2VecEmbedder(spacy_tokens_mapping, word2vec_model)  # type: ignore
     word2vec_embeddings_mapping = word2vec_embedder.compute_embeddings_mapping()
     write_df_to_pickle(
         embeddings_mapping_to_frame(word2vec_embeddings_mapping),
@@ -85,7 +85,7 @@ def main() -> None:
     # After conversion the user interface of the two models is identical, thus the same
     # `Word2VecEmbedder` can be used!
     glove_model: KeyedVectors = load_word2vec_format(ModelPaths.glove, binary=False, no_header=True)
-    glove_embedder = Word2VecEmbedder(glove_model, spacy_tokens_mapping)
+    glove_embedder = Word2VecEmbedder(spacy_tokens_mapping, glove_model)  # type: ignore
     glove_embeddings_mapping = glove_embedder.compute_embeddings_mapping()
     write_df_to_pickle(
         embeddings_mapping_to_frame(glove_embeddings_mapping),
@@ -95,7 +95,7 @@ def main() -> None:
     # requires pre-downloaded model from fasttext website:
     # https://fasttext.cc/docs/en/crawl-vectors.html#models
     fasttext_model = load_facebook_model(ModelPaths.fasttext)
-    fasttext_embedder = FastTextEmbedder(fasttext_model, spacy_tokens_mapping)
+    fasttext_embedder = FastTextEmbedder(spacy_tokens_mapping, fasttext_model)  # type: ignore
     fasttext_embeddings_mapping = fasttext_embedder.compute_embeddings_mapping()
     write_df_to_pickle(
         embeddings_mapping_to_frame(fasttext_embeddings_mapping),

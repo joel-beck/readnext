@@ -30,6 +30,14 @@ from readnext.utils.io import (
 )
 from readnext.utils.preprocessing import add_rank
 from readnext.utils.progress_bar import setup_progress_bar
+from readnext.utils.protocols import (
+    BertModelProtocol,
+    FastTextModelProtocol,
+    LongformerModelProtocol,
+    TorchModelOutputProtocol,
+    Word2VecModelProtocol,
+    WordVectorsProtocol,
+)
 from readnext.utils.utils import slice_mapping
 
 __all__ = [
@@ -59,5 +67,13 @@ __all__ = [
     "write_object_to_pickle",
     "add_rank",
     "setup_progress_bar",
+    "WordVectorsProtocol",
+    "BertModelProtocol",
+    "FastTextModelProtocol",
+    "LongformerModelProtocol",
+    "SpacyModelProtocol",
+    "TorchModelOutputProtocol",
+    "Word2VecModelProtocol",
+    "WordVectorsProtocol",
     "slice_mapping",
 ]

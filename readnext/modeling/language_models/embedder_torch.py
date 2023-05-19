@@ -3,15 +3,20 @@ from dataclasses import dataclass
 from typing import Generic, TypeVar
 
 import torch
-from transformers import BertModel, LongformerModel
 
 from readnext.modeling.language_models.embedder import AggregationStrategy
 
 # do not import from .language_models to avoid circular imports
 from readnext.modeling.language_models.tokenizer_tensor import TokenIds, TokensIdMapping
-from readnext.utils import Embedding, EmbeddingsMapping, setup_progress_bar
+from readnext.utils import (
+    BertModelProtocol,
+    Embedding,
+    EmbeddingsMapping,
+    LongformerModelProtocol,
+    setup_progress_bar,
+)
 
-TTorchModel = TypeVar("TTorchModel", bound=BertModel | LongformerModel)
+TTorchModel = TypeVar("TTorchModel", bound=BertModelProtocol | LongformerModelProtocol)
 
 
 @dataclass
@@ -99,7 +104,7 @@ class BERTEmbedder(TorchEmbedder):
     input.
     """
 
-    torch_model: BertModel
+    torch_model: BertModelProtocol
 
 
 @dataclass
@@ -109,4 +114,4 @@ class LongformerEmbedder(TorchEmbedder):
     input.
     """
 
-    torch_model: LongformerModel
+    torch_model: LongformerModelProtocol

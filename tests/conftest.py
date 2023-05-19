@@ -18,13 +18,23 @@ from readnext.modeling import (
 )
 from readnext.modeling.language_models import SpacyTokenizer
 from readnext.utils import (
+    BertModelProtocol,
     EmbeddingsMapping,
+    FastTextModelProtocol,
+    LongformerModelProtocol,
+    ScoresFrame,
     Tokens,
     TokensIdMapping,
     TokensMapping,
+    Word2VecModelProtocol,
     load_df_from_pickle,
     load_object_from_pickle,
-    ScoresFrame,
+)
+from tests.mocks import (
+    bert_model_mock,
+    fasttext_model_mock,
+    longformer_model_mock,
+    word2vec_model_mock,
 )
 
 
@@ -200,17 +210,17 @@ def test_word2vec_embeddings_mapping_most_cited(root_path: Path) -> EmbeddingsMa
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def spacy_model() -> Language:
     return spacy.load(ModelVersions.spacy)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def spacy_tokenizer(documents_info: DocumentsInfo, spacy_model: Language) -> SpacyTokenizer:
     return SpacyTokenizer(documents_info, spacy_model)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def spacy_tokenized_abstracts() -> list[list[str]]:
     return [
         [
@@ -241,6 +251,26 @@ def spacy_tokenized_abstracts() -> list[list[str]]:
             "brace",
         ],
     ]
+
+
+@pytest.fixture(scope="session")
+def word2vec_model() -> Word2VecModelProtocol:
+    return word2vec_model_mock()
+
+
+@pytest.fixture(scope="session")
+def fasttext_model() -> FastTextModelProtocol:
+    return fasttext_model_mock()
+
+
+@pytest.fixture(scope="session")
+def bert_model() -> BertModelProtocol:
+    return bert_model_mock()
+
+
+@pytest.fixture(scope="session")
+def longformer_model() -> LongformerModelProtocol:
+    return longformer_model_mock()
 
 
 @pytest.fixture(scope="session")

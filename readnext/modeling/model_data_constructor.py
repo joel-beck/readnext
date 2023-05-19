@@ -98,7 +98,7 @@ class ModelDataConstructor(ABC):
     def document_scores_to_frame(self, document_scores: list[DocumentScore]) -> pd.DataFrame:
         """
         Convert the scores of all candidate documents to a dataframe. The output
-        dataframe has a single `score` column with the document ids as index.
+        dataframe has one column named `score` and the index is named `document_id`.
         """
         return pd.DataFrame(
             [

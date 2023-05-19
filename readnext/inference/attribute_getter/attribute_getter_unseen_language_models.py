@@ -126,7 +126,10 @@ def word2vec_embed_query(query_document_info: DocumentInfo) -> Embedding:
     word2vec_model: KeyedVectors = load_word2vec_format(ModelPaths.word2vec, binary=True)
     print("Word2Vec Model loaded.")
 
-    word2vec_embedder = Word2VecEmbedder(word2vec_model, learned_spacy_tokens_mapping)
+    word2vec_embedder = Word2VecEmbedder(
+        learned_spacy_tokens_mapping,
+        word2vec_model,  # type: ignore
+    )
 
     return word2vec_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
@@ -139,7 +142,7 @@ def glove_embed_query(query_document_info: DocumentInfo) -> Embedding:
     glove_model: KeyedVectors = load_word2vec_format(ModelPaths.glove, binary=False, no_header=True)
     print("GloVe Model loaded.")
 
-    glove_embedder = Word2VecEmbedder(glove_model, learned_spacy_tokens_mapping)
+    glove_embedder = Word2VecEmbedder(learned_spacy_tokens_mapping, glove_model)  # type: ignore
 
     return glove_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
@@ -152,7 +155,10 @@ def fasttest_embed_query(query_document_info: DocumentInfo) -> Embedding:
     fasttext_model = load_facebook_model(ModelPaths.fasttext)
     print("FastText Model loaded.")
 
-    fasttext_embedder = FastTextEmbedder(fasttext_model, learned_spacy_tokens_mapping)
+    fasttext_embedder = FastTextEmbedder(
+        learned_spacy_tokens_mapping,
+        fasttext_model,  # type: ignore
+    )
 
     return fasttext_embedder.compute_embedding_single_document(query_abstract_tokenized)
 

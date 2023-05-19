@@ -221,7 +221,7 @@ def spacy_tokenizer(documents_info: DocumentsInfo, spacy_model: Language) -> Spa
 
 
 @pytest.fixture(scope="session")
-def spacy_tokenized_abstracts() -> list[list[str]]:
+def spacy_tokenized_abstracts() -> list[Tokens]:
     return [
         [
             "abstract",
@@ -251,6 +251,11 @@ def spacy_tokenized_abstracts() -> list[list[str]]:
             "brace",
         ],
     ]
+
+
+@pytest.fixture(scope="session")
+def spacy_tokens_mapping(spacy_tokenized_abstracts: list[Tokens]) -> TokensMapping:
+    return dict(enumerate(spacy_tokenized_abstracts))
 
 
 @pytest.fixture(scope="session")

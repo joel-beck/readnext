@@ -28,6 +28,12 @@ from readnext.utils import (
     Word2VecModelProtocol,
 )
 from readnext.utils.aliases import TokensIdMapping
+from tests.mocks import (
+    bert_model_mock,
+    fasttext_model_mock,
+    longformer_model_mock,
+    word2vec_model_mock,
+)
 
 
 # SECTION: Tokens
@@ -335,6 +341,27 @@ def longformer_expected_tokenized_abstract() -> Tokens:
         "<pad>",
         "<pad>",
     ]
+
+
+# SECTION: Language Models
+@pytest.fixture(scope="session")
+def word2vec_model() -> Word2VecModelProtocol:
+    return word2vec_model_mock()
+
+
+@pytest.fixture(scope="session")
+def fasttext_model() -> FastTextModelProtocol:
+    return fasttext_model_mock()
+
+
+@pytest.fixture(scope="session")
+def bert_model() -> BertModelProtocol:
+    return bert_model_mock()
+
+
+@pytest.fixture(scope="session")
+def longformer_model() -> LongformerModelProtocol:
+    return longformer_model_mock()
 
 
 # SECTION: Embedders

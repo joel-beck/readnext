@@ -17,22 +17,12 @@ from readnext.modeling import (
 )
 from readnext.modeling.language_models import LanguageModelChoice
 from readnext.utils import (
-    BertModelProtocol,
     EmbeddingsMapping,
-    FastTextModelProtocol,
-    LongformerModelProtocol,
     ScoresFrame,
     TokensIdMapping,
     TokensMapping,
-    Word2VecModelProtocol,
     load_df_from_pickle,
     load_object_from_pickle,
-)
-from tests.mocks import (
-    bert_model_mock,
-    fasttext_model_mock,
-    longformer_model_mock,
-    word2vec_model_mock,
 )
 
 
@@ -207,27 +197,6 @@ def test_word2vec_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_word2vec_embeddings_most_cited.pkl"
     )
-
-
-# SECTION: Language Models
-@pytest.fixture(scope="session")
-def word2vec_model() -> Word2VecModelProtocol:
-    return word2vec_model_mock()
-
-
-@pytest.fixture(scope="session")
-def fasttext_model() -> FastTextModelProtocol:
-    return fasttext_model_mock()
-
-
-@pytest.fixture(scope="session")
-def bert_model() -> BertModelProtocol:
-    return bert_model_mock()
-
-
-@pytest.fixture(scope="session")
-def longformer_model() -> LongformerModelProtocol:
-    return longformer_model_mock()
 
 
 # SECTION: Model Data Constructors

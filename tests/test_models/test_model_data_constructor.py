@@ -28,8 +28,9 @@ def test_initialization(model_data_constructor: ModelDataConstructor) -> None:
     assert isinstance(model_data_constructor.d3_document_id, int)
     assert model_data_constructor.d3_document_id == 206594692
 
+    # number of columns is different betwen citation and language model data and tested
+    # in individual tests below
     assert isinstance(model_data_constructor.documents_data, pd.DataFrame)
-    assert model_data_constructor.documents_data.shape[1] == 25
 
     assert isinstance(model_data_constructor.info_cols, list)
     assert all(isinstance(col, str) for col in model_data_constructor.info_cols)
@@ -206,6 +207,8 @@ def test_citation_model_constructor_initialization(
     assert isinstance(model_data_constructor.bibliographic_coupling_scores, pd.DataFrame)
     assert model_data_constructor.bibliographic_coupling_scores.shape[1] == 1
 
+    assert model_data_constructor.documents_data.shape[1] == 25
+
 
 @pytest.mark.parametrize(
     "model_data_constructor",
@@ -296,6 +299,8 @@ def test_language_model_constructor_initialization(
 
     assert isinstance(model_data_constructor.cosine_similarities, pd.DataFrame)
     assert model_data_constructor.cosine_similarities.shape[1] == 1
+
+    assert model_data_constructor.documents_data.shape[1] == 24
 
 
 @pytest.mark.parametrize(

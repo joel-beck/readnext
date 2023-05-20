@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import cast
 
+import numpy as np
 import pandas as pd
 
 from readnext.modeling.document_info import DocumentInfo, DocumentScore
@@ -220,8 +221,10 @@ class LanguageModelDataConstructor(ModelDataConstructor):
             self.d3_document_id
         ].item()
 
-        return self.document_scores_to_frame(document_scores).rename(
-            columns={"score": "cosine_similarity"}
+        return (
+            self.document_scores_to_frame(document_scores)
+            .rename(columns={"score": "cosine_similarity"})
+            .astype(np.float64)
         )
 
     def extend_info_matrix(self, info_matrix: pd.DataFrame) -> pd.DataFrame:
@@ -243,4 +246,5 @@ class LanguageModelDataConstructor(ModelDataConstructor):
             self.get_cosine_similarity_scores()
             .rank(ascending=False)
             .rename({"cosine_similarity": "cosine_similarity_rank"}, axis="columns")
+            .astype(np.float64)
         )

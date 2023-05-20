@@ -230,7 +230,7 @@ def test_language_model_data_cosine_similarity_ranks(
     assert min(model_data.cosine_similarity_ranks["cosine_similarity_rank"]) == 1.0
 
     # check that no rank is higher than the number of documents
-    assert max(model_data.cosine_similarity_ranks["cosine_similarity_rank"]) < len(
+    assert max(model_data.cosine_similarity_ranks["cosine_similarity_rank"]) <= len(
         model_data.cosine_similarity_ranks
     )
 

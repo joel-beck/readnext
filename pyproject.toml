@@ -161,6 +161,7 @@ select = [
 # - `N806` (variable in function should be lowercase)
 # - `PD015` (use `.merge()` instead of `pd.merge()`, incorrect for Series)
 # - `PD901` (don't use `df` as a variable name)
+# - `PT011` (`pytest_raises(ValueError`) is too broad)
 # - `RUF007` (prefer `itertools.pairwise()` over `zip()` when iterating over successive pairs)
 # - "RUF100" (unused `noqa`)
 ignore = [
@@ -171,6 +172,7 @@ ignore = [
     "N806",
     "PD015",
     "PD901",
+    "PT011",
     "RUF007",
     "RUF100"
 ]

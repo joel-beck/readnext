@@ -336,8 +336,6 @@ def documents_info() -> DocumentsInfo:
 
 
 # SECTION: Model Data Constructors
-# query_d3_document_id is modified by some tests, set `scope="session"` to provide a new instance to
-# each test function
 @pytest.fixture(scope="session")
 def citation_model_data_constructor(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
@@ -356,8 +354,6 @@ def citation_model_data_constructor(
     )
 
 
-# query_d3_document_id is modified by some tests, set `scope="session"` to provide a new instance to
-# each test function
 @pytest.fixture(scope="session")
 def language_model_data_constructor(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,

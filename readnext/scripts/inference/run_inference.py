@@ -27,6 +27,9 @@ def main() -> None:
         inference_data_seen_constructor_semanticscholar_id
     )
 
+    type(inference_data_seen_from_semanticscholar_id.document_info.d3_document_id)
+    type(inference_data_seen_from_semanticscholar_id.document_identifier.d3_document_id)
+
     print(inference_data_seen_from_semanticscholar_id.document_identifier)
     print(inference_data_seen_from_semanticscholar_id.document_info)
     print(inference_data_seen_from_semanticscholar_id.features)

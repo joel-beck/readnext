@@ -19,9 +19,19 @@ class InferenceDataInputConverter:
 
     def get_d3_document_id_from_semanticscholar_url(self, semanticscholar_url: str) -> int:
         """Retrieve D3 document id from Semanticscholar url."""
-        return self.documents_data[
-            self.documents_data["semanticscholar_url"] == semanticscholar_url
-        ].index.item()
+        return (
+            self.documents_data.loc[
+                self.documents_data["semanticscholar_url"] == semanticscholar_url
+            ]
+            # the dataframe index is a pandas Index object of type pd.Int64Dtype() ->
+            # this requires two `.item()` calls to extract the integer element out of
+            # the index
+            # the first `.item()` extracts single element numpy array from pandas Index
+            # -> type: np.int64
+            # the second `.item()` extracts the python integer out of single element
+            # numpy array -> type: int
+            .index.item().item()
+        )
 
     def get_d3_document_id_from_semanticscholar_id(self, semanticscholar_id: str) -> int:
         """Retrieve D3 document id from Semanticscholar id."""
@@ -31,7 +41,11 @@ class InferenceDataInputConverter:
     def get_d3_document_id_from_arxiv_id(self, arxiv_id: str) -> int:
         """Retrieve D3 document id from Arxiv id."""
 
-        return self.documents_data[self.documents_data["arxiv_id"] == arxiv_id].index.item()
+        return (
+            self.documents_data.loc[self.documents_data["arxiv_id"] == arxiv_id]
+            .index.item()
+            .item()  # see comment above for double `.item()` explanation
+        )
 
     def get_d3_document_id_from_arxiv_url(self, arxiv_url: str) -> int:
         """Retrieve D3 document id from Arxiv url."""

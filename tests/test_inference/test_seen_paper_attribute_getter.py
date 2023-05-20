@@ -62,11 +62,21 @@ def input_converter_sets_identifier_correctly(
     seen_paper_attribute_getter: SeenPaperAttributeGetter,
 ) -> None:
     assert isinstance(seen_paper_attribute_getter.identifier, DocumentIdentifier)
+
     assert seen_paper_attribute_getter.identifier.d3_document_id is not None
+    assert isinstance(seen_paper_attribute_getter.identifier.d3_document_id, int)
+
     assert seen_paper_attribute_getter.identifier.semanticscholar_id is not None
+    assert isinstance(seen_paper_attribute_getter.identifier.semanticscholar_id, str)
+
     assert seen_paper_attribute_getter.identifier.semanticscholar_url is not None
+    assert isinstance(seen_paper_attribute_getter.identifier.semanticscholar_url, str)
+
     assert seen_paper_attribute_getter.identifier.arxiv_id is not None
+    assert isinstance(seen_paper_attribute_getter.identifier.arxiv_id, str)
+
     assert seen_paper_attribute_getter.identifier.arxiv_url is not None
+    assert isinstance(seen_paper_attribute_getter.identifier.arxiv_url, str)
 
 
 @pytest.mark.parametrize(

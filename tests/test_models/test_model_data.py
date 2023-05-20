@@ -31,7 +31,7 @@ language_model_data_fixtures = [
 model_data_fixtures = citation_model_data_fixtures + language_model_data_fixtures
 
 
-@pytest.mark.slow
+# SECTION: CitationModelDataConstructor
 @pytest.mark.parametrize(
     "model_data_constructor",
     lazy_fixture(citation_model_data_constructor_fixtures),
@@ -47,7 +47,7 @@ def test_citation_model_data_from_constructor(
     assert isinstance(citation_model_data.feature_matrix, pd.DataFrame)
 
 
-@pytest.mark.slow
+# SECTION: LanguageModelDataConstructor
 @pytest.mark.parametrize(
     "model_data_constructor",
     lazy_fixture(language_model_data_constructor_fixtures),
@@ -63,7 +63,7 @@ def test_language_model_data_from_constructor(
     assert isinstance(language_model_data.cosine_similarity_ranks, pd.DataFrame)
 
 
-@pytest.mark.slow
+# SECTION: ModelData
 @pytest.mark.parametrize(
     "model_data",
     lazy_fixture(model_data_fixtures),
@@ -73,7 +73,7 @@ def test_model_data_query_document(model_data: ModelData) -> None:
 
     # TODO: For model data the index if of type int (the python type) and not int64 (the
     # numpy type)
-    assert model_data.query_document.d3_document_id.dtype == np.int64  # type: ignore
+    assert isinstance(model_data.query_document.d3_document_id, int)
     assert model_data.query_document.d3_document_id == 206594692
 
     assert isinstance(model_data.query_document.title, str)
@@ -90,7 +90,6 @@ def test_model_data_query_document(model_data: ModelData) -> None:
     assert model_data.query_document.abstract == ""
 
 
-@pytest.mark.slow
 @pytest.mark.parametrize(
     "model_data",
     lazy_fixture(model_data_fixtures),
@@ -105,12 +104,12 @@ def test_model_data_integer_labels(model_data: ModelData) -> None:
     assert model_data.integer_labels.unique().tolist() == [0, 1]
 
 
-@pytest.mark.slow
+# SECTION: CitationModelData
 @pytest.mark.parametrize(
     "model_data",
-    lazy_fixture(model_data_fixtures),
+    lazy_fixture(citation_model_data_fixtures),
 )
-def test_model_data_info_matrix(model_data: ModelData) -> None:
+def test_citation_model_data_info_matrix(model_data: CitationModelData) -> None:
     assert isinstance(model_data.info_matrix, pd.DataFrame)
 
     assert model_data.info_matrix.index.name == "document_id"
@@ -127,23 +126,18 @@ def test_model_data_info_matrix(model_data: ModelData) -> None:
         "co_citation_analysis",
         "bibliographic_coupling",
     ]
-    # TODO: This test fails
-    assert all(
-        model_data.info_matrix.dtypes
-        == [
-            pd.StringDtype(),
-            pd.StringDtype(),
-            object,
-            pd.StringDtype(),
-            pd.Int64Dtype(),
-            pd.Int64Dtype(),
-            np.float64,
-            np.float64,
-        ]
-    )
+    assert model_data.info_matrix.dtypes.to_list() == [
+        pd.StringDtype(),
+        pd.StringDtype(),
+        np.dtype("O"),
+        pd.StringDtype(),
+        pd.Int64Dtype(),
+        pd.Int64Dtype(),
+        np.dtype("int64"),
+        np.dtype("int64"),
+    ]
 
 
-@pytest.mark.slow
 @pytest.mark.parametrize(
     "model_data",
     lazy_fixture(citation_model_data_fixtures),
@@ -168,7 +162,56 @@ def test_citation_model_data_feature_matrix(model_data: CitationModelData) -> No
     )
 
 
-@pytest.mark.slow
+@pytest.mark.parametrize(
+    "model_data",
+    lazy_fixture(citation_model_data_fixtures),
+)
+def test_citation_model_data_getitem(model_data: CitationModelData, test_data_size: int) -> None:
+    index_info_matrix = model_data.info_matrix.index
+    assert len(index_info_matrix) == test_data_size - 1
+
+    index_feature_matrix = model_data.feature_matrix.index
+    assert len(index_feature_matrix) == test_data_size - 1
+
+    # index of info matrix and feature matrix is identical
+    shared_indices = index_info_matrix.intersection(index_feature_matrix)
+    assert len(shared_indices) == test_data_size - 1
+
+    # check that slicing works for info matrix, feature matrix and integer labels
+    sliced_model_data = model_data[shared_indices]
+    assert isinstance(sliced_model_data, CitationModelData)
+
+    assert len(sliced_model_data.info_matrix) == len(shared_indices)
+    assert len(sliced_model_data.integer_labels) == len(shared_indices)
+    assert len(sliced_model_data.feature_matrix) == len(shared_indices)
+
+
+# SECTION: LanguageModelData
+@pytest.mark.parametrize(
+    "model_data",
+    lazy_fixture(language_model_data_fixtures),
+)
+def test_language_model_data_info_matrix(model_data: CitationModelData) -> None:
+    assert isinstance(model_data.info_matrix, pd.DataFrame)
+
+    assert model_data.info_matrix.index.name == "document_id"
+    assert model_data.info_matrix.index.dtype == pd.Int64Dtype()
+
+    assert model_data.info_matrix.shape[1] == 4
+    assert model_data.info_matrix.columns.to_list() == [
+        "title",
+        "author",
+        "arxiv_labels",
+        "cosine_similarity",
+    ]
+    assert model_data.info_matrix.dtypes.to_list() == [
+        pd.StringDtype(),
+        pd.StringDtype(),
+        np.dtype("O"),
+        np.dtype("float64"),
+    ]
+
+
 @pytest.mark.parametrize(
     "model_data",
     lazy_fixture(language_model_data_fixtures),
@@ -194,32 +237,6 @@ def test_language_model_data_cosine_similarity_ranks(
     )
 
 
-@pytest.mark.slow
-@pytest.mark.parametrize(
-    "model_data",
-    lazy_fixture(citation_model_data_fixtures),
-)
-def test_citation_model_data_getitem(model_data: CitationModelData, test_data_size: int) -> None:
-    index_info_matrix = model_data.info_matrix.index
-    assert len(index_info_matrix) == test_data_size - 1
-
-    index_feature_matrix = model_data.feature_matrix.index
-    assert len(index_feature_matrix) == test_data_size - 1
-
-    # index of info matrix and feature matrix is identical
-    shared_indices = index_info_matrix.intersection(index_feature_matrix)
-    assert len(shared_indices) == test_data_size - 1
-
-    # check that slicing works for info matrix, feature matrix and integer labels
-    sliced_model_data = model_data[shared_indices]
-    assert isinstance(sliced_model_data, CitationModelData)
-
-    assert len(sliced_model_data.info_matrix) == len(shared_indices)
-    assert len(sliced_model_data.integer_labels) == len(shared_indices)
-    assert len(sliced_model_data.feature_matrix) == len(shared_indices)
-
-
-@pytest.mark.slow
 @pytest.mark.parametrize(
     "model_data",
     lazy_fixture(language_model_data_fixtures),

@@ -4,7 +4,7 @@ import pandas as pd
 
 from readnext.config import ResultsPaths
 from readnext.data import (
-    add_feature_rank_cols,
+    add_citation_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
 from readnext.inference.attribute_getter.attribute_getter_base import (
@@ -113,7 +113,7 @@ class SeenPaperAttributeGetter(AttributeGetter):
 
         citation_model_data_constructor = CitationModelDataConstructor(
             d3_document_id=self.identifier.d3_document_id,
-            documents_data=self.documents_data.pipe(add_feature_rank_cols).pipe(
+            documents_data=self.documents_data.pipe(add_citation_feature_rank_cols).pipe(
                 set_missing_publication_dates_to_max_rank
             ),
             co_citation_analysis_scores=self.get_co_citation_analysis_scores(),

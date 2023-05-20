@@ -214,6 +214,8 @@ class LanguageModelDataConstructor(ModelDataConstructor):
         the query document and converts them to a dataframe with a single
         `cosine_similarity` column and the document ids as index.
         """
+        # output dataframe has length of original full data in tests, even though the
+        # test_cosine_similarities data itself only contains 100 rows
         document_scores: list[DocumentScore] = self.cosine_similarities.loc[
             self.d3_document_id
         ].item()

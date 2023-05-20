@@ -101,7 +101,8 @@ def tfidf_embed_query(query_document_info: DocumentInfo) -> Embedding:
     query_abstract_tokenized = spacy_tokenize_query(query_document_info)
 
     tfidf_embedder = TFIDFEmbedder(
-        keyword_algorithm=tfidf, tokens_mapping=learned_spacy_tokens_mapping
+        tokens_mapping=learned_spacy_tokens_mapping,
+        keyword_algorithm=tfidf,
     )
 
     return tfidf_embedder.compute_embedding_single_document(query_abstract_tokenized)
@@ -112,7 +113,7 @@ def bm25_embed_query(query_document_info: DocumentInfo) -> Embedding:
     query_abstract_tokenized = spacy_tokenize_query(query_document_info)
 
     bm25_embedder = TFIDFEmbedder(
-        keyword_algorithm=bm25, tokens_mapping=learned_spacy_tokens_mapping
+        tokens_mapping=learned_spacy_tokens_mapping, keyword_algorithm=bm25
     )
 
     return bm25_embedder.compute_embedding_single_document(query_abstract_tokenized)
@@ -127,8 +128,8 @@ def word2vec_embed_query(query_document_info: DocumentInfo) -> Embedding:
     print("Word2Vec Model loaded.")
 
     word2vec_embedder = Word2VecEmbedder(
-        learned_spacy_tokens_mapping,
-        word2vec_model,  # type: ignore
+        tokens_mapping=learned_spacy_tokens_mapping,
+        embedding_model=word2vec_model,  # type: ignore
     )
 
     return word2vec_embedder.compute_embedding_single_document(query_abstract_tokenized)
@@ -142,7 +143,10 @@ def glove_embed_query(query_document_info: DocumentInfo) -> Embedding:
     glove_model: KeyedVectors = load_word2vec_format(ModelPaths.glove, binary=False, no_header=True)
     print("GloVe Model loaded.")
 
-    glove_embedder = Word2VecEmbedder(learned_spacy_tokens_mapping, glove_model)  # type: ignore
+    glove_embedder = Word2VecEmbedder(
+        tokens_mapping=learned_spacy_tokens_mapping,
+        embedding_model=glove_model,  # type: ignore
+    )
 
     return glove_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
@@ -156,8 +160,8 @@ def fasttest_embed_query(query_document_info: DocumentInfo) -> Embedding:
     print("FastText Model loaded.")
 
     fasttext_embedder = FastTextEmbedder(
-        learned_spacy_tokens_mapping,
-        fasttext_model,  # type: ignore
+        tokens_mapping=learned_spacy_tokens_mapping,
+        embedding_model=fasttext_model,  # type: ignore
     )
 
     return fasttext_embedder.compute_embedding_single_document(query_abstract_tokenized)
@@ -168,7 +172,10 @@ def bert_embed_query(query_document_info: DocumentInfo) -> Embedding:
     query_abstract_tokenized = bert_tokenize_query(query_document_info)
 
     bert_model = BertModel.from_pretrained(ModelVersions.bert)
-    bert_embedder = BERTEmbedder(bert_model, learned_bert_tokens_mapping)  # type: ignore
+    bert_embedder = BERTEmbedder(
+        tokens_tensor_mapping=learned_bert_tokens_mapping,
+        torch_model=bert_model,  # type: ignore
+    )
 
     return bert_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
@@ -178,7 +185,10 @@ def scibert_embed_query(query_document_info: DocumentInfo) -> Embedding:
     query_abstract_tokenized = scibert_tokenize_query(query_document_info)
 
     scibert_model = BertModel.from_pretrained(ModelVersions.scibert)
-    scibert_embedder = BERTEmbedder(scibert_model, learned_scibert_tokens_mapping)  # type: ignore
+    scibert_embedder = BERTEmbedder(
+        tokens_tensor_mapping=learned_scibert_tokens_mapping,
+        torch_model=scibert_model,  # type: ignore
+    )
 
     return scibert_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
@@ -189,8 +199,8 @@ def longformer_embed_query(query_document_info: DocumentInfo) -> Embedding:
 
     longformer_model = LongformerModel.from_pretrained(ModelVersions.longformer)
     longformer_embedder = LongformerEmbedder(
-        longformer_model,  # type: ignore
-        learned_longformer_tokens_mapping,
+        tokens_tensor_mapping=learned_longformer_tokens_mapping,
+        torch_model=longformer_model,  # type: ignore
     )
 
     return longformer_embedder.compute_embedding_single_document(query_abstract_tokenized)

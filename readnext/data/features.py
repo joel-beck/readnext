@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def add_feature_rank_cols(df: pd.DataFrame) -> pd.DataFrame:
+def add_citation_feature_rank_cols(df: pd.DataFrame) -> pd.DataFrame:
     """
     Add rank columns for publication date, document citation count, and author citation
     count to the dataframe.

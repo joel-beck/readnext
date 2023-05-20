@@ -19,15 +19,15 @@ from readnext.utils import (
 TTorchModel = TypeVar("TTorchModel", bound=BertModelProtocol | LongformerModelProtocol)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class TorchEmbedder(ABC, Generic[TTorchModel]):
     """
     Abstract Base class for pytorch embedding models. All embedding models implement a
     `compute_embeddings_mapping` method.
     """
 
-    torch_model: TTorchModel
     tokens_tensor_mapping: TokensIdMapping
+    torch_model: TTorchModel
     aggregation_strategy: AggregationStrategy = AggregationStrategy.mean
 
     @staticmethod
@@ -95,7 +95,7 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
         return embeddings_mapping
 
 
-@dataclass
+@dataclass(kw_only=True)
 class BERTEmbedder(TorchEmbedder):
     """
     Computes document embeddings with the BERT model. Takes a pretrained BERT model as
@@ -105,7 +105,7 @@ class BERTEmbedder(TorchEmbedder):
     torch_model: BertModelProtocol
 
 
-@dataclass
+@dataclass(kw_only=True)
 class LongformerEmbedder(TorchEmbedder):
     """
     Computes document embeddings with the Longformer model. Takes a pretrained Longformer model as

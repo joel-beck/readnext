@@ -7,7 +7,7 @@ import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
 from readnext.data import (
-    add_feature_rank_cols,
+    add_citation_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
 from readnext.evaluation.metrics import CountUniqueLabels
@@ -47,7 +47,7 @@ def main() -> None:
     citation_model_data_constructor = CitationModelDataConstructor(
         d3_document_id=query_d3_document_id,
         documents_data=documents_authors_labels_citations_most_cited.pipe(
-            add_feature_rank_cols
+            add_citation_feature_rank_cols
         ).pipe(set_missing_publication_dates_to_max_rank),
         co_citation_analysis_scores=co_citation_analysis_scores_most_cited,
         bibliographic_coupling_scores=bibliographic_coupling_scores_most_cited,

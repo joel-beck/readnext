@@ -340,33 +340,35 @@ def longformer_expected_tokenized_abstract() -> Tokens:
 # SECTION: Embedders
 @pytest.fixture(scope="session")
 def tfidf_embedder(spacy_tokens_mapping: TokensMapping) -> TFIDFEmbedder:
-    return TFIDFEmbedder(keyword_algorithm=tfidf, tokens_mapping=spacy_tokens_mapping)
+    return TFIDFEmbedder(tokens_mapping=spacy_tokens_mapping, keyword_algorithm=tfidf)
 
 
 @pytest.fixture(scope="session")
 def word2vec_embedder(
     spacy_tokens_mapping: TokensMapping, word2vec_model: Word2VecModelProtocol
 ) -> Word2VecEmbedder:
-    return Word2VecEmbedder(spacy_tokens_mapping, word2vec_model)
+    return Word2VecEmbedder(tokens_mapping=spacy_tokens_mapping, embedding_model=word2vec_model)
 
 
 @pytest.fixture(scope="session")
 def fasttext_embedder(
     spacy_tokens_mapping: TokensMapping, fasttext_model: FastTextModelProtocol
 ) -> FastTextEmbedder:
-    return FastTextEmbedder(spacy_tokens_mapping, fasttext_model)
+    return FastTextEmbedder(tokens_mapping=spacy_tokens_mapping, embedding_model=fasttext_model)
 
 
-# TODO: Unify Order of tokens mapping and model across all embedders
 @pytest.fixture(scope="session")
 def bert_embedder(
     bert_tokens_id_mapping: TokensIdMapping, bert_model: BertModelProtocol
 ) -> BERTEmbedder:
-    return BERTEmbedder(bert_model, bert_tokens_id_mapping)
+    return BERTEmbedder(tokens_tensor_mapping=bert_tokens_id_mapping, torch_model=bert_model)
 
 
 @pytest.fixture(scope="session")
 def longformer_embedder(
     longformer_tokens_id_mapping: TokensIdMapping, longformer_model: LongformerModelProtocol
 ) -> LongformerEmbedder:
-    return LongformerEmbedder(longformer_model, longformer_tokens_id_mapping)
+    return LongformerEmbedder(
+        tokens_tensor_mapping=longformer_tokens_id_mapping,
+        torch_model=longformer_model,
+    )

@@ -52,7 +52,7 @@ def embeddings_mapping_to_frame(embeddings_mapping: EmbeddingsMapping) -> pd.Dat
     )
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Embedder(ABC):
     """
     Abstract Base class for embedding models. All embedding models implement a
@@ -86,14 +86,14 @@ class Embedder(ABC):
         raise ValueError(f"Aggregation strategy `{aggregation_strategy}` is not implemented.")
 
 
-@dataclass
+@dataclass(kw_only=True)
 class TFIDFEmbedder(Embedder):
     """
     Computes document embeddings with the TF-IDF or BM25 model.
     """
 
-    keyword_algorithm: KeywordAlgorithm
     tokens_mapping: TokensMapping
+    keyword_algorithm: KeywordAlgorithm
 
     def compute_embedding_single_document(self, document_tokens: Tokens) -> np.ndarray:
         return self.keyword_algorithm(document_tokens, list(self.tokens_mapping.values()))
@@ -123,7 +123,7 @@ class TFIDFEmbedder(Embedder):
         return embeddings_mapping
 
 
-@dataclass
+@dataclass(kw_only=True)
 class GensimEmbedder(Embedder):
     """
     Takes pretrained Word2Vec (`KeyedVectors` in gensim) or FastText model as input.
@@ -173,7 +173,7 @@ class Word2VecEmbedder(GensimEmbedder):
     def __init__(
         self, tokens_mapping: TokensMapping, embedding_model: Word2VecModelProtocol
     ) -> None:
-        super().__init__(tokens_mapping)
+        super().__init__(tokens_mapping=tokens_mapping)
         self.embedding_model = embedding_model
 
     def compute_embedding_single_document(self, document_tokens: Tokens) -> np.ndarray:
@@ -193,7 +193,7 @@ class FastTextEmbedder(GensimEmbedder):
     def __init__(
         self, tokens_mapping: TokensMapping, embedding_model: FastTextModelProtocol
     ) -> None:
-        super().__init__(tokens_mapping)
+        super().__init__(tokens_mapping=tokens_mapping)
         self.embedding_model = embedding_model
 
     def compute_embedding_single_document(self, document_tokens: Tokens) -> np.ndarray:

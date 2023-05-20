@@ -244,10 +244,11 @@ def test_language_model_data_getitem(model_data: LanguageModelData, test_data_si
     assert len(index_info_matrix) == test_data_size - 1
 
     index_cosine_similarity_ranks = model_data.cosine_similarity_ranks.index
-    # TODO: Why is this number not 99 (i.e. test_data_size - 1)?
+    # the cosine similarities test data frame has 100 rows, but each row still contains
+    # a list of the original 1000 `DocumentScore` objects
     assert len(index_cosine_similarity_ranks) == 999
 
-    # index of info matrix is subset of cosine similarity ranks index
+    # index of info matrix is a strict subset of cosine similarity ranks index
     shared_indices = index_info_matrix.intersection(index_cosine_similarity_ranks)
     assert len(shared_indices) == test_data_size - 1
 

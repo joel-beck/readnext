@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 
 from readnext.data import (
-    add_feature_rank_cols,
+    add_citation_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
 from readnext.evaluation.scoring import FeatureWeights
@@ -209,9 +209,7 @@ def test_word2vec_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
     )
 
 
-# SECTION: Language Models & Tokenizers
-
-
+# SECTION: Language Models
 @pytest.fixture(scope="session")
 def word2vec_model() -> Word2VecModelProtocol:
     return word2vec_model_mock()
@@ -244,7 +242,7 @@ def citation_model_data_constructor(
     return CitationModelDataConstructor(
         d3_document_id=query_d3_document_id,
         documents_data=test_documents_authors_labels_citations_most_cited.pipe(
-            add_feature_rank_cols
+            add_citation_feature_rank_cols
         ).pipe(set_missing_publication_dates_to_max_rank),
         co_citation_analysis_scores=test_co_citation_analysis_scores_most_cited,
         bibliographic_coupling_scores=test_bibliographic_coupling_scores_most_cited,
@@ -254,16 +252,14 @@ def citation_model_data_constructor(
 @pytest.fixture(scope="session")
 def language_model_data_constructor(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
-    test_tfidf_cosine_similarities_most_cited: ScoresFrame,
+    test_bert_cosine_similarities_most_cited: ScoresFrame,
 ) -> LanguageModelDataConstructor:
     query_d3_document_id = 206594692
 
     return LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=test_documents_authors_labels_citations_most_cited.pipe(
-            add_feature_rank_cols
-        ).pipe(set_missing_publication_dates_to_max_rank),
-        cosine_similarities=test_tfidf_cosine_similarities_most_cited,
+        documents_data=test_documents_authors_labels_citations_most_cited,
+        cosine_similarities=test_bert_cosine_similarities_most_cited,
     )
 
 

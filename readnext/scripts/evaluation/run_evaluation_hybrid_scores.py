@@ -7,7 +7,7 @@ import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
 from readnext.data import (
-    add_feature_rank_cols,
+    add_citation_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
 from readnext.evaluation.metrics import AveragePrecision
@@ -30,7 +30,7 @@ def compare_hybrid_scores_by_document_id(
     # SECTION: Citation Models
     citation_model_data_constructor = CitationModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data.pipe(add_feature_rank_cols).pipe(
+        documents_data=documents_data.pipe(add_citation_feature_rank_cols).pipe(
             set_missing_publication_dates_to_max_rank
         ),
         co_citation_analysis_scores=co_citation_analysis_scores,

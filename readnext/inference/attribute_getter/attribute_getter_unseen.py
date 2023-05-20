@@ -4,7 +4,7 @@ import pandas as pd
 
 from readnext.data import (
     SemanticscholarRequest,
-    add_feature_rank_cols,
+    add_citation_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
 from readnext.evaluation.metrics import (
@@ -164,8 +164,8 @@ class UnseenPaperAttributeGetter(AttributeGetter):
         citation_model_data_constructor = QueryCitationModelDataConstructor(
             response=self.response,
             d3_document_id=-1,
-            documents_data=self.documents_data.pipe(add_feature_rank_cols)
-            .pipe(add_feature_rank_cols)
+            documents_data=self.documents_data.pipe(add_citation_feature_rank_cols)
+            .pipe(add_citation_feature_rank_cols)
             .pipe(set_missing_publication_dates_to_max_rank),
             co_citation_analysis_scores=self.get_co_citation_analysis_scores(),
             bibliographic_coupling_scores=self.get_bibliographic_coupling_scores(),

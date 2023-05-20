@@ -3,7 +3,7 @@ import pytest
 from pandas.testing import assert_frame_equal
 
 from readnext.data import (
-    add_feature_rank_cols,
+    add_citation_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
 
@@ -28,7 +28,7 @@ def test_add_feature_rank_cols(test_data: pd.DataFrame) -> None:
         "citationcount_author_rank": [3.0, 2.0, 1.0],
     }
     expected_df = pd.DataFrame(expected_data)
-    result_df = add_feature_rank_cols(test_data)
+    result_df = add_citation_feature_rank_cols(test_data)
     assert_frame_equal(result_df, expected_df)
 
 
@@ -77,7 +77,7 @@ def test_add_feature_rank_cols_extended(extended_test_data: pd.DataFrame) -> Non
         "citationcount_author_rank": [4.5, 2.5, 1.0, 4.5, 2.5],
     }
     expected_df = pd.DataFrame(expected_data)
-    result_df = add_feature_rank_cols(extended_test_data)
+    result_df = add_citation_feature_rank_cols(extended_test_data)
     assert_frame_equal(result_df, expected_df)
 
 

@@ -53,9 +53,9 @@ class PairwiseMetric(ABC, Generic[TReturn]):
         Count the number of common values between two vectors that are extracted from a
         DataFrame.
         """
-        # iloc[0] to get the first and only value of the pandas Series
-        row_value_list: list[str] = df.loc[df["document_id"] == document_id_1, colname].iloc[0]
-        col_value_list: list[str] = df.loc[df["document_id"] == document_id_2, colname].iloc[0]
+
+        row_value_list: list[str] = df.loc[document_id_1, colname]
+        col_value_list: list[str] = df.loc[document_id_2, colname]
 
         return PairwiseMetric.count_common_values(row_value_list, col_value_list)
 

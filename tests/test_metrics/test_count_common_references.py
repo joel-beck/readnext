@@ -40,37 +40,43 @@ def test_count_common_references_mixed_inputs() -> None:
 
 
 def test_count_common_references_from_df() -> None:
+    index = pd.Index([1, 2, 3], name="document_id")
     data = {
-        "document_id": [1, 2, 3],
         "references": [
             [1, 2, 3, 4, 5],
             [4, 5, 6, 7, 8],
             [1, 3, 5, 7, 9],
         ],
     }
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(data, index=index)
+
     assert CountCommonReferences.from_df(df, 1, 2) == 2
     assert CountCommonReferences.from_df(df, 1, 3) == 3
     assert CountCommonReferences.from_df(df, 2, 3) == 2
 
 
 def test_count_common_references_from_df_empty_dataframe() -> None:
-    df = pd.DataFrame(columns=["document_id", "references"])
-    with pytest.raises(IndexError):
+    index = pd.Index([], name="document_id")
+    df = pd.DataFrame(columns=["references"], index=index)
+
+    with pytest.raises(KeyError):
         CountCommonReferences.from_df(df, 1, 2)
 
 
 def test_count_common_references_from_df_missing_document_id() -> None:
+    index = pd.Index([1, 2, 3], name="document_id")
     data = {
         "document_id": [1, 2, 3],
         "references": [[1, 2, 3, 4, 5], [4, 5, 6, 7, 8], [1, 3, 5, 7, 9]],
     }
-    df = pd.DataFrame(data)
-    with pytest.raises(IndexError):
+    df = pd.DataFrame(data, index=index)
+
+    with pytest.raises(KeyError):
         CountCommonReferences.from_df(df, 1, 4)
 
 
 def test_count_common_references_from_df_different_data_types() -> None:
+    index = pd.Index([1, 2, 3], name="document_id")
     data = {
         "document_id": [1, 2, 3],
         "references": [
@@ -79,7 +85,8 @@ def test_count_common_references_from_df_different_data_types() -> None:
             ["A", "C", "E", "G", "I"],
         ],
     }
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(data, index=index)
+
     assert CountCommonReferences.from_df(df, 1, 2) == 2
     assert CountCommonReferences.from_df(df, 1, 3) == 3
     assert CountCommonReferences.from_df(df, 2, 3) == 2

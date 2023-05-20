@@ -34,17 +34,12 @@ def tfidf_embeddings(test_tfidf_embeddings_most_cited: pd.DataFrame) -> pd.DataF
 def test_find_top_n_matches_single_document(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
 ) -> None:
-    document_ids = test_documents_authors_labels_citations_most_cited.index[:8].tolist()
-    query_d3_document_id = document_ids[0]
+    query_d3_document_id = test_documents_authors_labels_citations_most_cited.index[0].item()  # type: ignore # noqa: E501
     pairwise_metric = CountCommonCitations()
     n = 5
 
     top_n_matches = find_top_n_matches_single_document(
-        test_documents_authors_labels_citations_most_cited,
-        document_ids,
-        query_d3_document_id,
-        pairwise_metric,
-        n,
+        test_documents_authors_labels_citations_most_cited, query_d3_document_id, pairwise_metric, n
     )
 
     assert isinstance(top_n_matches, list)
@@ -77,6 +72,7 @@ def test_precompute_co_citations(co_citation_analysis_scores: pd.DataFrame) -> N
     first_score = first_scores[0]
     assert isinstance(first_score, DocumentScore)
     assert isinstance(first_score.document_info, DocumentInfo)
+
     assert isinstance(first_score.document_info.d3_document_id, int)
     assert first_score.document_info.title == ""
     assert first_score.document_info.author == ""
@@ -99,6 +95,7 @@ def test_precompute_co_references(bibliographic_coupling_scores: pd.DataFrame) -
     first_score = first_scores[0]
     assert isinstance(first_score, DocumentScore)
     assert isinstance(first_score.document_info, DocumentInfo)
+
     assert isinstance(first_score.document_info.d3_document_id, int)
     assert first_score.document_info.title == ""
     assert first_score.document_info.author == ""
@@ -121,6 +118,7 @@ def test_precompute_cosine_similarities(tfidf_embeddings: pd.DataFrame) -> None:
     first_score = first_scores[0]
     assert isinstance(first_score, DocumentScore)
     assert isinstance(first_score.document_info, DocumentInfo)
+
     assert isinstance(first_score.document_info.d3_document_id, int)
     assert first_score.document_info.title == ""
     assert first_score.document_info.author == ""

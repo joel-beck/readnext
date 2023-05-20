@@ -19,7 +19,6 @@ all_tokenized_abstracts_mappings = [
 ]
 
 
-@pytest.mark.slow
 @pytest.mark.parametrize(
     "tokenized_abstracts_mapping", lazy_fixture(all_tokenized_abstracts_mappings)
 )
@@ -33,7 +32,6 @@ def test_key_values_tokenized_abstracts_mappings_most_cited(
     assert all(isinstance(value, list) for value in tokenized_abstracts_mapping.values())
 
 
-@pytest.mark.slow
 def test_spacy_tokenized_abstract_mappings_most_cited(
     spacy_tokenized_abstracts_mapping_most_cited: TokensMapping,
 ) -> None:
@@ -47,7 +45,6 @@ def test_spacy_tokenized_abstract_mappings_most_cited(
     )
 
 
-@pytest.mark.slow
 @pytest.mark.parametrize(
     "tokenized_abstract_mapping", lazy_fixture(torch_tokenized_abstracts_mappings)
 )
@@ -59,7 +56,6 @@ def test_torch_tokenized_abstract_mappings_token_ids(
     assert all(isinstance(token_id, int) for token_id in single_abstract_token_ids)
 
 
-@pytest.mark.slow
 @pytest.mark.parametrize(
     "tokenized_abstract_mapping", lazy_fixture(bert_based_tokenized_abstracts_mappings)
 )
@@ -68,7 +64,6 @@ def test_bert_based_tokenized_abstracts_length(tokenized_abstract_mapping: Token
     assert all(len(abstract_ids) == 512 for abstract_ids in tokenized_abstract_mapping.values())
 
 
-@pytest.mark.slow
 def test_bert_tokenized_abstracts_most_cited(
     bert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
 ) -> None:
@@ -77,7 +72,6 @@ def test_bert_tokenized_abstracts_most_cited(
     assert all(token_id != 0 for token_id in single_abstract_token_ids[:254])
 
 
-@pytest.mark.slow
 def test_scibert_tokenized_abstracts_most_cited(
     scibert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
 ) -> None:
@@ -87,7 +81,6 @@ def test_scibert_tokenized_abstracts_most_cited(
     assert all(token_id != 0 for token_id in single_abstract_token_ids[:252])
 
 
-@pytest.mark.slow
 def test_longformer_tokenized_abstracts_most_cited(
     longformer_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
 ) -> None:

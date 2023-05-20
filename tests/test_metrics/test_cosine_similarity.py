@@ -73,14 +73,14 @@ def test_cosine_similarity_from_df(document_embeddings_df: pd.DataFrame) -> None
 
 
 def test_cosine_similarity_from_df_non_existent_ids(document_embeddings_df: pd.DataFrame) -> None:
-    with pytest.raises(IndexError):
+    with pytest.raises(KeyError):
         CosineSimilarity.from_df(document_embeddings_df, 1, 5)
 
-    with pytest.raises(IndexError):
+    with pytest.raises(KeyError):
         CosineSimilarity.from_df(document_embeddings_df, 6, 2)
 
 
 def test_cosine_similarity_from_df_empty_dataframe() -> None:
     empty_df = pd.DataFrame(columns=["document_id", "embedding"]).set_index("document_id")
-    with pytest.raises(IndexError):
+    with pytest.raises(KeyError):
         CosineSimilarity.from_df(empty_df, 1, 2)

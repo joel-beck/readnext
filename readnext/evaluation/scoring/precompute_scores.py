@@ -12,19 +12,23 @@ from readnext.utils import ScoresFrame
 
 
 def find_top_n_matches_single_document(
-    input_df: pd.DataFrame,
-    candidate_d3_document_ids: list[int],
-    query_d3_document_id: int,
-    pairwise_metric: PairwiseMetric,
-    n: int,
+    input_df: pd.DataFrame, query_d3_document_id: int, pairwise_metric: PairwiseMetric, n: int
 ) -> list[DocumentScore]:
     """
     Find the n documents with the highest pairwise score for a single query document.
     """
     scores = []
-    for d3_document_id in candidate_d3_document_ids:
+    for d3_document_id in input_df.index:
         if d3_document_id == query_d3_document_id:
             continue
+
+        # full documents data (input of `precompute_co_citations` and
+        # `precompute_co_references`) has index of type `pd.Index`, while the input of
+        # `precompute_cosine_similarities` does not require an extra `.item()` call
+        d3_document_id = (
+            d3_document_id if isinstance(d3_document_id, int) else d3_document_id.item()
+        )
+
         document_info = DocumentInfo(d3_document_id=d3_document_id)
         score = pairwise_metric.from_df(input_df, query_d3_document_id, d3_document_id)
         scores.append(DocumentScore(document_info=document_info, score=score))
@@ -33,10 +37,7 @@ def find_top_n_matches_single_document(
 
 
 def precompute_pairwise_scores(
-    input_df: pd.DataFrame,
-    candidate_d3_document_ids: list[int],
-    pairwise_metric: PairwiseMetric,
-    n: int | None,
+    input_df: pd.DataFrame, pairwise_metric: PairwiseMetric, n: int | None
 ) -> ScoresFrame:
     """
     Precompute and store pairwise scores for all documents in a dataframe with one row
@@ -49,7 +50,7 @@ def precompute_pairwise_scores(
         n = len(input_df)
 
     return (
-        pd.DataFrame(data=candidate_d3_document_ids, columns=["document_id"])
+        pd.DataFrame(data=input_df.index, columns=["document_id"])
         .assign(
             # the new scoped dataframe inside the first lambda function must have a
             # different name than the input dataframe since the input dataframe is
@@ -57,7 +58,7 @@ def precompute_pairwise_scores(
             # scoped dataframe!
             scores=lambda new_df: new_df["document_id"].progress_apply(
                 lambda query_d3_document_id: find_top_n_matches_single_document(
-                    input_df, candidate_d3_document_ids, query_d3_document_id, pairwise_metric, n
+                    input_df, query_d3_document_id, pairwise_metric, n
                 )
             )
         )
@@ -78,8 +79,7 @@ def precompute_co_citations(
 
     The input dataframe is the full documents data.
     """
-    candidate_d3_document_ids = df["document_id"].tolist()
-    return precompute_pairwise_scores(df, candidate_d3_document_ids, CountCommonCitations(), n)
+    return precompute_pairwise_scores(df, CountCommonCitations(), n)
 
 
 def precompute_co_references(
@@ -92,8 +92,7 @@ def precompute_co_references(
 
     The input dataframe is the full documents data.
     """
-    candidate_d3_document_ids = df["document_id"].tolist()
-    return precompute_pairwise_scores(df, candidate_d3_document_ids, CountCommonReferences(), n)
+    return precompute_pairwise_scores(df, CountCommonReferences(), n)
 
 
 def precompute_cosine_similarities(
@@ -107,5 +106,4 @@ def precompute_cosine_similarities(
     The input dataframe has a single column named `embedding` and the index is named
     `document_id`.
     """
-    candidate_d3_document_ids = df.index.tolist()
-    return precompute_pairwise_scores(df, candidate_d3_document_ids, CosineSimilarity(), n)
+    return precompute_pairwise_scores(df, CosineSimilarity(), n)

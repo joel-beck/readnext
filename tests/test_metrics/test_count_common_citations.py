@@ -40,46 +40,50 @@ def test_count_common_citations_mixed_inputs() -> None:
 
 
 def test_count_common_citations_from_df() -> None:
+    index = pd.Index([1, 2, 3], name="document_id")
     data = {
-        "document_id": [1, 2, 3],
         "citations": [
             [1, 2, 3, 4, 5],
             [4, 5, 6, 7, 8],
             [1, 3, 5, 7, 9],
         ],
     }
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(data, index=index)
     assert CountCommonCitations.from_df(df, 1, 2) == 2
     assert CountCommonCitations.from_df(df, 1, 3) == 3
     assert CountCommonCitations.from_df(df, 2, 3) == 2
 
 
 def test_count_common_citations_from_df_empty_dataframe() -> None:
-    df = pd.DataFrame(columns=["document_id", "citations"])
-    with pytest.raises(IndexError):
+    index = pd.Index([], name="document_id")
+    df = pd.DataFrame(columns=["citations"], index=index)
+
+    with pytest.raises(KeyError):
         CountCommonCitations.from_df(df, 1, 2)
 
 
 def test_count_common_citations_from_df_missing_document_id() -> None:
+    index = pd.Index([1, 2, 3], name="document_id")
     data = {
-        "document_id": [1, 2, 3],
         "citations": [[1, 2, 3, 4, 5], [4, 5, 6, 7, 8], [1, 3, 5, 7, 9]],
     }
-    df = pd.DataFrame(data)
-    with pytest.raises(IndexError):
+    df = pd.DataFrame(data, index=index)
+
+    with pytest.raises(KeyError):
         CountCommonCitations.from_df(df, 1, 4)
 
 
 def test_count_common_citations_from_df_different_data_types() -> None:
+    index = pd.Index([1, 2, 3], name="document_id")
     data = {
-        "document_id": [1, 2, 3],
         "citations": [
             ["A", "B", "C", "D", "E"],
             ["D", "E", "F", "G", "H"],
             ["A", "C", "E", "G", "I"],
         ],
     }
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(data, index=index)
+
     assert CountCommonCitations.from_df(df, 1, 2) == 2
     assert CountCommonCitations.from_df(df, 1, 3) == 3
     assert CountCommonCitations.from_df(df, 2, 3) == 2

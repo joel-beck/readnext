@@ -138,8 +138,7 @@ select = [
     "INP", # flake8-no-pep420
     "ISC", # flake8-implicit-str-concat
     "N", # pep8-naming
-    # causes toml parsing error: unknown field
-    # "NPY", # NumPy-specific rules
+    # "NPY", # NumPy-specific rules # causes toml parsing error: unknown field
     "PD", # pandas-vet
     "PIE", # flake8-pie
     "PT", # flake8-pytest-style
@@ -154,32 +153,25 @@ select = [
     "W", # pycodestyle Warning
 
 ]
-# - `ANN101` (missing type annotation for `self` in method)
-# - `ANN102` (missing type annotation for `cls` in classmethod)
-# - `ANN401` (Dynamically typed expressions (typing.Any) are disallowed)
-# - `N803` (argument name should be lowercase)
-# - `N806` (variable in function should be lowercase)
-# - `PD015` (use `.merge()` instead of `pd.merge()`, incorrect for Series)
-# - `PD901` (don't use `df` as a variable name)
-# - `PT011` (`pytest_raises(ValueError`) is too broad)
-# - `RUF007` (prefer `itertools.pairwise()` over `zip()` when iterating over successive pairs)
-# - "RUF100" (unused `noqa`)
 ignore = [
-    "ANN101",
-    "ANN102",
-    "ANN401",
-    "N803",
-    "N806",
-    "PD015",
-    "PD901",
-    "PT011",
-    "RUF007",
-    "RUF100"
+    "ANN101", # missing type annotation for `self` in method
+    "ANN102", # missing type annotation for `cls` in classmethod
+    "ANN401", # Dynamically typed expressions (typing.Any) are disallowed
+    "N803", # argument name should be lowercase
+    "N806", # variable in function should be lowercase
+    "PD015", # use `.merge()` instead of `pd.merge()`, incorrect for Series
+    "PD901", # don't use `df` as a variable name
+    "PT011", # `pytest_raises(ValueError)` is too broad
+    "RUF007", # prefer `itertools.pairwise()` over `zip()` when iterating over successive pairs
+    "RUF100", # unused `noqa`
+
 ]
-# Never try to fix
-# - `F401` (unused imports)
-# - `F841` (unused variables)
-unfixable = ["F401", "F841"]
+# Never try to fix automatically
+unfixable = [
+    "F401", # unused imports
+    "F841", # unused variables
+
+]
 
 [tool.ruff.flake8-annotations]
 suppress-dummy-args = true # suppress violations "dummy" variables like `_`

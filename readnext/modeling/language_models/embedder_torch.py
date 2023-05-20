@@ -36,16 +36,14 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
         aggregation_strategy: AggregationStrategy = AggregationStrategy.mean,
     ) -> torch.Tensor:
         """
-        Combines word embeddings per document by averaging each embedding dimension.
-
-        Output has shape (n_dimensions,) with
-        - n_dimensions: dimension of embedding space
+        Collapses first dimension of document embeddings tensor (number of tokens per
+        document) to a single document embedding.
         """
         if aggregation_strategy.is_mean:
             return document_embeddings.mean(dim=1)
 
         if aggregation_strategy.is_max:
-            return document_embeddings.max(dim=1)
+            return document_embeddings.max(dim=1)[0]  # Only return the max values, not the indices
 
         raise ValueError(f"Aggregation strategy `{aggregation_strategy}` is not implemented.")
 

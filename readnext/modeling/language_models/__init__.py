@@ -2,6 +2,7 @@ from readnext.modeling.language_models.bm25 import bm25, bm25_idf, bm25_single_t
 from readnext.modeling.language_models.embedder import (
     AggregationStrategy,
     FastTextEmbedder,
+    GensimEmbedder,
     TFIDFEmbedder,
     Word2VecEmbedder,
     embeddings_mapping_to_frame,
@@ -9,6 +10,7 @@ from readnext.modeling.language_models.embedder import (
 from readnext.modeling.language_models.embedder_torch import (
     BERTEmbedder,
     LongformerEmbedder,
+    TorchEmbedder,
 )
 from readnext.modeling.language_models.model_choice import (
     LanguageModelChoice,
@@ -34,6 +36,7 @@ from readnext.modeling.language_models.tokenizer_list import (
 from readnext.modeling.language_models.tokenizer_tensor import (
     BERTTokenizer,
     LongformerTokenizer,
+    TensorTokenizer,
     TokenIds,
     TokensIdMapping,
 )
@@ -44,8 +47,10 @@ __all__ = [
     "bm25_single_term",
     "bm25_tf",
     "FastTextEmbedder",
+    "GensimEmbedder",
     "BERTEmbedder",
     "LongformerEmbedder",
+    "TorchEmbedder",
     "TFIDFEmbedder",
     "Word2VecEmbedder",
     "embeddings_mapping_to_frame",
@@ -63,6 +68,7 @@ __all__ = [
     "tfidf_single_term",
     "BERTTokenizer",
     "LongformerTokenizer",
+    "TensorTokenizer",
     "SpacyTokenizer",
     "TextProcessingSteps",
     "TokenIds",

@@ -52,7 +52,8 @@ def torch_model_output_mock() -> TorchModelOutputProtocol:
     class TorchModelOutputMock:
         @property
         def last_hidden_state(self) -> torch.Tensor:
-            return torch.Tensor(torch.Tensor([1, 2, 3]))
+            # dimension: num_documents x num_tokens_per_document x embedding_dimension
+            return torch.Tensor(torch.ones(size=(1, 2, 768)))
 
     return TorchModelOutputMock()
 

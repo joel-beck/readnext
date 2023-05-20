@@ -2,10 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-import spacy
-from spacy.language import Language
 
-from readnext.config import ModelVersions
 from readnext.data import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
@@ -15,19 +12,16 @@ from readnext.inference.attribute_getter import SeenPaperAttributeGetter
 from readnext.modeling import (
     CitationModelData,
     CitationModelDataConstructor,
-    DocumentInfo,
-    DocumentsInfo,
     LanguageModelData,
     LanguageModelDataConstructor,
 )
-from readnext.modeling.language_models import LanguageModelChoice, SpacyTokenizer
+from readnext.modeling.language_models import LanguageModelChoice
 from readnext.utils import (
     BertModelProtocol,
     EmbeddingsMapping,
     FastTextModelProtocol,
     LongformerModelProtocol,
     ScoresFrame,
-    Tokens,
     TokensIdMapping,
     TokensMapping,
     Word2VecModelProtocol,
@@ -216,52 +210,6 @@ def test_word2vec_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
 
 
 # SECTION: Language Models & Tokenizers
-@pytest.fixture(scope="session")
-def spacy_model() -> Language:
-    return spacy.load(ModelVersions.spacy)
-
-
-@pytest.fixture(scope="session")
-def spacy_tokenizer(documents_info: DocumentsInfo, spacy_model: Language) -> SpacyTokenizer:
-    return SpacyTokenizer(documents_info, spacy_model)
-
-
-@pytest.fixture(scope="session")
-def spacy_tokenized_abstracts() -> list[Tokens]:
-    return [
-        [
-            "abstract",
-            "example",
-            "abstract",
-            "character",
-            "contain",
-            "number",
-            "special",
-            "character",
-            "like",
-        ],
-        ["abstract", "example", "abstract", "include", "upper", "case", "letter", "stopword"],
-        [
-            "abstract",
-            "example",
-            "abstract",
-            "mix",
-            "low",
-            "case",
-            "upper",
-            "case",
-            "letter",
-            "punctuation",
-            "bracket",
-            "curly",
-            "brace",
-        ],
-    ]
-
-
-@pytest.fixture(scope="session")
-def spacy_tokens_mapping(spacy_tokenized_abstracts: list[Tokens]) -> TokensMapping:
-    return dict(enumerate(spacy_tokenized_abstracts))
 
 
 @pytest.fixture(scope="session")
@@ -282,57 +230,6 @@ def bert_model() -> BertModelProtocol:
 @pytest.fixture(scope="session")
 def longformer_model() -> LongformerModelProtocol:
     return longformer_model_mock()
-
-
-# SECTION: Tokens and DocumentsInfo
-@pytest.fixture(scope="session")
-def document_tokens() -> Tokens:
-    return ["a", "b", "c", "a", "b", "c", "d", "d", "d"]
-
-
-@pytest.fixture(scope="session")
-def document_corpus() -> list[Tokens]:
-    return [
-        ["a", "b", "c", "d", "d", "d"],
-        ["a", "b", "b", "c", "c", "c", "d"],
-        ["a", "a", "a", "b", "c", "d"],
-    ]
-
-
-@pytest.fixture(scope="session")
-def documents_info() -> DocumentsInfo:
-    return DocumentsInfo(
-        [
-            DocumentInfo(
-                d3_document_id=1,
-                title="Title 1",
-                author="Author 1",
-                abstract="""
-                Abstract 1: This is an example abstract with various characters! It
-                contains numbers 1, 2, 3 and special characters like @, #, $.
-                """,
-            ),
-            DocumentInfo(
-                d3_document_id=2,
-                title="Title 2",
-                author="Author 2",
-                abstract="""
-                Abstract 2: Another example abstract, including upper-case letters and a
-                few stopwords such as 'the', 'and', 'in'.
-                """,
-            ),
-            DocumentInfo(
-                d3_document_id=3,
-                title="Title 3",
-                author="Author 3",
-                abstract="""
-                Abstract 3: A third example abstract with a mix of lower-case and
-                UPPER-CASE letters, as well as some punctuation: (brackets) and {curly
-                braces}.
-                """,
-            ),
-        ]
-    )
 
 
 # SECTION: Model Data Constructors

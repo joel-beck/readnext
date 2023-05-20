@@ -71,8 +71,6 @@ def test_language_model_data_from_constructor(
 def test_model_data_query_document(model_data: ModelData) -> None:
     assert isinstance(model_data.query_document, DocumentInfo)
 
-    # TODO: For model data the index if of type int (the python type) and not int64 (the
-    # numpy type)
     assert isinstance(model_data.query_document.d3_document_id, int)
     assert model_data.query_document.d3_document_id == 206594692
 

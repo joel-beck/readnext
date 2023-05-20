@@ -34,6 +34,10 @@ class TensorTokenizer(ABC, Generic[TTorchTokenizer]):
         document ids to token ids.
         """
 
+    def tokens_to_ids(self, tokens: Tokens) -> TokenIds:
+        """Converts a list of tokens into a list of token ids."""
+        return cast(list[int], self.tensor_tokenizer.convert_tokens_to_ids(tokens))
+
     def ids_to_tokens(self, token_ids: TokenIds) -> Tokens:
         """Converts a list of token ids into a list of tokens."""
         return cast(list[str], self.tensor_tokenizer.convert_ids_to_tokens(token_ids))

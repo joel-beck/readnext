@@ -16,7 +16,7 @@ def document_embeddings_df() -> pd.DataFrame:
             np.array([1, 1, 0]),
         ],
     }
-    return pd.DataFrame(data)
+    return pd.DataFrame(data).set_index("document_id")
 
 
 def test_cosine_similarity_identical_vectors() -> None:
@@ -81,6 +81,6 @@ def test_cosine_similarity_from_df_non_existent_ids(document_embeddings_df: pd.D
 
 
 def test_cosine_similarity_from_df_empty_dataframe() -> None:
-    empty_df = pd.DataFrame(columns=["document_id", "embedding"])
+    empty_df = pd.DataFrame(columns=["document_id", "embedding"]).set_index("document_id")
     with pytest.raises(IndexError):
         CosineSimilarity.from_df(empty_df, 1, 2)

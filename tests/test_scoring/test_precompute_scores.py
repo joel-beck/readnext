@@ -34,9 +34,7 @@ def tfidf_embeddings(test_tfidf_embeddings_most_cited: pd.DataFrame) -> pd.DataF
 def test_find_top_n_matches_single_document(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
 ) -> None:
-    document_ids = (
-        test_documents_authors_labels_citations_most_cited["document_id"].iloc[:8].tolist()
-    )
+    document_ids = test_documents_authors_labels_citations_most_cited.index[:8].tolist()
     query_d3_document_id = document_ids[0]
     pairwise_metric = CountCommonCitations()
     n = 5

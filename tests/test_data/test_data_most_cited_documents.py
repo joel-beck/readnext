@@ -2,11 +2,18 @@ import pandas as pd
 from pandas.api.types import is_integer_dtype, is_string_dtype
 
 
+def test_index(
+    documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> None:
+    assert documents_authors_labels_citations_most_cited.index.name == "document_id"
+    assert documents_authors_labels_citations_most_cited.index.is_unique
+    assert documents_authors_labels_citations_most_cited.index.dtype == pd.Int64Dtype()
+
+
 def test_contains_columns_subset(
     documents_authors_labels_citations_most_cited: pd.DataFrame,
 ) -> None:
     columns_subset = [
-        "document_id",
         "author_id",
         "title",
         "author",
@@ -27,7 +34,7 @@ def test_contains_columns_subset(
 def test_dtypes(
     documents_authors_labels_citations_most_cited: pd.DataFrame,
 ) -> None:
-    is_integer_dtype(documents_authors_labels_citations_most_cited["document_id"])
+    is_integer_dtype(documents_authors_labels_citations_most_cited.index)
     is_integer_dtype(documents_authors_labels_citations_most_cited["author_id"])
     is_string_dtype(documents_authors_labels_citations_most_cited["title"])
     is_string_dtype(documents_authors_labels_citations_most_cited["author"])

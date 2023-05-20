@@ -28,7 +28,7 @@ def main() -> None:
     # SECTION: Get Raw Data
     documents_authors_labels_citations_most_cited: pd.DataFrame = load_df_from_pickle(
         DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
-    ).set_index("document_id")
+    )
     # NOTE: Remove to evaluate on full data
     documents_authors_labels_citations_most_cited = (
         documents_authors_labels_citations_most_cited.head(1000)

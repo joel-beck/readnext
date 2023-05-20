@@ -99,11 +99,9 @@ class InferenceDataConstructor:
     def get_documents_data(self) -> pd.DataFrame:
         # NOTE: For now the data is limited to the first 1000 documents. This number
         # must match the number of precomputed embeddings, cosine similarities, etc!
-        return (
-            load_df_from_pickle(DataPaths.merged.documents_authors_labels_citations_most_cited_pkl)
-            .set_index("document_id")
-            .head(1000)
-        )
+        return load_df_from_pickle(
+            DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
+        ).head(1000)
 
     def query_document_in_training_data(self) -> bool:
         if self.semanticscholar_id is not None:

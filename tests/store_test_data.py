@@ -3,7 +3,6 @@ Read the first 10 rows of all important data files and store them in the project
 folder to use for testing.
 """
 
-
 from dataclasses import fields, is_dataclass
 from pathlib import Path
 

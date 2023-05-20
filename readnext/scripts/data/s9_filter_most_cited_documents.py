@@ -14,9 +14,13 @@ def main() -> None:
         DataPaths.merged.documents_authors_labels_citations_pkl
     )
 
-    documents_authors_labels_citations_most_cited = documents_authors_labels_references.sort_values(
-        by="citationcount_document", ascending=False
-    ).iloc[: DataPaths.merged.most_cited_subset_size]
+    documents_authors_labels_citations_most_cited = (
+        documents_authors_labels_references.sort_values(
+            by="citationcount_document", ascending=False
+        )
+        .iloc[: DataPaths.merged.most_cited_subset_size]
+        .set_index("document_id")
+    )
 
     write_df_to_pickle(
         documents_authors_labels_citations_most_cited,

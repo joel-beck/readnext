@@ -4,8 +4,9 @@ from pandas.api.types import is_integer_dtype
 from pytest_lazyfixture import lazy_fixture
 
 from readnext.modeling import DocumentInfo, DocumentScore
+from readnext.utils import ScoresFrame
 
-score_dataframes = [
+score_dataframes: list[str] = [
     "co_citation_analysis_scores_most_cited",
     "bibliographic_coupling_scores_most_cited",
     "tfidf_cosine_similarities_most_cited",
@@ -16,6 +17,16 @@ score_dataframes = [
     "bert_cosine_similarities_most_cited",
     "scibert_cosine_similarities_most_cited",
     "longformer_cosine_similarities_most_cited",
+    "seen_paper_attribute_getter_co_citation_analysis",
+    "seen_paper_attribute_getter_bibliographic_coupling",
+    "seen_paper_attribute_getter_cosine_similarities_tfidf",
+    "seen_paper_attribute_getter_cosine_similarities_bm25",
+    "seen_paper_attribute_getter_cosine_similarities_word2vec",
+    "seen_paper_attribute_getter_cosine_similarities_glove",
+    "seen_paper_attribute_getter_cosine_similarities_fasttext",
+    "seen_paper_attribute_getter_cosine_similarities_bert",
+    "seen_paper_attribute_getter_cosine_similarities_scibert",
+    "seen_paper_attribute_getter_cosine_similarities_longformer",
 ]
 
 
@@ -25,7 +36,7 @@ score_dataframes = [
     lazy_fixture(score_dataframes),
 )
 def test_score_dataframes(
-    score_dataframe: pd.DataFrame,
+    score_dataframe: ScoresFrame,
 ) -> None:
     assert isinstance(score_dataframe, pd.DataFrame)
 

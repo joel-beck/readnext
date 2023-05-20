@@ -10,13 +10,17 @@ from readnext.data import (
     add_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
+from readnext.evaluation.scoring import FeatureWeights
+from readnext.inference.attribute_getter import SeenPaperAttributeGetter
 from readnext.modeling import (
+    CitationModelData,
     CitationModelDataConstructor,
     DocumentInfo,
     DocumentsInfo,
+    LanguageModelData,
     LanguageModelDataConstructor,
 )
-from readnext.modeling.language_models import SpacyTokenizer
+from readnext.modeling.language_models import LanguageModelChoice, SpacyTokenizer
 from readnext.utils import (
     BertModelProtocol,
     EmbeddingsMapping,
@@ -49,6 +53,7 @@ def test_data_size() -> int:
     return 100
 
 
+# SECTION: Test Data
 @pytest.fixture(scope="session")
 def test_documents_authors_labels_citations_most_cited(root_path: Path) -> pd.DataFrame:
     return load_df_from_pickle(
@@ -210,6 +215,7 @@ def test_word2vec_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
     )
 
 
+# SECTION: Language Models & Tokenizers
 @pytest.fixture(scope="session")
 def spacy_model() -> Language:
     return spacy.load(ModelVersions.spacy)
@@ -278,6 +284,7 @@ def longformer_model() -> LongformerModelProtocol:
     return longformer_model_mock()
 
 
+# SECTION: Tokens and DocumentsInfo
 @pytest.fixture(scope="session")
 def document_tokens() -> Tokens:
     return ["a", "b", "c", "a", "b", "c", "d", "d", "d"]
@@ -328,15 +335,16 @@ def documents_info() -> DocumentsInfo:
     )
 
 
+# SECTION: Model Data Constructors
 # query_d3_document_id is modified by some tests, set `scope="session"` to provide a new instance to
 # each test function
-@pytest.fixture
+@pytest.fixture(scope="session")
 def citation_model_data_constructor(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
     test_co_citation_analysis_scores_most_cited: ScoresFrame,
     test_bibliographic_coupling_scores_most_cited: ScoresFrame,
 ) -> CitationModelDataConstructor:
-    query_d3_document_id = 546182
+    query_d3_document_id = 206594692
 
     return CitationModelDataConstructor(
         d3_document_id=query_d3_document_id,
@@ -350,24 +358,12 @@ def citation_model_data_constructor(
 
 # query_d3_document_id is modified by some tests, set `scope="session"` to provide a new instance to
 # each test function
-@pytest.fixture
-def citation_model_data_constructor_new_document_id(
-    citation_model_data_constructor: CitationModelDataConstructor,
-) -> CitationModelDataConstructor:
-    # original query document id is not in co-citation analysis scores and bibliographic
-    # coupling scores data
-    citation_model_data_constructor.d3_document_id = 206594692
-    return citation_model_data_constructor
-
-
-# query_d3_document_id is modified by some tests, set `scope="session"` to provide a new instance to
-# each test function
-@pytest.fixture
+@pytest.fixture(scope="session")
 def language_model_data_constructor(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
     test_tfidf_cosine_similarities_most_cited: ScoresFrame,
 ) -> LanguageModelDataConstructor:
-    query_d3_document_id = 546182
+    query_d3_document_id = 206594692
 
     return LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
@@ -378,12 +374,246 @@ def language_model_data_constructor(
     )
 
 
-# query_d3_document_id is modified by some tests, set `scope="session"` to provide a new instance to
-# each test function
-@pytest.fixture
-def language_model_data_constructor_new_document_id(
+# SECTION: Model Data
+@pytest.fixture(scope="session")
+def citation_model_data(
+    citation_model_data_constructor: CitationModelDataConstructor,
+) -> CitationModelData:
+    return CitationModelData.from_constructor(citation_model_data_constructor)
+
+
+@pytest.fixture(scope="session")
+def language_model_data(
     language_model_data_constructor: LanguageModelDataConstructor,
-) -> LanguageModelDataConstructor:
-    # original query document id is not in cosine similarity scores data
-    language_model_data_constructor.d3_document_id = 206594692
-    return language_model_data_constructor
+) -> LanguageModelData:
+    return LanguageModelData.from_constructor(language_model_data_constructor)
+
+
+# SECTION: Inference
+# SUBSECTION: SeenPaperAttributeGetter
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_co_citation_analysis(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> ScoresFrame:
+    semantischolar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+
+    seen_paper_attribute_getter = SeenPaperAttributeGetter(
+        semanticscholar_id=semantischolar_id,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.tfidf,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+    return seen_paper_attribute_getter.get_co_citation_analysis_scores()
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_bibliographic_coupling(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> ScoresFrame:
+    semantischolar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+
+    seen_paper_attribute_getter = SeenPaperAttributeGetter(
+        semanticscholar_id=semantischolar_id,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.tfidf,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+    return seen_paper_attribute_getter.get_bibliographic_coupling_scores()
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_cosine_similarities_tfidf(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> ScoresFrame:
+    semantischolar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+
+    seen_paper_attribute_getter = SeenPaperAttributeGetter(
+        semanticscholar_id=semantischolar_id,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.tfidf,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+    return seen_paper_attribute_getter.get_cosine_similarities()
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_cosine_similarities_bm25(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> ScoresFrame:
+    semantischolar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+
+    seen_paper_attribute_getter = SeenPaperAttributeGetter(
+        semanticscholar_id=semantischolar_id,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.bm25,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+    return seen_paper_attribute_getter.get_cosine_similarities()
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_cosine_similarities_word2vec(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> ScoresFrame:
+    semantischolar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+
+    seen_paper_attribute_getter = SeenPaperAttributeGetter(
+        semanticscholar_id=semantischolar_id,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.word2vec,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+    return seen_paper_attribute_getter.get_cosine_similarities()
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_cosine_similarities_glove(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> ScoresFrame:
+    semantischolar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+
+    seen_paper_attribute_getter = SeenPaperAttributeGetter(
+        semanticscholar_id=semantischolar_id,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.glove,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+    return seen_paper_attribute_getter.get_cosine_similarities()
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_cosine_similarities_fasttext(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> ScoresFrame:
+    semantischolar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+
+    seen_paper_attribute_getter = SeenPaperAttributeGetter(
+        semanticscholar_id=semantischolar_id,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.fasttext,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+    return seen_paper_attribute_getter.get_cosine_similarities()
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_cosine_similarities_bert(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> ScoresFrame:
+    semantischolar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+
+    seen_paper_attribute_getter = SeenPaperAttributeGetter(
+        semanticscholar_id=semantischolar_id,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.bert,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+    return seen_paper_attribute_getter.get_cosine_similarities()
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_cosine_similarities_scibert(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> ScoresFrame:
+    semantischolar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+
+    seen_paper_attribute_getter = SeenPaperAttributeGetter(
+        semanticscholar_id=semantischolar_id,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.scibert,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+    return seen_paper_attribute_getter.get_cosine_similarities()
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_cosine_similarities_longformer(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> ScoresFrame:
+    semantischolar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+
+    seen_paper_attribute_getter = SeenPaperAttributeGetter(
+        semanticscholar_id=semantischolar_id,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.longformer,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+    return seen_paper_attribute_getter.get_cosine_similarities()
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_citation_model_data(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> CitationModelData:
+    semanticscholar_id = "2c03df8b48bf3fa39054345bafabfeff15bfd11d"
+
+    seen_paper_attribute_getter = SeenPaperAttributeGetter(
+        semanticscholar_id=semanticscholar_id,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.tfidf,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+    return seen_paper_attribute_getter.get_citation_model_data()
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_language_model_data(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> LanguageModelData:
+    semanticscholar_id = "2c03df8b48bf3fa39054345bafabfeff15bfd11d"
+
+    seen_paper_attribute_getter = SeenPaperAttributeGetter(
+        semanticscholar_id=semanticscholar_id,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.tfidf,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+    return seen_paper_attribute_getter.get_language_model_data()

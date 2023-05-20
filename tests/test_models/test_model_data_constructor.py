@@ -13,7 +13,7 @@ def test_initialization(citation_model_data_constructor: CitationModelDataConstr
     assert isinstance(citation_model_data_constructor, CitationModelDataConstructor)
 
     assert isinstance(citation_model_data_constructor.d3_document_id, int)
-    assert citation_model_data_constructor.d3_document_id == 546182
+    assert citation_model_data_constructor.d3_document_id == 206594692
 
     assert isinstance(citation_model_data_constructor.documents_data, pd.DataFrame)
     assert citation_model_data_constructor.documents_data.shape[1] == 26
@@ -31,7 +31,7 @@ def test_collect_query_document(
     citation_model_data_constructor: CitationModelDataConstructor,
 ) -> None:
     assert isinstance(citation_model_data_constructor.query_document.d3_document_id, int)
-    assert citation_model_data_constructor.query_document.d3_document_id == 546182
+    assert citation_model_data_constructor.query_document.d3_document_id == 206594692
 
     assert isinstance(citation_model_data_constructor.query_document.title, str)
     assert (

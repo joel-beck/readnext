@@ -108,9 +108,6 @@ class SeenPaperAttributeGetter(AttributeGetter):
             ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl
         )
 
-    def get_cosine_similarities(self) -> pd.DataFrame:
-        return load_cosine_similarities_from_choice(self.language_model_choice)
-
     def get_citation_model_data(self) -> CitationModelData:
         assert self.identifier.d3_document_id is not None
 
@@ -123,6 +120,9 @@ class SeenPaperAttributeGetter(AttributeGetter):
             bibliographic_coupling_scores=self.get_bibliographic_coupling_scores(),
         )
         return CitationModelData.from_constructor(citation_model_data_constructor)
+
+    def get_cosine_similarities(self) -> pd.DataFrame:
+        return load_cosine_similarities_from_choice(self.language_model_choice)
 
     def get_language_model_data(self) -> LanguageModelData:
         assert self.identifier.d3_document_id is not None

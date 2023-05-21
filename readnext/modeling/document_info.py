@@ -83,7 +83,7 @@ class DocumentScore:
 def documents_info_from_df(df: pd.DataFrame) -> DocumentsInfo:
     """
     Generate a `DocumentsInfo` instance from the input documents dataframe, which
-    consists `document_id`, `title`, and `abstract` columns.
+    contains `document_id`, `title`, and `abstract` columns.
     """
     document_ids = df["document_id"].tolist()
     titles = df["title"].tolist()

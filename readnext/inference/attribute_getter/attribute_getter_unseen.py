@@ -193,7 +193,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
         cosine_similarity_scores: list[DocumentScore] = []
 
         for candidate_document_id, candidate_embedding in zip(
-            candidate_embeddings["document_id"], candidate_embeddings["embedding"]
+            candidate_embeddings.index, candidate_embeddings["embedding"]
         ):
             candidate_document_info = DocumentInfo(d3_document_id=candidate_document_id)
             cosine_similarity = CosineSimilarity.score(query_embedding, candidate_embedding)

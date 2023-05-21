@@ -18,7 +18,7 @@ from readnext.modeling.language_models import (
     embeddings_mapping_to_frame,
     tfidf,
 )
-from readnext.utils import slice_mapping, write_df_to_pickle, suppress_transformers_logging
+from readnext.utils import slice_mapping, suppress_transformers_logging, write_df_to_pickle
 
 
 def main() -> None:

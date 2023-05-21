@@ -3,6 +3,8 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any, Concatenate, Literal, ParamSpec, TypeVar
 
+import pandas as pd
+
 P = ParamSpec("P")
 R = TypeVar("R")
 
@@ -55,51 +57,69 @@ def loader_decorator_factory(
     return decorator
 
 
-def writer_decorator_factory(
-    data_type: Literal["Object", "Data Frame"]
-) -> Callable[[Callable[Concatenate[Any, Path, P], R]], Callable[Concatenate[Any, Path, P], R]]:
+dataframe_loader = loader_decorator_factory(data_type="Data Frame")
+object_loader = loader_decorator_factory(data_type="Object")
+
+
+def dataframe_writer(
+    func: Callable[[pd.DataFrame, Path], None]
+) -> Callable[[pd.DataFrame, Path], None]:
     """
-    Create a decorator for writing data operations.
+    Decorator for writing DataFrame operations.
 
-    This decorator factory generates a decorator intended for functions that write data,
-    with the data to be written as their first argument, and the Path to the data file
-    as their second argument. The decorated function can have any number of additional
-    positional and keyword arguments.
+    This decorator is intended for functions that write data,
+    with the DataFrame to be written as their first argument,
+    and the Path to the data file as their second argument.
 
-    The decorator prints a writing message before calling the decorated function and a
-    checkmark after the function returns.
-
-    Args:
-        data_type: The type of the data to be written, must be either "Object" or "Data
-        Frame".
+    The decorator prints a writing message before calling the decorated function
+    and a checkmark after the function returns.
 
     Returns:
-        A decorator that can be used to decorate data writing functions.
+        The decorated function.
 
     Usage:
-        @writer_decorator_factory(data_type="Object") def write_object_to_pickle(obj:
-        Any, path: Path) -> None:
+        @dataframe_writer_decorator
+        def write_df_to_pickle(df: pd.DataFrame, path: Path) -> None:
             ...
     """
 
-    def decorator(
-        func: Callable[Concatenate[Any, Path, P], R]
-    ) -> Callable[Concatenate[Any, Path, P], R]:
-        @functools.wraps(func)
-        def wrapper(obj: Any, path: Path, *args: P.args, **kwargs: P.kwargs) -> R:
-            print(writing_message(path=path, data_type=data_type), end=" ")
+    @functools.wraps(func)
+    def wrapper(df: pd.DataFrame, path: Path) -> None:
+        print(writing_message(path=path, data_type="Data Frame"), end=" ")
 
-            result = func(obj, path, *args, **kwargs)
+        func(df, path)
 
-            print("✅")
-            return result
+        print("✅")
 
-        return wrapper
-
-    return decorator
+    return wrapper
 
 
-object_loader = loader_decorator_factory(data_type="Object")
-dataframe_loader = loader_decorator_factory(data_type="Data Frame")
-object_writer = writer_decorator_factory(data_type="Object")
-dataframe_writer = writer_decorator_factory(data_type="Data Frame")
+def object_writer(func: Callable[[Any, Path], None]) -> Callable[[Any, Path], None]:
+    """
+    Decorator for writing Python object operations.
+
+    This decorator is intended for functions that write Python objects,
+    with the object to be written as their first argument,
+    and the Path to the data file as their second argument.
+
+    The decorator prints a writing message before calling the decorated function
+    and a checkmark after the function returns.
+
+    Returns:
+        The decorated function.
+
+    Usage:
+        @object_writer_decorator
+        def write_object_to_pickle(obj: Any, path: Path) -> None:
+            ...
+    """
+
+    @functools.wraps(func)
+    def wrapper(obj: Any, path: Path) -> None:
+        print(writing_message(path=path, data_type="Object"), end=" ")
+
+        func(obj, path)
+
+        print("✅")
+
+    return wrapper

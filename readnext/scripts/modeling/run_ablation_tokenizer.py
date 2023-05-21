@@ -9,10 +9,12 @@ from transformers import BertTokenizerFast
 
 from readnext.config import DataPaths, ModelVersions
 from readnext.modeling import documents_info_from_df
-from readnext.utils import load_df_from_pickle
+from readnext.utils import load_df_from_pickle, suppress_transformers_logging
 
 
 def main() -> None:
+    suppress_transformers_logging()
+
     documents_authors_labels_citations_most_cited = load_df_from_pickle(
         DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
     )

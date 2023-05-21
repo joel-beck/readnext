@@ -6,12 +6,13 @@ import pandas as pd
 
 from readnext.utils.decorators import (
     dataframe_loader,
-    # dataframe_writer,
+    dataframe_writer,
     object_loader,
+    object_writer,
 )
 
 
-# @object_writer
+@object_writer
 def write_object_to_pickle(
     obj: Any,
     path: Path,
@@ -28,7 +29,7 @@ def load_object_from_pickle(path: Path) -> Any:
         return pickle.load(f)  # type: ignore
 
 
-# @dataframe_writer
+@dataframe_writer
 def write_df_to_pickle(
     df: pd.DataFrame,
     path: Path,

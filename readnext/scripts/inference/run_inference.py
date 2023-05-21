@@ -4,10 +4,13 @@ from readnext.utils import (
     get_arxiv_id_from_arxiv_url,
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
+    suppress_transformers_logging,
 )
 
 
 def main() -> None:
+    suppress_transformers_logging()
+
     # SECTION: Seen Paper
     semanticscholar_url = (
         "https://www.semanticscholar.org/paper/204e3073870fae3d05bcbc2f6a8e263d9b72e776"

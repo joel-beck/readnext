@@ -18,10 +18,12 @@ from readnext.modeling.language_models import (
     embeddings_mapping_to_frame,
     tfidf,
 )
-from readnext.utils import slice_mapping, write_df_to_pickle
+from readnext.utils import slice_mapping, write_df_to_pickle, suppress_transformers_logging
 
 
 def main() -> None:
+    suppress_transformers_logging()
+
     spacy_tokens_mapping = SpacyTokenizer.load_tokens_mapping(
         ResultsPaths.language_models.spacy_tokenized_abstracts_mapping_most_cited_pkl
     )

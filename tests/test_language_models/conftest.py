@@ -89,6 +89,7 @@ def documents_info() -> DocumentsInfo:
 
 # SECTION: Tokenizer
 # SUBSECTION: SpaCy
+# contained as dependency in pyproject.toml, can be used in CI
 @pytest.fixture(scope="session")
 def spacy_model() -> Language:
     return spacy.load(ModelVersions.spacy)

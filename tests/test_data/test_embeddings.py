@@ -21,6 +21,7 @@ torch_embeddings = [
 all_embeddings = keyword_algorithm_embeddings + gensim_embeddings + torch_embeddings
 
 
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("embeddings", lazy_fixture(all_embeddings))
 def test_embeddings_dataframe_structure(embeddings: pd.DataFrame) -> None:
     assert isinstance(embeddings, pd.DataFrame)
@@ -35,6 +36,7 @@ def test_embeddings_dataframe_structure(embeddings: pd.DataFrame) -> None:
     assert all(isinstance(embedding, np.ndarray) for embedding in embeddings["embedding"])
 
 
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("embeddings", lazy_fixture(keyword_algorithm_embeddings))
 def test_keyword_algorithm_embeddings_dimension(embeddings: pd.DataFrame) -> None:
     first_document = embeddings.iloc[0]
@@ -42,6 +44,7 @@ def test_keyword_algorithm_embeddings_dimension(embeddings: pd.DataFrame) -> Non
     assert all(len(embedding) == 6578 for embedding in embeddings["embedding"])
 
 
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("embeddings", lazy_fixture(gensim_embeddings))
 def test_gensim_embeddings_dimension(embeddings: pd.DataFrame) -> None:
     first_document = embeddings.iloc[0]
@@ -51,6 +54,7 @@ def test_gensim_embeddings_dimension(embeddings: pd.DataFrame) -> None:
     assert all(len(embedding) == 300 for embedding in embeddings["embedding"])
 
 
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("embeddings", lazy_fixture(torch_embeddings))
 def test_torch_embeddings_dimension(embeddings: pd.DataFrame) -> None:
     first_document = embeddings.iloc[0]

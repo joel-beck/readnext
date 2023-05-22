@@ -15,6 +15,7 @@ real_test_tokens_mapping_pairs = [
 
 
 @pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize(
     ("real_tokens_mapping", "test_tokens_mapping"),
     [(lazy_fixture(x), lazy_fixture(y)) for x, y in real_test_tokens_mapping_pairs],
@@ -42,6 +43,7 @@ real_test_tokens_id_mapping_pairs = [
 
 
 @pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize(
     ("real_tokens_id_mapping", "test_tokens_id_mapping"),
     [(lazy_fixture(x), lazy_fixture(y)) for x, y in real_test_tokens_id_mapping_pairs],
@@ -85,6 +87,7 @@ real_test_dataframe_pairs = [
 
 
 @pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize(
     ("real_dataframe", "test_dataframe"),
     [(lazy_fixture(x), lazy_fixture(y)) for x, y in real_test_dataframe_pairs],

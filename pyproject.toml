@@ -47,10 +47,10 @@ lint = "ruff --fix --exit-non-zero-on-fix --show-fixes ."
 check = "mypy ."
 test = "pytest"
 test-cov = "pytest --cov=readnext --cov-config=.coveragerc"
-# do not test data files in CI since the data files only exist locally
-test-ci = "pytest --ignore tests/test_data --cov=readnext --cov-config=.coveragerc --cov-report=xml"
 test-slow = "pytest -m 'slow'" # run all tests marked with `@pytest.mark.slow`
 test-fast = "pytest -m 'not slow'" # run all tests except those marked with `@pytest.mark.slow`
+# run all tests except those marked with `@pytest.mark.skip_ci` and create coverage report
+test-ci = "pytest -m 'not skip_ci' --cov=readnext --cov-config=.coveragerc --cov-report=xml"
 pre = "pre-commit run --all-files"
 serve = "mkdocs serve"
 deploy = { shell = "mkdocs build && mkdocs gh-deploy" }

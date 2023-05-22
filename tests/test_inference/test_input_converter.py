@@ -8,26 +8,6 @@ from readnext.utils import (
 )
 
 
-@pytest.fixture
-def toy_data() -> pd.DataFrame:
-    index = pd.Index([1001, 1002], name="document_id", dtype=pd.Int64Dtype())
-    return pd.DataFrame(
-        {
-            "semanticscholar_url": [
-                "https://www.semanticscholar.org/paper/1",
-                "https://www.semanticscholar.org/paper/2",
-            ],
-            "arxiv_id": ["1", "2"],
-        },
-        index=index,
-    )
-
-
-@pytest.fixture
-def input_converter_toy_data(toy_data: pd.DataFrame) -> InferenceDataInputConverter:
-    return InferenceDataInputConverter(toy_data)
-
-
 # SECTION: Tests for Toy Data
 def test_get_d3_document_id_from_semanticscholar_id_toy_data(
     input_converter_toy_data: InferenceDataInputConverter,

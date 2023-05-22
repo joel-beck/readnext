@@ -31,6 +31,7 @@ score_dataframes: list[str] = [
 
 
 @pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize(
     "score_dataframe",
     lazy_fixture(score_dataframes),

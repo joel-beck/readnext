@@ -1,7 +1,9 @@
 import pandas as pd
 from pandas.api.types import is_integer_dtype, is_string_dtype
+import pytest
 
 
+@pytest.mark.skip_ci
 def test_index(
     documents_authors_labels_citations_most_cited: pd.DataFrame,
 ) -> None:
@@ -10,6 +12,7 @@ def test_index(
     assert documents_authors_labels_citations_most_cited.index.dtype == pd.Int64Dtype()
 
 
+@pytest.mark.skip_ci
 def test_contains_columns_subset(
     documents_authors_labels_citations_most_cited: pd.DataFrame,
 ) -> None:
@@ -31,6 +34,7 @@ def test_contains_columns_subset(
     assert set(columns_subset).issubset(set(documents_authors_labels_citations_most_cited.columns))
 
 
+@pytest.mark.skip_ci
 def test_dtypes(
     documents_authors_labels_citations_most_cited: pd.DataFrame,
 ) -> None:
@@ -47,6 +51,7 @@ def test_dtypes(
     is_string_dtype(documents_authors_labels_citations_most_cited["semanticscholar_url"])
 
 
+@pytest.mark.skip_ci
 def test_arxiv_labels(
     documents_authors_labels_citations_most_cited: pd.DataFrame,
 ) -> None:
@@ -68,6 +73,7 @@ def test_arxiv_labels(
     assert len(unique_arxiv_labels) == 40
 
 
+@pytest.mark.skip_ci
 def test_semanticscholar_tags(
     documents_authors_labels_citations_most_cited: pd.DataFrame,
 ) -> None:

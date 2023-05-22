@@ -5,20 +5,6 @@ import pytest
 from readnext.evaluation.metrics import CosineSimilarity, MismatchingDimensionsError
 
 
-@pytest.fixture
-def document_embeddings_df() -> pd.DataFrame:
-    data = {
-        "document_id": [1, 2, 3, 4],
-        "embedding": [
-            np.array([1, 2, 3]),
-            np.array([4, 5, 6]),
-            np.array([0, 0, 1]),
-            np.array([1, 1, 0]),
-        ],
-    }
-    return pd.DataFrame(data).set_index("document_id")
-
-
 def test_cosine_similarity_identical_vectors() -> None:
     assert CosineSimilarity.score([1, 0, 1, 1], [1, 0, 1, 1]) == pytest.approx(1.0)
     assert CosineSimilarity.score([0, 0, 0, 1], [0, 0, 0, 1]) == pytest.approx(1.0)

@@ -17,8 +17,8 @@ Here, you'll find everything you need to know about the project's background, as
 
 - [Background](background.md): Dive into the details of the citation-based methods and language models utilized in this project, and learn how they can help quantify document similarity.
 
-- [Reproducibility](reproducibility.md): A comprehensive guide to ensure the results presented in the thesis can be reproduced and validated with precision and ease.
-
 - [Inference](inference.md): Instructions on how to employ the package for inference, enabling you to extract recommendations for any query document.
+
+- [Reproducibility](reproducibility.md): A comprehensive guide to ensure the results presented in the thesis can be reproduced and validated with precision and ease.
 
 - [Development](development.md): Detailed guidance on tailoring the package to your needs, including how to extend features, incorporate individual language models, and utilize diverse metrics for evaluation.

@@ -84,6 +84,6 @@ nav: # Navigation menu structure
   - Setup: setup.md
   - Overview: overview.md
   - Background: background.md
-  - Reproducibility: reproducibility.md
   - Inference: inference.md
+  - Reproducibility: reproducibility.md
   - Development: development.md

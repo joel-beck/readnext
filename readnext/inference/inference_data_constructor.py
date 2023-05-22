@@ -41,7 +41,7 @@ class Ranks:
     citationcount_author: pd.Series
     co_citation_analysis: pd.Series
     bibliographic_coupling: pd.Series
-    cosine_similarity: pd.DataFrame
+    cosine_similarity: pd.Series
 
 
 @dataclass
@@ -171,7 +171,7 @@ class InferenceDataConstructor:
             self._citation_model_data.feature_matrix["citationcount_author_rank"],
             self._citation_model_data.feature_matrix["co_citation_analysis_rank"],
             self._citation_model_data.feature_matrix["bibliographic_coupling_rank"],
-            self._language_model_data.cosine_similarity_ranks,
+            self._language_model_data.cosine_similarity_ranks["cosine_similarity_rank"],
         )
 
     def collect_labels(self) -> Labels:

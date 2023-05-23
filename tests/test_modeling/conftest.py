@@ -1,33 +1,6 @@
-import pandas as pd
 import pytest
 
 from readnext.modeling import DocumentInfo, DocumentScore, DocumentsInfo
-
-
-@pytest.fixture
-def citation_models_features_frame() -> pd.DataFrame:
-    data = {
-        "publication_date": [pd.Timestamp("2020-01-01"), pd.Timestamp("2019-01-01"), None],
-        "citationcount_document": [50, 100, 75],
-        "citationcount_author": [1000, 2000, 3000],
-    }
-    return pd.DataFrame(data)
-
-
-@pytest.fixture
-def extended_citation_models_features_frame() -> pd.DataFrame:
-    data = {
-        "publication_date": [
-            pd.Timestamp("2020-01-01"),
-            pd.Timestamp("2019-01-01"),
-            None,
-            pd.Timestamp("2018-01-01"),
-            pd.Timestamp("2017-01-01"),
-        ],
-        "citationcount_document": [50, 100, 75, 50, 100],
-        "citationcount_author": [1000, 2000, 3000, 1000, 2000],
-    }
-    return pd.DataFrame(data)
 
 
 @pytest.fixture

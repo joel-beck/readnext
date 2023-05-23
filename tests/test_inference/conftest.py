@@ -2,20 +2,22 @@ import pandas as pd
 import pytest
 
 from readnext.evaluation.scoring import FeatureWeights
-from readnext.inference import (
-    DocumentIdentifier,
-    InferenceData,
-    InferenceDataConstructor,
-    InferenceDataInputConverter,
-    LanguageModelChoice,
-)
-from readnext.inference.attribute_getter import SeenPaperAttributeGetter, UnseenPaperAttributeGetter
 
 # These imports must not come from `readnext.inference`, otherwise they are really
 # imported twice with different session scopes and `isinstance()` checks fail.
-from readnext.inference.inference_data_constructor import Features, Labels, Ranks, Recommendations
+from readnext.inference import (
+    DocumentIdentifier,
+    Features,
+    InferenceData,
+    InferenceDataConstructor,
+    InferenceDataInputConverter,
+    Labels,
+    Ranks,
+    Recommendations,
+)
+from readnext.inference.attribute_getter import SeenPaperAttributeGetter, UnseenPaperAttributeGetter
 from readnext.modeling import DocumentInfo
-from readnext.modeling.language_models.model_choice import LanguageModelChoice
+from readnext.modeling.language_models import LanguageModelChoice
 
 
 # SECTION: Input Converter

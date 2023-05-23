@@ -3,12 +3,7 @@ import pytest
 from pandas.testing import assert_frame_equal
 from pytest_lazyfixture import lazy_fixture
 
-from readnext.data.semanticscholar import (
-    SemanticScholarCitation,
-    SemanticScholarReference,
-    SemanticscholarRequest,
-    SemanticScholarResponse,
-)
+from readnext.data.semanticscholar import SemanticscholarRequest, SemanticScholarResponse
 from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference import DocumentIdentifier, InferenceDataInputConverter
 from readnext.inference.attribute_getter import (

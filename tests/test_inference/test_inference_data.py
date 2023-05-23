@@ -375,4 +375,4 @@ def test_inference_data_recommendations_dataframes_language_candidates(
     assert recommendations_dataframe["cosine_similarity"].max() <= 1
 
     # check that the cosine similarities are sorted in descending order
-    assert all(recommendations_dataframe["cosine_similarity"].diff().dropna().values <= 0)  # type: ignore
+    assert all(recommendations_dataframe["cosine_similarity"].diff().dropna().to_numpy() <= 0)  # type: ignore # noqa: E501

@@ -39,11 +39,11 @@ class SemanticScholarJson(TypedDict):
 @dataclass(kw_only=True)
 class SemanticScholarResponse:
     semanticscholar_id: str
+    arxiv_id: str
     title: str
     abstract: str
     citations: list[SemanticScholarCitation]
     references: list[SemanticScholarReference]
-    arxiv_id: str
 
 
 @dataclass
@@ -73,11 +73,11 @@ class SemanticscholarRequest:
 
         return SemanticScholarResponse(
             semanticscholar_id=response["paperId"] if response["paperId"] is not None else "",
+            arxiv_id=arxiv_id,
             title=response["title"] if response["title"] is not None else "",
             abstract=response["abstract"] if response["abstract"] is not None else "",
             citations=response["citations"],
             references=response["references"],
-            arxiv_id=arxiv_id,
         )
 
     def from_semanticscholar_id(self, semanticscholar_id: str) -> SemanticScholarResponse:

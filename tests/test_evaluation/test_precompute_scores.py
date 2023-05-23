@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 from readnext.evaluation.metrics import CountCommonCitations
 from readnext.evaluation.scoring import find_top_n_matches_single_document
 from readnext.modeling import DocumentScore

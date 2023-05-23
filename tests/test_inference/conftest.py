@@ -6,14 +6,14 @@ from readnext.inference import (
     DocumentIdentifier,
     InferenceData,
     InferenceDataConstructor,
+    InferenceDataInputConverter,
     LanguageModelChoice,
 )
-from readnext.inference.attribute_getter import SeenPaperAttributeGetter
+from readnext.inference.attribute_getter import SeenPaperAttributeGetter, UnseenPaperAttributeGetter
 
 # These imports must not come from `readnext.inference`, otherwise they are really
 # imported twice with different session scopes and `isinstance()` checks fail.
 from readnext.inference.inference_data_constructor import Features, Labels, Ranks, Recommendations
-from readnext.inference import InferenceDataInputConverter
 from readnext.modeling import DocumentInfo
 from readnext.modeling.language_models.model_choice import LanguageModelChoice
 
@@ -102,6 +102,77 @@ def seen_paper_attribute_getter_from_arxiv_url(
     arxiv_url = "https://arxiv.org/abs/1706.03762"
 
     return SeenPaperAttributeGetter(
+        semanticscholar_id=None,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=arxiv_url,
+        language_model_choice=LanguageModelChoice.tfidf,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+
+# SECTION: Unseen Attribute Getter
+@pytest.fixture(scope="session")
+def unseen_paper_attribute_getter_from_semanticscholar_id(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> UnseenPaperAttributeGetter:
+    semanticscholar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
+
+    return UnseenPaperAttributeGetter(
+        semanticscholar_id=semanticscholar_id,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.tfidf,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+
+@pytest.fixture(scope="session")
+def unseen_paper_attribute_getter_from_semanticscholar_url(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> UnseenPaperAttributeGetter:
+    semanticscholar_url = (
+        "https://www.semanticscholar.org/paper/8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
+    )
+
+    return UnseenPaperAttributeGetter(
+        semanticscholar_id=None,
+        semanticscholar_url=semanticscholar_url,
+        arxiv_id=None,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.tfidf,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+
+@pytest.fixture(scope="session")
+def unseen_paper_attribute_getter_from_arxiv_id(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> UnseenPaperAttributeGetter:
+    arxiv_id = "2303.08774"
+
+    return UnseenPaperAttributeGetter(
+        semanticscholar_id=None,
+        semanticscholar_url=None,
+        arxiv_id=arxiv_id,
+        arxiv_url=None,
+        language_model_choice=LanguageModelChoice.tfidf,
+        feature_weights=FeatureWeights(),
+        documents_data=test_documents_authors_labels_citations_most_cited,
+    )
+
+
+@pytest.fixture(scope="session")
+def unseen_paper_attribute_getter_from_arxiv_url(
+    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+) -> UnseenPaperAttributeGetter:
+    arxiv_url = "https://arxiv.org/abs/2303.08774"
+
+    return UnseenPaperAttributeGetter(
         semanticscholar_id=None,
         semanticscholar_url=None,
         arxiv_id=None,

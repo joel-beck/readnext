@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from readnext.modeling import DocumentInfo, DocumentScore, DocumentsInfo, documents_info_from_df
+from readnext.modeling import DocumentInfo, DocumentScore, DocumentsInfo
 
 
 @pytest.fixture

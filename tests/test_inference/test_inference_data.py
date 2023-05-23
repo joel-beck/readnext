@@ -11,7 +11,6 @@ from readnext.inference import DocumentIdentifier
 from readnext.inference.inference_data_constructor import Features, Labels, Ranks, Recommendations
 from readnext.modeling import DocumentInfo
 
-
 seen_document_identifier_fixtures = ["inference_data_seen_document_identifier"]
 unseen_document_identifier_fixtures = ["inference_data_unseen_document_identifier"]
 

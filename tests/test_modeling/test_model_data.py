@@ -18,20 +18,8 @@ model_data_constructor_fixtures = (
     citation_model_data_constructor_fixtures + language_model_data_constructor_fixtures
 )
 
-citation_model_data_fixtures = [
-    "citation_model_data",
-    "seen_paper_attribute_getter_citation_model_data",
-]
 
-language_model_data_fixtures = [
-    "language_model_data",
-    "seen_paper_attribute_getter_language_model_data",
-]
-
-model_data_fixtures = citation_model_data_fixtures + language_model_data_fixtures
-
-
-# SECTION: CitationModelDataConstructor
+# SECTION: ModelDataConstructor
 @pytest.mark.parametrize(
     "model_data_constructor",
     lazy_fixture(citation_model_data_constructor_fixtures),
@@ -47,7 +35,6 @@ def test_citation_model_data_from_constructor(
     assert isinstance(citation_model_data.feature_matrix, pd.DataFrame)
 
 
-# SECTION: LanguageModelDataConstructor
 @pytest.mark.parametrize(
     "model_data_constructor",
     lazy_fixture(language_model_data_constructor_fixtures),
@@ -61,6 +48,19 @@ def test_language_model_data_from_constructor(
     assert isinstance(language_model_data.info_matrix, pd.DataFrame)
     assert isinstance(language_model_data.integer_labels, pd.Series)
     assert isinstance(language_model_data.cosine_similarity_ranks, pd.DataFrame)
+
+
+citation_model_data_fixtures = [
+    "citation_model_data",
+    "seen_paper_attribute_getter_citation_model_data",
+    "unseen_paper_attribute_getter_citation_model_data",
+]
+language_model_data_fixtures = [
+    "language_model_data",
+    "seen_paper_attribute_getter_language_model_data",
+    "unseen_paper_attribute_getter_language_model_data",
+]
+model_data_fixtures = citation_model_data_fixtures + language_model_data_fixtures
 
 
 # SECTION: ModelData

@@ -1,6 +1,6 @@
 import pandas as pd
-from pandas.api.types import is_integer_dtype, is_string_dtype
 import pytest
+from pandas.api.types import is_integer_dtype, is_string_dtype
 
 
 @pytest.mark.skip_ci

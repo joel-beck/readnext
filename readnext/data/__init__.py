@@ -1,4 +1,4 @@
-from readnext.data.features import (
+from readnext.data.citation_models_features import (
     add_citation_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )

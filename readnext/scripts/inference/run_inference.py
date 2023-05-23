@@ -110,6 +110,7 @@ def main() -> None:
     print(inference_data_unseen_from_arxiv_id.ranks)
     print(inference_data_unseen_from_arxiv_id.labels)
     print(inference_data_unseen_from_arxiv_id.recommendations.citation_to_language)
+    print(inference_data_unseen_from_arxiv_id.recommendations.citation_to_language)
 
 
 if __name__ == "__main__":

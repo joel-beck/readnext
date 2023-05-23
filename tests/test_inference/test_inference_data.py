@@ -274,23 +274,33 @@ recommendation_dataframe_fixtures_citation_to_language_candidates = [
     "inference_data_seen_recommendations_citation_to_language_candidates",
     "inference_data_unseen_recommendations_citation_to_language_candidates",
 ]
-
+recommendation_dataframe_fixtures_citation_to_language = [
+    "inference_data_seen_recommendations_citation_to_language",
+    "inference_data_unseen_recommendations_citation_to_language",
+]
 recommendation_dataframe_fixtures_language_to_citation_candidates = [
     "inference_data_seen_recommendations_language_to_citation_candidates",
     "inference_data_unseen_recommendations_language_to_citation_candidates",
 ]
-recommendation_dataframe_fixtures_final = [
-    "inference_data_seen_recommendations_citation_to_language",
+recommendation_dataframe_fixtures_language_to_citation = [
     "inference_data_seen_recommendations_language_to_citation",
-    "inference_data_unseen_recommendations_citation_to_language",
     "inference_data_unseen_recommendations_language_to_citation",
 ]
 
-recommendation_dataframe_fixtures = [
-    *recommendation_dataframe_fixtures_citation_to_language_candidates,
-    *recommendation_dataframe_fixtures_language_to_citation_candidates,
-    *recommendation_dataframe_fixtures_final,
-]
+recommendation_dataframe_fixtures_citation_features = (
+    recommendation_dataframe_fixtures_citation_to_language_candidates
+    + recommendation_dataframe_fixtures_language_to_citation
+)
+
+recommendation_dataframe_fixtures_language_features = (
+    recommendation_dataframe_fixtures_language_to_citation_candidates
+    + recommendation_dataframe_fixtures_citation_to_language
+)
+
+recommendation_dataframe_fixtures = (
+    recommendation_dataframe_fixtures_citation_features
+    + recommendation_dataframe_fixtures_language_features
+)
 
 
 @pytest.mark.slow
@@ -305,27 +315,36 @@ def test_inference_data_recommendations_dataframes(recommendations_dataframe: pd
     assert recommendations_dataframe.index.dtype == pd.Int64Dtype()
 
 
-# TODO: Fix tests below
 @pytest.mark.slow
 @pytest.mark.skip_ci
 @pytest.mark.parametrize(
-    "recommendations_dataframe",
-    lazy_fixture(recommendation_dataframe_fixtures_citation_to_language_candidates),
+    "recommendations_dataframe", lazy_fixture(recommendation_dataframe_fixtures_citation_features)
 )
 def test_inference_data_recommendations_dataframes_citation_candidates(
     recommendations_dataframe: pd.DataFrame,
 ) -> None:
-    assert recommendations_dataframe.shape[1] == 4
+    assert recommendations_dataframe.shape[1] == 9
     assert recommendations_dataframe.columns.tolist() == [
+        "weighted_rank",
         "title",
         "author",
         "arxiv_labels",
+        "publication_date",
+        "citationcount_document",
+        "citationcount_author",
+        "co_citation_analysis",
+        "bibliographic_coupling",
     ]
     assert recommendations_dataframe.dtypes.tolist() == [
         np.dtype("float64"),
         pd.StringDtype(),
         pd.StringDtype(),
         object,
+        pd.StringDtype(),
+        pd.Int64Dtype(),
+        pd.Int64Dtype(),
+        np.dtype("int64"),
+        np.dtype("int64"),
     ]
 
 
@@ -333,7 +352,7 @@ def test_inference_data_recommendations_dataframes_citation_candidates(
 @pytest.mark.skip_ci
 @pytest.mark.parametrize(
     "recommendations_dataframe",
-    lazy_fixture(recommendation_dataframe_fixtures_language_to_citation_candidates),
+    lazy_fixture(recommendation_dataframe_fixtures_language_features),
 )
 def test_inference_data_recommendations_dataframes_language_candidates(
     recommendations_dataframe: pd.DataFrame,
@@ -351,50 +370,9 @@ def test_inference_data_recommendations_dataframes_language_candidates(
         pd.StringDtype(),
         object,
     ]
-
-
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize(
-    "recommendations_dataframe",
-    lazy_fixture(recommendation_dataframe_fixtures_final),
-)
-def test_inference_data_recommendations_dataframes_final(
-    recommendations_dataframe: pd.DataFrame,
-) -> None:
-    assert recommendations_dataframe.shape[1] == 9
-    assert recommendations_dataframe.columns.tolist() == [
-        "cosine_similarity",
-        "title",
-        "author",
-        "arxiv_labels",
-    ]
-    assert recommendations_dataframe.dtypes.tolist() == [
-        np.dtype("float64"),
-        pd.StringDtype(),
-        pd.StringDtype(),
-        object,
-    ]
-
-
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize(
-    "recommendations_dataframe",
-    [
-        lazy_fixture(recommendation_dataframe_fixtures)
-        for recommendation_dataframe_fixtures in [
-            *recommendation_dataframe_fixtures_language_to_citation_candidates,
-            *recommendation_dataframe_fixtures_final,
-        ]
-    ],
-)
-def test_inference_data_recommendations_dataframes_language_features(
-    recommendations_dataframe: pd.DataFrame,
-) -> None:
     # check that cosine similarities are between 0 and 1
-    assert recommendations_dataframe.cosine_similarity.min() >= 0
-    assert recommendations_dataframe.cosine_similarity.max() <= 1
+    assert recommendations_dataframe["cosine_similarity"].min() >= 0
+    assert recommendations_dataframe["cosine_similarity"].max() <= 1
 
     # check that the cosine similarities are sorted in descending order
-    assert all(recommendations_dataframe.cosine_similarity.diff().dropna().values <= 0)  # type: ignore
+    assert all(recommendations_dataframe["cosine_similarity"].diff().dropna().values <= 0)  # type: ignore

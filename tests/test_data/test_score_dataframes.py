@@ -6,7 +6,7 @@ from pytest_lazyfixture import lazy_fixture
 from readnext.modeling import DocumentInfo, DocumentScore
 from readnext.utils import ScoresFrame
 
-score_dataframes: list[str] = [
+seen_score_dataframes = [
     "co_citation_analysis_scores_most_cited",
     "bibliographic_coupling_scores_most_cited",
     "tfidf_cosine_similarities_most_cited",
@@ -18,26 +18,32 @@ score_dataframes: list[str] = [
     "scibert_cosine_similarities_most_cited",
     "longformer_cosine_similarities_most_cited",
     "seen_paper_attribute_getter_co_citation_analysis",
-    "unseen_paper_attribute_getter_co_citation_analysis",
     "seen_paper_attribute_getter_bibliographic_coupling",
-    "unseen_paper_attribute_getter_bibliographic_coupling",
     "seen_paper_attribute_getter_cosine_similarities_tfidf",
-    "unseen_paper_attribute_getter_cosine_similarities_tfidf",
     "seen_paper_attribute_getter_cosine_similarities_bm25",
-    "unseen_paper_attribute_getter_cosine_similarities_bm25",
     "seen_paper_attribute_getter_cosine_similarities_word2vec",
-    "unseen_paper_attribute_getter_cosine_similarities_word2vec",
     "seen_paper_attribute_getter_cosine_similarities_glove",
-    "unseen_paper_attribute_getter_cosine_similarities_glove",
     "seen_paper_attribute_getter_cosine_similarities_fasttext",
-    "unseen_paper_attribute_getter_cosine_similarities_fasttext",
     "seen_paper_attribute_getter_cosine_similarities_bert",
-    "unseen_paper_attribute_getter_cosine_similarities_bert",
     "seen_paper_attribute_getter_cosine_similarities_scibert",
-    "unseen_paper_attribute_getter_cosine_similarities_scibert",
     "seen_paper_attribute_getter_cosine_similarities_longformer",
+]
+
+
+unseen_score_dataframes = [
+    "unseen_paper_attribute_getter_co_citation_analysis",
+    "unseen_paper_attribute_getter_bibliographic_coupling",
+    "unseen_paper_attribute_getter_cosine_similarities_tfidf",
+    "unseen_paper_attribute_getter_cosine_similarities_bm25",
+    "unseen_paper_attribute_getter_cosine_similarities_word2vec",
+    "unseen_paper_attribute_getter_cosine_similarities_glove",
+    "unseen_paper_attribute_getter_cosine_similarities_fasttext",
+    "unseen_paper_attribute_getter_cosine_similarities_bert",
+    "unseen_paper_attribute_getter_cosine_similarities_scibert",
     "unseen_paper_attribute_getter_cosine_similarities_longformer",
 ]
+
+score_dataframes = seen_score_dataframes + unseen_score_dataframes
 
 
 @pytest.mark.slow
@@ -59,28 +65,21 @@ def test_score_dataframes(
     # check document id data type
     assert is_integer_dtype(score_dataframe.index)
 
-    # check document scores column
+    # check first document score
     first_document_scores: list[DocumentScore] = score_dataframe["scores"].iloc[0]
     assert isinstance(first_document_scores, list)
-
-    # check that scores for all documents in training corpus are present except for the
-    # query document
     assert all(
-        len(document_scores) == (len(score_dataframe) - 1)
-        for document_scores in score_dataframe["scores"]
+        isinstance(document_score, DocumentScore) for document_score in first_document_scores
     )
 
-    unique_index_ids = set(score_dataframe.index.tolist())
-    unique_document_ids = {
-        document_score.document_info.d3_document_id for document_score in first_document_scores
-    }
-    assert len(unique_index_ids - unique_document_ids) == 1
+    # check that document scores are ordered by their score in descending order
+    first_document_scores_sorted = sorted(
+        first_document_scores, key=lambda x: x.score, reverse=True
+    )
+    assert first_document_scores == first_document_scores_sorted
 
-    # check data types of document scores
-    first_document_score: DocumentScore = first_document_scores[0]
-    assert isinstance(first_document_score, DocumentScore)
-
-    first_document_info: DocumentInfo = first_document_score.document_info
+    # check first document score content
+    first_document_info: DocumentInfo = first_document_scores[0].document_info
     assert isinstance(first_document_info, DocumentInfo)
 
     # check that only document_id of document_info is set
@@ -89,3 +88,44 @@ def test_score_dataframes(
     assert first_document_info.author == ""
     assert first_document_info.abstract == ""
     assert first_document_info.arxiv_labels == []
+
+
+@pytest.mark.slow
+@pytest.mark.skip_ci
+@pytest.mark.parametrize(
+    "score_dataframe",
+    lazy_fixture(seen_score_dataframes),
+)
+def test_seen_score_dataframes(
+    score_dataframe: ScoresFrame,
+) -> None:
+    # check that scores for all documents in training corpus are present except for the
+    # query document
+    assert all(
+        len(document_scores) == (len(score_dataframe) - 1)
+        for document_scores in score_dataframe["scores"]
+    )
+
+    # check document scores column
+    first_document_scores: list[DocumentScore] = score_dataframe["scores"].iloc[0]
+
+    unique_index_ids = set(score_dataframe.index.tolist())
+    unique_document_ids = {
+        document_score.document_info.d3_document_id for document_score in first_document_scores
+    }
+    assert len(unique_index_ids - unique_document_ids) == 1
+
+
+@pytest.mark.slow
+@pytest.mark.skip_ci
+@pytest.mark.parametrize(
+    "score_dataframe",
+    lazy_fixture(unseen_score_dataframes),
+)
+def test_unseen_score_dataframes(
+    score_dataframe: ScoresFrame,
+) -> None:
+    # check that scores dataframe contains only a single row with index -1 for the
+    # unseen query document
+    assert len(score_dataframe) == 1
+    assert score_dataframe.index.tolist() == [-1]

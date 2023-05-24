@@ -34,6 +34,7 @@ from readnext.utils import (
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
+    sort_document_scores,
 )
 
 
@@ -128,7 +129,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
         common_citations_scores: list[DocumentScore] = []
 
         for d3_document_id, candidate_citation_urls in self.documents_data["citations"].items():
-            document_info = DocumentInfo(d3_document_id=d3_document_id)  # type: ignore
+            document_info = DocumentInfo(d3_document_id=d3_document_id.item())  # type: ignore
 
             query_citation_urls = self.get_query_citation_urls()
             common_citation_urls = CountCommonCitations.count_common_values(
@@ -138,15 +139,15 @@ class UnseenPaperAttributeGetter(AttributeGetter):
             document_score = DocumentScore(document_info=document_info, score=common_citation_urls)
             common_citations_scores.append(document_score)
 
-        return pd.DataFrame({"score": [common_citations_scores]}, index=[-1]).rename_axis(
-            "document_id", axis="index"
-        )
+        return pd.DataFrame(
+            {"scores": [sort_document_scores(common_citations_scores)]}, index=[-1]
+        ).rename_axis("document_id", axis="index")
 
     def get_bibliographic_coupling_scores(self) -> pd.DataFrame:
         common_references_scores: list[DocumentScore] = []
 
         for d3_document_id, candidate_reference_urls in self.documents_data["references"].items():
-            document_info = DocumentInfo(d3_document_id=d3_document_id)  # type: ignore
+            document_info = DocumentInfo(d3_document_id=d3_document_id.item())  # type: ignore
 
             query_reference_urls = self.get_query_reference_urls()
             common_references = CountCommonReferences.count_common_values(
@@ -156,9 +157,9 @@ class UnseenPaperAttributeGetter(AttributeGetter):
             document_score = DocumentScore(document_info=document_info, score=common_references)
             common_references_scores.append(document_score)
 
-        return pd.DataFrame({"score": [common_references_scores]}, index=[-1]).rename_axis(
-            "document_id", axis="index"
-        )
+        return pd.DataFrame(
+            {"scores": [sort_document_scores(common_references_scores)]}, index=[-1]
+        ).rename_axis("document_id", axis="index")
 
     def get_citation_model_data(self) -> CitationModelData:
         citation_model_data_constructor = QueryCitationModelDataConstructor(
@@ -203,9 +204,9 @@ class UnseenPaperAttributeGetter(AttributeGetter):
             )
             cosine_similarity_scores.append(document_score)
 
-        return pd.DataFrame({"score": [cosine_similarity_scores]}, index=[-1]).rename_axis(
-            "document_id", axis="index"
-        )
+        return pd.DataFrame(
+            {"scores": [sort_document_scores(cosine_similarity_scores)]}, index=[-1]
+        ).rename_axis("document_id", axis="index")
 
     def get_language_model_data(self) -> LanguageModelData:
         language_model_data_constructor = QueryLanguageModelDataConstructor(

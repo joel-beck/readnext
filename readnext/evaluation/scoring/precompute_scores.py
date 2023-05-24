@@ -8,7 +8,7 @@ from readnext.evaluation.metrics import (
     PairwiseMetric,
 )
 from readnext.modeling import DocumentInfo, DocumentScore
-from readnext.utils import ScoresFrame
+from readnext.utils import ScoresFrame, sort_document_scores
 
 
 def find_top_n_matches_single_document(
@@ -17,7 +17,8 @@ def find_top_n_matches_single_document(
     """
     Find the n documents with the highest pairwise score for a single query document.
     """
-    scores = []
+    document_scores = []
+
     for d3_document_id in input_df.index:
         if d3_document_id == query_d3_document_id:
             continue
@@ -31,9 +32,9 @@ def find_top_n_matches_single_document(
 
         document_info = DocumentInfo(d3_document_id=d3_document_id)
         score = pairwise_metric.from_df(input_df, query_d3_document_id, d3_document_id)
-        scores.append(DocumentScore(document_info=document_info, score=score))
+        document_scores.append(DocumentScore(document_info=document_info, score=score))
 
-    return sorted(scores, key=lambda x: x.score, reverse=True)[:n]
+    return sort_document_scores(document_scores)[:n]
 
 
 def precompute_pairwise_scores(

@@ -23,7 +23,7 @@ from readnext.utils import (
 )
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Features:
     publication_date: pd.Series
     citationcount_document: pd.Series
@@ -34,7 +34,7 @@ class Features:
     feature_weights: FeatureWeights
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Ranks:
     publication_date: pd.Series
     citationcount_document: pd.Series
@@ -44,7 +44,7 @@ class Ranks:
     cosine_similarity: pd.Series
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Labels:
     arxiv: pd.Series
     integer: pd.Series
@@ -155,29 +155,39 @@ class InferenceDataConstructor:
 
     def collect_features(self) -> Features:
         return Features(
-            self._citation_model_data.info_matrix["publication_date"],
-            self._citation_model_data.info_matrix["citationcount_document"],
-            self._citation_model_data.info_matrix["citationcount_author"],
-            self._citation_model_data.info_matrix["co_citation_analysis"],
-            self._citation_model_data.info_matrix["bibliographic_coupling"],
-            self._language_model_data.info_matrix["cosine_similarity"],
-            self.feature_weights,
+            publication_date=self._citation_model_data.info_matrix["publication_date"],
+            citationcount_document=self._citation_model_data.info_matrix["citationcount_document"],
+            citationcount_author=self._citation_model_data.info_matrix["citationcount_author"],
+            co_citation_analysis=self._citation_model_data.info_matrix["co_citation_analysis"],
+            bibliographic_coupling=self._citation_model_data.info_matrix["bibliographic_coupling"],
+            cosine_similarity=self._language_model_data.info_matrix["cosine_similarity"],
+            feature_weights=self.feature_weights,
         )
 
     def collect_ranks(self) -> Ranks:
         return Ranks(
-            self._citation_model_data.feature_matrix["publication_date_rank"],
-            self._citation_model_data.feature_matrix["citationcount_document_rank"],
-            self._citation_model_data.feature_matrix["citationcount_author_rank"],
-            self._citation_model_data.feature_matrix["co_citation_analysis_rank"],
-            self._citation_model_data.feature_matrix["bibliographic_coupling_rank"],
-            self._language_model_data.cosine_similarity_ranks["cosine_similarity_rank"],
+            publication_date=self._citation_model_data.feature_matrix["publication_date_rank"],
+            citationcount_document=self._citation_model_data.feature_matrix[
+                "citationcount_document_rank"
+            ],
+            citationcount_author=self._citation_model_data.feature_matrix[
+                "citationcount_author_rank"
+            ],
+            co_citation_analysis=self._citation_model_data.feature_matrix[
+                "co_citation_analysis_rank"
+            ],
+            bibliographic_coupling=self._citation_model_data.feature_matrix[
+                "bibliographic_coupling_rank"
+            ],
+            cosine_similarity=self._language_model_data.cosine_similarity_ranks[
+                "cosine_similarity_rank"
+            ],
         )
 
     def collect_labels(self) -> Labels:
         return Labels(
-            self._citation_model_data.info_matrix["arxiv_labels"],
-            self._citation_model_data.integer_labels,
+            arxiv=self._citation_model_data.info_matrix["arxiv_labels"],
+            integer=self._citation_model_data.integer_labels,
         )
 
     def collect_recommendations(self) -> Recommendations:

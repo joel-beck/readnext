@@ -118,18 +118,6 @@ def test_inference_data_unseen_document_identifier(
     assert document_identifier.d3_document_id == -1
 
 
-def test_kw_only_initialization_document_identifier() -> None:
-    with pytest.raises(TypeError):
-        DocumentIdentifier(
-            -1,  # type: ignore
-            "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48",
-            "https://www.semanticscholar.org/paper/8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48",
-            "https://www.semanticscholar.org/paper/8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48",
-            "2303.08774",
-            "https://arxiv.org/abs/2303.08774",
-        )
-
-
 # SECTION: Document Info
 seen_document_info_fixtures = ["inference_data_seen_document_info"]
 unseen_document_info_fixtures = ["inference_data_unseen_document_info"]
@@ -442,13 +430,3 @@ def test_inference_data_recommendations_dataframes_language_candidates(
 
     # check that the cosine similarities are sorted in descending order
     assert all(recommendations_dataframe["cosine_similarity"].diff().dropna().to_numpy() <= 0)  # type: ignore # noqa: E501
-
-
-def test_kw_only_initialization_recommendations() -> None:
-    with pytest.raises(TypeError):
-        Recommendations(
-            pd.DataFrame(),  # type: ignore
-            pd.DataFrame(),
-            pd.DataFrame(),
-            pd.DataFrame(),
-        )

@@ -1,4 +1,5 @@
 from readnext.data import SemanticscholarRequest, SemanticScholarResponse
+import pytest
 
 
 def test_post_init(semanticscholar_request: SemanticscholarRequest) -> None:
@@ -54,3 +55,15 @@ def test_from_arxiv_url(
     response = semanticscholar_request.from_arxiv_url(arxiv_url)
     assert isinstance(response, SemanticScholarResponse)
     assert response == semanticscholar_response
+
+
+def test_kw_only_initialization_semanticscholar() -> None:
+    with pytest.raises(TypeError):
+        SemanticScholarResponse(
+            "SemantischscholarID",  # type: ignore
+            "ArxviID",
+            "Title",
+            "Abstract",
+            [],
+            [],
+        )

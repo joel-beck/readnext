@@ -1,6 +1,7 @@
 import pandas as pd
 import pytest
 from pytest_lazyfixture import lazy_fixture
+from readnext.data.semanticscholar import SemanticScholarResponse
 
 from readnext.modeling import (
     CitationModelDataConstructor,
@@ -8,6 +9,10 @@ from readnext.modeling import (
     DocumentScore,
     LanguageModelDataConstructor,
     ModelDataConstructor,
+)
+from readnext.inference.attribute_getter import (
+    QueryCitationModelDataConstructor,
+    QueryLanguageModelDataConstructor,
 )
 
 citation_model_data_constructor_fixtures = ["citation_model_data_constructor"]
@@ -287,6 +292,34 @@ def test_get_feature_matrix(
     assert "bibliographic_coupling_rank" in feature_matrix.columns
 
 
+def test_kw_only_initialization_citation_model_data_constructor() -> None:
+    with pytest.raises(TypeError):
+        CitationModelDataConstructor(
+            -1,  # type: ignore
+            pd.DataFrame(),
+            pd.DataFrame(),
+            pd.DataFrame(),
+        )
+
+
+def test_kw_only_initialization_query_citation_model_data_constructor() -> None:
+    with pytest.raises(TypeError):
+        QueryCitationModelDataConstructor(
+            -1,  # type: ignore
+            pd.DataFrame(),
+            pd.DataFrame(),
+            pd.DataFrame(),
+            SemanticScholarResponse(
+                semanticscholar_id="SemantischscholarID",
+                arxiv_id="ArxviID",
+                title="Title",
+                abstract="Abstract",
+                citations=[],
+                references=[],
+            ),
+        )
+
+
 # SECTION: LanguageModelDataConstructor
 @pytest.mark.parametrize(
     "model_data_constructor",
@@ -346,3 +379,29 @@ def test_get_cosine_similarity_ranks(
     assert ranks_df.shape[1] == 1
     assert "cosine_similarity_rank" in ranks_df.columns
     assert ranks_df.index.name == "document_id"
+
+
+def test_kw_only_initialization_language_model_data_constructor() -> None:
+    with pytest.raises(TypeError):
+        LanguageModelDataConstructor(
+            -1,  # type: ignore
+            pd.DataFrame(),
+            pd.DataFrame(),
+        )
+
+
+def test_kw_only_initialization_query_language_model_data_constructor() -> None:
+    with pytest.raises(TypeError):
+        QueryLanguageModelDataConstructor(
+            -1,  # type: ignore
+            pd.DataFrame(),
+            pd.DataFrame(),
+            SemanticScholarResponse(
+                semanticscholar_id="SemantischscholarID",
+                arxiv_id="ArxviID",
+                title="Title",
+                abstract="Abstract",
+                citations=[],
+                references=[],
+            ),
+        )

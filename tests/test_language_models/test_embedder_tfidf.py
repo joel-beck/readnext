@@ -1,6 +1,7 @@
 import numpy as np
+import pytest
 
-from readnext.modeling.language_models import TFIDFEmbedder
+from readnext.modeling.language_models import TFIDFEmbedder, tfidf
 from readnext.utils import Tokens
 
 
@@ -32,3 +33,8 @@ def test_compute_embeddings_mapping(
     assert all(
         len(value) == num_unique_corpus_tokens for value in tfidf_embeddings_mapping.values()
     )
+
+
+def test_kw_only_initialization_tfidf_embedder() -> None:
+    with pytest.raises(TypeError):
+        TFIDFEmbedder({-1: ["a", "b", "c"]}, tfidf)  # type: ignore

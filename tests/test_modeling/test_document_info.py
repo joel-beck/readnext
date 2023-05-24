@@ -137,3 +137,28 @@ def test_documents_info_from_df_partial_data() -> None:
 
     with pytest.raises(KeyError):
         _ = documents_info_from_df(df)
+
+
+def test_kw_only_initialization_document_info() -> None:
+    with pytest.raises(TypeError):
+        DocumentInfo(
+            -1,  # type: ignore
+            "Title",
+            "Author",
+            ["cs.AI", "cs.CL"],
+            "Abstract",
+        )
+
+
+def test_kw_only_initialization_document_score() -> None:
+    with pytest.raises(TypeError):
+        DocumentScore(
+            DocumentInfo(
+                d3_document_id=-1,  # type: ignore
+                title="Title",
+                author="Author",
+                arxiv_labels=["cs.AI", "cs.CL"],
+                abstract="Abstract",
+            ),
+            0.75,
+        )

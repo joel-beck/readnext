@@ -123,6 +123,19 @@ def test_seen_paper_attribute_getter_attributes_are_created_correctly(
     )
 
 
+def test_kw_only_initialization_seen_paper_attribute_getter() -> None:
+    with pytest.raises(TypeError):
+        SeenPaperAttributeGetter(
+            None,  # type: ignore
+            None,
+            None,
+            None,
+            LanguageModelChoice.tfidf,
+            FeatureWeights(),
+            pd.DataFrame(),
+        )
+
+
 # SECTION: UnseenPaperAttributeGetter
 @pytest.mark.parametrize(
     "unseen_paper_attribute_getter", lazy_fixture(unseen_paper_attribute_getters)
@@ -252,3 +265,16 @@ def test_query_document_info(
     # check that author and arxiv labels are not set
     assert document_info.author == ""
     assert document_info.arxiv_labels == []
+
+
+def test_kw_only_initialization_unseen_paper_attribute_getter() -> None:
+    with pytest.raises(TypeError):
+        UnseenPaperAttributeGetter(
+            None,  # type: ignore
+            None,
+            None,
+            None,
+            LanguageModelChoice.tfidf,
+            FeatureWeights(),
+            pd.DataFrame(),
+        )

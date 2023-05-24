@@ -113,6 +113,7 @@ ENV/
 
 # IDE settings
 .vscode/
+.VSCodeCounter/
 .idea/
 
 # MacOS

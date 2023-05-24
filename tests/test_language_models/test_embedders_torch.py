@@ -3,7 +3,12 @@ import pytest
 import torch
 from pytest_lazyfixture import lazy_fixture
 
-from readnext.modeling.language_models import AggregationStrategy, TorchEmbedder
+from readnext.modeling.language_models import (
+    AggregationStrategy,
+    TorchEmbedder,
+    BERTEmbedder,
+    LongformerEmbedder,
+)
 from readnext.utils.aliases import TokensIdMapping
 
 embedders = ["bert_embedder", "longformer_embedder"]
@@ -60,3 +65,19 @@ def test_compute_embeddings_mapping(embedder: TorchEmbedder) -> None:
 
     assert len(embeddings_mapping) == 3
     assert all(len(value) == 768 for value in embeddings_mapping.values())
+
+
+def test_kw_only_initialization_bert_embedder(bert_model) -> None:
+    with pytest.raises(TypeError):
+        BERTEmbedder(
+            {-1: torch.Tensor([1, 2, 3])},  # type: ignore
+            bert_model,
+        )
+
+
+def test_kw_only_initialization_longformer_embedder(longformer_model) -> None:
+    with pytest.raises(TypeError):
+        LongformerEmbedder(
+            {-1: torch.Tensor([1, 2, 3])},  # type: ignore
+            longformer_model,
+        )

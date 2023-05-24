@@ -37,7 +37,7 @@ from readnext.utils import (
 )
 
 
-@dataclass
+@dataclass(kw_only=True)
 class UnseenPaperAttributeGetter(AttributeGetter):
     semanticscholar_request: SemanticscholarRequest = field(init=False)
     response: SemanticScholarResponse = field(init=False)

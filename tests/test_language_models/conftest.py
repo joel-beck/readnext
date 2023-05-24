@@ -2,7 +2,14 @@ import pytest
 import spacy
 from spacy.language import Language
 from transformers import BertTokenizerFast, LongformerTokenizerFast
-
+from readnext.utils import (
+    BertModelProtocol,
+    FastTextModelProtocol,
+    LongformerModelProtocol,
+    Tokens,
+    TokensMapping,
+    Word2VecModelProtocol,
+)
 from readnext.config import ModelVersions
 from readnext.modeling import (
     DocumentInfo,

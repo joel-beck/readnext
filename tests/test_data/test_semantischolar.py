@@ -1,5 +1,6 @@
-from readnext.data import SemanticscholarRequest, SemanticScholarResponse
 import pytest
+
+from readnext.data import SemanticscholarRequest, SemanticScholarResponse
 
 
 def test_post_init(semanticscholar_request: SemanticscholarRequest) -> None:

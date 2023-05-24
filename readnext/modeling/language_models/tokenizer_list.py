@@ -62,7 +62,7 @@ class SpacyTokenizer(ListTokenizer):
 
     documents_info: DocumentsInfo
     spacy_model: Language
-    text_processing_steps: TextProcessingSteps = TextProcessingSteps()  # noqa
+    text_processing_steps: TextProcessingSteps = TextProcessingSteps()  # noqa: RUF009
 
     def to_spacy_doc(self, document: str) -> Doc:
         """Converts a single abstract into a spacy document."""

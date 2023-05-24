@@ -1,9 +1,9 @@
-import pytest
 import pandas as pd
+import pytest
 
 from readnext.evaluation.scoring import HybridScorer
 from readnext.modeling.document_info import DocumentInfo
-from readnext.modeling.model_data import LanguageModelData, CitationModelData
+from readnext.modeling.model_data import CitationModelData, LanguageModelData
 
 
 def test_kw_only_initialization_hybrid_scorer() -> None:

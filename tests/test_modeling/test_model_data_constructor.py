@@ -1,18 +1,18 @@
 import pandas as pd
 import pytest
 from pytest_lazyfixture import lazy_fixture
-from readnext.data.semanticscholar import SemanticScholarResponse
 
+from readnext.data.semanticscholar import SemanticScholarResponse
+from readnext.inference.attribute_getter import (
+    QueryCitationModelDataConstructor,
+    QueryLanguageModelDataConstructor,
+)
 from readnext.modeling import (
     CitationModelDataConstructor,
     DocumentInfo,
     DocumentScore,
     LanguageModelDataConstructor,
     ModelDataConstructor,
-)
-from readnext.inference.attribute_getter import (
-    QueryCitationModelDataConstructor,
-    QueryLanguageModelDataConstructor,
 )
 
 citation_model_data_constructor_fixtures = ["citation_model_data_constructor"]

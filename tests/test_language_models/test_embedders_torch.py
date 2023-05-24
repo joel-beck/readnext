@@ -5,10 +5,11 @@ from pytest_lazyfixture import lazy_fixture
 
 from readnext.modeling.language_models import (
     AggregationStrategy,
-    TorchEmbedder,
     BERTEmbedder,
     LongformerEmbedder,
+    TorchEmbedder,
 )
+from readnext.utils import BertModelProtocol, LongformerModelProtocol
 from readnext.utils.aliases import TokensIdMapping
 
 embedders = ["bert_embedder", "longformer_embedder"]
@@ -67,7 +68,7 @@ def test_compute_embeddings_mapping(embedder: TorchEmbedder) -> None:
     assert all(len(value) == 768 for value in embeddings_mapping.values())
 
 
-def test_kw_only_initialization_bert_embedder(bert_model) -> None:
+def test_kw_only_initialization_bert_embedder(bert_model: BertModelProtocol) -> None:
     with pytest.raises(TypeError):
         BERTEmbedder(
             {-1: torch.Tensor([1, 2, 3])},  # type: ignore
@@ -75,7 +76,9 @@ def test_kw_only_initialization_bert_embedder(bert_model) -> None:
         )
 
 
-def test_kw_only_initialization_longformer_embedder(longformer_model) -> None:
+def test_kw_only_initialization_longformer_embedder(
+    longformer_model: LongformerModelProtocol,
+) -> None:
     with pytest.raises(TypeError):
         LongformerEmbedder(
             {-1: torch.Tensor([1, 2, 3])},  # type: ignore

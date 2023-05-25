@@ -1,4 +1,3 @@
-import pandas as pd
 import pytest
 
 from readnext.inference import InferenceDataInputConverter
@@ -155,14 +154,6 @@ def test_get_arxiv_url_from_d3_document_id_toy_data(
 
     with pytest.raises(KeyError):
         assert input_converter_toy_data.get_arxiv_url_from_d3_document_id(1003)
-
-
-# SECTION: Tests for Test Data
-@pytest.fixture
-def input_converter(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
-) -> InferenceDataInputConverter:
-    return InferenceDataInputConverter(test_documents_authors_labels_citations_most_cited)
 
 
 def test_get_d3_document_id_from_semanticscholar_id(

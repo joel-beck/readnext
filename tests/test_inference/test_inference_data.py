@@ -295,14 +295,6 @@ recommendations_fixtures = [
     "inference_data_unseen_constructor_recommendations",
 ]
 
-
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("recommendations", lazy_fixture(recommendations_fixtures))
-def test_inference_data_recommendations(recommendations: Recommendations) -> None:
-    assert isinstance(recommendations, Recommendations)
-
-
 recommendation_dataframe_fixtures_citation_to_language_candidates = [
     "inference_data_seen_recommendations_citation_to_language_candidates",
     "inference_data_unseen_recommendations_citation_to_language_candidates",
@@ -334,6 +326,13 @@ recommendation_dataframe_fixtures = (
     recommendation_dataframe_fixtures_citation_features
     + recommendation_dataframe_fixtures_language_features
 )
+
+
+@pytest.mark.slow
+@pytest.mark.skip_ci
+@pytest.mark.parametrize("recommendations", lazy_fixture(recommendations_fixtures))
+def test_inference_data_recommendations(recommendations: Recommendations) -> None:
+    assert isinstance(recommendations, Recommendations)
 
 
 @pytest.mark.slow

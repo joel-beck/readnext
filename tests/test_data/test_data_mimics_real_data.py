@@ -17,7 +17,10 @@ real_test_tokens_mapping_pairs = [
 @pytest.mark.skip_ci
 @pytest.mark.parametrize(
     ("real_tokens_mapping", "test_tokens_mapping"),
-    [(lazy_fixture(x), lazy_fixture(y)) for x, y in real_test_tokens_mapping_pairs],
+    [
+        (lazy_fixture(real_tokens_mapping), lazy_fixture(test_tokens_mapping))
+        for real_tokens_mapping, test_tokens_mapping in real_test_tokens_mapping_pairs
+    ],
 )
 def test_that_test_tokens_mappings_mimic_real_tokens_mappings(
     test_data_size: int, real_tokens_mapping: TokensMapping, test_tokens_mapping: TokensMapping
@@ -44,7 +47,10 @@ real_test_tokens_id_mapping_pairs = [
 @pytest.mark.skip_ci
 @pytest.mark.parametrize(
     ("real_tokens_id_mapping", "test_tokens_id_mapping"),
-    [(lazy_fixture(x), lazy_fixture(y)) for x, y in real_test_tokens_id_mapping_pairs],
+    [
+        (lazy_fixture(real_tokens_id_mapping), lazy_fixture(test_tokens_id_mapping))
+        for real_tokens_id_mapping, test_tokens_id_mapping in real_test_tokens_id_mapping_pairs
+    ],
 )
 def test_that_test_tokens_id_mappings_mimic_real_tokens_id_mappings(
     test_data_size: int,
@@ -88,7 +94,10 @@ real_test_dataframe_pairs = [
 @pytest.mark.skip_ci
 @pytest.mark.parametrize(
     ("real_dataframe", "test_dataframe"),
-    [(lazy_fixture(x), lazy_fixture(y)) for x, y in real_test_dataframe_pairs],
+    [
+        (lazy_fixture(real_dataframe), lazy_fixture(test_dataframe))
+        for real_dataframe, test_dataframe in real_test_dataframe_pairs
+    ],
 )
 def test_that_test_dataframes_mimic_real_dataframes(
     test_data_size: int, real_dataframe: pd.DataFrame, test_dataframe: pd.DataFrame

@@ -1,13 +1,12 @@
-import pandas as pd
-
 from readnext.evaluation.metrics import CountCommonCitations
 from readnext.evaluation.scoring import find_top_n_matches_single_document
 from readnext.modeling import DocumentScore
 from readnext.modeling.document_info import DocumentInfo
+from readnext.utils import ScoresFrame
 
 
 def test_find_top_n_matches_single_document(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_authors_labels_citations_most_cited: ScoresFrame,
 ) -> None:
     query_d3_document_id = test_documents_authors_labels_citations_most_cited.index[0].item()  # type: ignore # noqa: E501
     pairwise_metric = CountCommonCitations()
@@ -34,8 +33,8 @@ def test_find_top_n_matches_single_document(
     assert all(top_match.score >= match.score for match in top_n_matches)
 
 
-def test_precompute_co_citations(co_citation_analysis_scores: pd.DataFrame) -> None:
-    assert isinstance(co_citation_analysis_scores, pd.DataFrame)
+def test_precompute_co_citations(co_citation_analysis_scores: ScoresFrame) -> None:
+    assert isinstance(co_citation_analysis_scores, ScoresFrame)
 
     assert co_citation_analysis_scores.shape[1] == 1
     assert co_citation_analysis_scores.columns == ["scores"]
@@ -57,8 +56,8 @@ def test_precompute_co_citations(co_citation_analysis_scores: pd.DataFrame) -> N
     assert isinstance(first_score.score, int)
 
 
-def test_precompute_co_references(bibliographic_coupling_scores: pd.DataFrame) -> None:
-    assert isinstance(bibliographic_coupling_scores, pd.DataFrame)
+def test_precompute_co_references(bibliographic_coupling_scores: ScoresFrame) -> None:
+    assert isinstance(bibliographic_coupling_scores, ScoresFrame)
 
     assert bibliographic_coupling_scores.shape[1] == 1
     assert bibliographic_coupling_scores.columns == ["scores"]
@@ -80,8 +79,8 @@ def test_precompute_co_references(bibliographic_coupling_scores: pd.DataFrame) -
     assert isinstance(first_score.score, int)
 
 
-def test_precompute_cosine_similarities(tfidf_embeddings: pd.DataFrame) -> None:
-    assert isinstance(tfidf_embeddings, pd.DataFrame)
+def test_precompute_cosine_similarities(tfidf_embeddings: ScoresFrame) -> None:
+    assert isinstance(tfidf_embeddings, ScoresFrame)
 
     assert tfidf_embeddings.shape[1] == 1
     assert tfidf_embeddings.columns == ["scores"]

@@ -120,14 +120,14 @@ def test_seen_model_data_query_document(model_data: ModelData) -> None:
     assert model_data.query_document.d3_document_id == 13756489
 
     assert isinstance(model_data.query_document.title, str)
-    assert model_data.query_document.title == "Deep Residual Learning for Image Recognition"
+    assert model_data.query_document.title == "Attention is All you Need"
 
     assert isinstance(model_data.query_document.author, str)
-    assert model_data.query_document.author == "Kaiming He"
+    assert model_data.query_document.author == "Lukasz Kaiser"
 
     assert isinstance(model_data.query_document.arxiv_labels, list)
     assert all(isinstance(label, str) for label in model_data.query_document.arxiv_labels)
-    assert model_data.query_document.arxiv_labels == ["cs.CV"]
+    assert model_data.query_document.arxiv_labels == ["cs.CL", "cs.LG"]
 
     assert isinstance(model_data.query_document.abstract, str)
     # abstract is not set for seen papers

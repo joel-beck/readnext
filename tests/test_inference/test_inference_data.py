@@ -11,57 +11,15 @@ from readnext.inference import DocumentIdentifier, InferenceData
 from readnext.inference.inference_data_constructor import Features, Labels, Ranks, Recommendations
 from readnext.modeling import DocumentInfo
 
-
-def test_kw_only_initialization_inference_data() -> None:
-    with pytest.raises(TypeError):
-        InferenceData(
-            DocumentIdentifier(  # type: ignore
-                d3_document_id=-1,
-                semanticscholar_id="8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48",
-                semanticscholar_url="https://www.semanticscholar.org/paper/8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48",
-                arxiv_id="2303.08774",
-                arxiv_url="https://arxiv.org/abs/2303.08774",
-            ),
-            DocumentInfo(
-                d3_document_id=-1,
-                title="Title",
-                author="Author",
-                abstract="Abstract",
-                arxiv_labels=[],
-            ),
-            Features(
-                publication_date=pd.Series(),
-                citationcount_document=pd.Series(),
-                citationcount_author=pd.Series(),
-                co_citation_analysis=pd.Series(),
-                bibliographic_coupling=pd.Series(),
-                cosine_similarity=pd.Series(),
-                feature_weights=FeatureWeights(),
-            ),
-            Ranks(
-                publication_date=pd.Series(),
-                citationcount_document=pd.Series(),
-                citationcount_author=pd.Series(),
-                co_citation_analysis=pd.Series(),
-                bibliographic_coupling=pd.Series(),
-                cosine_similarity=pd.Series(),
-            ),
-            Labels(
-                arxiv=pd.Series(),
-                integer=pd.Series(),
-            ),
-            Recommendations(
-                citation_to_language_candidates=pd.DataFrame(),
-                citation_to_language=pd.DataFrame(),
-                language_to_citation_candidates=pd.DataFrame(),
-                language_to_citation=pd.DataFrame(),
-            ),
-        )
-
-
 # SECTION: Document Identifier
-seen_document_identifier_fixtures = ["inference_data_seen_document_identifier"]
-unseen_document_identifier_fixtures = ["inference_data_unseen_document_identifier"]
+seen_document_identifier_fixtures = [
+    "inference_data_seen_document_identifier",
+    "inference_data_seen_constructor_document_identifier",
+]
+unseen_document_identifier_fixtures = [
+    "inference_data_unseen_document_identifier",
+    "inference_data_unseen_constructor_document_identifier",
+]
 
 
 @pytest.mark.slow
@@ -119,8 +77,14 @@ def test_inference_data_unseen_document_identifier(
 
 
 # SECTION: Document Info
-seen_document_info_fixtures = ["inference_data_seen_document_info"]
-unseen_document_info_fixtures = ["inference_data_unseen_document_info"]
+seen_document_info_fixtures = [
+    "inference_data_seen_document_info",
+    "inference_data_seen_constructor_document_info",
+]
+unseen_document_info_fixtures = [
+    "inference_data_unseen_document_info",
+    "inference_data_unseen_constructor_document_info",
+]
 
 
 @pytest.mark.slow
@@ -171,7 +135,12 @@ def test_inference_data_unseen_document_info(document_info: DocumentInfo) -> Non
 
 
 # SECTION: Features
-feature_fixtures = ["inference_data_seen_features", "inference_data_unseen_features"]
+feature_fixtures = [
+    "inference_data_seen_features",
+    "inference_data_seen_constructor_features",
+    "inference_data_unseen_features",
+    "inference_data_unseen_constructor_features",
+]
 
 
 @pytest.mark.slow
@@ -220,7 +189,12 @@ def test_inference_data_features(features: Features) -> None:
 
 
 # SECTION: Ranks
-ranks_fixtures = ["inference_data_seen_ranks", "inference_data_unseen_ranks"]
+ranks_fixtures = [
+    "inference_data_seen_ranks",
+    "inference_data_seen_constructor_ranks",
+    "inference_data_unseen_ranks",
+    "inference_data_unseen_constructor_ranks",
+]
 
 
 @pytest.mark.slow
@@ -267,8 +241,11 @@ def test_inference_data_ranks(ranks: Ranks) -> None:
 
 
 # SECTION: Labels
-seen_labels_fixtures = ["inference_data_seen_labels"]
-unseen_labels_fixtures = ["inference_data_unseen_labels"]
+seen_labels_fixtures = ["inference_data_seen_labels", "inference_data_seen_constructor_labels"]
+unseen_labels_fixtures = [
+    "inference_data_unseen_labels",
+    "inference_data_unseen_constructor_labels",
+]
 labels_fixtures = seen_labels_fixtures + unseen_labels_fixtures
 
 
@@ -313,7 +290,9 @@ def test_inference_data_unseen_labels(labels: Labels) -> None:
 # SECTION: Recommendations
 recommendations_fixtures = [
     "inference_data_seen_recommendations",
+    "inference_data_seen_constructor_recommendations",
     "inference_data_unseen_recommendations",
+    "inference_data_unseen_constructor_recommendations",
 ]
 
 
@@ -430,3 +409,50 @@ def test_inference_data_recommendations_dataframes_language_candidates(
 
     # check that the cosine similarities are sorted in descending order
     assert all(recommendations_dataframe["cosine_similarity"].diff().dropna().to_numpy() <= 0)  # type: ignore # noqa: E501
+
+
+def test_kw_only_initialization_inference_data() -> None:
+    with pytest.raises(TypeError):
+        InferenceData(
+            DocumentIdentifier(  # type: ignore
+                d3_document_id=-1,
+                semanticscholar_id="8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48",
+                semanticscholar_url="https://www.semanticscholar.org/paper/8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48",
+                arxiv_id="2303.08774",
+                arxiv_url="https://arxiv.org/abs/2303.08774",
+            ),
+            DocumentInfo(
+                d3_document_id=-1,
+                title="Title",
+                author="Author",
+                abstract="Abstract",
+                arxiv_labels=[],
+            ),
+            Features(
+                publication_date=pd.Series(),
+                citationcount_document=pd.Series(),
+                citationcount_author=pd.Series(),
+                co_citation_analysis=pd.Series(),
+                bibliographic_coupling=pd.Series(),
+                cosine_similarity=pd.Series(),
+                feature_weights=FeatureWeights(),
+            ),
+            Ranks(
+                publication_date=pd.Series(),
+                citationcount_document=pd.Series(),
+                citationcount_author=pd.Series(),
+                co_citation_analysis=pd.Series(),
+                bibliographic_coupling=pd.Series(),
+                cosine_similarity=pd.Series(),
+            ),
+            Labels(
+                arxiv=pd.Series(),
+                integer=pd.Series(),
+            ),
+            Recommendations(
+                citation_to_language_candidates=pd.DataFrame(),
+                citation_to_language=pd.DataFrame(),
+                language_to_citation_candidates=pd.DataFrame(),
+                language_to_citation=pd.DataFrame(),
+            ),
+        )

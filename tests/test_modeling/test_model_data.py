@@ -12,6 +12,7 @@ from readnext.modeling import (
     ModelData,
 )
 
+# SECTION: ModelDataConstructor
 citation_model_data_constructor_fixtures = ["citation_model_data_constructor"]
 language_model_data_constructor_fixtures = ["language_model_data_constructor"]
 model_data_constructor_fixtures = (
@@ -19,7 +20,6 @@ model_data_constructor_fixtures = (
 )
 
 
-# SECTION: ModelDataConstructor
 @pytest.mark.parametrize(
     "model_data_constructor", lazy_fixture(citation_model_data_constructor_fixtures)
 )
@@ -48,39 +48,76 @@ def test_language_model_data_from_constructor(
     assert isinstance(language_model_data.cosine_similarity_ranks, pd.DataFrame)
 
 
-seen_citation_model_data_fixtures = [
+# SECTION: ModelData
+# BOOKMARK: Citation Model Fixtures
+seen_test_data_citation_model_data_fixtures = [
     "citation_model_data",
     "seen_paper_attribute_getter_citation_model_data",
 ]
-unseen_citation_model_data_fixtures = ["unseen_paper_attribute_getter_citation_model_data"]
+seen_real_data_citation_model_data_fixtures = [
+    "inference_data_seen_constructor_citation_model_data",
+]
+seen_citation_model_data_fixtures = (
+    seen_test_data_citation_model_data_fixtures + seen_real_data_citation_model_data_fixtures
+)
+
+unseen_test_data_citation_model_data_fixtures = [
+    "unseen_paper_attribute_getter_citation_model_data",
+]
+unseen_real_data_citation_model_data_fixtures = [
+    "inference_data_unseen_constructor_citation_model_data",
+]
+unseen_citation_model_data_fixtures = (
+    unseen_test_data_citation_model_data_fixtures + unseen_real_data_citation_model_data_fixtures
+)
+
 citation_model_data_fixtures = (
     seen_citation_model_data_fixtures + unseen_citation_model_data_fixtures
 )
 
-seen_language_model_data_fixtures = [
+# BOOKMARK: Language Model Fixtures
+seen_test_data_language_model_data_fixtures = [
     "language_model_data",
     "seen_paper_attribute_getter_language_model_data",
 ]
-unseen_language_model_data_fixtures = ["unseen_paper_attribute_getter_language_model_data"]
+seen_real_data_language_model_data_fixtures = [
+    "inference_data_seen_constructor_language_model_data",
+]
+seen_language_model_data_fixtures = (
+    seen_test_data_language_model_data_fixtures + seen_real_data_language_model_data_fixtures
+)
+
+unseen_test_data_language_model_data_fixtures = [
+    "unseen_paper_attribute_getter_language_model_data",
+]
+unseen_real_data_language_model_data_fixtures = [
+    "inference_data_unseen_constructor_language_model_data",
+]
+unseen_language_model_data_fixtures = (
+    unseen_test_data_language_model_data_fixtures + unseen_real_data_language_model_data_fixtures
+)
+
 language_model_data_fixtures = (
     seen_language_model_data_fixtures + unseen_language_model_data_fixtures
 )
 
+# BOOKMARK: Model Data Fixtures
 seen_model_data_fixtures = seen_citation_model_data_fixtures + seen_language_model_data_fixtures
 unseen_model_data_fixtures = (
     unseen_citation_model_data_fixtures + unseen_language_model_data_fixtures
 )
-model_data_fixtures = citation_model_data_fixtures + language_model_data_fixtures
+model_data_fixtures = seen_model_data_fixtures + unseen_model_data_fixtures
 
 
-# SECTION: ModelData
 # SUBSECTION: Test Query Document
-@pytest.mark.parametrize("model_data", lazy_fixture(seen_citation_model_data_fixtures))
+@pytest.mark.slow
+@pytest.mark.skip_ci
+@pytest.mark.parametrize("model_data", lazy_fixture(seen_model_data_fixtures))
 def test_seen_model_data_query_document(model_data: ModelData) -> None:
     assert isinstance(model_data.query_document, DocumentInfo)
 
     assert isinstance(model_data.query_document.d3_document_id, int)
-    assert model_data.query_document.d3_document_id == 206594692
+    assert model_data.query_document.d3_document_id == 13756489
 
     assert isinstance(model_data.query_document.title, str)
     assert model_data.query_document.title == "Deep Residual Learning for Image Recognition"
@@ -97,6 +134,8 @@ def test_seen_model_data_query_document(model_data: ModelData) -> None:
     assert model_data.query_document.abstract == ""
 
 
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("model_data", lazy_fixture(unseen_model_data_fixtures))
 def test_unseen_model_data_query_document(model_data: ModelData) -> None:
     assert isinstance(model_data.query_document, DocumentInfo)
@@ -122,6 +161,8 @@ def test_unseen_model_data_query_document(model_data: ModelData) -> None:
 
 
 # SUBSECTION: Test Integer Labels
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("model_data", lazy_fixture(model_data_fixtures))
 def test_model_data_integer_labels(model_data: ModelData) -> None:
     assert isinstance(model_data.integer_labels, pd.Series)
@@ -131,11 +172,15 @@ def test_model_data_integer_labels(model_data: ModelData) -> None:
     assert model_data.integer_labels.index.name == "document_id"
 
 
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("model_data", lazy_fixture(seen_model_data_fixtures))
 def test_seen_model_data_integer_labels(model_data: ModelData) -> None:
     assert model_data.integer_labels.unique().tolist() == [0, 1]
 
 
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("model_data", lazy_fixture(unseen_model_data_fixtures))
 def test_unseen_model_data_integer_labels(model_data: ModelData) -> None:
     assert model_data.integer_labels.unique().tolist() == [0]
@@ -143,6 +188,8 @@ def test_unseen_model_data_integer_labels(model_data: ModelData) -> None:
 
 # SECTION: CitationModelData
 # SUBSECTION: Test Info Matrix
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("model_data", lazy_fixture(citation_model_data_fixtures))
 def test_citation_model_data_info_matrix(model_data: CitationModelData) -> None:
     assert isinstance(model_data.info_matrix, pd.DataFrame)
@@ -174,6 +221,8 @@ def test_citation_model_data_info_matrix(model_data: CitationModelData) -> None:
 
 
 # SUBSECTION: Test Feature Matrix
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("model_data", lazy_fixture(citation_model_data_fixtures))
 def test_citation_model_data_feature_matrix(model_data: CitationModelData) -> None:
     assert isinstance(model_data.feature_matrix, pd.DataFrame)
@@ -196,6 +245,8 @@ def test_citation_model_data_feature_matrix(model_data: CitationModelData) -> No
 
 
 # SUBSECTION: Test Getitem
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("model_data", lazy_fixture(citation_model_data_fixtures))
 def test_citation_model_data_getitem(model_data: CitationModelData) -> None:
     index_info_matrix = model_data.info_matrix.index
@@ -211,7 +262,7 @@ def test_citation_model_data_getitem(model_data: CitationModelData) -> None:
     assert len(sliced_model_data.feature_matrix) == len(shared_indices)
 
 
-@pytest.mark.parametrize("model_data", lazy_fixture(seen_citation_model_data_fixtures))
+@pytest.mark.parametrize("model_data", lazy_fixture(seen_test_data_citation_model_data_fixtures))
 def test_seen_citation_model_data_getitem(
     model_data: CitationModelData, test_data_size: int
 ) -> None:
@@ -227,7 +278,7 @@ def test_seen_citation_model_data_getitem(
     assert len(shared_indices) == test_data_size - 1
 
 
-@pytest.mark.parametrize("model_data", lazy_fixture(unseen_citation_model_data_fixtures))
+@pytest.mark.parametrize("model_data", lazy_fixture(unseen_test_data_citation_model_data_fixtures))
 def test_unseen_citation_model_data_getitem(
     model_data: CitationModelData, test_data_size: int
 ) -> None:
@@ -243,6 +294,8 @@ def test_unseen_citation_model_data_getitem(
 
 # SECTION: LanguageModelData
 # SUBSECTION: Test Info Matrix
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("model_data", lazy_fixture(language_model_data_fixtures))
 def test_language_model_data_info_matrix(model_data: CitationModelData) -> None:
     assert isinstance(model_data.info_matrix, pd.DataFrame)
@@ -266,6 +319,8 @@ def test_language_model_data_info_matrix(model_data: CitationModelData) -> None:
 
 
 # SUBSECTION: Test Cosine Similarity Ranks
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("model_data", lazy_fixture(language_model_data_fixtures))
 def test_language_model_data_cosine_similarity_ranks(
     model_data: LanguageModelData,
@@ -289,6 +344,8 @@ def test_language_model_data_cosine_similarity_ranks(
 
 
 # SUBSECTION: Test Getitem
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("model_data", lazy_fixture(language_model_data_fixtures))
 def test_language_model_data_getitem(model_data: LanguageModelData) -> None:
     index_info_matrix = model_data.info_matrix.index
@@ -304,7 +361,7 @@ def test_language_model_data_getitem(model_data: LanguageModelData) -> None:
     assert len(sliced_model_data.cosine_similarity_ranks) == len(shared_indices)
 
 
-@pytest.mark.parametrize("model_data", lazy_fixture(seen_language_model_data_fixtures))
+@pytest.mark.parametrize("model_data", lazy_fixture(seen_test_data_language_model_data_fixtures))
 def test_seen_language_model_data_getitem(
     model_data: LanguageModelData, test_data_size: int
 ) -> None:
@@ -321,7 +378,7 @@ def test_seen_language_model_data_getitem(
     assert len(shared_indices) == test_data_size - 1
 
 
-@pytest.mark.parametrize("model_data", lazy_fixture(unseen_language_model_data_fixtures))
+@pytest.mark.parametrize("model_data", lazy_fixture(unseen_test_data_language_model_data_fixtures))
 def test_unseen_language_model_data_getitem(
     model_data: LanguageModelData, test_data_size: int
 ) -> None:

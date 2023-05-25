@@ -8,6 +8,7 @@ from readnext.data import (
     set_missing_publication_dates_to_max_rank,
 )
 from readnext.evaluation.scoring import FeatureWeights
+from readnext.inference import InferenceDataConstructor
 from readnext.inference.attribute_getter import SeenPaperAttributeGetter, UnseenPaperAttributeGetter
 from readnext.modeling import (
     CitationModelData,
@@ -206,7 +207,7 @@ def citation_model_data_constructor(
     test_co_citation_analysis_scores_most_cited: ScoresFrame,
     test_bibliographic_coupling_scores_most_cited: ScoresFrame,
 ) -> CitationModelDataConstructor:
-    query_d3_document_id = 206594692
+    query_d3_document_id = 13756489
 
     return CitationModelDataConstructor(
         d3_document_id=query_d3_document_id,
@@ -223,7 +224,7 @@ def language_model_data_constructor(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
     test_bert_cosine_similarities_most_cited: ScoresFrame,
 ) -> LanguageModelDataConstructor:
-    query_d3_document_id = 206594692
+    query_d3_document_id = 13756489
 
     return LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
@@ -703,3 +704,108 @@ def unseen_paper_attribute_getter_language_model_data(
     )
 
     return unseen_paper_attribute_getter.get_language_model_data()
+
+
+# SUBSECTION: InferenceDataConstructor
+@pytest.fixture(scope="session")
+def inference_data_seen_constructor_from_semanticscholar_id() -> InferenceDataConstructor:
+    semanticscholar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+    return InferenceDataConstructor(
+        semanticscholar_id=semanticscholar_id,
+        language_model_choice=LanguageModelChoice.tfidf,
+        feature_weights=FeatureWeights(),
+    )
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_constructor_from_arxiv_url() -> InferenceDataConstructor:
+    arxiv_url = "https://arxiv.org/abs/2303.08774"
+    return InferenceDataConstructor(
+        arxiv_url=arxiv_url,
+        language_model_choice=LanguageModelChoice.scibert,
+        feature_weights=FeatureWeights(),
+    )
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_constructor_documents_data(
+    inference_data_seen_constructor_from_semanticscholar_id: InferenceDataConstructor,
+) -> pd.DataFrame:
+    return inference_data_seen_constructor_from_semanticscholar_id._documents_data
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_constructor_documents_data(
+    inference_data_unseen_constructor_from_arxiv_url: InferenceDataConstructor,
+) -> pd.DataFrame:
+    return inference_data_unseen_constructor_from_arxiv_url._documents_data
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_constructor_co_citation_analysis_scores(
+    inference_data_seen_constructor_from_semanticscholar_id: InferenceDataConstructor,
+) -> ScoresFrame:
+    return inference_data_seen_constructor_from_semanticscholar_id._co_citation_analysis_scores
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_constructor_co_citation_analysis_scores(
+    inference_data_unseen_constructor_from_arxiv_url: InferenceDataConstructor,
+) -> ScoresFrame:
+    return inference_data_unseen_constructor_from_arxiv_url._co_citation_analysis_scores
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_constructor_bibliographic_coupling_scores(
+    inference_data_seen_constructor_from_semanticscholar_id: InferenceDataConstructor,
+) -> ScoresFrame:
+    return inference_data_seen_constructor_from_semanticscholar_id._bibliographic_coupling_scores
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_constructor_bibliographic_coupling_scores(
+    inference_data_unseen_constructor_from_arxiv_url: InferenceDataConstructor,
+) -> ScoresFrame:
+    return inference_data_unseen_constructor_from_arxiv_url._bibliographic_coupling_scores
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_constructor_cosine_similarities(
+    inference_data_seen_constructor_from_semanticscholar_id: InferenceDataConstructor,
+) -> ScoresFrame:
+    return inference_data_seen_constructor_from_semanticscholar_id._cosine_similarities
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_constructor_cosine_similarities(
+    inference_data_unseen_constructor_from_arxiv_url: InferenceDataConstructor,
+) -> ScoresFrame:
+    return inference_data_unseen_constructor_from_arxiv_url._cosine_similarities
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_constructor_citation_model_data(
+    inference_data_seen_constructor_from_semanticscholar_id: InferenceDataConstructor,
+) -> CitationModelData:
+    return inference_data_seen_constructor_from_semanticscholar_id._citation_model_data
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_constructor_citation_model_data(
+    inference_data_unseen_constructor_from_arxiv_url: InferenceDataConstructor,
+) -> CitationModelData:
+    return inference_data_unseen_constructor_from_arxiv_url._citation_model_data
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_constructor_language_model_data(
+    inference_data_seen_constructor_from_semanticscholar_id: InferenceDataConstructor,
+) -> LanguageModelData:
+    return inference_data_seen_constructor_from_semanticscholar_id._language_model_data
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_constructor_language_model_data(
+    inference_data_unseen_constructor_from_arxiv_url: InferenceDataConstructor,
+) -> LanguageModelData:
+    return inference_data_unseen_constructor_from_arxiv_url._language_model_data

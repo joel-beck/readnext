@@ -14,7 +14,6 @@ real_test_tokens_mapping_pairs = [
 ]
 
 
-@pytest.mark.slow
 @pytest.mark.skip_ci
 @pytest.mark.parametrize(
     ("real_tokens_mapping", "test_tokens_mapping"),
@@ -42,7 +41,6 @@ real_test_tokens_id_mapping_pairs = [
 ]
 
 
-@pytest.mark.slow
 @pytest.mark.skip_ci
 @pytest.mark.parametrize(
     ("real_tokens_id_mapping", "test_tokens_id_mapping"),

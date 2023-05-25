@@ -38,7 +38,7 @@ def test_spacy_tokenized_abstract_mappings_most_cited(
     spacy_tokenized_abstracts_mapping_most_cited: TokensMapping,
 ) -> None:
     # check that tokenized abstracts are lists of strings
-    single_abstract = spacy_tokenized_abstracts_mapping_most_cited[206594692]
+    single_abstract = spacy_tokenized_abstracts_mapping_most_cited[13756489]
     assert all(isinstance(token, str) for token in single_abstract)
 
     # check that all tokenized abstracts are non-empty
@@ -55,7 +55,7 @@ def test_torch_tokenized_abstract_mappings_token_ids(
     tokenized_abstract_mapping: TokensIdMapping,
 ) -> None:
     # check that tokenized abstract are lists of integers
-    single_abstract_token_ids = tokenized_abstract_mapping[206594692]
+    single_abstract_token_ids = tokenized_abstract_mapping[13756489]
     assert all(isinstance(token_id, int) for token_id in single_abstract_token_ids)
 
 
@@ -72,7 +72,7 @@ def test_bert_based_tokenized_abstracts_length(tokenized_abstract_mapping: Token
 def test_bert_tokenized_abstracts_most_cited(
     bert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
 ) -> None:
-    single_abstract_token_ids = bert_tokenized_abstracts_mapping_most_cited[206594692]
+    single_abstract_token_ids = bert_tokenized_abstracts_mapping_most_cited[13756489]
     # check that first 254 token ids of first abstract are non-zero for bert tokenizer
     assert all(token_id != 0 for token_id in single_abstract_token_ids[:254])
 
@@ -81,7 +81,7 @@ def test_bert_tokenized_abstracts_most_cited(
 def test_scibert_tokenized_abstracts_most_cited(
     scibert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
 ) -> None:
-    single_abstract_token_ids = scibert_tokenized_abstracts_mapping_most_cited[206594692]
+    single_abstract_token_ids = scibert_tokenized_abstracts_mapping_most_cited[13756489]
     # check that first 252 token ids of first abstract are non-zero for scibert
     # tokenizer
     assert all(token_id != 0 for token_id in single_abstract_token_ids[:252])
@@ -97,7 +97,7 @@ def test_longformer_tokenized_abstracts_most_cited(
         for abstract_ids in longformer_tokenized_abstracts_mapping_most_cited.values()
     )
 
-    single_abstract_token_ids = longformer_tokenized_abstracts_mapping_most_cited[206594692]
+    single_abstract_token_ids = longformer_tokenized_abstracts_mapping_most_cited[13756489]
     # remaining tokens are not 0 but 1 for longformer! Check that from the 261st token
     # all remaining tokens are 1
     assert all(token_id == 1 for token_id in single_abstract_token_ids[261:])

@@ -14,8 +14,8 @@ from readnext.modeling import (
     LanguageModelData,
     LanguageModelDataConstructor,
 )
-from readnext.modeling.citation_models import (
-    add_feature_rank_cols,
+from readnext.data import (
+    add_citation_feature_rank_cols,
     set_missing_publication_dates_to_max_rank,
 )
 from readnext.utils import load_df_from_pickle
@@ -23,7 +23,7 @@ from readnext.utils import load_df_from_pickle
 
 def main() -> None:
     # evaluation for a single query document
-    query_d3_document_id = 206594692
+    query_d3_document_id = 13756489
 
     # SECTION: Get Raw Data
     documents_authors_labels_citations_most_cited: pd.DataFrame = load_df_from_pickle(
@@ -47,7 +47,7 @@ def main() -> None:
     citation_model_data_constructor = CitationModelDataConstructor(
         d3_document_id=query_d3_document_id,
         documents_data=documents_authors_labels_citations_most_cited.pipe(
-            add_feature_rank_cols
+            add_citation_feature_rank_cols
         ).pipe(set_missing_publication_dates_to_max_rank),
         co_citation_analysis_scores=co_citation_analysis_scores_most_cited,
         bibliographic_coupling_scores=bibliographic_coupling_scores_most_cited,

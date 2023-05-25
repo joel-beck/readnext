@@ -23,7 +23,7 @@ from readnext.utils import load_df_from_pickle
 
 def main() -> None:
     # evaluation for a single query document
-    query_d3_document_id = 206594692
+    query_d3_document_id = 13756489
 
     # SECTION: Get Raw Data
     documents_authors_labels_citations_most_cited: pd.DataFrame = load_df_from_pickle(

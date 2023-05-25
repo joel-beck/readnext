@@ -31,7 +31,7 @@ def test_initialization(model_data_constructor: ModelDataConstructor) -> None:
     assert isinstance(model_data_constructor, ModelDataConstructor)
 
     assert isinstance(model_data_constructor.d3_document_id, int)
-    assert model_data_constructor.d3_document_id == 206594692
+    assert model_data_constructor.d3_document_id == 13756489
 
     # number of columns is different betwen citation and language model data and tested
     # in individual tests below
@@ -51,7 +51,7 @@ def test_collect_query_document(
     model_data_constructor: ModelDataConstructor,
 ) -> None:
     assert isinstance(model_data_constructor.query_document.d3_document_id, int)
-    assert model_data_constructor.query_document.d3_document_id == 206594692
+    assert model_data_constructor.query_document.d3_document_id == 13756489
 
     assert isinstance(model_data_constructor.query_document.title, str)
     assert (

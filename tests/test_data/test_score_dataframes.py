@@ -27,8 +27,10 @@ seen_score_dataframes = [
     "seen_paper_attribute_getter_cosine_similarities_bert",
     "seen_paper_attribute_getter_cosine_similarities_scibert",
     "seen_paper_attribute_getter_cosine_similarities_longformer",
+    "inference_data_seen_constructor_co_citation_analysis_scores",
+    "inference_data_seen_constructor_bibliographic_coupling_scores",
+    "inference_data_seen_constructor_cosine_similarities",
 ]
-
 
 unseen_score_dataframes = [
     "unseen_paper_attribute_getter_co_citation_analysis",
@@ -41,6 +43,9 @@ unseen_score_dataframes = [
     "unseen_paper_attribute_getter_cosine_similarities_bert",
     "unseen_paper_attribute_getter_cosine_similarities_scibert",
     "unseen_paper_attribute_getter_cosine_similarities_longformer",
+    "inference_data_unseen_constructor_co_citation_analysis_scores",
+    "inference_data_unseen_constructor_bibliographic_coupling_scores",
+    "inference_data_unseen_constructor_cosine_similarities",
 ]
 
 score_dataframes = seen_score_dataframes + unseen_score_dataframes

@@ -187,23 +187,87 @@ def unseen_paper_attribute_getter_from_arxiv_url(
 
 # SECTION: Inference Data Constructor
 @pytest.fixture(scope="session")
-def inference_data_seen_constructor_from_semanticscholar_id() -> InferenceDataConstructor:
-    semanticscholar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
-    return InferenceDataConstructor(
-        semanticscholar_id=semanticscholar_id,
-        language_model_choice=LanguageModelChoice.tfidf,
-        feature_weights=FeatureWeights(),
-    )
+def inference_data_seen_constructor_document_identifier(
+    inference_data_seen_constructor_from_semanticscholar_id: InferenceDataConstructor,
+) -> DocumentIdentifier:
+    return inference_data_seen_constructor_from_semanticscholar_id.collect_document_identifier()
 
 
 @pytest.fixture(scope="session")
-def inference_data_unseen_constructor_from_arxiv_url() -> InferenceDataConstructor:
-    arxiv_url = "https://arxiv.org/abs/2303.08774"
-    return InferenceDataConstructor(
-        arxiv_url=arxiv_url,
-        language_model_choice=LanguageModelChoice.scibert,
-        feature_weights=FeatureWeights(),
-    )
+def inference_data_unseen_constructor_document_identifier(
+    inference_data_unseen_constructor_from_arxiv_url: InferenceDataConstructor,
+) -> DocumentIdentifier:
+    return inference_data_unseen_constructor_from_arxiv_url.collect_document_identifier()
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_constructor_document_info(
+    inference_data_seen_constructor_from_semanticscholar_id: InferenceDataConstructor,
+) -> DocumentInfo:
+    return inference_data_seen_constructor_from_semanticscholar_id.collect_document_info()
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_constructor_document_info(
+    inference_data_unseen_constructor_from_arxiv_url: InferenceDataConstructor,
+) -> DocumentInfo:
+    return inference_data_unseen_constructor_from_arxiv_url.collect_document_info()
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_constructor_features(
+    inference_data_seen_constructor_from_semanticscholar_id: InferenceDataConstructor,
+) -> Features:
+    return inference_data_seen_constructor_from_semanticscholar_id.collect_features()
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_constructor_features(
+    inference_data_unseen_constructor_from_arxiv_url: InferenceDataConstructor,
+) -> Features:
+    return inference_data_unseen_constructor_from_arxiv_url.collect_features()
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_constructor_ranks(
+    inference_data_seen_constructor_from_semanticscholar_id: InferenceDataConstructor,
+) -> Ranks:
+    return inference_data_seen_constructor_from_semanticscholar_id.collect_ranks()
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_constructor_ranks(
+    inference_data_unseen_constructor_from_arxiv_url: InferenceDataConstructor,
+) -> Ranks:
+    return inference_data_unseen_constructor_from_arxiv_url.collect_ranks()
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_constructor_labels(
+    inference_data_seen_constructor_from_semanticscholar_id: InferenceDataConstructor,
+) -> Labels:
+    return inference_data_seen_constructor_from_semanticscholar_id.collect_labels()
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_constructor_labels(
+    inference_data_unseen_constructor_from_arxiv_url: InferenceDataConstructor,
+) -> Labels:
+    return inference_data_unseen_constructor_from_arxiv_url.collect_labels()
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_constructor_recommendations(
+    inference_data_seen_constructor_from_semanticscholar_id: InferenceDataConstructor,
+) -> Recommendations:
+    return inference_data_seen_constructor_from_semanticscholar_id.collect_recommendations()
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_constructor_recommendations(
+    inference_data_unseen_constructor_from_arxiv_url: InferenceDataConstructor,
+) -> Recommendations:
+    return inference_data_unseen_constructor_from_arxiv_url.collect_recommendations()
 
 
 # SECTION: Inference Data

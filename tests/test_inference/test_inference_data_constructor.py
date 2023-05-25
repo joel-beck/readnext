@@ -8,7 +8,7 @@ from readnext.inference.attribute_getter import SeenPaperAttributeGetter, Unseen
 from readnext.inference.inference_data_constructor import Features, Labels, Ranks, Recommendations
 from readnext.modeling.language_models import LanguageModelChoice
 
-seen_inference_data_constructors = ["inference_data_seen_constructor_from_semanticscholar_id"]
+seen_inference_data_constructors = ["inference_data_constructor_seen_from_semanticscholar_id"]
 unseen_inference_data_constructors = ["inference_data_unseen_constructor_from_arxiv_url"]
 inference_data_constructors = seen_inference_data_constructors + unseen_inference_data_constructors
 

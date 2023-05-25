@@ -4,90 +4,12 @@ from spacy.language import Language
 from transformers import BertTokenizerFast, LongformerTokenizerFast
 
 from readnext.config import ModelVersions
-from readnext.modeling import (
-    DocumentInfo,
-    DocumentsInfo,
-)
-from readnext.modeling.language_models import (
-    BERTEmbedder,
-    BERTTokenizer,
-    FastTextEmbedder,
-    LongformerEmbedder,
-    LongformerTokenizer,
-    SpacyTokenizer,
-    TFIDFEmbedder,
-    Word2VecEmbedder,
-    tfidf,
-)
-from readnext.utils import (
-    BertModelProtocol,
-    FastTextModelProtocol,
-    LongformerModelProtocol,
-    Tokens,
-    TokensMapping,
-    Word2VecModelProtocol,
-)
+from readnext.modeling import DocumentsInfo
+from readnext.modeling.language_models import BERTTokenizer, LongformerTokenizer, SpacyTokenizer
+from readnext.utils import Tokens, TokensMapping
 from readnext.utils.aliases import TokensIdMapping
-from tests.mocks import (
-    bert_model_mock,
-    fasttext_model_mock,
-    longformer_model_mock,
-    word2vec_model_mock,
-)
 
 
-# SECTION: Tokens
-@pytest.fixture(scope="session")
-def document_tokens() -> Tokens:
-    return ["a", "b", "c", "a", "b", "c", "d", "d", "d"]
-
-
-@pytest.fixture(scope="session")
-def document_corpus() -> list[Tokens]:
-    return [
-        ["a", "b", "c", "d", "d", "d"],
-        ["a", "b", "b", "c", "c", "c", "d"],
-        ["a", "a", "a", "b", "c", "d"],
-    ]
-
-
-@pytest.fixture(scope="session")
-def documents_info() -> DocumentsInfo:
-    return DocumentsInfo(
-        [
-            DocumentInfo(
-                d3_document_id=1,
-                title="Title 1",
-                author="Author 1",
-                abstract="""
-                Abstract 1: This is an example abstract with various characters! It
-                contains numbers 1, 2, 3 and special characters like @, #, $.
-                """,
-            ),
-            DocumentInfo(
-                d3_document_id=2,
-                title="Title 2",
-                author="Author 2",
-                abstract="""
-                Abstract 2: Another example abstract, including upper-case letters and a
-                few stopwords such as 'the', 'and', 'in'.
-                """,
-            ),
-            DocumentInfo(
-                d3_document_id=3,
-                title="Title 3",
-                author="Author 3",
-                abstract="""
-                Abstract 3: A third example abstract with a mix of lower-case and
-                UPPER-CASE letters, as well as some punctuation: (brackets) and {curly
-                braces}.
-                """,
-            ),
-        ]
-    )
-
-
-# SECTION: Tokenizer
 # SUBSECTION: SpaCy
 # contained as dependency in pyproject.toml, can be used in CI
 @pytest.fixture(scope="session")
@@ -342,61 +264,3 @@ def longformer_expected_tokenized_abstract() -> Tokens:
         "<pad>",
         "<pad>",
     ]
-
-
-# SECTION: Language Models
-@pytest.fixture(scope="session")
-def word2vec_model() -> Word2VecModelProtocol:
-    return word2vec_model_mock()
-
-
-@pytest.fixture(scope="session")
-def fasttext_model() -> FastTextModelProtocol:
-    return fasttext_model_mock()
-
-
-@pytest.fixture(scope="session")
-def bert_model() -> BertModelProtocol:
-    return bert_model_mock()
-
-
-@pytest.fixture(scope="session")
-def longformer_model() -> LongformerModelProtocol:
-    return longformer_model_mock()
-
-
-# SECTION: Embedders
-@pytest.fixture(scope="session")
-def tfidf_embedder(spacy_tokens_mapping: TokensMapping) -> TFIDFEmbedder:
-    return TFIDFEmbedder(tokens_mapping=spacy_tokens_mapping, keyword_algorithm=tfidf)
-
-
-@pytest.fixture(scope="session")
-def word2vec_embedder(
-    spacy_tokens_mapping: TokensMapping, word2vec_model: Word2VecModelProtocol
-) -> Word2VecEmbedder:
-    return Word2VecEmbedder(tokens_mapping=spacy_tokens_mapping, embedding_model=word2vec_model)
-
-
-@pytest.fixture(scope="session")
-def fasttext_embedder(
-    spacy_tokens_mapping: TokensMapping, fasttext_model: FastTextModelProtocol
-) -> FastTextEmbedder:
-    return FastTextEmbedder(tokens_mapping=spacy_tokens_mapping, embedding_model=fasttext_model)
-
-
-@pytest.fixture(scope="session")
-def bert_embedder(
-    bert_tokens_id_mapping: TokensIdMapping, bert_model: BertModelProtocol
-) -> BERTEmbedder:
-    return BERTEmbedder(tokens_tensor_mapping=bert_tokens_id_mapping, torch_model=bert_model)
-
-
-@pytest.fixture(scope="session")
-def longformer_embedder(
-    longformer_tokens_id_mapping: TokensIdMapping, longformer_model: LongformerModelProtocol
-) -> LongformerEmbedder:
-    return LongformerEmbedder(
-        tokens_tensor_mapping=longformer_tokens_id_mapping,
-        torch_model=longformer_model,
-    )

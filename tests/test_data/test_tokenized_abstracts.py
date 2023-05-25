@@ -73,8 +73,9 @@ def test_bert_tokenized_abstracts_most_cited(
     bert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
 ) -> None:
     single_abstract_token_ids = bert_tokenized_abstracts_mapping_most_cited[13756489]
-    # check that first 254 token ids of first abstract are non-zero for bert tokenizer
-    assert all(token_id != 0 for token_id in single_abstract_token_ids[:254])
+    # only padding tokens from index 242 onwards
+    assert sum(token_id != 0 for token_id in single_abstract_token_ids[:242])
+    assert all(token_id == 0 for token_id in single_abstract_token_ids[242:])
 
 
 @pytest.mark.skip_ci
@@ -82,9 +83,9 @@ def test_scibert_tokenized_abstracts_most_cited(
     scibert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
 ) -> None:
     single_abstract_token_ids = scibert_tokenized_abstracts_mapping_most_cited[13756489]
-    # check that first 252 token ids of first abstract are non-zero for scibert
-    # tokenizer
-    assert all(token_id != 0 for token_id in single_abstract_token_ids[:252])
+    # only padding tokens from index 217 onwards
+    assert all(token_id != 0 for token_id in single_abstract_token_ids[:217])
+    assert all(token_id == 0 for token_id in single_abstract_token_ids[217:])
 
 
 @pytest.mark.skip_ci
@@ -98,6 +99,5 @@ def test_longformer_tokenized_abstracts_most_cited(
     )
 
     single_abstract_token_ids = longformer_tokenized_abstracts_mapping_most_cited[13756489]
-    # remaining tokens are not 0 but 1 for longformer! Check that from the 261st token
-    # all remaining tokens are 1
+    # only padding tokens from index 217 onwards
     assert all(token_id == 1 for token_id in single_abstract_token_ids[261:])

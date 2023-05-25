@@ -54,16 +54,13 @@ def test_collect_query_document(
     assert model_data_constructor.query_document.d3_document_id == 13756489
 
     assert isinstance(model_data_constructor.query_document.title, str)
-    assert (
-        model_data_constructor.query_document.title
-        == "Deep Residual Learning for Image Recognition"
-    )
+    assert model_data_constructor.query_document.title == "Attention is All you Need"
 
     assert isinstance(model_data_constructor.query_document.author, str)
-    assert model_data_constructor.query_document.author == "Kaiming He"
+    assert model_data_constructor.query_document.author == "Lukasz Kaiser"
 
     assert isinstance(model_data_constructor.query_document.arxiv_labels, list)
-    assert model_data_constructor.query_document.arxiv_labels == ["cs.CV"]
+    assert model_data_constructor.query_document.arxiv_labels == ["cs.CL", "cs.LG"]
 
 
 @pytest.mark.parametrize(
@@ -123,17 +120,17 @@ def test_extend_info_matrix(model_data_constructor: ModelDataConstructor) -> Non
     lazy_fixture(model_data_constructor_fixtures),
 )
 def test_shares_arxiv_label(model_data_constructor: ModelDataConstructor) -> None:
-    candidate_document_labels = ["cs.CV", "stat.ML"]
+    candidate_document_labels = ["cs.CL", "stat.ML"]
     result = model_data_constructor.shares_arxiv_label(candidate_document_labels)
 
     assert isinstance(result, bool)
-    assert result is True
+    assert result
 
-    candidate_document_labels = ["cs.AI", "cs.LG"]
+    candidate_document_labels = ["cs.CV"]
     result = model_data_constructor.shares_arxiv_label(candidate_document_labels)
 
     assert isinstance(result, bool)
-    assert result is False
+    assert not result
 
 
 @pytest.mark.parametrize(

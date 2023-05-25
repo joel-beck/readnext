@@ -43,7 +43,7 @@ unseen_score_dataframes = [
     "unseen_paper_attribute_getter_cosine_similarities_bert",
     "unseen_paper_attribute_getter_cosine_similarities_scibert",
     "unseen_paper_attribute_getter_cosine_similarities_longformer",
-    "inference_data_unseen_constructor_co_citation_analysis_scores",
+    "inference_data_constructor_unseen_co_citation_analysis_scores",
     "inference_data_unseen_constructor_bibliographic_coupling_scores",
     "inference_data_unseen_constructor_cosine_similarities",
 ]

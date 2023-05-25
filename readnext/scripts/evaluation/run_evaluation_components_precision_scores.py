@@ -6,6 +6,10 @@ model or a single Language Model for a single query document.
 import pandas as pd
 
 from readnext.config import DataPaths, ResultsPaths
+from readnext.data import (
+    add_citation_feature_rank_cols,
+    set_missing_publication_dates_to_max_rank,
+)
 from readnext.evaluation.metrics import AveragePrecision
 from readnext.evaluation.scoring import CitationModelScorer, FeatureWeights, LanguageModelScorer
 from readnext.modeling import (
@@ -13,10 +17,6 @@ from readnext.modeling import (
     CitationModelDataConstructor,
     LanguageModelData,
     LanguageModelDataConstructor,
-)
-from readnext.data import (
-    add_citation_feature_rank_cols,
-    set_missing_publication_dates_to_max_rank,
 )
 from readnext.utils import load_df_from_pickle
 

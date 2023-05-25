@@ -1,9 +1,7 @@
 import pandas as pd
 import pytest
-from pytest_mock import MockFixture
 
 from readnext.config import DataPaths, ResultsPaths
-from readnext.data import SemanticScholarJson, SemanticscholarRequest, SemanticScholarResponse
 from readnext.modeling.language_models import TokensIdMapping, TokensMapping
 from readnext.utils import load_df_from_pickle, load_object_from_pickle
 
@@ -145,70 +143,4 @@ def scibert_cosine_similarities_most_cited() -> pd.DataFrame:
 def longformer_cosine_similarities_most_cited() -> pd.DataFrame:
     return load_df_from_pickle(
         ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl
-    )
-
-
-# SECTION: Citation Models Features
-@pytest.fixture
-def citation_models_features_frame() -> pd.DataFrame:
-    data = {
-        "publication_date": [pd.Timestamp("2020-01-01"), pd.Timestamp("2019-01-01"), None],
-        "citationcount_document": [50, 100, 75],
-        "citationcount_author": [1000, 2000, 3000],
-    }
-    return pd.DataFrame(data)
-
-
-@pytest.fixture
-def extended_citation_models_features_frame() -> pd.DataFrame:
-    data = {
-        "publication_date": [
-            pd.Timestamp("2020-01-01"),
-            pd.Timestamp("2019-01-01"),
-            None,
-            pd.Timestamp("2018-01-01"),
-            pd.Timestamp("2017-01-01"),
-        ],
-        "citationcount_document": [50, 100, 75, 50, 100],
-        "citationcount_author": [1000, 2000, 3000, 1000, 2000],
-    }
-    return pd.DataFrame(data)
-
-
-# SECTION: Semanticscholar Class
-@pytest.fixture
-def semanticscholar_request() -> SemanticscholarRequest:
-    return SemanticscholarRequest()
-
-
-@pytest.fixture
-def json_response() -> SemanticScholarJson:
-    return {
-        "paperId": "TestID",
-        "title": "TestTitle",
-        "abstract": "TestAbstract",
-        "citations": [],
-        "references": [],
-        "externalIds": {"ArXiv": "ArxivID", "DBLP": None, "PubMedCentral": None},
-    }
-
-
-@pytest.fixture
-def semanticscholar_response() -> SemanticScholarResponse:
-    return SemanticScholarResponse(
-        semanticscholar_id="TestID",
-        arxiv_id="ArxivID",
-        title="TestTitle",
-        abstract="TestAbstract",
-        citations=[],
-        references=[],
-    )
-
-
-@pytest.fixture
-def mock_get_response_from_request(
-    mocker: MockFixture, semanticscholar_response: SemanticScholarResponse
-) -> None:
-    mocker.patch.object(
-        SemanticscholarRequest, "get_response_from_request", return_value=semanticscholar_response
     )

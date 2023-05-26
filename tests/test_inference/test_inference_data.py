@@ -12,11 +12,11 @@ from readnext.inference.inference_data_constructor import Features, Labels, Rank
 from readnext.modeling import DocumentInfo
 
 # SECTION: Document Identifier
-seen_document_identifier_fixtures = [
+seen_document_identifier_fixtures_slow_skip_ci = [
     "inference_data_seen_document_identifier",
     "inference_data_constructor_seen_document_identifier",
 ]
-unseen_document_identifier_fixtures = [
+unseen_document_identifier_fixtures_skip_ci = [
     "inference_data_unseen_document_identifier",
     "inference_data_constructor_unseen_document_identifier",
 ]
@@ -24,7 +24,9 @@ unseen_document_identifier_fixtures = [
 
 @pytest.mark.slow
 @pytest.mark.skip_ci
-@pytest.mark.parametrize("document_identifier", lazy_fixture(seen_document_identifier_fixtures))
+@pytest.mark.parametrize(
+    "document_identifier", lazy_fixture(seen_document_identifier_fixtures_slow_skip_ci)
+)
 def test_inference_data_seen_document_identifier(
     document_identifier: DocumentIdentifier,
 ) -> None:
@@ -49,9 +51,10 @@ def test_inference_data_seen_document_identifier(
     assert document_identifier.d3_document_id == 13756489
 
 
-@pytest.mark.slow
 @pytest.mark.skip_ci
-@pytest.mark.parametrize("document_identifier", lazy_fixture(unseen_document_identifier_fixtures))
+@pytest.mark.parametrize(
+    "document_identifier", lazy_fixture(unseen_document_identifier_fixtures_skip_ci)
+)
 def test_inference_data_unseen_document_identifier(
     document_identifier: DocumentIdentifier,
 ) -> None:
@@ -77,11 +80,11 @@ def test_inference_data_unseen_document_identifier(
 
 
 # SECTION: Document Info
-seen_document_info_fixtures = [
+seen_document_info_fixtures_slow_skip_ci = [
     "inference_data_seen_document_info",
     "inference_data_constructor_seen_document_info",
 ]
-unseen_document_info_fixtures = [
+unseen_document_info_fixtures_skip_ci = [
     "inference_data_unseen_document_info",
     "inference_data_constructor_unseen_document_info",
 ]
@@ -89,7 +92,7 @@ unseen_document_info_fixtures = [
 
 @pytest.mark.slow
 @pytest.mark.skip_ci
-@pytest.mark.parametrize("document_info", lazy_fixture(seen_document_info_fixtures))
+@pytest.mark.parametrize("document_info", lazy_fixture(seen_document_info_fixtures_slow_skip_ci))
 def test_inference_data_seen_document_info(document_info: DocumentInfo) -> None:
     assert isinstance(document_info, DocumentInfo)
 
@@ -112,9 +115,8 @@ def test_inference_data_seen_document_info(document_info: DocumentInfo) -> None:
     assert document_info.arxiv_labels == ["cs.CL", "cs.LG"]
 
 
-@pytest.mark.slow
 @pytest.mark.skip_ci
-@pytest.mark.parametrize("document_info", lazy_fixture(unseen_document_info_fixtures))
+@pytest.mark.parametrize("document_info", lazy_fixture(unseen_document_info_fixtures_skip_ci))
 def test_inference_data_unseen_document_info(document_info: DocumentInfo) -> None:
     assert isinstance(document_info, DocumentInfo)
 
@@ -135,17 +137,30 @@ def test_inference_data_unseen_document_info(document_info: DocumentInfo) -> Non
 
 
 # SECTION: Features
-feature_fixtures = [
+feature_fixtures_slow_skip_ci = [
     "inference_data_seen_features",
     "inference_data_constructor_seen_features",
+]
+
+feature_fixtures_skip_ci = [
     "inference_data_unseen_features",
     "inference_data_constructor_unseen_features",
 ]
 
 
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("features", lazy_fixture(feature_fixtures))
+@pytest.mark.parametrize(
+    "features",
+    [
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+    ],
+)
 def test_inference_data_features(features: Features) -> None:
     assert isinstance(features, Features)
 
@@ -189,17 +204,30 @@ def test_inference_data_features(features: Features) -> None:
 
 
 # SECTION: Ranks
-ranks_fixtures = [
+rank_fixtures_slow_skip_ci = [
     "inference_data_seen_ranks",
     "inference_data_constructor_seen_ranks",
+]
+
+rank_fixtures_skip_ci = [
     "inference_data_unseen_ranks",
     "inference_data_constructor_unseen_ranks",
 ]
 
 
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("ranks", lazy_fixture(ranks_fixtures))
+@pytest.mark.parametrize(
+    "ranks",
+    [
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in rank_fixtures_slow_skip_ci
+        ],
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
+            for fixture in rank_fixtures_skip_ci
+        ],
+    ],
+)
 def test_inference_data_ranks(ranks: Ranks) -> None:
     assert isinstance(ranks, Ranks)
 
@@ -241,17 +269,30 @@ def test_inference_data_ranks(ranks: Ranks) -> None:
 
 
 # SECTION: Labels
-seen_labels_fixtures = ["inference_data_seen_labels", "inference_data_constructor_seen_labels"]
-unseen_labels_fixtures = [
+label_fixtures_slow_skip_ci = [
+    "inference_data_seen_labels",
+    "inference_data_constructor_seen_labels",
+]
+
+label_fixtures_skip_ci = [
     "inference_data_unseen_labels",
     "inference_data_constructor_unseen_labels",
 ]
-labels_fixtures = seen_labels_fixtures + unseen_labels_fixtures
 
 
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("labels", lazy_fixture(labels_fixtures))
+@pytest.mark.parametrize(
+    "labels",
+    [
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in label_fixtures_slow_skip_ci
+        ],
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
+            for fixture in label_fixtures_skip_ci
+        ],
+    ],
+)
 def test_inference_data_labels(labels: Labels) -> None:
     assert isinstance(labels, Labels)
 
@@ -273,14 +314,13 @@ def test_inference_data_labels(labels: Labels) -> None:
 
 @pytest.mark.slow
 @pytest.mark.skip_ci
-@pytest.mark.parametrize("labels", lazy_fixture(seen_labels_fixtures))
+@pytest.mark.parametrize("labels", lazy_fixture(label_fixtures_slow_skip_ci))
 def test_inference_data_seen_labels(labels: Labels) -> None:
     assert labels.integer.unique().tolist() == [0, 1]
 
 
-@pytest.mark.slow
 @pytest.mark.skip_ci
-@pytest.mark.parametrize("labels", lazy_fixture(unseen_labels_fixtures))
+@pytest.mark.parametrize("labels", lazy_fixture(label_fixtures_skip_ci))
 def test_inference_data_unseen_labels(labels: Labels) -> None:
     # for unseen papers no arxiv labels are available, thus there is no intersection
     # with the candidate paper arxiv labels
@@ -288,57 +328,101 @@ def test_inference_data_unseen_labels(labels: Labels) -> None:
 
 
 # SECTION: Recommendations
-recommendations_fixtures = [
+recommendations_fixtures_slow_skip_ci = [
     "inference_data_seen_recommendations",
     "inference_data_constructor_seen_recommendations",
+]
+recommendations_fixtures_skip_ci = [
     "inference_data_unseen_recommendations",
     "inference_data_constructor_unseen_recommendations",
 ]
 
-recommendation_dataframe_fixtures_citation_to_language_candidates = [
-    "inference_data_seen_recommendations_citation_to_language_candidates",
-    "inference_data_unseen_recommendations_citation_to_language_candidates",
-]
-recommendation_dataframe_fixtures_citation_to_language = [
-    "inference_data_seen_recommendations_citation_to_language",
-    "inference_data_unseen_recommendations_citation_to_language",
-]
-recommendation_dataframe_fixtures_language_to_citation_candidates = [
-    "inference_data_seen_recommendations_language_to_citation_candidates",
-    "inference_data_unseen_recommendations_language_to_citation_candidates",
-]
-recommendation_dataframe_fixtures_language_to_citation = [
-    "inference_data_seen_recommendations_language_to_citation",
-    "inference_data_unseen_recommendations_language_to_citation",
-]
 
-recommendation_dataframe_fixtures_citation_features = (
-    recommendation_dataframe_fixtures_citation_to_language_candidates
-    + recommendation_dataframe_fixtures_language_to_citation
+@pytest.mark.parametrize(
+    "recommendations",
+    [
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in recommendations_fixtures_slow_skip_ci
+        ],
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
+            for fixture in recommendations_fixtures_skip_ci
+        ],
+    ],
 )
-
-recommendation_dataframe_fixtures_language_features = (
-    recommendation_dataframe_fixtures_language_to_citation_candidates
-    + recommendation_dataframe_fixtures_citation_to_language
-)
-
-recommendation_dataframe_fixtures = (
-    recommendation_dataframe_fixtures_citation_features
-    + recommendation_dataframe_fixtures_language_features
-)
-
-
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("recommendations", lazy_fixture(recommendations_fixtures))
 def test_inference_data_recommendations(recommendations: Recommendations) -> None:
     assert isinstance(recommendations, Recommendations)
 
 
-@pytest.mark.slow
-@pytest.mark.skip_ci
+recommendation_dataframe_fixtures_citation_to_language_candidates_slow_skip_ci = [
+    "inference_data_seen_recommendations_citation_to_language_candidates",
+]
+recommendation_dataframe_fixtures_citation_to_language_candidates_skip_ci = [
+    "inference_data_unseen_recommendations_citation_to_language_candidates",
+]
+
+recommendation_dataframe_fixtures_citation_to_language_slow_skip_ci = [
+    "inference_data_seen_recommendations_citation_to_language",
+]
+recommendation_dataframe_fixtures_citation_to_language_skip_ci = [
+    "inference_data_unseen_recommendations_citation_to_language",
+]
+
+recommendation_dataframe_fixtures_language_to_citation_candidates_slow_skip_ci = [
+    "inference_data_seen_recommendations_language_to_citation_candidates",
+]
+recommendation_dataframe_fixtures_language_to_citation_candidates_skip_ci = [
+    "inference_data_unseen_recommendations_language_to_citation_candidates",
+]
+
+recommendation_dataframe_fixtures_language_to_citation_slow_skip_ci = [
+    "inference_data_seen_recommendations_language_to_citation",
+]
+recommendation_dataframe_fixtures_language_to_citation_skip_ci = [
+    "inference_data_unseen_recommendations_language_to_citation",
+]
+
+recommendation_dataframe_fixtures_citation_features_slow_skip_ci = (
+    recommendation_dataframe_fixtures_citation_to_language_candidates_slow_skip_ci
+    + recommendation_dataframe_fixtures_language_to_citation_slow_skip_ci
+)
+recommendation_dataframe_fixtures_citation_features_skip_ci = (
+    recommendation_dataframe_fixtures_citation_to_language_candidates_skip_ci
+    + recommendation_dataframe_fixtures_language_to_citation_skip_ci
+)
+
+recommendation_dataframe_fixtures_language_features_slow_skip_ci = (
+    recommendation_dataframe_fixtures_language_to_citation_candidates_slow_skip_ci
+    + recommendation_dataframe_fixtures_citation_to_language_slow_skip_ci
+)
+recommendation_dataframe_fixtures_language_features_skip_ci = (
+    recommendation_dataframe_fixtures_language_to_citation_candidates_skip_ci
+    + recommendation_dataframe_fixtures_citation_to_language_skip_ci
+)
+
+recommendation_dataframe_fixtures_slow_skip_ci = (
+    recommendation_dataframe_fixtures_citation_features_slow_skip_ci
+    + recommendation_dataframe_fixtures_language_features_slow_skip_ci
+)
+recommendation_dataframe_fixtures_skip_ci = (
+    recommendation_dataframe_fixtures_citation_features_skip_ci
+    + recommendation_dataframe_fixtures_language_features_skip_ci
+)
+
+
 @pytest.mark.parametrize(
-    "recommendations_dataframe", lazy_fixture(recommendation_dataframe_fixtures)
+    "recommendations_dataframe",
+    [
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in recommendation_dataframe_fixtures_slow_skip_ci
+        ],
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
+            for fixture in recommendation_dataframe_fixtures_skip_ci
+        ],
+    ],
 )
 def test_inference_data_recommendations_dataframes(recommendations_dataframe: pd.DataFrame) -> None:
     assert isinstance(recommendations_dataframe, pd.DataFrame)
@@ -347,12 +431,20 @@ def test_inference_data_recommendations_dataframes(recommendations_dataframe: pd
     assert recommendations_dataframe.index.dtype == pd.Int64Dtype()
 
 
-@pytest.mark.slow
-@pytest.mark.skip_ci
 @pytest.mark.parametrize(
-    "recommendations_dataframe", lazy_fixture(recommendation_dataframe_fixtures_citation_features)
+    "recommendations_dataframe",
+    [
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in recommendation_dataframe_fixtures_citation_features_slow_skip_ci
+        ],
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
+            for fixture in recommendation_dataframe_fixtures_citation_features_skip_ci
+        ],
+    ],
 )
-def test_inference_data_recommendations_dataframes_citation_candidates(
+def test_inference_data_recommendations_dataframes_citation_features(
     recommendations_dataframe: pd.DataFrame,
 ) -> None:
     assert recommendations_dataframe.shape[1] == 9
@@ -380,13 +472,20 @@ def test_inference_data_recommendations_dataframes_citation_candidates(
     ]
 
 
-@pytest.mark.slow
-@pytest.mark.skip_ci
 @pytest.mark.parametrize(
     "recommendations_dataframe",
-    lazy_fixture(recommendation_dataframe_fixtures_language_features),
+    [
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in recommendation_dataframe_fixtures_language_features_slow_skip_ci
+        ],
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
+            for fixture in recommendation_dataframe_fixtures_language_features_skip_ci
+        ],
+    ],
 )
-def test_inference_data_recommendations_dataframes_language_candidates(
+def test_inference_data_recommendations_dataframes_language_features(
     recommendations_dataframe: pd.DataFrame,
 ) -> None:
     assert recommendations_dataframe.shape[1] == 4

@@ -3,21 +3,29 @@ import pytest
 from pandas.api.types import is_integer_dtype, is_string_dtype
 from pytest_lazyfixture import lazy_fixture
 
-full_documents_data_fixtures = [
+documents_data_fixtures_skip_ci = [
     "documents_authors_labels_citations_most_cited",
 ]
 
-subset_documents_data_fixtures = [
+documents_data_fixtures_slow_skip_ci = [
     "inference_data_constructor_seen_documents_data",
     "inference_data_constructor_unseen_documents_data",
 ]
 
-documents_data_fixtures = full_documents_data_fixtures + subset_documents_data_fixtures
 
-
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("documents_data", lazy_fixture(documents_data_fixtures))
+@pytest.mark.parametrize(
+    "documents_data",
+    [
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
+            for fixture in documents_data_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in documents_data_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_index(
     documents_data: pd.DataFrame,
 ) -> None:
@@ -26,9 +34,19 @@ def test_index(
     assert documents_data.index.dtype == pd.Int64Dtype()
 
 
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("documents_data", lazy_fixture(documents_data_fixtures))
+@pytest.mark.parametrize(
+    "documents_data",
+    [
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
+            for fixture in documents_data_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in documents_data_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_contains_columns_subset(
     documents_data: pd.DataFrame,
 ) -> None:
@@ -50,9 +68,19 @@ def test_contains_columns_subset(
     assert set(columns_subset).issubset(set(documents_data.columns))
 
 
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("documents_data", lazy_fixture(documents_data_fixtures))
+@pytest.mark.parametrize(
+    "documents_data",
+    [
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
+            for fixture in documents_data_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in documents_data_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_dtypes(
     documents_data: pd.DataFrame,
 ) -> None:
@@ -69,9 +97,19 @@ def test_dtypes(
     is_string_dtype(documents_data["semanticscholar_url"])
 
 
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("documents_data", lazy_fixture(documents_data_fixtures))
+@pytest.mark.parametrize(
+    "documents_data",
+    [
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
+            for fixture in documents_data_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in documents_data_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_arxiv_labels(
     documents_data: pd.DataFrame,
 ) -> None:
@@ -85,8 +123,13 @@ def test_arxiv_labels(
     assert arxiv_labels.apply(lambda x: len(x) > 0).all()
 
 
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("documents_data", lazy_fixture(full_documents_data_fixtures))
+@pytest.mark.parametrize(
+    "documents_data",
+    [
+        pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
+        for fixture in documents_data_fixtures_skip_ci
+    ],
+)
 def test_arxiv_labels_full_documents_data(
     documents_data: pd.DataFrame,
 ) -> None:
@@ -100,9 +143,13 @@ def test_arxiv_labels_full_documents_data(
     assert len(unique_arxiv_labels) == 40
 
 
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("documents_data", lazy_fixture(subset_documents_data_fixtures))
+@pytest.mark.parametrize(
+    "documents_data",
+    [
+        pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+        for fixture in documents_data_fixtures_slow_skip_ci
+    ],
+)
 def test_arxiv_labels_subset_documents_data(
     documents_data: pd.DataFrame,
 ) -> None:
@@ -116,9 +163,19 @@ def test_arxiv_labels_subset_documents_data(
     assert len(unique_arxiv_labels) == 35
 
 
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("documents_data", lazy_fixture(documents_data_fixtures))
+@pytest.mark.parametrize(
+    "documents_data",
+    [
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
+            for fixture in documents_data_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in documents_data_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_semanticscholar_tags(
     documents_data: pd.DataFrame,
 ) -> None:
@@ -132,8 +189,13 @@ def test_semanticscholar_tags(
     assert semanticscholar_tags.apply(lambda x: len(x) > 0).all()
 
 
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("documents_data", lazy_fixture(full_documents_data_fixtures))
+@pytest.mark.parametrize(
+    "documents_data",
+    [
+        pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
+        for fixture in documents_data_fixtures_skip_ci
+    ],
+)
 def test_semanticscholar_tags_full_documents_data(
     documents_data: pd.DataFrame,
 ) -> None:
@@ -144,9 +206,13 @@ def test_semanticscholar_tags_full_documents_data(
     assert len(unique_semanticscholar_tags) == 22
 
 
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("documents_data", lazy_fixture(subset_documents_data_fixtures))
+@pytest.mark.parametrize(
+    "documents_data",
+    [
+        pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+        for fixture in documents_data_fixtures_slow_skip_ci
+    ],
+)
 def test_semanticscholar_tags_subset_documents_data(
     documents_data: pd.DataFrame,
 ) -> None:

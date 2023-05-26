@@ -8,15 +8,16 @@ from readnext.inference.attribute_getter import SeenPaperAttributeGetter, Unseen
 from readnext.inference.inference_data_constructor import Features, Labels, Ranks, Recommendations
 from readnext.modeling.language_models import LanguageModelChoice
 
-seen_inference_data_constructors = ["inference_data_constructor_seen_from_semanticscholar_id"]
-unseen_inference_data_constructors = ["inference_data_constructor_unseen_from_arxiv_url"]
-inference_data_constructors = seen_inference_data_constructors + unseen_inference_data_constructors
+seen_inference_data_constructors_slow_skip_ci = [
+    "inference_data_constructor_seen_from_semanticscholar_id"
+]
+unseen_inference_data_constructors_skip_ci = ["inference_data_constructor_unseen_from_arxiv_url"]
 
 
 @pytest.mark.slow
 @pytest.mark.skip_ci
 @pytest.mark.parametrize(
-    "inference_data_constructor", lazy_fixture(seen_inference_data_constructors)
+    "inference_data_constructor", lazy_fixture(seen_inference_data_constructors_slow_skip_ci)
 )
 def test_seen_attribute_getter_is_selected_correctly(
     inference_data_constructor: InferenceDataConstructor,
@@ -28,10 +29,9 @@ def test_seen_attribute_getter_is_selected_correctly(
     )
 
 
-@pytest.mark.slow
 @pytest.mark.skip_ci
 @pytest.mark.parametrize(
-    "inference_data_constructor", lazy_fixture(unseen_inference_data_constructors)
+    "inference_data_constructor", lazy_fixture(unseen_inference_data_constructors_skip_ci)
 )
 def test_unseen_attribute_getter_is_selected_correctly(
     inference_data_constructor: InferenceDataConstructor,

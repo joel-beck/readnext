@@ -6,7 +6,7 @@ from pytest_lazyfixture import lazy_fixture
 from readnext.modeling.language_models import TokensIdMapping, TokensMapping
 from readnext.utils import slice_mapping
 
-real_test_tokens_mapping_pairs = [
+real_test_tokens_mapping_pairs_skip_ci = [
     (
         "spacy_tokenized_abstracts_mapping_most_cited",
         "test_spacy_tokenized_abstracts_mapping_most_cited",
@@ -19,7 +19,7 @@ real_test_tokens_mapping_pairs = [
     ("real_tokens_mapping", "test_tokens_mapping"),
     [
         (lazy_fixture(real_tokens_mapping), lazy_fixture(test_tokens_mapping))
-        for real_tokens_mapping, test_tokens_mapping in real_test_tokens_mapping_pairs
+        for real_tokens_mapping, test_tokens_mapping in real_test_tokens_mapping_pairs_skip_ci
     ],
 )
 def test_that_test_tokens_mappings_mimic_real_tokens_mappings(
@@ -28,7 +28,7 @@ def test_that_test_tokens_mappings_mimic_real_tokens_mappings(
     assert slice_mapping(real_tokens_mapping, test_data_size) == test_tokens_mapping
 
 
-real_test_tokens_id_mapping_pairs = [
+real_test_tokens_id_mapping_pairs_skip_ci = [
     (
         "bert_tokenized_abstracts_mapping_most_cited",
         "test_bert_tokenized_abstracts_mapping_most_cited",
@@ -49,7 +49,7 @@ real_test_tokens_id_mapping_pairs = [
     ("real_tokens_id_mapping", "test_tokens_id_mapping"),
     [
         (lazy_fixture(real_tokens_id_mapping), lazy_fixture(test_tokens_id_mapping))
-        for real_tokens_id_mapping, test_tokens_id_mapping in real_test_tokens_id_mapping_pairs
+        for real_tokens_id_mapping, test_tokens_id_mapping in real_test_tokens_id_mapping_pairs_skip_ci
     ],
 )
 def test_that_test_tokens_id_mappings_mimic_real_tokens_id_mappings(
@@ -60,7 +60,7 @@ def test_that_test_tokens_id_mappings_mimic_real_tokens_id_mappings(
     assert slice_mapping(real_tokens_id_mapping, test_data_size) == test_tokens_id_mapping
 
 
-real_test_dataframe_pairs = [
+real_test_dataframe_pairs_skip_ci = [
     ("tfidf_embeddings_most_cited", "test_tfidf_embeddings_most_cited"),
     ("word2vec_embeddings_most_cited", "test_word2vec_embeddings_most_cited"),
     ("fasttext_embeddings_most_cited", "test_fasttext_embeddings_most_cited"),
@@ -96,7 +96,7 @@ real_test_dataframe_pairs = [
     ("real_dataframe", "test_dataframe"),
     [
         (lazy_fixture(real_dataframe), lazy_fixture(test_dataframe))
-        for real_dataframe, test_dataframe in real_test_dataframe_pairs
+        for real_dataframe, test_dataframe in real_test_dataframe_pairs_skip_ci
     ],
 )
 def test_that_test_dataframes_mimic_real_dataframes(

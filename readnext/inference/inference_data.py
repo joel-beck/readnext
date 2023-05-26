@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing_extensions import Self
 
 from readnext.inference.inference_data_constructor import (
-    DocumentIdentifiers,
+    DocumentIdentifier,
     DocumentInfo,
     Features,
     InferenceDataConstructor,
@@ -15,7 +15,7 @@ from readnext.inference.inference_data_constructor import (
 
 @dataclass(kw_only=True)
 class InferenceData:
-    document_identifiers: DocumentIdentifiers
+    document_identifier: DocumentIdentifier
     document_info: DocumentInfo
     features: Features
     ranks: Ranks
@@ -25,7 +25,7 @@ class InferenceData:
     @classmethod
     def from_constructor(cls, constructor: InferenceDataConstructor) -> Self:
         return cls(
-            document_identifiers=constructor.collect_document_identifiers(),
+            document_identifier=constructor.collect_document_identifier(),
             document_info=constructor.collect_document_info(),
             features=constructor.collect_features(),
             ranks=constructor.collect_ranks(),

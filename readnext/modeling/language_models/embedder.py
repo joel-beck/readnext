@@ -1,21 +1,19 @@
 from abc import ABC, abstractmethod
-from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from enum import Enum
-from typing import TypeAlias
 
 import numpy as np
 import pandas as pd
-from gensim.models import FastText, KeyedVectors
 
 # do not import from .language_models to avoid circular imports
 from readnext.modeling.language_models.tokenizer_list import Tokens, TokensMapping
-from readnext.utils import setup_progress_bar
-
-Embedding: TypeAlias = np.ndarray
-EmbeddingsMapping: TypeAlias = dict[int, Embedding]
-
-KeywordAlgorithm: TypeAlias = Callable[[Tokens, Sequence[Tokens]], np.ndarray]
+from readnext.utils import (
+    EmbeddingsMapping,
+    FastTextModelProtocol,
+    KeywordAlgorithm,
+    Word2VecModelProtocol,
+    setup_progress_bar,
+)
 
 
 class AggregationStrategy(str, Enum):
@@ -44,17 +42,17 @@ class AggregationStrategy(str, Enum):
 def embeddings_mapping_to_frame(embeddings_mapping: EmbeddingsMapping) -> pd.DataFrame:
     """
     Converts a dictionary of document ids to document embeddings to a pandas DataFrame.
-    The output dataframe has two columns: `document_id` and `embedding`.
+    The output dataframe has one column named `embedding` and the index named
+    `document_id`.
     """
     return (
         pd.Series(embeddings_mapping, name="embedding")
         .to_frame()
         .rename_axis("document_id", axis="index")
-        .reset_index(drop=False)
     )
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Embedder(ABC):
     """
     Abstract Base class for embedding models. All embedding models implement a
@@ -62,7 +60,11 @@ class Embedder(ABC):
     """
 
     @abstractmethod
-    def compute_embeddings_mapping(self, tokens_mapping: TokensMapping) -> EmbeddingsMapping:
+    def compute_embedding_single_document(self, document_tokens: Tokens) -> np.ndarray:
+        """Computes a single document embedding from a tokenized document."""
+
+    @abstractmethod
+    def compute_embeddings_mapping(self) -> EmbeddingsMapping:
         """Computes a dictionary of document ids to document embeddings."""
 
     @staticmethod
@@ -84,20 +86,19 @@ class Embedder(ABC):
         raise ValueError(f"Aggregation strategy `{aggregation_strategy}` is not implemented.")
 
 
-@dataclass
+@dataclass(kw_only=True)
 class TFIDFEmbedder(Embedder):
     """
     Computes document embeddings with the TF-IDF or BM25 model.
     """
 
+    tokens_mapping: TokensMapping
     keyword_algorithm: KeywordAlgorithm
 
-    def compute_embeddings_single_document(
-        self, document_tokens: Tokens, tokens_mapping: TokensMapping
-    ) -> np.ndarray:
-        return self.keyword_algorithm(document_tokens, list(tokens_mapping.values()))
+    def compute_embedding_single_document(self, document_tokens: Tokens) -> np.ndarray:
+        return self.keyword_algorithm(document_tokens, list(self.tokens_mapping.values()))
 
-    def compute_embeddings_mapping(self, tokens_mapping: TokensMapping) -> EmbeddingsMapping:
+    def compute_embeddings_mapping(self) -> EmbeddingsMapping:
         """
         Takes a mapping of document ids to tokenized documents (each document is a list
         of strings) as input and computes the TF-IDF document embeddings.
@@ -110,29 +111,29 @@ class TFIDFEmbedder(Embedder):
         embeddings_mapping = {}
 
         with setup_progress_bar() as progress_bar:
-            for document_id, document_tokens in progress_bar.track(
-                tokens_mapping.items(),
-                total=len(tokens_mapping),
+            for d3_document_id, document_tokens in progress_bar.track(
+                self.tokens_mapping.items(),
+                total=len(self.tokens_mapping),
                 description=f"{self.__class__.__name__}:",
             ):
-                embeddings_mapping[document_id] = self.compute_embeddings_single_document(
-                    document_tokens, tokens_mapping
+                embeddings_mapping[d3_document_id] = self.compute_embedding_single_document(
+                    document_tokens
                 )
 
         return embeddings_mapping
 
 
-@dataclass
+@dataclass(kw_only=True)
 class GensimEmbedder(Embedder):
     """
     Takes pretrained Word2Vec (`KeyedVectors` in gensim) or FastText model as input.
     """
 
-    embedding_model: KeyedVectors | FastText
+    tokens_mapping: TokensMapping
     aggregation_strategy: AggregationStrategy = AggregationStrategy.mean
 
     @abstractmethod
-    def compute_embeddings_single_document(self, tokens: Tokens) -> np.ndarray:
+    def compute_embedding_single_document(self, document_tokens: Tokens) -> np.ndarray:
         """
         Stacks all word embeddings of a single document vertically.
 
@@ -141,10 +142,7 @@ class GensimEmbedder(Embedder):
         - n_dimensions: dimension of embedding space
         """
 
-    def compute_embeddings_mapping(
-        self,
-        tokens_mapping: TokensMapping,
-    ) -> EmbeddingsMapping:
+    def compute_embeddings_mapping(self) -> EmbeddingsMapping:
         """
         Takes a list of tokenized documents (list of lists of strings, one list of
         strings for each document) as input and computes the word2vec or fasttext token
@@ -159,14 +157,12 @@ class GensimEmbedder(Embedder):
         embeddings_mapping = {}
 
         with setup_progress_bar() as progress_bar:
-            for document_id, tokens in progress_bar.track(
-                tokens_mapping.items(),
-                total=len(tokens_mapping),
+            for d3_document_id, tokens in progress_bar.track(
+                self.tokens_mapping.items(),
+                total=len(self.tokens_mapping),
                 description=f"{self.__class__.__name__}:",
             ):
-                embeddings_mapping[document_id] = self.word_embeddings_to_document_embedding(
-                    self.compute_embeddings_single_document(tokens), self.aggregation_strategy
-                )
+                embeddings_mapping[d3_document_id] = self.compute_embedding_single_document(tokens)
 
         return embeddings_mapping
 
@@ -174,21 +170,34 @@ class GensimEmbedder(Embedder):
 class Word2VecEmbedder(GensimEmbedder):
     """Computes document embeddings with the Word2Vec model."""
 
-    def __init__(self, embedding_model: KeyedVectors) -> None:
-        super().__init__(embedding_model)
+    def __init__(
+        self, tokens_mapping: TokensMapping, embedding_model: Word2VecModelProtocol
+    ) -> None:
+        super().__init__(tokens_mapping=tokens_mapping)
+        self.embedding_model = embedding_model
 
-    def compute_embeddings_single_document(self, tokens: Tokens) -> np.ndarray:
+    def compute_embedding_single_document(self, document_tokens: Tokens) -> np.ndarray:
         # exclude any individual unknown tokens
-        return np.vstack(
-            [self.embedding_model[token] for token in tokens if token in self.embedding_model]  # type: ignore # noqa: E501
+        stacked_word_embeddings = np.vstack(
+            [self.embedding_model[token] for token in document_tokens if token in self.embedding_model]  # type: ignore # noqa: E501
+        )
+
+        return self.word_embeddings_to_document_embedding(
+            stacked_word_embeddings, self.aggregation_strategy
         )
 
 
 class FastTextEmbedder(GensimEmbedder):
     """Computes document embeddings with the FastText model."""
 
-    def __init__(self, embedding_model: FastText) -> None:
-        super().__init__(embedding_model)
+    def __init__(
+        self, tokens_mapping: TokensMapping, embedding_model: FastTextModelProtocol
+    ) -> None:
+        super().__init__(tokens_mapping=tokens_mapping)
+        self.embedding_model = embedding_model
 
-    def compute_embeddings_single_document(self, tokens: Tokens) -> np.ndarray:
-        return self.embedding_model.wv[tokens]  # type: ignore
+    def compute_embedding_single_document(self, document_tokens: Tokens) -> np.ndarray:
+        return self.word_embeddings_to_document_embedding(
+            self.embedding_model.wv[document_tokens],
+            self.aggregation_strategy,
+        )  # type: ignore

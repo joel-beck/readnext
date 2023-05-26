@@ -6,19 +6,25 @@ a separate file.
 import pandas as pd
 
 from readnext.config import DataPaths
+from readnext.utils import load_df_from_pickle, write_df_to_pickle
 
 
 def main() -> None:
-    documents_authors_labels_references: pd.DataFrame = pd.read_pickle(
+    documents_authors_labels_references: pd.DataFrame = load_df_from_pickle(
         DataPaths.merged.documents_authors_labels_citations_pkl
     )
 
-    documents_authors_labels_citations_most_cited = documents_authors_labels_references.sort_values(
-        by="citationcount_document", ascending=False
-    ).iloc[: DataPaths.merged.most_cited_subset_size]
+    documents_authors_labels_citations_most_cited = (
+        documents_authors_labels_references.sort_values(
+            by="citationcount_document", ascending=False
+        )
+        .iloc[: DataPaths.merged.most_cited_subset_size]
+        .set_index("document_id")
+    )
 
-    documents_authors_labels_citations_most_cited.to_pickle(
-        DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
+    write_df_to_pickle(
+        documents_authors_labels_citations_most_cited,
+        DataPaths.merged.documents_authors_labels_citations_most_cited_pkl,
     )
 
 

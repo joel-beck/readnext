@@ -2,102 +2,102 @@
 
 from readnext.config import ResultsPaths
 from readnext.evaluation.scoring import precompute_cosine_similarities
-from readnext.utils import load_df_from_pickle, save_df_to_pickle
+from readnext.utils import load_df_from_pickle, write_df_to_pickle
 
 
 def main() -> None:
     # SUBSECTION: TF-IDF
-    tfidf_embeddings_mapping = load_df_from_pickle(
-        ResultsPaths.language_models.tfidf_embeddings_mapping_most_cited_pkl
+    tfidf_embeddings = load_df_from_pickle(
+        ResultsPaths.language_models.tfidf_embeddings_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    tfidf_embeddings_mapping = tfidf_embeddings_mapping.head(1000)
-    tfidf_cosine_similarities = precompute_cosine_similarities(tfidf_embeddings_mapping)
-    save_df_to_pickle(
+    tfidf_embeddings = tfidf_embeddings.head(1000)
+    tfidf_cosine_similarities = precompute_cosine_similarities(tfidf_embeddings)
+    write_df_to_pickle(
         tfidf_cosine_similarities,
         ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl,
     )
 
     # SUBSECTION: BM25
-    bm25_embeddings_mapping = load_df_from_pickle(
-        ResultsPaths.language_models.bm25_embeddings_mapping_most_cited_pkl
+    bm25_embeddings = load_df_from_pickle(
+        ResultsPaths.language_models.bm25_embeddings_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    bm25_embeddings_mapping = bm25_embeddings_mapping.head(1000)
-    bm25_cosine_similarities = precompute_cosine_similarities(bm25_embeddings_mapping)
-    save_df_to_pickle(
+    bm25_embeddings = bm25_embeddings.head(1000)
+    bm25_cosine_similarities = precompute_cosine_similarities(bm25_embeddings)
+    write_df_to_pickle(
         bm25_cosine_similarities,
         ResultsPaths.language_models.bm25_cosine_similarities_most_cited_pkl,
     )
 
     # SUBSECTION: Word2Vec
-    word2vec_embeddings_mapping = load_df_from_pickle(
-        ResultsPaths.language_models.word2vec_embeddings_mapping_most_cited_pkl
+    word2vec_embeddings = load_df_from_pickle(
+        ResultsPaths.language_models.word2vec_embeddings_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    word2vec_embeddings_mapping = word2vec_embeddings_mapping.head(1000)
-    word2vec_cosine_similarities = precompute_cosine_similarities(word2vec_embeddings_mapping)
-    save_df_to_pickle(
+    word2vec_embeddings = word2vec_embeddings.head(1000)
+    word2vec_cosine_similarities = precompute_cosine_similarities(word2vec_embeddings)
+    write_df_to_pickle(
         word2vec_cosine_similarities,
         ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl,
     )
 
     # SUBSECTION: GloVe
-    glove_embeddings_mapping = load_df_from_pickle(
-        ResultsPaths.language_models.glove_embeddings_mapping_most_cited_pkl
+    glove_embeddings = load_df_from_pickle(
+        ResultsPaths.language_models.glove_embeddings_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    glove_embeddings_mapping = glove_embeddings_mapping.head(1000)
-    glove_cosine_similarities = precompute_cosine_similarities(glove_embeddings_mapping)
-    save_df_to_pickle(
+    glove_embeddings = glove_embeddings.head(1000)
+    glove_cosine_similarities = precompute_cosine_similarities(glove_embeddings)
+    write_df_to_pickle(
         glove_cosine_similarities,
         ResultsPaths.language_models.glove_cosine_similarities_most_cited_pkl,
     )
 
     # SUBSECTION: FastText
-    fasttext_embeddings_mapping = load_df_from_pickle(
-        ResultsPaths.language_models.fasttext_embeddings_mapping_most_cited_pkl
+    fasttext_embeddings = load_df_from_pickle(
+        ResultsPaths.language_models.fasttext_embeddings_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    fasttext_embeddings_mapping = fasttext_embeddings_mapping.head(1000)
-    fasttext_cosine_similarities = precompute_cosine_similarities(fasttext_embeddings_mapping)
-    save_df_to_pickle(
+    fasttext_embeddings = fasttext_embeddings.head(1000)
+    fasttext_cosine_similarities = precompute_cosine_similarities(fasttext_embeddings)
+    write_df_to_pickle(
         fasttext_cosine_similarities,
         ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl,
     )
 
     # SUBSECTION: BERT
-    bert_embeddings_mapping = load_df_from_pickle(
-        ResultsPaths.language_models.bert_embeddings_mapping_most_cited_pkl
+    bert_embeddings = load_df_from_pickle(
+        ResultsPaths.language_models.bert_embeddings_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    bert_embeddings_mapping = bert_embeddings_mapping.head(1000)
-    bert_cosine_similarities = precompute_cosine_similarities(bert_embeddings_mapping)
-    save_df_to_pickle(
+    bert_embeddings = bert_embeddings.head(1000)
+    bert_cosine_similarities = precompute_cosine_similarities(bert_embeddings)
+    write_df_to_pickle(
         bert_cosine_similarities,
         ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl,
     )
 
     # SUBSECTION: SciBERT
-    scibert_embeddings_mapping = load_df_from_pickle(
-        ResultsPaths.language_models.scibert_embeddings_mapping_most_cited_pkl
+    scibert_embeddings = load_df_from_pickle(
+        ResultsPaths.language_models.scibert_embeddings_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    scibert_embeddings_mapping = scibert_embeddings_mapping.head(1000)
-    scibert_cosine_similarities = precompute_cosine_similarities(scibert_embeddings_mapping)
-    save_df_to_pickle(
+    scibert_embeddings = scibert_embeddings.head(1000)
+    scibert_cosine_similarities = precompute_cosine_similarities(scibert_embeddings)
+    write_df_to_pickle(
         scibert_cosine_similarities,
         ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl,
     )
 
     # SUBSECTION: Longformer
-    longformer_embeddings_mapping = load_df_from_pickle(
-        ResultsPaths.language_models.longformer_embeddings_mapping_most_cited_pkl
+    longformer_embeddings = load_df_from_pickle(
+        ResultsPaths.language_models.longformer_embeddings_most_cited_pkl
     )
     # NOTE: Remove to train on full data
-    longformer_embeddings_mapping = longformer_embeddings_mapping.head(1000)
-    longformer_cosine_similarities = precompute_cosine_similarities(longformer_embeddings_mapping)
-    save_df_to_pickle(
+    longformer_embeddings = longformer_embeddings.head(1000)
+    longformer_cosine_similarities = precompute_cosine_similarities(longformer_embeddings)
+    write_df_to_pickle(
         longformer_cosine_similarities,
         ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl,
     )

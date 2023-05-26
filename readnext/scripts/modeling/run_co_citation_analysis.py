@@ -2,14 +2,13 @@
 Precompute and store co-citation scores for all documents in a dataframe.
 """
 
-import pandas as pd
-
 from readnext.config import DataPaths, ResultsPaths
 from readnext.evaluation.scoring import precompute_co_citations
+from readnext.utils import load_df_from_pickle, write_df_to_pickle
 
 
 def main() -> None:
-    documents_authors_labels_citations_most_cited = pd.read_pickle(
+    documents_authors_labels_citations_most_cited = load_df_from_pickle(
         DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
     )
     # NOTE: Remove to train on full data
@@ -21,8 +20,9 @@ def main() -> None:
         documents_authors_labels_citations_most_cited
     )
 
-    co_citation_analysis_scores_most_cited.to_pickle(
-        ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl
+    write_df_to_pickle(
+        co_citation_analysis_scores_most_cited,
+        ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl,
     )
 
 

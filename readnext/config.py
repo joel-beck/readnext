@@ -144,32 +144,26 @@ class LanguageModelsResultsPaths:
     spacy_tokenized_abstracts_mapping_most_cited_pkl: Path = (
         results_dirpath / "spacy_tokenized_abstracts_mapping_most_cited.pkl"
     )
-    tfidf_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "tfidf_embeddings_mapping_most_cited.pkl"
-    )
+    tfidf_embeddings_most_cited_pkl: Path = results_dirpath / "tfidf_embeddings_most_cited.pkl"
     tfidf_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "tfidf_cosine_similarities_most_cited.pkl"
     )
-    bm25_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "bm25_embeddings_mapping_most_cited.pkl"
-    )
+    bm25_embeddings_most_cited_pkl: Path = results_dirpath / "bm25_embeddings_most_cited.pkl"
     bm25_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "bm25_cosine_similarities_most_cited.pkl"
     )
-    word2vec_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "word2vec_embeddings_mapping_most_cited.pkl"
+    word2vec_embeddings_most_cited_pkl: Path = (
+        results_dirpath / "word2vec_embeddings_most_cited.pkl"
     )
     word2vec_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "word2vec_cosine_similarities_most_cited.pkl"
     )
-    glove_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "glove_embeddings_mapping_most_cited.pkl"
-    )
+    glove_embeddings_most_cited_pkl: Path = results_dirpath / "glove_embeddings_most_cited.pkl"
     glove_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "glove_cosine_similarities_most_cited.pkl"
     )
-    fasttext_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "fasttext_embeddings_mapping_most_cited.pkl"
+    fasttext_embeddings_most_cited_pkl: Path = (
+        results_dirpath / "fasttext_embeddings_most_cited.pkl"
     )
     fasttext_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "fasttext_cosine_similarities_most_cited.pkl"
@@ -177,26 +171,22 @@ class LanguageModelsResultsPaths:
     bert_tokenized_abstracts_mapping_most_cited_pkl: Path = (
         results_dirpath / "bert_tokenized_abstracts_mapping_most_cited.pkl"
     )
-    bert_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "bert_embeddings_mapping_most_cited.pkl"
-    )
+    bert_embeddings_most_cited_pkl: Path = results_dirpath / "bert_embeddings_most_cited.pkl"
     bert_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "bert_cosine_similarities_most_cited.pkl"
     )
     scibert_tokenized_abstracts_mapping_most_cited_pkl: Path = (
         results_dirpath / "scibert_tokenized_abstracts_mapping_most_cited.pkl"
     )
-    scibert_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "scibert_embeddings_mapping_most_cited.pkl"
-    )
+    scibert_embeddings_most_cited_pkl: Path = results_dirpath / "scibert_embeddings_most_cited.pkl"
     scibert_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "scibert_cosine_similarities_most_cited.pkl"
     )
     longformer_tokenized_abstracts_mapping_most_cited_pkl: Path = (
         results_dirpath / "longformer_tokenized_abstracts_mapping_most_cited.pkl"
     )
-    longformer_embeddings_mapping_most_cited_pkl: Path = (
-        results_dirpath / "longformer_embeddings_mapping_most_cited.pkl"
+    longformer_embeddings_most_cited_pkl: Path = (
+        results_dirpath / "longformer_embeddings_most_cited.pkl"
     )
     longformer_cosine_similarities_most_cited_pkl: Path = (
         results_dirpath / "longformer_cosine_similarities_most_cited.pkl"

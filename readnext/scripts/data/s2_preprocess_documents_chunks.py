@@ -9,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 
 from readnext.config import DataPaths
-from readnext.utils import add_rank, setup_progress_bar
+from readnext.utils import add_rank, load_df_from_pickle, setup_progress_bar, write_df_to_pickle
 
 
 def flatten_list_of_dicts(list_of_dicts: list[dict], key: str) -> list[str]:
@@ -30,7 +30,7 @@ def filter_by_tag(df: pd.DataFrame, tag: str) -> pd.DataFrame:
 
 
 def preprocess_document_chunk(filepath: Path, chunk_index: int) -> None:
-    documents_chunk: pd.DataFrame = pd.read_pickle(filepath)
+    documents_chunk: pd.DataFrame = load_df_from_pickle(filepath)
 
     documents_ranked = documents_chunk.assign(
         citationcount_rank=add_rank(documents_chunk["citationcount"]),
@@ -58,8 +58,9 @@ def preprocess_document_chunk(filepath: Path, chunk_index: int) -> None:
         arxiv_id=extract_arxiv_id(documents_long_format)
     ).loc[lambda df: df["arxiv_id"].notna()]
 
-    documents_long_format_arxiv.to_pickle(
-        f"{DataPaths.d3.documents.preprocessed_chunks_stem}_{chunk_index}.pkl"
+    write_df_to_pickle(
+        Path(f"{DataPaths.d3.documents.preprocessed_chunks_stem}_{chunk_index}.pkl"),
+        documents_long_format_arxiv,
     )
 
 

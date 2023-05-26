@@ -1,6 +1,6 @@
+from readnext.inference.document_identifier import DocumentIdentifier
 from readnext.inference.inference_data import InferenceData
 from readnext.inference.inference_data_constructor import (
-    DocumentIdentifiers,
     DocumentInfo,
     Features,
     InferenceDataConstructor,
@@ -9,10 +9,11 @@ from readnext.inference.inference_data_constructor import (
     Ranks,
     Recommendations,
 )
+from readnext.inference.input_converter import InferenceDataInputConverter
 
 __all__ = [
+    "DocumentIdentifier",
     "InferenceData",
-    "DocumentIdentifiers",
     "DocumentInfo",
     "Features",
     "InferenceDataConstructor",
@@ -20,4 +21,5 @@ __all__ = [
     "LanguageModelChoice",
     "Ranks",
     "Recommendations",
+    "InferenceDataInputConverter",
 ]

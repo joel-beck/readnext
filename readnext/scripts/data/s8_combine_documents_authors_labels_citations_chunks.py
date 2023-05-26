@@ -6,7 +6,7 @@ dataframe.
 import pandas as pd
 
 from readnext.config import DataPaths
-from readnext.utils import setup_progress_bar
+from readnext.utils import load_df_from_pickle, setup_progress_bar, write_df_to_pickle
 
 
 def main() -> None:
@@ -21,7 +21,7 @@ def main() -> None:
     with setup_progress_bar() as progress_bar:
         for filepath in progress_bar.track(matching_files, total=len(matching_files)):
             print(f"Reading File {filepath.name}")
-            df_chunk = pd.read_pickle(filepath)
+            df_chunk = load_df_from_pickle(filepath)
             df_list.append(df_chunk)
 
     print("\nConcatenating Dataframes...")
@@ -34,8 +34,7 @@ def main() -> None:
     #     (df_combined["citations"].apply(len) == 0) | (df_combined["references"].apply(len) == 0)
     # ]
 
-    print(f"Writing to {path_documents_authors_labels_citations}")
-    df_combined.to_pickle(path_documents_authors_labels_citations)
+    write_df_to_pickle(df_combined, path_documents_authors_labels_citations)
 
 
 if __name__ == "__main__":

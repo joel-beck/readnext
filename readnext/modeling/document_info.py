@@ -9,15 +9,26 @@ from typing_extensions import Self
 class DocumentInfo:
     """Collects information about a single document/paper."""
 
-    document_id: int
+    d3_document_id: int
     title: str = ""
     author: str = ""
     arxiv_labels: list[str] = field(default_factory=list)
     abstract: str = ""
 
+    def __repr__(self) -> str:
+        return (
+            f"DocumentInfo(\n"
+            f"  d3_document_id={self.d3_document_id},\n"
+            f"  title={self.title},\n"
+            f"  author={self.author},\n"
+            f"  arxiv_labels={self.arxiv_labels},\n"
+            f"  abstract={self.abstract}\n"
+            ")"
+        )
+
     def __str__(self) -> str:
         return (
-            f"Document {self.document_id}\n"
+            f"Document {self.d3_document_id}\n"
             "---------------------\n"
             f"Title: {self.title}\n"
             f"Author: {self.author}\n"
@@ -32,7 +43,9 @@ class DocumentsInfo:
     documents_info: list[DocumentInfo]
 
     def __post_init__(self) -> None:
-        self.document_ids = [document_info.document_id for document_info in self.documents_info]
+        self.d3_document_ids = [
+            document_info.d3_document_id for document_info in self.documents_info
+        ]
         self.titles = [document_info.title for document_info in self.documents_info]
         self.abstracts = [document_info.abstract for document_info in self.documents_info]
 
@@ -70,7 +83,7 @@ class DocumentScore:
 def documents_info_from_df(df: pd.DataFrame) -> DocumentsInfo:
     """
     Generate a `DocumentsInfo` instance from the input documents dataframe, which
-    consists `document_id`, `title`, and `abstract` columns.
+    contains `document_id`, `title`, and `abstract` columns.
     """
     document_ids = df["document_id"].tolist()
     titles = df["title"].tolist()
@@ -78,7 +91,7 @@ def documents_info_from_df(df: pd.DataFrame) -> DocumentsInfo:
 
     return DocumentsInfo(
         [
-            DocumentInfo(document_id=document_id, title=title, abstract=abstract)
-            for document_id, title, abstract in zip(document_ids, titles, abstracts)
+            DocumentInfo(d3_document_id=d3_document_id, title=title, abstract=abstract)
+            for d3_document_id, title, abstract in zip(document_ids, titles, abstracts)
         ]
     )

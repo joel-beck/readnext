@@ -92,31 +92,27 @@ def test_language_models_results_paths() -> None:
     assert isinstance(
         language_models_results_paths.spacy_tokenized_abstracts_mapping_most_cited_pkl, Path
     )
-    assert isinstance(language_models_results_paths.tfidf_embeddings_mapping_most_cited_pkl, Path)
+    assert isinstance(language_models_results_paths.tfidf_embeddings_most_cited_pkl, Path)
     assert isinstance(language_models_results_paths.tfidf_cosine_similarities_most_cited_pkl, Path)
-    assert isinstance(
-        language_models_results_paths.word2vec_embeddings_mapping_most_cited_pkl, Path
-    )
+    assert isinstance(language_models_results_paths.word2vec_embeddings_most_cited_pkl, Path)
     assert isinstance(
         language_models_results_paths.word2vec_cosine_similarities_most_cited_pkl, Path
     )
-    assert isinstance(language_models_results_paths.glove_embeddings_mapping_most_cited_pkl, Path)
+    assert isinstance(language_models_results_paths.glove_embeddings_most_cited_pkl, Path)
     assert isinstance(language_models_results_paths.glove_cosine_similarities_most_cited_pkl, Path)
-    assert isinstance(
-        language_models_results_paths.fasttext_embeddings_mapping_most_cited_pkl, Path
-    )
+    assert isinstance(language_models_results_paths.fasttext_embeddings_most_cited_pkl, Path)
     assert isinstance(
         language_models_results_paths.fasttext_cosine_similarities_most_cited_pkl, Path
     )
     assert isinstance(
         language_models_results_paths.bert_tokenized_abstracts_mapping_most_cited_pkl, Path
     )
-    assert isinstance(language_models_results_paths.bert_embeddings_mapping_most_cited_pkl, Path)
+    assert isinstance(language_models_results_paths.bert_embeddings_most_cited_pkl, Path)
     assert isinstance(language_models_results_paths.bert_cosine_similarities_most_cited_pkl, Path)
     assert isinstance(
         language_models_results_paths.scibert_tokenized_abstracts_mapping_most_cited_pkl, Path
     )
-    assert isinstance(language_models_results_paths.scibert_embeddings_mapping_most_cited_pkl, Path)
+    assert isinstance(language_models_results_paths.scibert_embeddings_most_cited_pkl, Path)
     assert isinstance(
         language_models_results_paths.scibert_cosine_similarities_most_cited_pkl, Path
     )

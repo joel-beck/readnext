@@ -8,7 +8,7 @@ repo_url: https://github.com/joel-beck/readnext
 theme:
   name: material
   icon:
-    logo: material/meteor # built-in icon search at https://squidfunk.github.io/mkdocs-material/reference/icons-emojis/?h=ic#search # noqa
+    logo: material/meteor # built-in icon search at https://squidfunk.github.io/mkdocs-material/reference/icons-emojis/?h=ic#search
     repo: fontawesome/brands/github
   features:
     - content.code.copy # Adds a copy button to code blocks
@@ -84,6 +84,6 @@ nav: # Navigation menu structure
   - Setup: setup.md
   - Overview: overview.md
   - Background: background.md
-  - Reproducibility: reproducibility.md
   - Inference: inference.md
+  - Reproducibility: reproducibility.md
   - Development: development.md

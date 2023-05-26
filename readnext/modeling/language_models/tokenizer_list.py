@@ -1,21 +1,18 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TypeAlias
 
 from spacy.language import Language
 from spacy.tokens.doc import Doc
 
 from readnext.modeling.document_info import DocumentsInfo
 from readnext.utils import (
+    Tokens,
+    TokensMapping,
     load_object_from_pickle,
-    save_object_to_pickle,
     setup_progress_bar,
+    write_object_to_pickle,
 )
-
-# each document is represented as a list of tokens
-Tokens: TypeAlias = list[str]
-TokensMapping: TypeAlias = dict[int, Tokens]
 
 
 @dataclass
@@ -25,13 +22,17 @@ class ListTokenizer(ABC):
     documents_info: DocumentsInfo
 
     @abstractmethod
+    def tokenize_single_document(self, document: str) -> Tokens:
+        ...
+
+    @abstractmethod
     def tokenize(self) -> TokensMapping:
         ...
 
     @staticmethod
     def save_tokens_mapping(path: Path, tokens_mapping: TokensMapping) -> None:
         """Save a mapping of document ids to tokens to a pickle file."""
-        save_object_to_pickle(tokens_mapping, path)
+        write_object_to_pickle(tokens_mapping, path)
 
     @staticmethod
     def load_tokens_mapping(path: Path) -> TokensMapping:
@@ -61,7 +62,7 @@ class SpacyTokenizer(ListTokenizer):
 
     documents_info: DocumentsInfo
     spacy_model: Language
-    text_processing_steps: TextProcessingSteps = TextProcessingSteps()  # noqa
+    text_processing_steps: TextProcessingSteps = TextProcessingSteps()  # noqa: RUF009
 
     def to_spacy_doc(self, document: str) -> Doc:
         """Converts a single abstract into a spacy document."""
@@ -110,7 +111,7 @@ class SpacyTokenizer(ListTokenizer):
 
         return clean_tokens
 
-    def clean_document(self, document: str) -> Tokens:
+    def tokenize_single_document(self, document: str) -> Tokens:
         """Tokenizes and cleans a single abstract."""
         spacy_doc = self.to_spacy_doc(document)
         return self.clean_spacy_doc(spacy_doc)
@@ -123,11 +124,13 @@ class SpacyTokenizer(ListTokenizer):
         tokenized_abstracts_mapping = {}
 
         with setup_progress_bar() as progress_bar:
-            for document_id, abstract in progress_bar.track(
-                zip(self.documents_info.document_ids, self.documents_info.abstracts),
-                total=len(self.documents_info.document_ids),
+            for d3_document_id, abstract in progress_bar.track(
+                zip(self.documents_info.d3_document_ids, self.documents_info.abstracts),
+                total=len(self.documents_info.d3_document_ids),
                 description=f"{self.__class__.__name__}:",
             ):
-                tokenized_abstracts_mapping[document_id] = self.clean_document(abstract)
+                tokenized_abstracts_mapping[d3_document_id] = self.tokenize_single_document(
+                    abstract
+                )
 
         return tokenized_abstracts_mapping

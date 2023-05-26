@@ -47,10 +47,10 @@ lint = "ruff --fix --exit-non-zero-on-fix --show-fixes ."
 check = "mypy ."
 test = "pytest"
 test-cov = "pytest --cov=readnext --cov-config=.coveragerc"
-# do not test data files in CI since the data files only exist locally
-test-ci = "pytest --ignore tests/test_data --cov=readnext --cov-config=.coveragerc --cov-report=xml"
 test-slow = "pytest -m 'slow'" # run all tests marked with `@pytest.mark.slow`
 test-fast = "pytest -m 'not slow'" # run all tests except those marked with `@pytest.mark.slow`
+# run all tests except those marked with `@pytest.mark.skip_ci` and create coverage report
+test-ci = "pytest -m 'not skip_ci' --cov=readnext --cov-config=.coveragerc --cov-report=xml"
 pre = "pre-commit run --all-files"
 serve = "mkdocs serve"
 deploy = { shell = "mkdocs build && mkdocs gh-deploy" }
@@ -68,6 +68,8 @@ dev = [
     "pytest>=7.2.2",
     "ruff>=0.0.261",
     "types-requests>=2.28.11.17",
+    "pytest-lazy-fixture>=0.6.3",
+    "pytest-mock>=3.10.0",
 ]
 
 [tool.black]
@@ -82,7 +84,7 @@ include = '\.pyi?$'
 ignore_missing_imports = true
 # Disallow dynamic typing
 disallow_any_expr = false
-disallow_any_explicit = true
+disallow_any_explicit = false
 # Untyped definitions and calls
 disallow_untyped_calls = true
 disallow_untyped_defs = true
@@ -137,8 +139,7 @@ select = [
     "INP", # flake8-no-pep420
     "ISC", # flake8-implicit-str-concat
     "N", # pep8-naming
-    # causes toml parsing error: unknown field
-    # "NPY", # NumPy-specific rules
+    # "NPY", # NumPy-specific rules # causes toml parsing error: unknown field
     "PD", # pandas-vet
     "PIE", # flake8-pie
     "PT", # flake8-pytest-style
@@ -153,28 +154,26 @@ select = [
     "W", # pycodestyle Warning
 
 ]
-# - `ANN101` (missing type annotation for `self` in method)
-# - `ANN102` (missing type annotation for `cls` in classmethod)
-# - `N803` (argument name should be lowercase)
-# - `N806` (variable in function should be lowercase)
-# - `PD015` (use `.merge()` instead of `pd.merge()`, incorrect for Series)
-# - `PD901` (don't use `df` as a variable name)
-# - `RUF007` (prefer `itertools.pairwise()` over `zip()` when iterating over successive pairs)
-# - "RUF100" (unused `noqa`)
 ignore = [
-    "ANN101",
-    "ANN102",
-    "N803",
-    "N806",
-    "PD015",
-    "PD901",
-    "RUF007",
-    "RUF100"
+    "ANN101", # missing type annotation for `self` in method
+    "ANN102", # missing type annotation for `cls` in classmethod
+    "ANN401", # Dynamically typed expressions (typing.Any) are disallowed
+    "N803", # argument name should be lowercase
+    "N806", # variable in function should be lowercase
+    "PD015", # use `.merge()` instead of `pd.merge()`, incorrect for Series
+    "PD901", # don't use `df` as a variable name
+    "PT004", # Fixture does not return anything, add leading underscore
+    "PT011", # `pytest_raises(ValueError)` is too broad
+    "RUF007", # prefer `itertools.pairwise()` over `zip()` when iterating over successive pairs
+    "RUF100", # unused `noqa`
+
 ]
-# Never try to fix
-# - `F401` (unused imports)
-# - `F841` (unused variables)
-unfixable = ["F401", "F841"]
+# Never try to fix automatically
+unfixable = [
+    "F401", # unused imports
+    "F841", # unused variables
+
+]
 
 [tool.ruff.flake8-annotations]
 suppress-dummy-args = true # suppress violations "dummy" variables like `_`

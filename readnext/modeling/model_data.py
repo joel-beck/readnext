@@ -72,12 +72,13 @@ class CitationModelData(ModelData):
 
         info_matrix_repr = (
             f"info_matrix=[pd.DataFrame, shape={self.info_matrix.shape}, "
-            f"index={self.info_matrix.index.name}, columns={self.info_matrix.columns}]"
+            f"index={self.info_matrix.index.name}, columns={self.info_matrix.columns.to_list()}]"
         )
 
         feature_matrix_repr = (
             f"feature_matrix=[pd.DataFrame, shape={self.feature_matrix.shape}, "
-            f"index={self.feature_matrix.index.name}, columns={self.feature_matrix.columns}]"
+            f"index={self.feature_matrix.index.name}, "
+            f"columns={self.feature_matrix.columns.to_list()}]"
         )
 
         integer_labels_repr = (
@@ -118,6 +119,10 @@ class LanguageModelData(ModelData):
             self.query_document,
             self.info_matrix.loc[indices],
             self.integer_labels.loc[indices],
+            # This line raises an IndexError if at least one of the indices is not
+            # present in the cosine similarity ranks dataframe. This might occur when
+            # the full documents data with 10000 documents is used but the cosine
+            # similarity ranks are only precomputed for the top 1000 documents.
             self.cosine_similarity_ranks.loc[indices],
         )
 
@@ -126,13 +131,13 @@ class LanguageModelData(ModelData):
 
         info_matrix_repr = (
             f"info_matrix=[pd.DataFrame, shape={self.info_matrix.shape}, "
-            f"index={self.info_matrix.index.name}, columns={self.info_matrix.columns}]"
+            f"index={self.info_matrix.index.name}, columns={self.info_matrix.columns.to_list()}]"
         )
 
         cosine_similarity_ranks_repr = (
             f"cosine_similarity_ranks=[pd.DataFrame, shape={self.cosine_similarity_ranks.shape}, "
             f"index={self.cosine_similarity_ranks.index.name}, "
-            f"columns={self.cosine_similarity_ranks.columns}]"
+            f"columns={self.cosine_similarity_ranks.columns.to_list()}]"
         )
 
         integer_labels_repr = (

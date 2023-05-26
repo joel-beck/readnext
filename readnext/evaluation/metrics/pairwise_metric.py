@@ -1,14 +1,11 @@
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Generic, Literal, TypeAlias, TypeVar
+from typing import Generic, Literal, TypeVar
 
 import numpy as np
 import pandas as pd
-from numpy.typing import NDArray
 
-Vector: TypeAlias = Sequence | NDArray | pd.Series
-EmbeddingVector: TypeAlias = Sequence[float] | NDArray | pd.Series
+from readnext.utils import EmbeddingVector, Vector
 
 TReturn = TypeVar("TReturn", int, float)
 
@@ -56,9 +53,9 @@ class PairwiseMetric(ABC, Generic[TReturn]):
         Count the number of common values between two vectors that are extracted from a
         DataFrame.
         """
-        # iloc[0] to get the first and only value of the pandas Series
-        row_value_list: list[str] = df.loc[df["document_id"] == document_id_1, colname].iloc[0]
-        col_value_list: list[str] = df.loc[df["document_id"] == document_id_2, colname].iloc[0]
+
+        row_value_list: list[str] = df.loc[document_id_1, colname]
+        col_value_list: list[str] = df.loc[document_id_2, colname]
 
         return PairwiseMetric.count_common_values(row_value_list, col_value_list)
 
@@ -112,11 +109,7 @@ class CosineSimilarity(PairwiseMetric):
         from a DataFrame.
         """
         # iloc[0] to get the first and only value of the pandas Series
-        row_embedding: EmbeddingVector = df.loc[
-            df["document_id"] == document_id_1, "embedding"
-        ].iloc[0]
-        col_embedding: EmbeddingVector = df.loc[
-            df["document_id"] == document_id_2, "embedding"
-        ].iloc[0]
+        row_embedding: EmbeddingVector = df.loc[document_id_1].item()
+        col_embedding: EmbeddingVector = df.loc[document_id_2].item()
 
         return CosineSimilarity.score(row_embedding, col_embedding)

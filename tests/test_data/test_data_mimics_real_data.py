@@ -49,7 +49,7 @@ real_test_tokens_id_mapping_pairs_skip_ci = [
     ("real_tokens_id_mapping", "test_tokens_id_mapping"),
     [
         (lazy_fixture(real_tokens_id_mapping), lazy_fixture(test_tokens_id_mapping))
-        for real_tokens_id_mapping, test_tokens_id_mapping in real_test_tokens_id_mapping_pairs_skip_ci
+        for real_tokens_id_mapping, test_tokens_id_mapping in real_test_tokens_id_mapping_pairs_skip_ci  # noqa: E501
     ],
 )
 def test_that_test_tokens_id_mappings_mimic_real_tokens_id_mappings(

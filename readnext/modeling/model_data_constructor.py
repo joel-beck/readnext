@@ -43,12 +43,14 @@ class ModelDataConstructor(ABC):
         query_document_labels = cast(
             list[str], self.documents_data.loc[self.d3_document_id, "arxiv_labels"]
         )
+        query_document_abstract = str(self.documents_data.loc[self.d3_document_id, "abstract"])
 
         return DocumentInfo(
             d3_document_id=self.d3_document_id,
             title=query_document_title,
             author=query_document_author,
             arxiv_labels=query_document_labels,
+            abstract=query_document_abstract,
         )
 
     def exclude_query_document(self, df: pd.DataFrame) -> pd.DataFrame:

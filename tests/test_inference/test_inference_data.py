@@ -106,9 +106,7 @@ def test_inference_data_seen_document_info(document_info: DocumentInfo) -> None:
     assert document_info.author == "Lukasz Kaiser"
 
     assert isinstance(document_info.abstract, str)
-    # abstract is not set for seen documents
-    # TODO: Should this be the case?
-    assert len(document_info.abstract) == 0
+    assert len(document_info.abstract) > 0
 
     assert isinstance(document_info.arxiv_labels, list)
     assert all(isinstance(label, str) for label in document_info.arxiv_labels)

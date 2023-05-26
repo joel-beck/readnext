@@ -51,8 +51,7 @@ def test_seen_model_data_query_document(query_document: DocumentInfo) -> None:
     assert query_document.arxiv_labels == ["cs.CL", "cs.LG"]
 
     assert isinstance(query_document.abstract, str)
-    # abstract is not set for seen papers
-    assert query_document.abstract == ""
+    assert len(query_document.abstract) > 0
 
 
 query_document_fixtures_unseen_skip_ci = [
@@ -92,7 +91,6 @@ def test_unseen_model_data_query_document(query_document: DocumentInfo) -> None:
     assert query_document.arxiv_labels == []
 
     assert isinstance(query_document.abstract, str)
-    # abstract is set for unseen papers
     assert len(query_document.abstract) > 0
 
 

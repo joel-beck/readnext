@@ -8,6 +8,13 @@ from readnext.modeling import (
 )
 
 
+def overwrite_collect_query_document(response: SemanticScholarResponse) -> DocumentInfo:
+    title = response.title if response.title is not None else ""
+    abstract = response.abstract if response.abstract is not None else ""
+
+    return DocumentInfo(d3_document_id=-1, title=title, abstract=abstract)
+
+
 @dataclass(kw_only=True)
 class QueryCitationModelDataConstructor(CitationModelDataConstructor):
     response: SemanticScholarResponse
@@ -22,10 +29,3 @@ class QueryLanguageModelDataConstructor(LanguageModelDataConstructor):
 
     def collect_query_document(self) -> DocumentInfo:
         return overwrite_collect_query_document(self.response)
-
-
-def overwrite_collect_query_document(response: SemanticScholarResponse) -> DocumentInfo:
-    title = response.title if response.title is not None else ""
-    abstract = response.abstract if response.abstract is not None else ""
-
-    return DocumentInfo(d3_document_id=-1, title=title, abstract=abstract)

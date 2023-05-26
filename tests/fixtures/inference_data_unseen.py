@@ -17,9 +17,9 @@ from readnext.modeling import DocumentInfo
 
 @pytest.fixture(scope="session")
 def inference_data_unseen_from_arxiv_url(
-    inference_data_unseen_constructor_from_arxiv_url: InferenceDataConstructor,
+    inference_data_constructor_unseen_from_arxiv_url: InferenceDataConstructor,
 ) -> InferenceData:
-    return InferenceData.from_constructor(inference_data_unseen_constructor_from_arxiv_url)
+    return InferenceData.from_constructor(inference_data_constructor_unseen_from_arxiv_url)
 
 
 @pytest.fixture(scope="session")

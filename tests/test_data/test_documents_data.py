@@ -8,8 +8,8 @@ full_documents_data_fixtures = [
 ]
 
 subset_documents_data_fixtures = [
-    "inference_data_seen_constructor_documents_data",
-    "inference_data_unseen_constructor_documents_data",
+    "inference_data_constructor_seen_documents_data",
+    "inference_data_constructor_unseen_documents_data",
 ]
 
 documents_data_fixtures = full_documents_data_fixtures + subset_documents_data_fixtures

@@ -14,11 +14,11 @@ from readnext.modeling import DocumentInfo
 # SECTION: Document Identifier
 seen_document_identifier_fixtures = [
     "inference_data_seen_document_identifier",
-    "inference_data_seen_constructor_document_identifier",
+    "inference_data_constructor_seen_document_identifier",
 ]
 unseen_document_identifier_fixtures = [
     "inference_data_unseen_document_identifier",
-    "inference_data_unseen_constructor_document_identifier",
+    "inference_data_constructor_unseen_document_identifier",
 ]
 
 
@@ -79,11 +79,11 @@ def test_inference_data_unseen_document_identifier(
 # SECTION: Document Info
 seen_document_info_fixtures = [
     "inference_data_seen_document_info",
-    "inference_data_seen_constructor_document_info",
+    "inference_data_constructor_seen_document_info",
 ]
 unseen_document_info_fixtures = [
     "inference_data_unseen_document_info",
-    "inference_data_unseen_constructor_document_info",
+    "inference_data_constructor_unseen_document_info",
 ]
 
 
@@ -137,9 +137,9 @@ def test_inference_data_unseen_document_info(document_info: DocumentInfo) -> Non
 # SECTION: Features
 feature_fixtures = [
     "inference_data_seen_features",
-    "inference_data_seen_constructor_features",
+    "inference_data_constructor_seen_features",
     "inference_data_unseen_features",
-    "inference_data_unseen_constructor_features",
+    "inference_data_constructor_unseen_features",
 ]
 
 
@@ -191,9 +191,9 @@ def test_inference_data_features(features: Features) -> None:
 # SECTION: Ranks
 ranks_fixtures = [
     "inference_data_seen_ranks",
-    "inference_data_seen_constructor_ranks",
+    "inference_data_constructor_seen_ranks",
     "inference_data_unseen_ranks",
-    "inference_data_unseen_constructor_ranks",
+    "inference_data_constructor_unseen_ranks",
 ]
 
 
@@ -241,10 +241,10 @@ def test_inference_data_ranks(ranks: Ranks) -> None:
 
 
 # SECTION: Labels
-seen_labels_fixtures = ["inference_data_seen_labels", "inference_data_seen_constructor_labels"]
+seen_labels_fixtures = ["inference_data_seen_labels", "inference_data_constructor_seen_labels"]
 unseen_labels_fixtures = [
     "inference_data_unseen_labels",
-    "inference_data_unseen_constructor_labels",
+    "inference_data_constructor_unseen_labels",
 ]
 labels_fixtures = seen_labels_fixtures + unseen_labels_fixtures
 
@@ -290,9 +290,9 @@ def test_inference_data_unseen_labels(labels: Labels) -> None:
 # SECTION: Recommendations
 recommendations_fixtures = [
     "inference_data_seen_recommendations",
-    "inference_data_seen_constructor_recommendations",
+    "inference_data_constructor_seen_recommendations",
     "inference_data_unseen_recommendations",
-    "inference_data_unseen_constructor_recommendations",
+    "inference_data_constructor_unseen_recommendations",
 ]
 
 recommendation_dataframe_fixtures_citation_to_language_candidates = [

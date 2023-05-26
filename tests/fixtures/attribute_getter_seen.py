@@ -5,6 +5,7 @@ from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference.attribute_getter import SeenPaperAttributeGetter
 from readnext.modeling import (
     CitationModelData,
+    DocumentInfo,
     LanguageModelData,
 )
 from readnext.modeling.language_models import LanguageModelChoice
@@ -293,6 +294,34 @@ def seen_paper_attribute_getter_citation_model_data(
 
 
 @pytest.fixture(scope="session")
+def seen_paper_attribute_getter_citation_model_data_query_document(
+    seen_paper_attribute_getter_citation_model_data: CitationModelData,
+) -> DocumentInfo:
+    return seen_paper_attribute_getter_citation_model_data.query_document
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_citation_model_data_integer_labels(
+    seen_paper_attribute_getter_citation_model_data: CitationModelData,
+) -> pd.Series:
+    return seen_paper_attribute_getter_citation_model_data.integer_labels
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_citation_model_data_info_matrix(
+    seen_paper_attribute_getter_citation_model_data: CitationModelData,
+) -> pd.DataFrame:
+    return seen_paper_attribute_getter_citation_model_data.info_matrix
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_citation_model_data_feature_matrix(
+    seen_paper_attribute_getter_citation_model_data: CitationModelData,
+) -> pd.DataFrame:
+    return seen_paper_attribute_getter_citation_model_data.feature_matrix
+
+
+@pytest.fixture(scope="session")
 def seen_paper_attribute_getter_language_model_data(
     test_documents_authors_labels_citations_most_cited: pd.DataFrame,
 ) -> LanguageModelData:
@@ -309,3 +338,31 @@ def seen_paper_attribute_getter_language_model_data(
     )
 
     return seen_paper_attribute_getter.get_language_model_data()
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_language_model_data_query_document(
+    seen_paper_attribute_getter_language_model_data: LanguageModelData,
+) -> DocumentInfo:
+    return seen_paper_attribute_getter_language_model_data.query_document
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_language_model_data_integer_labels(
+    seen_paper_attribute_getter_language_model_data: LanguageModelData,
+) -> pd.Series:
+    return seen_paper_attribute_getter_language_model_data.integer_labels
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_language_model_data_info_matrix(
+    seen_paper_attribute_getter_language_model_data: LanguageModelData,
+) -> pd.DataFrame:
+    return seen_paper_attribute_getter_language_model_data.info_matrix
+
+
+@pytest.fixture(scope="session")
+def seen_paper_attribute_getter_language_model_data_cosine_similarity_ranks(
+    seen_paper_attribute_getter_language_model_data: LanguageModelData,
+) -> pd.DataFrame:
+    return seen_paper_attribute_getter_language_model_data.cosine_similarity_ranks

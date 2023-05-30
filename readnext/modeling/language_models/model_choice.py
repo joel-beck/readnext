@@ -34,43 +34,43 @@ def get_language_model_choice_paths(
     match language_model_choice:
         case LanguageModelChoice.tfidf:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.tfidf_embeddings_most_cited_pkl,
-                cosine_similarities=ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl,
+                embeddings=ResultsPaths.language_models.tfidf_embeddings_most_cited_parquet,
+                cosine_similarities=ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_parquet,
             )
         case LanguageModelChoice.bm25:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.bm25_embeddings_most_cited_pkl,
-                cosine_similarities=ResultsPaths.language_models.bm25_cosine_similarities_most_cited_pkl,
+                embeddings=ResultsPaths.language_models.bm25_embeddings_most_cited_parquet,
+                cosine_similarities=ResultsPaths.language_models.bm25_cosine_similarities_most_cited_parquet,
             )
         case LanguageModelChoice.word2vec:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.word2vec_embeddings_most_cited_pkl,
-                cosine_similarities=ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl,
+                embeddings=ResultsPaths.language_models.word2vec_embeddings_most_cited_parquet,
+                cosine_similarities=ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_parquet,
             )
         case LanguageModelChoice.glove:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.glove_embeddings_most_cited_pkl,
-                cosine_similarities=ResultsPaths.language_models.glove_cosine_similarities_most_cited_pkl,
+                embeddings=ResultsPaths.language_models.glove_embeddings_most_cited_parquet,
+                cosine_similarities=ResultsPaths.language_models.glove_cosine_similarities_most_cited_parquet,
             )
         case LanguageModelChoice.fasttext:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.fasttext_embeddings_most_cited_pkl,
-                cosine_similarities=ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl,
+                embeddings=ResultsPaths.language_models.fasttext_embeddings_most_cited_parquet,
+                cosine_similarities=ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_parquet,
             )
         case LanguageModelChoice.bert:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.bert_embeddings_most_cited_pkl,
-                cosine_similarities=ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl,
+                embeddings=ResultsPaths.language_models.bert_embeddings_most_cited_parquet,
+                cosine_similarities=ResultsPaths.language_models.bert_cosine_similarities_most_cited_parquet,
             )
         case LanguageModelChoice.scibert:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.scibert_embeddings_most_cited_pkl,
-                cosine_similarities=ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl,
+                embeddings=ResultsPaths.language_models.scibert_embeddings_most_cited_parquet,
+                cosine_similarities=ResultsPaths.language_models.scibert_cosine_similarities_most_cited_parquet,
             )
         case LanguageModelChoice.longformer:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.longformer_embeddings_most_cited_pkl,
-                cosine_similarities=ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl,
+                embeddings=ResultsPaths.language_models.longformer_embeddings_most_cited_parquet,
+                cosine_similarities=ResultsPaths.language_models.longformer_cosine_similarities_most_cited_parquet,
             )
         case _:
             raise ValueError(f"Invalid language model choice: {language_model_choice}")

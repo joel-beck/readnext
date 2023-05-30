@@ -16,7 +16,7 @@ def main() -> None:
     suppress_transformers_logging()
 
     documents_authors_labels_citations_most_cited = read_df_from_parquet(
-        DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
+        DataPaths.merged.documents_authors_labels_citations_most_cited_parquet
     )
     documents_info = documents_info_from_df(documents_authors_labels_citations_most_cited)
 

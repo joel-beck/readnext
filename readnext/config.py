@@ -43,7 +43,7 @@ class D3DocumentsDataPaths:
 
     raw_json: Path = data_dirpath / documents_metadata_json_filename
     chunks_stem: Path = data_dirpath / "2022-11-30_documents_chunks"
-    full_parquet: Path = data_dirpath / "2022-11-30_documents_full.parquet"
+    full_pkl: Path = data_dirpath / "2022-11-30_documents_full.pkl"
     preprocessed_chunks_stem: Path = data_dirpath / "documents_preprocessed_chunks"
 
 
@@ -80,13 +80,13 @@ class MergedDataPaths:
     """
 
     documents_labels_chunk_stem: Path = data_dirpath / "documents_labels_chunks"
-    documents_labels_parquet: Path = data_dirpath / "documents_labels.parquet"
-    documents_authors_labels_parquet: Path = data_dirpath / "documents_authors_labels.parquet"
+    documents_labels_pkl: Path = data_dirpath / "documents_labels.pkl"
+    documents_authors_labels_pkl: Path = data_dirpath / "documents_authors_labels.pkl"
     documents_authors_labels_citations_chunks_stem: Path = (
         data_dirpath / "documents_authors_labels_citations_chunks"
     )
-    documents_authors_labels_citations_parquet: Path = (
-        data_dirpath / "documents_authors_labels_citations.parquet"
+    documents_authors_labels_citations_pkl: Path = (
+        data_dirpath / "documents_authors_labels_citations.pkl"
     )
     documents_authors_labels_citations_most_cited_parquet: Path = (
         data_dirpath / "documents_authors_labels_citations_most_cited.parquet"

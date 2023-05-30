@@ -33,7 +33,7 @@ class ModelData(ABC, Generic[TModelDataConstructor]):
         """Construct a `ModelData` instance from a `ModelDataConstructor` instance."""
 
     @abstractmethod
-    def __getitem__(self, indices: pl.Index) -> Self:
+    def __getitem__(self, indices: list[int]) -> Self:
         """Specify how to index or slice a `ModelData` instance."""
 
     @abstractmethod
@@ -59,12 +59,12 @@ class CitationModelData(ModelData):
             constructor.get_feature_matrix(),
         )
 
-    def __getitem__(self, indices: pl.Index) -> Self:
+    def __getitem__(self, indices: list[int]) -> Self:
         return self.__class__(
             self.query_document,
-            self.info_matrix.loc[indices],
-            self.integer_labels.loc[indices],
-            self.feature_matrix.loc[indices],
+            self.info_matrix.filter(pl.col("document_id").is_in(indices)),
+            self.integer_labels.filter(pl.col("document_id").is_in(indices)),
+            self.feature_matrix.filter(pl.col("document_id").is_in(indices)),
         )
 
     def __repr__(self) -> str:
@@ -72,13 +72,12 @@ class CitationModelData(ModelData):
 
         info_matrix_repr = (
             f"info_matrix=[pl.DataFrame, shape={self.info_matrix.shape}, "
-            f"index={self.info_matrix.index.name}, columns={self.info_matrix.columns.to_list()}]"
+            f"columns={self.info_matrix.columns}]"
         )
 
         feature_matrix_repr = (
             f"feature_matrix=[pl.DataFrame, shape={self.feature_matrix.shape}, "
-            f"index={self.feature_matrix.index.name}, "
-            f"columns={self.feature_matrix.columns.to_list()}]"
+            f"columns={self.feature_matrix.columns}]"
         )
 
         integer_labels_repr = (
@@ -114,16 +113,16 @@ class LanguageModelData(ModelData):
             constructor.get_cosine_similarity_ranks(),
         )
 
-    def __getitem__(self, indices: pl.Index) -> Self:
+    def __getitem__(self, indices: list[int]) -> Self:
         return self.__class__(
             self.query_document,
-            self.info_matrix.loc[indices],
-            self.integer_labels.loc[indices],
+            self.info_matrix.filter(pl.col("document_id").is_in(indices)),
+            self.integer_labels.filter(pl.col("document_id").is_in(indices)),
             # This line raises an IndexError if at least one of the indices is not
             # present in the cosine similarity ranks dataframe. This might occur when
             # the full documents data with 10000 documents is used but the cosine
             # similarity ranks are only precomputed for the top 1000 documents.
-            self.cosine_similarity_ranks.loc[indices],
+            self.cosine_similarity_ranks.filter(pl.col("document_id").is_in(indices)),
         )
 
     def __repr__(self) -> str:
@@ -131,13 +130,12 @@ class LanguageModelData(ModelData):
 
         info_matrix_repr = (
             f"info_matrix=[pl.DataFrame, shape={self.info_matrix.shape}, "
-            f"index={self.info_matrix.index.name}, columns={self.info_matrix.columns.to_list()}]"
+            f"columns={self.info_matrix.columns}]"
         )
 
         cosine_similarity_ranks_repr = (
             f"cosine_similarity_ranks=[pl.DataFrame, shape={self.cosine_similarity_ranks.shape}, "
-            f"index={self.cosine_similarity_ranks.index.name}, "
-            f"columns={self.cosine_similarity_ranks.columns.to_list()}]"
+            f"columns={self.cosine_similarity_ranks.columns}]"
         )
 
         integer_labels_repr = (

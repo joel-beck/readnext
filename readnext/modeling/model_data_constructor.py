@@ -38,12 +38,27 @@ class ModelDataConstructor(ABC):
 
     def collect_query_document(self) -> DocumentInfo:
         """Extract and collect the query document information from the documents data."""
-        query_document_title = str(self.documents_data.loc[self.d3_document_id, "title"])
-        query_document_author = str(self.documents_data.loc[self.d3_document_id, "author"])
-        query_document_labels = cast(
-            list[str], self.documents_data.loc[self.d3_document_id, "arxiv_labels"]
+        query_document_title = str(
+            self.documents_data.filter(pl.col("document_id") == self.d3_document_id)
+            .select("title")
+            .item()
         )
-        query_document_abstract = str(self.documents_data.loc[self.d3_document_id, "abstract"])
+        query_document_author = str(
+            self.documents_data.filter(pl.col("document_id") == self.d3_document_id)
+            .select("author")
+            .item()
+        )
+        query_document_labels = cast(
+            list[str],
+            self.documents_data.filter(pl.col("document_id") == self.d3_document_id)
+            .select("arxiv_labels")
+            .item(),
+        )
+        query_document_abstract = str(
+            self.documents_data.filter(pl.col("document_id") == self.d3_document_id)
+            .select("abstract")
+            .item()
+        )
 
         return DocumentInfo(
             d3_document_id=self.d3_document_id,
@@ -55,7 +70,7 @@ class ModelDataConstructor(ABC):
 
     def exclude_query_document(self, df: pl.DataFrame) -> pl.DataFrame:
         """Exclude the query document from the documents data."""
-        return df.loc[df.index != self.d3_document_id]
+        return df.filter(pl.col("document_id") != self.d3_document_id)
 
     def filter_documents_data(self) -> pl.DataFrame:
         """
@@ -68,7 +83,7 @@ class ModelDataConstructor(ABC):
         Exclude the query document from the documents data and select only the feature
         columns with information about the candidate documents.
         """
-        return self.filter_documents_data().loc[:, self.info_cols]
+        return self.filter_documents_data().select(self.info_cols)
 
     def shares_arxiv_label(
         self,
@@ -91,8 +106,7 @@ class ModelDataConstructor(ABC):
         convert them to integer labels.
         """
         return (
-            self.filter_documents_data()
-            .loc[:, "arxiv_labels"]
+            self.filter_documents_data()["arxiv_labels"]
             .apply(self.shares_arxiv_label)
             .apply(self.boolean_to_int)
             .rename("integer_labels")
@@ -111,7 +125,7 @@ class ModelDataConstructor(ABC):
                 }
                 for document_score in document_scores
             ]
-        ).set_index("document_id")
+        )
 
 
 @dataclass(kw_only=True)
@@ -147,36 +161,34 @@ class CitationModelDataConstructor(ModelDataConstructor):
         converts them to a dataframe with a single `score` column and the document ids
         as index.
         """
-        document_scores: list[DocumentScore] = citation_method_data.loc[self.d3_document_id].item()
+        document_scores: list[DocumentScore] = citation_method_data.filter(
+            pl.col("document_id") == self.d3_document_id
+        ).item()
 
         return self.document_scores_to_frame(document_scores)
 
-    def get_co_citation_analysis_scores(self) -> pl.DataFrame:
+    def get_co_citation_analysis_scores(self) -> pl.Series:
         """
         Extract the co-citation analysis scores of all candidate documents and converts
         them to a dataframe with a single `co_citation_analysis` column and the document
         ids as index.
         """
-        return self.get_citation_method_scores(self.co_citation_analysis_scores).rename(
-            columns={"score": "co_citation_analysis"}
-        )
+        return self.get_citation_method_scores(self.co_citation_analysis_scores)["score"]
 
-    def get_bibliographic_coupling_scores(self) -> pl.DataFrame:
+    def get_bibliographic_coupling_scores(self) -> pl.Series:
         """
         Extract the bibliographic coupling scores of all candidate documents and
         converts them to a dataframe with a single `bibliographic_coupling` column and
         the document ids as index.
         """
-        return self.get_citation_method_scores(self.bibliographic_coupling_scores).rename(
-            columns={"score": "bibliographic_coupling"}
-        )
+        return self.get_citation_method_scores(self.bibliographic_coupling_scores)["score"]
 
     def extend_info_matrix(self, info_matrix: pl.DataFrame) -> pl.DataFrame:
         """
         Adds the co-citation analysis and bibliographic coupling scores to the
         information features about the candidate documents.
         """
-        return info_matrix.assign(
+        return info_matrix.with_columns(
             co_citation_analysis=self.get_co_citation_analysis_scores(),
             bibliographic_coupling=self.get_bibliographic_coupling_scores(),
         )
@@ -188,13 +200,13 @@ class CitationModelDataConstructor(ModelDataConstructor):
         """
         return (
             self.filter_documents_data()
-            .loc[:, self.feature_cols]
-            .assign(
+            .select(self.feature_cols)
+            .with_columns(
                 co_citation_analysis_rank=self.get_co_citation_analysis_scores().rank(
-                    ascending=False
+                    descending=True
                 ),
                 bibliographic_coupling_rank=self.get_bibliographic_coupling_scores().rank(
-                    ascending=False
+                    descending=True
                 ),
             )
         )
@@ -219,23 +231,19 @@ class LanguageModelDataConstructor(ModelDataConstructor):
         """
         # output dataframe has length of original full data in tests, even though the
         # test_cosine_similarities data itself only contains 100 rows
-        document_scores: list[DocumentScore] = self.cosine_similarities.loc[
-            self.d3_document_id
-        ].item()
+        document_scores: list[DocumentScore] = self.cosine_similarities.filter(
+            pl.col("document_id") == self.d3_document_id
+        ).item()
 
-        return (
-            self.document_scores_to_frame(document_scores)
-            .rename(columns={"score": "cosine_similarity"})
-            .astype(np.float64)
-        )
+        return self.document_scores_to_frame(document_scores)
 
     def extend_info_matrix(self, info_matrix: pl.DataFrame) -> pl.DataFrame:
         """
         Adds the cosine similarity scores to the information features about the
         candidate documents.
         """
-        return info_matrix.assign(
-            cosine_similarity=self.get_cosine_similarity_scores(),
+        return info_matrix.with_columns(
+            cosine_similarity=self.get_cosine_similarity_scores()["score"]
         )
 
     def get_cosine_similarity_ranks(self) -> pl.DataFrame:
@@ -244,9 +252,8 @@ class LanguageModelDataConstructor(ModelDataConstructor):
         the query document. The output dataframe has a single `cosine_similarity_rank`
         column and the document ids as index.
         """
-        return (
-            self.get_cosine_similarity_scores()
-            .rank(ascending=False)
-            .rename({"cosine_similarity": "cosine_similarity_rank"}, axis="columns")
-            .astype(np.float64)
+        return self.get_cosine_similarity_scores().with_columns(
+            cosine_similarity_rank=self.get_cosine_similarity_scores()["score"].rank(
+                descending=True
+            )
         )

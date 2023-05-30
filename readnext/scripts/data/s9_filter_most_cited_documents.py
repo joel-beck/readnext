@@ -4,13 +4,15 @@ a separate file.
 """
 
 import polars as pl
+import pandas as pd
+
 
 from readnext.config import DataPaths
-from readnext.utils import read_df_from_parquet, write_df_to_parquet
+from readnext.utils import write_df_to_parquet
 
 
 def main() -> None:
-    documents_authors_labels_references: pl.DataFrame = read_df_from_parquet(
+    documents_authors_labels_references: pd.DataFrame = pd.read_pickle(
         DataPaths.merged.documents_authors_labels_citations_pkl
     )
 
@@ -23,8 +25,8 @@ def main() -> None:
     )
 
     write_df_to_parquet(
-        documents_authors_labels_citations_most_cited,
-        DataPaths.merged.documents_authors_labels_citations_most_cited_pkl,
+        pl.from_pandas(documents_authors_labels_citations_most_cited),
+        DataPaths.merged.documents_authors_labels_citations_most_cited_parquet,
     )
 
 

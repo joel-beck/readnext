@@ -9,7 +9,7 @@ from readnext.utils import read_df_from_parquet, write_df_to_parquet
 
 def main() -> None:
     documents_authors_labels_citations_most_cited = read_df_from_parquet(
-        DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
+        DataPaths.merged.documents_authors_labels_citations_most_cited_parquet
     )
     # NOTE: Remove to train on full data
     documents_authors_labels_citations_most_cited = (
@@ -22,7 +22,7 @@ def main() -> None:
 
     write_df_to_parquet(
         bibliographic_coupling_scores_most_cited,
-        ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl,
+        ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_parquet,
     )
 
 

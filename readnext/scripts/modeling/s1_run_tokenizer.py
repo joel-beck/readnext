@@ -6,12 +6,12 @@ from transformers import BertTokenizerFast, LongformerTokenizerFast
 from readnext.config import DataPaths, ModelVersions, ResultsPaths
 from readnext.modeling import documents_info_from_df
 from readnext.modeling.language_models import BERTTokenizer, LongformerTokenizer, SpacyTokenizer
-from readnext.utils import load_df_from_pickle
+from readnext.utils import read_df_from_parquet
 
 
 def main() -> None:
-    documents_authors_labels_citations_most_cited = load_df_from_pickle(
-        DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
+    documents_authors_labels_citations_most_cited = read_df_from_parquet(
+        DataPaths.merged.documents_authors_labels_citations_most_cited_parquet
     )
     # NOTE: Remove to train on full data
     documents_authors_labels_citations_most_cited = (

@@ -4,12 +4,13 @@ from pathlib import Path
 
 from spacy.language import Language
 from spacy.tokens.doc import Doc
+import pandas as pd
 
 from readnext.modeling.document_info import DocumentsInfo
 from readnext.utils import (
     Tokens,
     TokensMapping,
-    read_df_from_parquet,
+    read_object_from_pickle,
     setup_progress_bar,
     write_object_to_pickle,
 )
@@ -37,7 +38,7 @@ class ListTokenizer(ABC):
     @staticmethod
     def load_tokens_mapping(path: Path) -> TokensMapping:
         """Load a mapping of document ids to tokens from a pickle file."""
-        return read_df_from_parquet(path)  # type: ignore
+        return read_object_from_pickle(path)  # type: ignore
 
 
 @dataclass

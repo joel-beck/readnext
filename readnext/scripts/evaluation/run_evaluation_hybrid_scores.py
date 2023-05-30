@@ -42,7 +42,7 @@ def compare_hybrid_scores_by_document_id(
     # SUBSECTION: TF-IDF
 
     tfidf_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
-        ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl
+        ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_parquet
     )
     tfidf_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
@@ -53,7 +53,7 @@ def compare_hybrid_scores_by_document_id(
 
     # SUBSECTION: BM25
     bm25_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
-        ResultsPaths.language_models.bm25_cosine_similarities_most_cited_pkl
+        ResultsPaths.language_models.bm25_cosine_similarities_most_cited_parquet
     )
     bm25_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
@@ -64,7 +64,7 @@ def compare_hybrid_scores_by_document_id(
 
     # SUBSECTION: Word2Vec
     word2vec_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
-        ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl
+        ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_parquet
     )
     word2vec_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
@@ -75,7 +75,7 @@ def compare_hybrid_scores_by_document_id(
 
     # SUBSECTION: GloVe
     glove_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
-        ResultsPaths.language_models.glove_cosine_similarities_most_cited_pkl
+        ResultsPaths.language_models.glove_cosine_similarities_most_cited_parquet
     )
     glove_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
@@ -86,7 +86,7 @@ def compare_hybrid_scores_by_document_id(
 
     # SUBSECTION: FastText
     fasttext_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
-        ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl
+        ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_parquet
     )
     fasttext_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
@@ -97,7 +97,7 @@ def compare_hybrid_scores_by_document_id(
 
     # SUBSECTION: BERT
     bert_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
-        ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl
+        ResultsPaths.language_models.bert_cosine_similarities_most_cited_parquet
     )
     bert_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
@@ -108,7 +108,7 @@ def compare_hybrid_scores_by_document_id(
 
     # SUBSECTION: SciBERT
     scibert_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
-        ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl
+        ResultsPaths.language_models.scibert_cosine_similarities_most_cited_parquet
     )
     scibert_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
@@ -119,7 +119,7 @@ def compare_hybrid_scores_by_document_id(
 
     # SUBSECTION: Longformer
     longformer_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
-        ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl
+        ResultsPaths.language_models.longformer_cosine_similarities_most_cited_parquet
     )
     longformer_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
@@ -245,15 +245,14 @@ def compare_hybrid_scores_by_document_id(
             scibert_hybrid_score,
             longformer_hybrid_score,
         )
-        .assign(query_d3_document_id=query_d3_document_id)
-        .set_index("query_d3_document_id")
-        .rename_axis(index="Query Document ID")
+        .with_columns(query_d3_document_id=query_d3_document_id)
+        .rename({"query_d3_document_id": "Query Document ID"})
     )
 
 
 def main() -> None:
     documents_authors_labels_citations_most_cited: pl.DataFrame = read_df_from_parquet(
-        DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
+        DataPaths.merged.documents_authors_labels_citations_most_cited_parquet
     )
     # NOTE: Remove to evaluate on full data
     documents_authors_labels_citations_most_cited = (
@@ -261,11 +260,11 @@ def main() -> None:
     )
 
     bibliographic_coupling_scores_most_cited: pl.DataFrame = read_df_from_parquet(
-        ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl
+        ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_parquet
     )
 
     co_citation_analysis_scores_most_cited: pl.DataFrame = read_df_from_parquet(
-        ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl
+        ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_parquet
     )
 
     # add query document ids to index
@@ -277,9 +276,9 @@ def main() -> None:
                 co_citation_analysis_scores_most_cited,
                 bibliographic_coupling_scores_most_cited,
             )
-            for query_d3_document_id in documents_authors_labels_citations_most_cited.head(
-                5
-            ).index.to_numpy()
+            for query_d3_document_id in documents_authors_labels_citations_most_cited[
+                "document_id"
+            ].head(5)
         ]
     )
 
@@ -289,9 +288,9 @@ def main() -> None:
     ).max(axis=1)
 
     # filter best language model for each query document id
-    average_precision_scores.sort_values("Best Score", ascending=False).reset_index(
-        drop=False
-    ).drop_duplicates(subset="Query Document ID").reset_index(drop=True)
+    average_precision_scores.sort(by="Best Score", descending=True).drop_duplicates(
+        subset="Query Document ID"
+    ).reset_index(drop=True)
 
 
 if __name__ == "__main__":

@@ -50,20 +50,16 @@ def precompute_pairwise_scores(
     if n is None:
         n = len(input_df)
 
-    return (
-        pl.DataFrame(data={"document_id": input_df["document_id"]})
-        .with_columns(
-            # the new scoped dataframe inside the first lambda function must have a
-            # different name than the input dataframe since the input dataframe is
-            # passed to the `find_top_n_matches_single_document` function and NOT the
-            # scoped dataframe!
-            scores=lambda new_df: new_df["document_id"].progress_apply(
-                lambda query_d3_document_id: find_top_n_matches_single_document(
-                    input_df, query_d3_document_id, pairwise_metric, n
-                )
+    return pl.DataFrame(data={"document_id": input_df["document_id"]}).with_columns(
+        # the new scoped dataframe inside the first lambda function must have a
+        # different name than the input dataframe since the input dataframe is
+        # passed to the `find_top_n_matches_single_document` function and NOT the
+        # scoped dataframe!
+        scores=pl.col("document_id").apply(
+            lambda query_d3_document_id: find_top_n_matches_single_document(
+                input_df, query_d3_document_id, pairwise_metric, n
             )
         )
-        .set_index("document_id")
     )
 
 

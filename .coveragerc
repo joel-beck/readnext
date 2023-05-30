@@ -8,6 +8,11 @@ omit =
     readnext/scripts/*
     # exclude loading and saving functions in `readnext/utils/io.py` directory from coverage
     readnext/utils/io.py
+    # exlude files that are tested by loading locally stored data that are not available
+    # in CI
+    readnext/inference/inference_data_constructor.py
+    readnext/inference/inference_data.py
+
 
 [report]
 exclude_lines =

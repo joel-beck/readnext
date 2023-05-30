@@ -38,7 +38,7 @@ class HybridScorer:
     def set_citation_to_language_candidates(
         self,
         feature_weights: FeatureWeights = FeatureWeights(),
-        n_candidates: int = 30,
+        n_candidates: int = 20,
     ) -> None:
         """
         Store the intermediate candidate list from a Citation ->
@@ -53,7 +53,7 @@ class HybridScorer:
     def set_citation_to_language_candidate_ids(
         self,
         feature_weights: FeatureWeights = FeatureWeights(),
-        n_candidates: int = 30,
+        n_candidates: int = 20,
     ) -> None:
         """
         Store the intermediate candidate document ids from a Citation ->
@@ -69,7 +69,7 @@ class HybridScorer:
         self,
         metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
-        n_candidates: int = 30,
+        n_candidates: int = 20,
     ) -> None:
         """
         Store the intermediate candidate scores from a Citation -> Language hybrid
@@ -88,8 +88,8 @@ class HybridScorer:
     def top_n_citation_to_language(
         self,
         feature_weights: FeatureWeights = FeatureWeights(),
-        n_candidates: int = 30,
-        n_final: int = 10,
+        n_candidates: int = 20,
+        n_final: int = 20,
     ) -> None:
         """
         Select the top-n recommendations from a Citation -> Language hybrid recommender
@@ -105,8 +105,8 @@ class HybridScorer:
         self,
         metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
-        n_candidates: int = 30,
-        n_final: int = 10,
+        n_candidates: int = 20,
+        n_final: int = 20,
     ) -> None:
         """
         Score the top-n recommendations from a Citation -> Language hybrid recommender
@@ -118,7 +118,7 @@ class HybridScorer:
             self.language_model_data[self.citation_to_language_candidate_ids], metric, n=n_final
         )
 
-    def set_language_to_citation_candidates(self, n_candidates: int = 30) -> None:
+    def set_language_to_citation_candidates(self, n_candidates: int = 20) -> None:
         """
         Store the intermediate candidate list from a Language -> Citation hybrid
         recommender in instance attributes.
@@ -127,7 +127,7 @@ class HybridScorer:
             self.language_model_data, n=n_candidates
         )
 
-    def set_language_to_citation_candidate_ids(self, n_candidates: int = 30) -> None:
+    def set_language_to_citation_candidate_ids(self, n_candidates: int = 20) -> None:
         """
         Store the intermediate candidate document ids from
         a Language -> Citation hybrid recommender in instance attributes.
@@ -137,7 +137,7 @@ class HybridScorer:
         self.language_to_citation_candidate_ids = self.language_to_citation_candidates.index
 
     def set_language_to_citation_candidate_scores(
-        self, metric: AveragePrecision | CountUniqueLabels, n_candidates: int = 30
+        self, metric: AveragePrecision | CountUniqueLabels, n_candidates: int = 20
     ) -> None:
         """
         Store the intermediate candidate list, their scores and their document ids from
@@ -152,8 +152,8 @@ class HybridScorer:
     def top_n_language_to_citation(
         self,
         feature_weights: FeatureWeights = FeatureWeights(),
-        n_candidates: int = 30,
-        n_final: int = 10,
+        n_candidates: int = 20,
+        n_final: int = 20,
     ) -> None:
         """
         Select the top-n recommendations from a Language -> Citation hybrid recommender
@@ -171,8 +171,8 @@ class HybridScorer:
         self,
         metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
-        n_candidates: int = 30,
-        n_final: int = 10,
+        n_candidates: int = 20,
+        n_final: int = 20,
     ) -> None:
         """
         Score the top-n recommendations from a Language -> Citation hybrid recommender
@@ -190,8 +190,8 @@ class HybridScorer:
     def recommend(
         self,
         feature_weights: FeatureWeights = FeatureWeights(),
-        n_candidates: int = 30,
-        n_final: int = 10,
+        n_candidates: int = 20,
+        n_final: int = 20,
     ) -> None:
         """
         Return the top-n recommendations from a hybrid recommender for both orders
@@ -204,8 +204,8 @@ class HybridScorer:
         self,
         metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
-        n_candidates: int = 30,
-        n_final: int = 10,
+        n_candidates: int = 20,
+        n_final: int = 20,
     ) -> None:
         """
         Score the top-n recommendations from a hybrid recommender for both orders
@@ -218,8 +218,8 @@ class HybridScorer:
         self,
         metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
-        n_candidates: int = 30,
-        n_final: int = 10,
+        n_candidates: int = 20,
+        n_final: int = 20,
     ) -> None:
         """
         Fit a hybrid recommender model by computing the top-n recommendations and their

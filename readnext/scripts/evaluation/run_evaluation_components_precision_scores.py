@@ -31,7 +31,7 @@ def main() -> None:
     )
     # NOTE: Remove to evaluate on full data
     documents_authors_labels_citations_most_cited = (
-        documents_authors_labels_citations_most_cited.head(1000)
+        documents_authors_labels_citations_most_cited.head(2000)
     )
 
     bibliographic_coupling_scores_most_cited: pd.DataFrame = load_df_from_pickle(
@@ -66,7 +66,7 @@ def main() -> None:
         cosine_similarities=tfidf_cosine_similarities_most_cited,
     )
     tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
-    LanguageModelScorer.display_top_n(tfidf_data, n=10)
+    LanguageModelScorer.display_top_n(tfidf_data, n=20)
 
     # SUBSECTION: BM25
     bm25_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
@@ -78,7 +78,7 @@ def main() -> None:
         cosine_similarities=bm25_cosine_similarities_most_cited,
     )
     bm25_data = LanguageModelData.from_constructor(bm25_data_constructor)
-    LanguageModelScorer.display_top_n(bm25_data, n=10)
+    LanguageModelScorer.display_top_n(bm25_data, n=20)
 
     # SUBSECTION: Word2Vec
     word2vec_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
@@ -90,7 +90,7 @@ def main() -> None:
         cosine_similarities=word2vec_cosine_similarities_most_cited,
     )
     word2vec_data = LanguageModelData.from_constructor(word2vec_data_constructor)
-    LanguageModelScorer.display_top_n(word2vec_data, n=10)
+    LanguageModelScorer.display_top_n(word2vec_data, n=20)
 
     # SUBSECTION: GloVe
     glove_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
@@ -102,7 +102,7 @@ def main() -> None:
         cosine_similarities=glove_cosine_similarities_most_cited,
     )
     glove_data = LanguageModelData.from_constructor(glove_data_constructor)
-    LanguageModelScorer.display_top_n(glove_data, n=10)
+    LanguageModelScorer.display_top_n(glove_data, n=20)
 
     # SUBSECTION: FastText
     fasttext_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
@@ -114,7 +114,7 @@ def main() -> None:
         cosine_similarities=fasttext_cosine_similarities_most_cited,
     )
     fasttext_data = LanguageModelData.from_constructor(fasttext_data_constructor)
-    LanguageModelScorer.display_top_n(fasttext_data, n=10)
+    LanguageModelScorer.display_top_n(fasttext_data, n=20)
 
     # SUBSECTION: BERT
     bert_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
@@ -126,7 +126,7 @@ def main() -> None:
         cosine_similarities=bert_cosine_similarities_most_cited,
     )
     bert_data = LanguageModelData.from_constructor(bert_data_constructor)
-    LanguageModelScorer.display_top_n(bert_data, n=10)
+    LanguageModelScorer.display_top_n(bert_data, n=20)
 
     # SUBSECTION: SciBERT
     scibert_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
@@ -138,7 +138,7 @@ def main() -> None:
         cosine_similarities=scibert_cosine_similarities_most_cited,
     )
     scibert_data = LanguageModelData.from_constructor(scibert_data_constructor)
-    LanguageModelScorer.display_top_n(scibert_data, n=10)
+    LanguageModelScorer.display_top_n(scibert_data, n=20)
 
     # SUBSECTION: Longformer
     longformer_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
@@ -150,7 +150,7 @@ def main() -> None:
         cosine_similarities=longformer_cosine_similarities_most_cited,
     )
     longformer_data = LanguageModelData.from_constructor(longformer_data_constructor)
-    LanguageModelScorer.display_top_n(longformer_data, n=10)
+    LanguageModelScorer.display_top_n(longformer_data, n=20)
 
     # SECTION: Evaluate Scores
     average_precision_scores = (

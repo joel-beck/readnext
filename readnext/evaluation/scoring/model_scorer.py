@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Generic, TypeVar, overload
 
-import pandas as pd
+import polars as pl
 
 from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
 from readnext.modeling import CitationModelData, LanguageModelData, ModelData
@@ -23,9 +23,9 @@ class FeatureWeights:
     co_citation_analysis: float = 1.0
     bibliographic_coupling: float = 1.0
 
-    def to_series(self) -> pd.Series:
+    def to_series(self) -> pl.Series:
         """Collects all weights in a Pandas Series."""
-        return pd.Series(
+        return pl.Series(
             {
                 "publication_date_rank": self.publication_date,
                 "citationcount_document_rank": self.citationcount_document,
@@ -50,7 +50,7 @@ class ModelScorer(ABC, Generic[TModelData]):
     @abstractmethod
     def select_top_n_ranks(
         model_data: TModelData, feature_weights: FeatureWeights | None = None, n: int = 20
-    ) -> pd.DataFrame:
+    ) -> pl.DataFrame:
         ...
 
     @overload
@@ -89,16 +89,16 @@ class ModelScorer(ABC, Generic[TModelData]):
     @abstractmethod
     def display_top_n(
         model_data: TModelData, feature_weights: FeatureWeights | None = None, n: int = 20
-    ) -> pd.DataFrame:
+    ) -> pl.DataFrame:
         ...
 
     @staticmethod
-    def add_labels(df: pd.DataFrame, labels: pd.Series) -> pd.DataFrame:
+    def add_labels(df: pl.DataFrame, labels: pl.Series) -> pl.DataFrame:
         """Add a vector of labels to a dataframe."""
-        return pd.merge(df, labels, left_index=True, right_index=True)
+        return pl.merge(df, labels, left_index=True, right_index=True)
 
     @staticmethod
-    def compute_weighted_rowsums(df: pd.DataFrame, feature_weights: FeatureWeights) -> pd.Series:
+    def compute_weighted_rowsums(df: pl.DataFrame, feature_weights: FeatureWeights) -> pl.Series:
         """Compute the weighted rowsums of a dataframe with one weight for each column."""
         return df.mul(feature_weights.to_series()).sum(axis=1)
 
@@ -110,7 +110,7 @@ class CitationModelScorer(ModelScorer):
         citation_model_data: CitationModelData,
         feature_weights: FeatureWeights | None = None,
         n: int = 20,
-    ) -> pd.DataFrame:
+    ) -> pl.DataFrame:
         """
         Select and collect the top n recommendations from a citation model in a dataframe.
         """
@@ -127,16 +127,16 @@ class CitationModelScorer(ModelScorer):
         )
 
     @staticmethod
-    def add_info_cols(df: pd.DataFrame, info_matrix: pd.DataFrame) -> pd.DataFrame:
+    def add_info_cols(df: pl.DataFrame, info_matrix: pl.DataFrame) -> pl.DataFrame:
         """Add document info columns to a dataframe."""
-        return pd.merge(df, info_matrix, left_index=True, right_index=True)
+        return pl.merge(df, info_matrix, left_index=True, right_index=True)
 
     @staticmethod
     def display_top_n(
         citation_model_data: CitationModelData,
         feature_weights: FeatureWeights | None = None,
         n: int = 20,
-    ) -> pd.DataFrame:
+    ) -> pl.DataFrame:
         """
         Select and collect the top n recommendations from a citation model in a
         dataframe together with additional information columns about the documents.
@@ -190,7 +190,7 @@ class LanguageModelScorer(ModelScorer):
         language_model_data: LanguageModelData,
         feature_weights: FeatureWeights | None = None,  # noqa: ARG004
         n: int = 20,
-    ) -> pd.DataFrame:
+    ) -> pl.DataFrame:
         """
         Select and collect the top n recommendations from a language model in a dataframe.
 
@@ -201,18 +201,18 @@ class LanguageModelScorer(ModelScorer):
         ).head(n)
 
     @staticmethod
-    def move_cosine_similarity_first(df: pd.DataFrame) -> pd.DataFrame:
+    def move_cosine_similarity_first(df: pl.DataFrame) -> pl.DataFrame:
         """Move the cosine similarity column to the first position in a dataframe."""
         return df[["cosine_similarity", *list(df.columns.drop("cosine_similarity"))]]
 
     @staticmethod
-    def add_info_cols(df: pd.DataFrame, info_matrix: pd.DataFrame) -> pd.DataFrame:
+    def add_info_cols(df: pl.DataFrame, info_matrix: pl.DataFrame) -> pl.DataFrame:
         """
         Add document info columns to a dataframe. The cosine similarity column is moved
         to the first position and replaces the cosine similarity rank column.
         """
         return (
-            pd.merge(df, info_matrix, left_index=True, right_index=True)
+            pl.merge(df, info_matrix, left_index=True, right_index=True)
             .drop("cosine_similarity_rank", axis="columns")
             .pipe(LanguageModelScorer.move_cosine_similarity_first)
         )
@@ -222,7 +222,7 @@ class LanguageModelScorer(ModelScorer):
         language_model_data: LanguageModelData,
         feature_weights: FeatureWeights | None = None,
         n: int = 20,
-    ) -> pd.DataFrame:
+    ) -> pl.DataFrame:
         """
         Select and collect the top n recommendations from a language model in a
         dataframe together with additional information columns about the documents.

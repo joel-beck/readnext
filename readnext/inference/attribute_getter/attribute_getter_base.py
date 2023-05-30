@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-import pandas as pd
+import polars as pl
 
 from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference.document_identifier import DocumentIdentifier
@@ -22,7 +22,7 @@ class AttributeGetter(ABC):
     arxiv_url: str | None = None
     language_model_choice: LanguageModelChoice
     feature_weights: FeatureWeights
-    documents_data: pd.DataFrame
+    documents_data: pl.DataFrame
 
     identifier: DocumentIdentifier = field(init=False)
 
@@ -48,15 +48,15 @@ class AttributeGetter(ABC):
         ...
 
     @abstractmethod
-    def get_co_citation_analysis_scores(self) -> pd.DataFrame:
+    def get_co_citation_analysis_scores(self) -> pl.DataFrame:
         ...
 
     @abstractmethod
-    def get_bibliographic_coupling_scores(self) -> pd.DataFrame:
+    def get_bibliographic_coupling_scores(self) -> pl.DataFrame:
         ...
 
     @abstractmethod
-    def get_cosine_similarities(self) -> pd.DataFrame:
+    def get_cosine_similarities(self) -> pl.DataFrame:
         ...
 
     @abstractmethod

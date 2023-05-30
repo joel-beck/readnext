@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Generic, Literal, TypeVar
 
 import numpy as np
-import pandas as pd
+import polars as pl
 
 from readnext.utils import EmbeddingVector, Vector
 
@@ -25,7 +25,7 @@ class PairwiseMetric(ABC, Generic[TReturn]):
 
     @staticmethod
     @abstractmethod
-    def from_df(df: pd.DataFrame, document_id_1: int, document_id_2: int) -> TReturn:
+    def from_df(df: pl.DataFrame, document_id_1: int, document_id_2: int) -> TReturn:
         ...
 
     @staticmethod
@@ -44,7 +44,7 @@ class PairwiseMetric(ABC, Generic[TReturn]):
 
     @staticmethod
     def count_common_values_from_df(
-        df: pd.DataFrame,
+        df: pl.DataFrame,
         colname: Literal["citations", "references"],
         document_id_1: int,
         document_id_2: int,
@@ -54,8 +54,12 @@ class PairwiseMetric(ABC, Generic[TReturn]):
         DataFrame.
         """
 
-        row_value_list: list[str] = df.loc[document_id_1, colname]
-        col_value_list: list[str] = df.loc[document_id_2, colname]
+        row_value_list: list[str] = (
+            df.filter(pl.col("document_id") == document_id_1).select(colname).item()
+        )
+        col_value_list: list[str] = (
+            df.filter(pl.col("document_id") == document_id_2).select(colname).item()
+        )
 
         return PairwiseMetric.count_common_values(row_value_list, col_value_list)
 
@@ -67,7 +71,7 @@ class CountCommonCitations(PairwiseMetric):
         return PairwiseMetric.count_common_values(vec_1, vec_2)
 
     @staticmethod
-    def from_df(df: pd.DataFrame, document_id_1: int, document_id_2: int) -> int:
+    def from_df(df: pl.DataFrame, document_id_1: int, document_id_2: int) -> int:
         """
         Count the number of common citations between two documents that are extracted
         from a DataFrame.
@@ -84,7 +88,7 @@ class CountCommonReferences(PairwiseMetric):
         return PairwiseMetric.count_common_values(vec_1, vec_2)
 
     @staticmethod
-    def from_df(df: pd.DataFrame, document_id_1: int, document_id_2: int) -> int:
+    def from_df(df: pl.DataFrame, document_id_1: int, document_id_2: int) -> int:
         """
         Count the number of common references between two documents that are extracted
         from a DataFrame.
@@ -103,13 +107,12 @@ class CosineSimilarity(PairwiseMetric):
         return np.dot(vec_1, vec_2) / (np.linalg.norm(vec_1) * np.linalg.norm(vec_2))  # type: ignore # noqa: E501
 
     @staticmethod
-    def from_df(df: pd.DataFrame, document_id_1: int, document_id_2: int) -> float:
+    def from_df(df: pl.DataFrame, document_id_1: int, document_id_2: int) -> float:
         """
         Compute the cosine similarity between two document embeddings that are extracted
         from a DataFrame.
         """
-        # iloc[0] to get the first and only value of the pandas Series
-        row_embedding: EmbeddingVector = df.loc[document_id_1].item()
-        col_embedding: EmbeddingVector = df.loc[document_id_2].item()
+        row_embedding: EmbeddingVector = df.filter(pl.col("document_id") == document_id_1).item()
+        col_embedding: EmbeddingVector = df.filter(pl.col("document_id") == document_id_2).item()
 
         return CosineSimilarity.score(row_embedding, col_embedding)

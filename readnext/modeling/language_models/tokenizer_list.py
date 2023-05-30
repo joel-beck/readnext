@@ -9,7 +9,7 @@ from readnext.modeling.document_info import DocumentsInfo
 from readnext.utils import (
     Tokens,
     TokensMapping,
-    load_object_from_pickle,
+    read_df_from_parquet,
     setup_progress_bar,
     write_object_to_pickle,
 )
@@ -37,7 +37,7 @@ class ListTokenizer(ABC):
     @staticmethod
     def load_tokens_mapping(path: Path) -> TokensMapping:
         """Load a mapping of document ids to tokens from a pickle file."""
-        return load_object_from_pickle(path)  # type: ignore
+        return read_df_from_parquet(path)  # type: ignore
 
 
 @dataclass

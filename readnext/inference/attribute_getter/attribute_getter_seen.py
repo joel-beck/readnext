@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-import pandas as pd
+import polars as pl
 
 from readnext.config import ResultsPaths
 from readnext.data import (
@@ -21,7 +21,7 @@ from readnext.modeling import (
 from readnext.modeling.language_models import (
     load_cosine_similarities_from_choice,
 )
-from readnext.utils import load_df_from_pickle
+from readnext.utils import read_df_from_parquet
 
 
 @dataclass(kw_only=True)
@@ -98,13 +98,13 @@ class SeenPaperAttributeGetter(AttributeGetter):
             arxiv_url=arxiv_url,
         )
 
-    def get_co_citation_analysis_scores(self) -> pd.DataFrame:
-        return load_df_from_pickle(
+    def get_co_citation_analysis_scores(self) -> pl.DataFrame:
+        return read_df_from_parquet(
             ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl
         )
 
-    def get_bibliographic_coupling_scores(self) -> pd.DataFrame:
-        return load_df_from_pickle(
+    def get_bibliographic_coupling_scores(self) -> pl.DataFrame:
+        return read_df_from_parquet(
             ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl
         )
 
@@ -121,7 +121,7 @@ class SeenPaperAttributeGetter(AttributeGetter):
         )
         return CitationModelData.from_constructor(citation_model_data_constructor)
 
-    def get_cosine_similarities(self) -> pd.DataFrame:
+    def get_cosine_similarities(self) -> pl.DataFrame:
         return load_cosine_similarities_from_choice(self.language_model_choice)
 
     def get_language_model_data(self) -> LanguageModelData:

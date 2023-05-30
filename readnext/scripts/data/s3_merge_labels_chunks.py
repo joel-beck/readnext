@@ -5,13 +5,13 @@ least one label in the Computer Science domain.
 
 from pathlib import Path
 
-import pandas as pd
+import polars as pl
 
 from readnext.config import DataPaths
-from readnext.utils import load_df_from_pickle, setup_progress_bar, write_df_to_pickle
+from readnext.utils import read_df_from_parquet, setup_progress_bar, write_df_to_parquet
 
 
-def add_labels(df: pd.DataFrame) -> pd.DataFrame:
+def add_labels(df: pl.DataFrame) -> pl.DataFrame:
     """
     Add arxiv tags/categories as labels as a new column. Split space separated labels
     into a list.
@@ -19,7 +19,7 @@ def add_labels(df: pd.DataFrame) -> pd.DataFrame:
     return df.assign(arxiv_labels=lambda df: df["categories"].apply(lambda x: x.split()))
 
 
-def keep_cs_labels(df: pd.DataFrame) -> pd.DataFrame:
+def keep_cs_labels(df: pl.DataFrame) -> pl.DataFrame:
     """Keep only labels of the computer science domain."""
     return df.assign(
         arxiv_labels=lambda df: df["arxiv_labels"].apply(
@@ -28,7 +28,7 @@ def keep_cs_labels(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def remove_non_cs_documents(df: pd.DataFrame) -> pd.DataFrame:
+def remove_non_cs_documents(df: pl.DataFrame) -> pl.DataFrame:
     """
     Remove documents without any labels in the Computer Science domain, i.e. with at
     least one list element in the `arxiv_labels` column.
@@ -37,8 +37,8 @@ def remove_non_cs_documents(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def merge_labels_chunk(filepath: Path, chunk_index: int) -> None:
-    documents_preprocessed_chunk: pd.DataFrame = load_df_from_pickle(filepath)
-    arxiv_id_labels = load_df_from_pickle(DataPaths.arxiv.id_labels_pkl)
+    documents_preprocessed_chunk: pl.DataFrame = read_df_from_parquet(filepath)
+    arxiv_id_labels = read_df_from_parquet(DataPaths.arxiv.id_labels_pkl)
 
     documents_labels_chunk = (
         documents_preprocessed_chunk.merge(arxiv_id_labels, on="arxiv_id", how="left")
@@ -47,7 +47,7 @@ def merge_labels_chunk(filepath: Path, chunk_index: int) -> None:
         .pipe(remove_non_cs_documents)
     )
 
-    write_df_to_pickle(
+    write_df_to_parquet(
         documents_labels_chunk,
         Path(f"{DataPaths.merged.documents_labels_chunk_stem}_{chunk_index}.pkl"),
     )

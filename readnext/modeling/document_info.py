@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import overload
 
-import pandas as pd
+import polars as pl
 from typing_extensions import Self
 
 
@@ -80,14 +80,14 @@ class DocumentScore:
     score: float
 
 
-def documents_info_from_df(df: pd.DataFrame) -> DocumentsInfo:
+def documents_info_from_df(df: pl.DataFrame) -> DocumentsInfo:
     """
     Generate a `DocumentsInfo` instance from the input documents dataframe, which
     contains `document_id`, `title`, and `abstract` columns.
     """
-    document_ids = df["document_id"].tolist()
-    titles = df["title"].tolist()
-    abstracts = df["abstract"].tolist()
+    document_ids = df["document_id"].to_list()
+    titles = df["title"].to_list()
+    abstracts = df["abstract"].to_list()
 
     return DocumentsInfo(
         [

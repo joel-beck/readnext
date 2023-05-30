@@ -2,7 +2,7 @@ from collections.abc import Callable, Sequence
 from typing import TypeAlias
 
 import numpy as np
-import pandas as pd
+import polars as pl
 import torch
 from numpy.typing import NDArray
 
@@ -26,17 +26,17 @@ EmbeddingsMapping: TypeAlias = dict[int, Embedding]
 # language model embedding functions during inference
 QueryEmbeddingFunction: TypeAlias = Callable[[DocumentInfo], Embedding]
 
-Vector: TypeAlias = Sequence | NDArray | pd.Series
-EmbeddingVector: TypeAlias = Sequence[float] | NDArray | pd.Series
+Vector: TypeAlias = Sequence | NDArray | pl.Series
+EmbeddingVector: TypeAlias = Sequence[float] | NDArray | pl.Series
 
 # data frame with a single column named `score` and an index named `document_id`
 # the `score` column contains lists of `DocumentScore` objects
 # used for storing co-citation analysis scores, bibliographic coupling scores and cosine
 # similarity scores
-ScoresFrame = pd.DataFrame
+ScoresFrame = pl.DataFrame
 
-IntegerLabelList: TypeAlias = Sequence[int] | NDArray | pd.Series
+IntegerLabelList: TypeAlias = Sequence[int] | NDArray | pl.Series
 IntegerLabelLists: TypeAlias = Sequence[IntegerLabelList]
 
-StringLabelList: TypeAlias = Sequence[str] | pd.Series
-StringLabelLists: TypeAlias = Sequence[StringLabelList] | pd.Series
+StringLabelList: TypeAlias = Sequence[str] | pl.Series
+StringLabelLists: TypeAlias = Sequence[StringLabelList] | pl.Series

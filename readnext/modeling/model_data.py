@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 
-import pandas as pd
+import polars as pl
 from typing_extensions import Self
 
 from readnext.modeling.document_info import DocumentInfo
@@ -24,8 +24,8 @@ class ModelData(ABC, Generic[TModelDataConstructor]):
     """
 
     query_document: DocumentInfo
-    info_matrix: pd.DataFrame
-    integer_labels: pd.Series
+    info_matrix: pl.DataFrame
+    integer_labels: pl.Series
 
     @classmethod
     @abstractmethod
@@ -33,7 +33,7 @@ class ModelData(ABC, Generic[TModelDataConstructor]):
         """Construct a `ModelData` instance from a `ModelDataConstructor` instance."""
 
     @abstractmethod
-    def __getitem__(self, indices: pd.Index) -> Self:
+    def __getitem__(self, indices: pl.Index) -> Self:
         """Specify how to index or slice a `ModelData` instance."""
 
     @abstractmethod
@@ -48,7 +48,7 @@ class CitationModelData(ModelData):
     which contains the citation and global document features.
     """
 
-    feature_matrix: pd.DataFrame
+    feature_matrix: pl.DataFrame
 
     @classmethod
     def from_constructor(cls, constructor: CitationModelDataConstructor) -> Self:
@@ -59,7 +59,7 @@ class CitationModelData(ModelData):
             constructor.get_feature_matrix(),
         )
 
-    def __getitem__(self, indices: pd.Index) -> Self:
+    def __getitem__(self, indices: pl.Index) -> Self:
         return self.__class__(
             self.query_document,
             self.info_matrix.loc[indices],
@@ -71,18 +71,18 @@ class CitationModelData(ModelData):
         query_document_repr = f"query_document={self.query_document!r}"
 
         info_matrix_repr = (
-            f"info_matrix=[pd.DataFrame, shape={self.info_matrix.shape}, "
+            f"info_matrix=[pl.DataFrame, shape={self.info_matrix.shape}, "
             f"index={self.info_matrix.index.name}, columns={self.info_matrix.columns.to_list()}]"
         )
 
         feature_matrix_repr = (
-            f"feature_matrix=[pd.DataFrame, shape={self.feature_matrix.shape}, "
+            f"feature_matrix=[pl.DataFrame, shape={self.feature_matrix.shape}, "
             f"index={self.feature_matrix.index.name}, "
             f"columns={self.feature_matrix.columns.to_list()}]"
         )
 
         integer_labels_repr = (
-            f"integer_labels=[pd.Series, shape={self.integer_labels.shape}, "
+            f"integer_labels=[pl.Series, shape={self.integer_labels.shape}, "
             f"name={self.integer_labels.name}]"
         )
 
@@ -103,7 +103,7 @@ class LanguageModelData(ModelData):
     similarity ranks of all candidate documents with respect to the query document.
     """
 
-    cosine_similarity_ranks: pd.DataFrame
+    cosine_similarity_ranks: pl.DataFrame
 
     @classmethod
     def from_constructor(cls, constructor: LanguageModelDataConstructor) -> Self:
@@ -114,7 +114,7 @@ class LanguageModelData(ModelData):
             constructor.get_cosine_similarity_ranks(),
         )
 
-    def __getitem__(self, indices: pd.Index) -> Self:
+    def __getitem__(self, indices: pl.Index) -> Self:
         return self.__class__(
             self.query_document,
             self.info_matrix.loc[indices],
@@ -130,18 +130,18 @@ class LanguageModelData(ModelData):
         query_document_repr = f"query_document={self.query_document!r}"
 
         info_matrix_repr = (
-            f"info_matrix=[pd.DataFrame, shape={self.info_matrix.shape}, "
+            f"info_matrix=[pl.DataFrame, shape={self.info_matrix.shape}, "
             f"index={self.info_matrix.index.name}, columns={self.info_matrix.columns.to_list()}]"
         )
 
         cosine_similarity_ranks_repr = (
-            f"cosine_similarity_ranks=[pd.DataFrame, shape={self.cosine_similarity_ranks.shape}, "
+            f"cosine_similarity_ranks=[pl.DataFrame, shape={self.cosine_similarity_ranks.shape}, "
             f"index={self.cosine_similarity_ranks.index.name}, "
             f"columns={self.cosine_similarity_ranks.columns.to_list()}]"
         )
 
         integer_labels_repr = (
-            f"integer_labels=[pd.Series, shape={self.integer_labels.shape}, "
+            f"integer_labels=[pl.Series, shape={self.integer_labels.shape}, "
             f"name={self.integer_labels.name}]"
         )
 

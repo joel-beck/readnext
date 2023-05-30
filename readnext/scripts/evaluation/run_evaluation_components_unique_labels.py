@@ -3,7 +3,7 @@ Compute evaluation metrics and show the best recommendations of either the Citat
 model or a single Language Model for a single query document.
 """
 
-import pandas as pd
+import polars as pl
 
 from readnext.config import DataPaths, ResultsPaths
 from readnext.data import (
@@ -18,7 +18,7 @@ from readnext.modeling import (
     LanguageModelData,
     LanguageModelDataConstructor,
 )
-from readnext.utils import load_df_from_pickle
+from readnext.utils import read_df_from_parquet
 
 
 def main() -> None:
@@ -26,7 +26,7 @@ def main() -> None:
     query_d3_document_id = 13756489
 
     # SECTION: Get Raw Data
-    documents_authors_labels_citations_most_cited: pd.DataFrame = load_df_from_pickle(
+    documents_authors_labels_citations_most_cited: pl.DataFrame = read_df_from_parquet(
         DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
     )
     # NOTE: Remove to evaluate on full data
@@ -34,11 +34,11 @@ def main() -> None:
         documents_authors_labels_citations_most_cited.head(2000)
     )
 
-    bibliographic_coupling_scores_most_cited: pd.DataFrame = load_df_from_pickle(
+    bibliographic_coupling_scores_most_cited: pl.DataFrame = read_df_from_parquet(
         ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl
     )
 
-    co_citation_analysis_scores_most_cited: pd.DataFrame = load_df_from_pickle(
+    co_citation_analysis_scores_most_cited: pl.DataFrame = read_df_from_parquet(
         ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl
     )
 
@@ -57,7 +57,7 @@ def main() -> None:
     print(citation_model_data.query_document)
 
     # SUBSECTION: TF-IDF
-    tfidf_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
+    tfidf_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
         ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl
     )
     tfidf_data_constructor = LanguageModelDataConstructor(
@@ -69,7 +69,7 @@ def main() -> None:
     LanguageModelScorer.display_top_n(tfidf_data, n=20)
 
     # SUBSECTION: BM25
-    bm25_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
+    bm25_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
         ResultsPaths.language_models.bm25_cosine_similarities_most_cited_pkl
     )
     bm25_data_constructor = LanguageModelDataConstructor(
@@ -81,7 +81,7 @@ def main() -> None:
     LanguageModelScorer.display_top_n(bm25_data, n=20)
 
     # SUBSECTION: Word2Vec
-    word2vec_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
+    word2vec_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
         ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl
     )
     word2vec_data_constructor = LanguageModelDataConstructor(
@@ -93,7 +93,7 @@ def main() -> None:
     LanguageModelScorer.display_top_n(word2vec_data, n=20)
 
     # SUBSECTION: GloVe
-    glove_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
+    glove_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
         ResultsPaths.language_models.glove_cosine_similarities_most_cited_pkl
     )
     glove_data_constructor = LanguageModelDataConstructor(
@@ -105,7 +105,7 @@ def main() -> None:
     LanguageModelScorer.display_top_n(glove_data, n=20)
 
     # SUBSECTION: FastText
-    fasttext_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
+    fasttext_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
         ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl
     )
     fasttext_data_constructor = LanguageModelDataConstructor(
@@ -117,7 +117,7 @@ def main() -> None:
     LanguageModelScorer.display_top_n(fasttext_data, n=20)
 
     # SUBSECTION: BERT
-    bert_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
+    bert_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
         ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl
     )
     bert_data_constructor = LanguageModelDataConstructor(
@@ -129,7 +129,7 @@ def main() -> None:
     LanguageModelScorer.display_top_n(bert_data, n=20)
 
     # SUBSECTION: SciBERT
-    scibert_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
+    scibert_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
         ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl
     )
     scibert_data_constructor = LanguageModelDataConstructor(
@@ -141,7 +141,7 @@ def main() -> None:
     LanguageModelScorer.display_top_n(scibert_data, n=20)
 
     # SUBSECTION: Longformer
-    longformer_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
+    longformer_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
         ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl
     )
     longformer_data_constructor = LanguageModelDataConstructor(
@@ -154,7 +154,7 @@ def main() -> None:
 
     # SECTION: Evaluate Scores
     count_unique_labels_scores = (
-        pd.DataFrame(
+        pl.DataFrame(
             [
                 (
                     "Publication Date",

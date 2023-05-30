@@ -4,11 +4,11 @@ Precompute and store bibliographic coupling scores for all documents in a datafr
 
 from readnext.config import DataPaths, ResultsPaths
 from readnext.evaluation.scoring import precompute_co_references
-from readnext.utils import load_df_from_pickle, write_df_to_pickle
+from readnext.utils import read_df_from_parquet, write_df_to_parquet
 
 
 def main() -> None:
-    documents_authors_labels_citations_most_cited = load_df_from_pickle(
+    documents_authors_labels_citations_most_cited = read_df_from_parquet(
         DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
     )
     # NOTE: Remove to train on full data
@@ -20,7 +20,7 @@ def main() -> None:
         documents_authors_labels_citations_most_cited
     )
 
-    write_df_to_pickle(
+    write_df_to_parquet(
         bibliographic_coupling_scores_most_cited,
         ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl,
     )

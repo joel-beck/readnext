@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-import pandas as pd
+import polars as pl
 
 from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
 from readnext.evaluation.scoring.model_scorer import (
@@ -23,17 +23,17 @@ class HybridScorer:
     language_model_data: LanguageModelData
     citation_model_data: CitationModelData
 
-    citation_to_language_candidates: pd.DataFrame = field(init=False)
-    citation_to_language_candidate_ids: pd.Index = field(init=False)
+    citation_to_language_candidates: pl.DataFrame = field(init=False)
+    citation_to_language_candidate_ids: pl.Series = field(init=False)
     citation_to_language_candidate_scores: float = field(init=False)
     citation_to_language_scores: float = field(init=False)
-    citation_to_language_recommendations: pd.DataFrame = field(init=False)
+    citation_to_language_recommendations: pl.DataFrame = field(init=False)
 
-    language_to_citation_candidates: pd.DataFrame = field(init=False)
-    language_to_citation_candidate_ids: pd.Index = field(init=False)
+    language_to_citation_candidates: pl.DataFrame = field(init=False)
+    language_to_citation_candidate_ids: pl.Series = field(init=False)
     language_to_citation_candidate_scores: float = field(init=False)
     language_to_citation_scores: float = field(init=False)
-    language_to_citation_recommendations: pd.DataFrame = field(init=False)
+    language_to_citation_recommendations: pl.DataFrame = field(init=False)
 
     def set_citation_to_language_candidates(
         self,
@@ -63,7 +63,9 @@ class HybridScorer:
         # of candidates may be used
         self.set_citation_to_language_candidates(feature_weights, n_candidates)
 
-        self.citation_to_language_candidate_ids = self.citation_to_language_candidates.index
+        self.citation_to_language_candidate_ids = self.citation_to_language_candidates[
+            "document_id"
+        ]
 
     def set_citation_to_language_candidate_scores(
         self,
@@ -134,7 +136,9 @@ class HybridScorer:
         """
         self.set_language_to_citation_candidates(n_candidates)
 
-        self.language_to_citation_candidate_ids = self.language_to_citation_candidates.index
+        self.language_to_citation_candidate_ids = self.language_to_citation_candidates[
+            "document_id"
+        ]
 
     def set_language_to_citation_candidate_scores(
         self, metric: AveragePrecision | CountUniqueLabels, n_candidates: int = 20

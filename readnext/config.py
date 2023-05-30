@@ -43,7 +43,7 @@ class D3DocumentsDataPaths:
 
     raw_json: Path = data_dirpath / documents_metadata_json_filename
     chunks_stem: Path = data_dirpath / "2022-11-30_documents_chunks"
-    full_pkl: Path = data_dirpath / "2022-11-30_documents_full.pkl"
+    full_parquet: Path = data_dirpath / "2022-11-30_documents_full.parquet"
     preprocessed_chunks_stem: Path = data_dirpath / "documents_preprocessed_chunks"
 
 
@@ -52,8 +52,8 @@ class D3AuthorsDataPaths:
     """Sets file paths for the raw D3 authors data."""
 
     raw_json: Path = data_dirpath / authors_metadata_json_filename
-    most_cited_pkl: Path = data_dirpath / "2022-11-30_authors_most_cited.pkl"
-    full_pkl: Path = data_dirpath / "2022-11-30_authors_full.pkl"
+    most_cited_parquet: Path = data_dirpath / "2022-11-30_authors_most_cited.parquet"
+    full_parquet: Path = data_dirpath / "2022-11-30_authors_full.parquet"
 
 
 @dataclass(frozen=True)
@@ -69,7 +69,7 @@ class ArxivDataPaths:
     """Sets file paths for the raw arXiv data."""
 
     raw_json: Path = data_dirpath / "arxiv_metadata.json"
-    id_labels_pkl: Path = data_dirpath / "arxiv_id_labels.pkl"
+    id_labels_parquet: Path = data_dirpath / "arxiv_id_labels.parquet"
 
 
 @dataclass(frozen=True)
@@ -80,16 +80,16 @@ class MergedDataPaths:
     """
 
     documents_labels_chunk_stem: Path = data_dirpath / "documents_labels_chunks"
-    documents_labels_pkl: Path = data_dirpath / "documents_labels.pkl"
-    documents_authors_labels_pkl: Path = data_dirpath / "documents_authors_labels.pkl"
+    documents_labels_parquet: Path = data_dirpath / "documents_labels.parquet"
+    documents_authors_labels_parquet: Path = data_dirpath / "documents_authors_labels.parquet"
     documents_authors_labels_citations_chunks_stem: Path = (
         data_dirpath / "documents_authors_labels_citations_chunks"
     )
-    documents_authors_labels_citations_pkl: Path = (
-        data_dirpath / "documents_authors_labels_citations.pkl"
+    documents_authors_labels_citations_parquet: Path = (
+        data_dirpath / "documents_authors_labels_citations.parquet"
     )
-    documents_authors_labels_citations_most_cited_pkl: Path = (
-        data_dirpath / "documents_authors_labels_citations_most_cited.pkl"
+    documents_authors_labels_citations_most_cited_parquet: Path = (
+        data_dirpath / "documents_authors_labels_citations_most_cited.parquet"
     )
     most_cited_subset_size: int = 10_000
 
@@ -129,11 +129,11 @@ class ModelPaths:
 class CitationModelsResultsPaths:
     """Sets file paths for citation model results."""
 
-    bibliographic_coupling_scores_most_cited_pkl: Path = (
-        results_dirpath / "bibliographic_coupling_scores_most_cited.pkl"
+    bibliographic_coupling_scores_most_cited_parquet: Path = (
+        results_dirpath / "bibliographic_coupling_scores_most_cited.parquet"
     )
-    co_citation_analysis_scores_most_cited_pkl: Path = (
-        results_dirpath / "co_citation_analysis_scores_most_cited.pkl"
+    co_citation_analysis_scores_most_cited_parquet: Path = (
+        results_dirpath / "co_citation_analysis_scores_most_cited.parquet"
     )
 
 
@@ -144,52 +144,62 @@ class LanguageModelsResultsPaths:
     spacy_tokenized_abstracts_mapping_most_cited_pkl: Path = (
         results_dirpath / "spacy_tokenized_abstracts_mapping_most_cited.pkl"
     )
-    tfidf_embeddings_most_cited_pkl: Path = results_dirpath / "tfidf_embeddings_most_cited.pkl"
-    tfidf_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "tfidf_cosine_similarities_most_cited.pkl"
+    tfidf_embeddings_most_cited_parquet: Path = (
+        results_dirpath / "tfidf_embeddings_most_cited.parquet"
     )
-    bm25_embeddings_most_cited_pkl: Path = results_dirpath / "bm25_embeddings_most_cited.pkl"
-    bm25_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "bm25_cosine_similarities_most_cited.pkl"
+    tfidf_cosine_similarities_most_cited_parquet: Path = (
+        results_dirpath / "tfidf_cosine_similarities_most_cited.parquet"
     )
-    word2vec_embeddings_most_cited_pkl: Path = (
-        results_dirpath / "word2vec_embeddings_most_cited.pkl"
+    bm25_embeddings_most_cited_parquet: Path = (
+        results_dirpath / "bm25_embeddings_most_cited.parquet"
     )
-    word2vec_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "word2vec_cosine_similarities_most_cited.pkl"
+    bm25_cosine_similarities_most_cited_parquet: Path = (
+        results_dirpath / "bm25_cosine_similarities_most_cited.parquet"
     )
-    glove_embeddings_most_cited_pkl: Path = results_dirpath / "glove_embeddings_most_cited.pkl"
-    glove_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "glove_cosine_similarities_most_cited.pkl"
+    word2vec_embeddings_most_cited_parquet: Path = (
+        results_dirpath / "word2vec_embeddings_most_cited.parquet"
     )
-    fasttext_embeddings_most_cited_pkl: Path = (
-        results_dirpath / "fasttext_embeddings_most_cited.pkl"
+    word2vec_cosine_similarities_most_cited_parquet: Path = (
+        results_dirpath / "word2vec_cosine_similarities_most_cited.parquet"
     )
-    fasttext_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "fasttext_cosine_similarities_most_cited.pkl"
+    glove_embeddings_most_cited_parquet: Path = (
+        results_dirpath / "glove_embeddings_most_cited.parquet"
+    )
+    glove_cosine_similarities_most_cited_parquet: Path = (
+        results_dirpath / "glove_cosine_similarities_most_cited.parquet"
+    )
+    fasttext_embeddings_most_cited_parquet: Path = (
+        results_dirpath / "fasttext_embeddings_most_cited.parquet"
+    )
+    fasttext_cosine_similarities_most_cited_parquet: Path = (
+        results_dirpath / "fasttext_cosine_similarities_most_cited.parquet"
     )
     bert_tokenized_abstracts_mapping_most_cited_pkl: Path = (
         results_dirpath / "bert_tokenized_abstracts_mapping_most_cited.pkl"
     )
-    bert_embeddings_most_cited_pkl: Path = results_dirpath / "bert_embeddings_most_cited.pkl"
-    bert_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "bert_cosine_similarities_most_cited.pkl"
+    bert_embeddings_most_cited_parquet: Path = (
+        results_dirpath / "bert_embeddings_most_cited.parquet"
+    )
+    bert_cosine_similarities_most_cited_parquet: Path = (
+        results_dirpath / "bert_cosine_similarities_most_cited.parquet"
     )
     scibert_tokenized_abstracts_mapping_most_cited_pkl: Path = (
         results_dirpath / "scibert_tokenized_abstracts_mapping_most_cited.pkl"
     )
-    scibert_embeddings_most_cited_pkl: Path = results_dirpath / "scibert_embeddings_most_cited.pkl"
-    scibert_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "scibert_cosine_similarities_most_cited.pkl"
+    scibert_embeddings_most_cited_parquet: Path = (
+        results_dirpath / "scibert_embeddings_most_cited.parquet"
+    )
+    scibert_cosine_similarities_most_cited_parquet: Path = (
+        results_dirpath / "scibert_cosine_similarities_most_cited.parquet"
     )
     longformer_tokenized_abstracts_mapping_most_cited_pkl: Path = (
         results_dirpath / "longformer_tokenized_abstracts_mapping_most_cited.pkl"
     )
-    longformer_embeddings_most_cited_pkl: Path = (
-        results_dirpath / "longformer_embeddings_most_cited.pkl"
+    longformer_embeddings_most_cited_parquet: Path = (
+        results_dirpath / "longformer_embeddings_most_cited.parquet"
     )
-    longformer_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "longformer_cosine_similarities_most_cited.pkl"
+    longformer_cosine_similarities_most_cited_parquet: Path = (
+        results_dirpath / "longformer_cosine_similarities_most_cited.parquet"
     )
 
 

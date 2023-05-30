@@ -8,7 +8,7 @@ the existing dataframe.
 import sys
 from pathlib import Path
 
-import pandas as pd
+import polars as pl
 from dotenv import load_dotenv
 from tqdm import tqdm
 
@@ -16,8 +16,8 @@ from readnext.config import DataPaths
 from readnext.data import SemanticscholarRequest, SemanticScholarResponse
 from readnext.utils import (
     get_semanticscholar_url_from_semanticscholar_id,
-    load_df_from_pickle,
-    write_df_to_pickle,
+    read_df_from_parquet,
+    write_df_to_parquet,
 )
 
 
@@ -45,7 +45,7 @@ def main() -> None:
     # process subsets of documents in parallel to speed up the process
     USE_SUBSET = True
 
-    documents_authors_labels: pd.DataFrame = load_df_from_pickle(
+    documents_authors_labels: pl.DataFrame = read_df_from_parquet(
         DataPaths.merged.documents_authors_labels_pkl
     )
 
@@ -67,7 +67,7 @@ def main() -> None:
     ).drop(columns=["semanticscholar_request"])
 
     # subtract one from subset end since upper bound of slice is exclusive
-    write_df_to_pickle(
+    write_df_to_parquet(
         documents_authors_labels_citations,
         Path(
             f"{DataPaths.merged.documents_authors_labels_citations_chunks_stem}_{SUBSET_START}_{SUBSET_END-1}.pkl"

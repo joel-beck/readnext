@@ -18,7 +18,7 @@ from readnext.modeling.language_models import (
     embeddings_mapping_to_frame,
     tfidf,
 )
-from readnext.utils import slice_mapping, suppress_transformers_logging, write_df_to_pickle
+from readnext.utils import slice_mapping, suppress_transformers_logging, write_df_to_parquet
 
 
 def main() -> None:
@@ -50,17 +50,17 @@ def main() -> None:
 
     tfidf_embedder = TFIDFEmbedder(tokens_mapping=spacy_tokens_mapping, keyword_algorithm=tfidf)
     tfidf_embeddings_mapping = tfidf_embedder.compute_embeddings_mapping()
-    write_df_to_pickle(
+    write_df_to_parquet(
         embeddings_mapping_to_frame(tfidf_embeddings_mapping),
-        ResultsPaths.language_models.tfidf_embeddings_most_cited_pkl,
+        ResultsPaths.language_models.tfidf_embeddings_most_cited_parquet,
     )
 
     # interface of tfidf and bm25 is identical, thus the same embedder can be used
     bm25_embedder = TFIDFEmbedder(tokens_mapping=spacy_tokens_mapping, keyword_algorithm=bm25)
     bm25_embeddings_mapping = bm25_embedder.compute_embeddings_mapping()
-    write_df_to_pickle(
+    write_df_to_parquet(
         embeddings_mapping_to_frame(bm25_embeddings_mapping),
-        ResultsPaths.language_models.bm25_embeddings_most_cited_pkl,
+        ResultsPaths.language_models.bm25_embeddings_most_cited_parquet,
     )
 
     # requires pre-downloaded model from gensim data repository:
@@ -77,9 +77,9 @@ def main() -> None:
         embedding_model=word2vec_model,  # type: ignore
     )
     word2vec_embeddings_mapping = word2vec_embedder.compute_embeddings_mapping()
-    write_df_to_pickle(
+    write_df_to_parquet(
         embeddings_mapping_to_frame(word2vec_embeddings_mapping),
-        ResultsPaths.language_models.word2vec_embeddings_most_cited_pkl,
+        ResultsPaths.language_models.word2vec_embeddings_most_cited_parquet,
     )
 
     # requires pre-downloaded `glove.6B` model from Stanford NLP website:
@@ -94,9 +94,9 @@ def main() -> None:
         tokens_mapping=spacy_tokens_mapping, embedding_model=glove_model  # type: ignore
     )
     glove_embeddings_mapping = glove_embedder.compute_embeddings_mapping()
-    write_df_to_pickle(
+    write_df_to_parquet(
         embeddings_mapping_to_frame(glove_embeddings_mapping),
-        ResultsPaths.language_models.glove_embeddings_most_cited_pkl,
+        ResultsPaths.language_models.glove_embeddings_most_cited_parquet,
     )
 
     # requires pre-downloaded model from fasttext website:
@@ -106,9 +106,9 @@ def main() -> None:
         tokens_mapping=spacy_tokens_mapping, embedding_model=fasttext_model  # type: ignore
     )
     fasttext_embeddings_mapping = fasttext_embedder.compute_embeddings_mapping()
-    write_df_to_pickle(
+    write_df_to_parquet(
         embeddings_mapping_to_frame(fasttext_embeddings_mapping),
-        ResultsPaths.language_models.fasttext_embeddings_most_cited_pkl,
+        ResultsPaths.language_models.fasttext_embeddings_most_cited_parquet,
     )
 
     bert_model = BertModel.from_pretrained(ModelVersions.bert)  # type: ignore
@@ -117,9 +117,9 @@ def main() -> None:
         torch_model=bert_model,  # type: ignore
     )
     bert_embeddings_mapping = bert_embedder.compute_embeddings_mapping()
-    write_df_to_pickle(
+    write_df_to_parquet(
         embeddings_mapping_to_frame(bert_embeddings_mapping),
-        ResultsPaths.language_models.bert_embeddings_most_cited_pkl,
+        ResultsPaths.language_models.bert_embeddings_most_cited_parquet,
     )
 
     scibert_model = BertModel.from_pretrained(ModelVersions.scibert)  # type: ignore
@@ -128,9 +128,9 @@ def main() -> None:
         torch_model=scibert_model,  # type: ignore
     )
     scibert_embeddings = scibert_embedder.compute_embeddings_mapping()
-    write_df_to_pickle(
+    write_df_to_parquet(
         embeddings_mapping_to_frame(scibert_embeddings),
-        ResultsPaths.language_models.scibert_embeddings_most_cited_pkl,
+        ResultsPaths.language_models.scibert_embeddings_most_cited_parquet,
     )
 
     longformer_model = LongformerModel.from_pretrained(ModelVersions.longformer)  # type: ignore
@@ -139,9 +139,9 @@ def main() -> None:
         torch_model=longformer_model,  # type: ignore
     )
     longformer_embeddings = longformer_embedder.compute_embeddings_mapping()
-    write_df_to_pickle(
+    write_df_to_parquet(
         embeddings_mapping_to_frame(longformer_embeddings),
-        ResultsPaths.language_models.longformer_embeddings_most_cited_pkl,
+        ResultsPaths.language_models.longformer_embeddings_most_cited_parquet,
     )
 
 

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 import numpy as np
-import pandas as pd
+import polars as pl
 
 # do not import from .language_models to avoid circular imports
 from readnext.modeling.language_models.tokenizer_list import Tokens, TokensMapping
@@ -39,16 +39,17 @@ class AggregationStrategy(str, Enum):
         return self == self.max
 
 
-def embeddings_mapping_to_frame(embeddings_mapping: EmbeddingsMapping) -> pd.DataFrame:
+def embeddings_mapping_to_frame(embeddings_mapping: EmbeddingsMapping) -> pl.DataFrame:
     """
     Converts a dictionary of document ids to document embeddings to a pandas DataFrame.
     The output dataframe has one column named `embedding` and the index named
     `document_id`.
     """
-    return (
-        pd.Series(embeddings_mapping, name="embedding")
-        .to_frame()
-        .rename_axis("document_id", axis="index")
+    return pl.DataFrame(
+        {
+            "document_id": list(embeddings_mapping.keys()),
+            "embedding": list(embeddings_mapping.values()),
+        }
     )
 
 

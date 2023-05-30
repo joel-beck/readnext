@@ -3,13 +3,13 @@ Add author information to documents and labels. Match authors with documents by 
 author id.
 """
 
-import pandas as pd
+import polars as pl
 
 from readnext.config import DataPaths
-from readnext.utils import add_rank, load_df_from_pickle, write_df_to_pickle
+from readnext.utils import add_rank, read_df_from_parquet, write_df_to_parquet
 
 
-def add_author_ranks(authors: pd.DataFrame) -> pd.DataFrame:
+def add_author_ranks(authors: pl.DataFrame) -> pl.DataFrame:
     return authors.assign(
         citationcount_rank=add_rank(authors["citationcount"]),
         hindex_rank=add_rank(authors["hindex"]),
@@ -18,8 +18,8 @@ def add_author_ranks(authors: pd.DataFrame) -> pd.DataFrame:
 
 
 def select_most_popular_author(
-    df: pd.DataFrame, author_popularity_metric: str = "citationcount_author"
-) -> pd.DataFrame:
+    df: pl.DataFrame, author_popularity_metric: str = "citationcount_author"
+) -> pl.DataFrame:
     """
     Sort by author popularity metric within each document from highest to lowest and
     keep first row. Then sort the unique documents again by document citation count.
@@ -31,15 +31,15 @@ def select_most_popular_author(
     )
 
 
-def remove_incomplete_data(df: pd.DataFrame) -> pd.DataFrame:
+def remove_incomplete_data(df: pl.DataFrame) -> pl.DataFrame:
     return df.dropna(
         subset=["publication_year", "citationcount_document", "citationcount_author", "abstract"]
     )
 
 
 def main() -> None:
-    documents_labels: pd.DataFrame = load_df_from_pickle(DataPaths.merged.documents_labels_pkl)
-    authors: pd.DataFrame = load_df_from_pickle(DataPaths.d3.authors.full_pkl)
+    documents_labels: pl.DataFrame = read_df_from_parquet(DataPaths.merged.documents_labels_pkl)
+    authors: pl.DataFrame = read_df_from_parquet(DataPaths.d3.authors.full_pkl)
 
     output_columns = [
         "document_id",
@@ -105,7 +105,7 @@ def main() -> None:
         select_most_popular_author, author_popularity_metric="citationcount_author"
     ).pipe(remove_incomplete_data)
 
-    write_df_to_pickle(documents_authors_labels, DataPaths.merged.documents_authors_labels_pkl)
+    write_df_to_parquet(documents_authors_labels, DataPaths.merged.documents_authors_labels_pkl)
 
 
 if __name__ == "__main__":

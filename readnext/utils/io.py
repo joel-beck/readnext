@@ -1,13 +1,13 @@
-import pickle
 from pathlib import Path
 from typing import Any
 
-import pandas as pd
+import polars as pl
+import pickle
 
 from readnext.utils.decorators import (
-    dataframe_loader,
+    dataframe_reader,
     dataframe_writer,
-    object_loader,
+    object_reader,
     object_writer,
 )
 
@@ -22,23 +22,23 @@ def write_object_to_pickle(
         pickle.dump(obj, f)
 
 
-@object_loader
-def load_object_from_pickle(path: Path) -> Any:
-    """Load any Python object from a pickle file."""
+@object_reader
+def read_object_from_pickle(path: Path) -> Any:
+    """Read any Python object from a pickle file."""
     with path.open("rb") as f:
         return pickle.load(f)  # type: ignore
 
 
 @dataframe_writer
-def write_df_to_pickle(
-    df: pd.DataFrame,
+def write_df_to_parquet(
+    df: pl.DataFrame,
     path: Path,
 ) -> None:
-    """Write a Pandas DataFrame to a pickle file."""
-    df.to_pickle(path)
+    """Write a Polars DataFrame to a parquet file."""
+    df.write_parquet(path)
 
 
-@dataframe_loader
-def load_df_from_pickle(path: Path) -> pd.DataFrame:
-    """Load a Pandas DataFrame from a pickle file."""
-    return pd.read_pickle(path)
+@dataframe_reader
+def read_df_from_parquet(path: Path) -> pl.DataFrame:
+    """Read a Polars DataFrame from a parquet file."""
+    return pl.read_parquet(path)

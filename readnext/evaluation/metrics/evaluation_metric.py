@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Generic, TypeVar
 
 import numpy as np
-import pandas as pd
+import polars as pl
 
 from readnext.utils import IntegerLabelList, IntegerLabelLists, StringLabelList, StringLabelLists
 
@@ -22,7 +22,7 @@ class EvaluationMetric(ABC, Generic[TLabelList, TReturn]):
 
     @staticmethod
     @abstractmethod
-    def from_df(df: pd.DataFrame) -> TReturn:
+    def from_df(df: pl.DataFrame) -> TReturn:
         ...
 
 
@@ -66,7 +66,7 @@ class AveragePrecision(EvaluationMetric):
         if not len(label_list):
             return 0.0
 
-        if isinstance(label_list, pd.Series):
+        if isinstance(label_list, pl.Series):
             label_list = label_list.to_list()
 
         num_relevant_items = sum(label_list)
@@ -96,7 +96,7 @@ class AveragePrecision(EvaluationMetric):
         return np.mean([AveragePrecision.score(label_list) for label_list in label_lists])  # type: ignore # noqa: E501
 
     @staticmethod
-    def from_df(df: pd.DataFrame) -> float:
+    def from_df(df: pl.DataFrame) -> float:
         """
         Compute the average precision for a list of integer recommendation labels that are
         contained in a dataframe column.
@@ -117,7 +117,7 @@ class CountUniqueLabels(EvaluationMetric):
         return len({label for labels in label_list for label in labels})
 
     @staticmethod
-    def from_df(df: pd.DataFrame) -> int:
+    def from_df(df: pl.DataFrame) -> int:
         """
         Count the number of unique labels in a list of labels that are contained in a
         dataframe column.

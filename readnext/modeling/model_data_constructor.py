@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from typing import cast
 
 import numpy as np
-import pandas as pd
+import polars as pl
 
 from readnext.modeling.document_info import DocumentInfo, DocumentScore
 
@@ -21,7 +21,7 @@ class ModelDataConstructor(ABC):
     """
 
     d3_document_id: int
-    documents_data: pd.DataFrame
+    documents_data: pl.DataFrame
     info_cols: list[str]
     query_document: DocumentInfo = field(init=False)
 
@@ -30,7 +30,7 @@ class ModelDataConstructor(ABC):
         self.query_document = self.collect_query_document()
 
     @abstractmethod
-    def extend_info_matrix(self, info_matrix: pd.DataFrame) -> pd.DataFrame:
+    def extend_info_matrix(self, info_matrix: pl.DataFrame) -> pl.DataFrame:
         """
         Add additonal features to the information matrix which contains the candidate
         document features.
@@ -53,17 +53,17 @@ class ModelDataConstructor(ABC):
             abstract=query_document_abstract,
         )
 
-    def exclude_query_document(self, df: pd.DataFrame) -> pd.DataFrame:
+    def exclude_query_document(self, df: pl.DataFrame) -> pl.DataFrame:
         """Exclude the query document from the documents data."""
         return df.loc[df.index != self.d3_document_id]
 
-    def filter_documents_data(self) -> pd.DataFrame:
+    def filter_documents_data(self) -> pl.DataFrame:
         """
         Exclude the query document from the documents data and return the filtered data.
         """
         return self.exclude_query_document(self.documents_data)
 
-    def get_info_matrix(self) -> pd.DataFrame:
+    def get_info_matrix(self) -> pl.DataFrame:
         """
         Exclude the query document from the documents data and select only the feature
         columns with information about the candidate documents.
@@ -85,7 +85,7 @@ class ModelDataConstructor(ABC):
         """Convert a boolean value to a 0/1 integer."""
         return int(boolean)
 
-    def get_integer_labels(self) -> pd.Series:
+    def get_integer_labels(self) -> pl.Series:
         """
         Extract the arxiv labels for all candidate documents from the input data and
         convert them to integer labels.
@@ -98,12 +98,12 @@ class ModelDataConstructor(ABC):
             .rename("integer_labels")
         )
 
-    def document_scores_to_frame(self, document_scores: list[DocumentScore]) -> pd.DataFrame:
+    def document_scores_to_frame(self, document_scores: list[DocumentScore]) -> pl.DataFrame:
         """
         Convert the scores of all candidate documents to a dataframe. The output
         dataframe has one column named `score` and the index is named `document_id`.
         """
-        return pd.DataFrame(
+        return pl.DataFrame(
             [
                 {
                     "document_id": document_score.document_info.d3_document_id,
@@ -121,8 +121,8 @@ class CitationModelDataConstructor(ModelDataConstructor):
     analysis and bibliographic coupling scores as additional inputs.
     """
 
-    co_citation_analysis_scores: pd.DataFrame
-    bibliographic_coupling_scores: pd.DataFrame
+    co_citation_analysis_scores: pl.DataFrame
+    bibliographic_coupling_scores: pl.DataFrame
     info_cols: list[str] = field(
         default_factory=lambda: [
             "title",
@@ -141,7 +141,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
         ]
     )
 
-    def get_citation_method_scores(self, citation_method_data: pd.DataFrame) -> pd.DataFrame:
+    def get_citation_method_scores(self, citation_method_data: pl.DataFrame) -> pl.DataFrame:
         """
         Extract the scores of all candidate documents for a given citation method and
         converts them to a dataframe with a single `score` column and the document ids
@@ -151,7 +151,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
 
         return self.document_scores_to_frame(document_scores)
 
-    def get_co_citation_analysis_scores(self) -> pd.DataFrame:
+    def get_co_citation_analysis_scores(self) -> pl.DataFrame:
         """
         Extract the co-citation analysis scores of all candidate documents and converts
         them to a dataframe with a single `co_citation_analysis` column and the document
@@ -161,7 +161,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
             columns={"score": "co_citation_analysis"}
         )
 
-    def get_bibliographic_coupling_scores(self) -> pd.DataFrame:
+    def get_bibliographic_coupling_scores(self) -> pl.DataFrame:
         """
         Extract the bibliographic coupling scores of all candidate documents and
         converts them to a dataframe with a single `bibliographic_coupling` column and
@@ -171,7 +171,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
             columns={"score": "bibliographic_coupling"}
         )
 
-    def extend_info_matrix(self, info_matrix: pd.DataFrame) -> pd.DataFrame:
+    def extend_info_matrix(self, info_matrix: pl.DataFrame) -> pl.DataFrame:
         """
         Adds the co-citation analysis and bibliographic coupling scores to the
         information features about the candidate documents.
@@ -181,7 +181,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
             bibliographic_coupling=self.get_bibliographic_coupling_scores(),
         )
 
-    def get_feature_matrix(self) -> pd.DataFrame:
+    def get_feature_matrix(self) -> pl.DataFrame:
         """
         Collects all citation-based and global document feature ranks that are used for
         the weighted citation recommender model in a single dataframe.
@@ -208,10 +208,10 @@ class LanguageModelDataConstructor(ModelDataConstructor):
     additional input.
     """
 
-    cosine_similarities: pd.DataFrame
+    cosine_similarities: pl.DataFrame
     info_cols: list[str] = field(default_factory=lambda: ["title", "author", "arxiv_labels"])
 
-    def get_cosine_similarity_scores(self) -> pd.DataFrame:
+    def get_cosine_similarity_scores(self) -> pl.DataFrame:
         """
         Extracts the cosine similarity scores of all candidate documents with respect to
         the query document and converts them to a dataframe with a single
@@ -229,7 +229,7 @@ class LanguageModelDataConstructor(ModelDataConstructor):
             .astype(np.float64)
         )
 
-    def extend_info_matrix(self, info_matrix: pd.DataFrame) -> pd.DataFrame:
+    def extend_info_matrix(self, info_matrix: pl.DataFrame) -> pl.DataFrame:
         """
         Adds the cosine similarity scores to the information features about the
         candidate documents.
@@ -238,7 +238,7 @@ class LanguageModelDataConstructor(ModelDataConstructor):
             cosine_similarity=self.get_cosine_similarity_scores(),
         )
 
-    def get_cosine_similarity_ranks(self) -> pd.DataFrame:
+    def get_cosine_similarity_ranks(self) -> pl.DataFrame:
         """
         Computes the cosine similarity ranks of all candidate documents with respect to
         the query document. The output dataframe has a single `cosine_similarity_rank`

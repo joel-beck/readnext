@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-import pandas as pd
+import polars as pl
 
 from readnext.config import DataPaths
 from readnext.evaluation.scoring import FeatureWeights, HybridScorer
@@ -19,43 +19,43 @@ from readnext.modeling.language_models import LanguageModelChoice
 from readnext.utils import (
     get_arxiv_id_from_arxiv_url,
     get_semanticscholar_url_from_semanticscholar_id,
-    load_df_from_pickle,
+    read_df_from_parquet,
 )
 
 
 @dataclass(kw_only=True)
 class Features:
-    publication_date: pd.Series
-    citationcount_document: pd.Series
-    citationcount_author: pd.Series
-    co_citation_analysis: pd.Series
-    bibliographic_coupling: pd.Series
-    cosine_similarity: pd.Series
+    publication_date: pl.Series
+    citationcount_document: pl.Series
+    citationcount_author: pl.Series
+    co_citation_analysis: pl.Series
+    bibliographic_coupling: pl.Series
+    cosine_similarity: pl.Series
     feature_weights: FeatureWeights
 
 
 @dataclass(kw_only=True)
 class Ranks:
-    publication_date: pd.Series
-    citationcount_document: pd.Series
-    citationcount_author: pd.Series
-    co_citation_analysis: pd.Series
-    bibliographic_coupling: pd.Series
-    cosine_similarity: pd.Series
+    publication_date: pl.Series
+    citationcount_document: pl.Series
+    citationcount_author: pl.Series
+    co_citation_analysis: pl.Series
+    bibliographic_coupling: pl.Series
+    cosine_similarity: pl.Series
 
 
 @dataclass(kw_only=True)
 class Labels:
-    arxiv: pd.Series
-    integer: pd.Series
+    arxiv: pl.Series
+    integer: pl.Series
 
 
 @dataclass(kw_only=True)
 class Recommendations:
-    citation_to_language_candidates: pd.DataFrame
-    citation_to_language: pd.DataFrame
-    language_to_citation_candidates: pd.DataFrame
-    language_to_citation: pd.DataFrame
+    citation_to_language_candidates: pl.DataFrame
+    citation_to_language: pl.DataFrame
+    language_to_citation_candidates: pl.DataFrame
+    language_to_citation: pl.DataFrame
 
 
 @dataclass(kw_only=True)
@@ -69,10 +69,10 @@ class InferenceDataConstructor:
 
     attribute_getter: AttributeGetter = field(init=False)
 
-    _documents_data: pd.DataFrame = field(init=False)
-    _co_citation_analysis_scores: pd.DataFrame = field(init=False)
-    _bibliographic_coupling_scores: pd.DataFrame = field(init=False)
-    _cosine_similarities: pd.DataFrame = field(init=False)
+    _documents_data: pl.DataFrame = field(init=False)
+    _co_citation_analysis_scores: pl.DataFrame = field(init=False)
+    _bibliographic_coupling_scores: pl.DataFrame = field(init=False)
+    _cosine_similarities: pl.DataFrame = field(init=False)
     _citation_model_data: CitationModelData = field(init=False)
     _language_model_data: LanguageModelData = field(init=False)
 
@@ -96,10 +96,10 @@ class InferenceDataConstructor:
         self._citation_model_data = self.attribute_getter.get_citation_model_data()
         self._language_model_data = self.attribute_getter.get_language_model_data()
 
-    def get_documents_data(self) -> pd.DataFrame:
+    def get_documents_data(self) -> pl.DataFrame:
         # NOTE: For now the data is limited to the first 1000 documents. This number
         # must match the number of precomputed embeddings, cosine similarities, etc!
-        return load_df_from_pickle(
+        return read_df_from_parquet(
             DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
         ).head(1000)
 

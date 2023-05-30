@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import cast
 
-import pandas as pd
+import polars as pl
 
 from readnext.utils import (
     get_arxiv_id_from_arxiv_url,
@@ -15,22 +15,14 @@ from readnext.utils import (
 class InferenceDataInputConverter:
     """Converts input to `InferenceDataConstructor` from and to D3 document ID."""
 
-    documents_data: pd.DataFrame
+    documents_data: pl.DataFrame
 
     def get_d3_document_id_from_semanticscholar_url(self, semanticscholar_url: str) -> int:
         """Retrieve D3 document id from Semanticscholar url."""
         return (
-            self.documents_data.loc[
-                self.documents_data["semanticscholar_url"] == semanticscholar_url
-            ]
-            # the dataframe index is a pandas Index object of type pd.Int64Dtype() ->
-            # this requires two `.item()` calls to extract the integer element out of
-            # the index
-            # the first `.item()` extracts single element numpy array from pandas Index
-            # -> type: np.int64
-            # the second `.item()` extracts the python integer out of single element
-            # numpy array -> type: int
-            .index.item().item()
+            self.documents_data.filter(pl.col("semanticscholar_url") == semanticscholar_url)
+            .select("document_id")
+            .item()
         )
 
     def get_d3_document_id_from_semanticscholar_id(self, semanticscholar_id: str) -> int:
@@ -42,9 +34,7 @@ class InferenceDataInputConverter:
         """Retrieve D3 document id from Arxiv id."""
 
         return (
-            self.documents_data.loc[self.documents_data["arxiv_id"] == arxiv_id]
-            .index.item()
-            .item()  # see comment above for double `.item()` explanation
+            self.documents_data.filter(pl.col("arxiv_id") == arxiv_id).select("document_id").item()
         )
 
     def get_d3_document_id_from_arxiv_url(self, arxiv_url: str) -> int:
@@ -55,7 +45,12 @@ class InferenceDataInputConverter:
 
     def get_semanticscholar_url_from_d3_document_id(self, d3_document_id: int) -> str:
         """Retrieve Semanticscholar url from D3 document id."""
-        return cast(str, self.documents_data.loc[d3_document_id, "semanticscholar_url"])
+        return cast(
+            str,
+            self.documents_data.filter(pl.col("document_id") == d3_document_id)
+            .select("semanticscholar_url")
+            .item(),
+        )
 
     def get_semanticscholar_id_from_d3_document_id(self, d3_document_id: int) -> str:
         """Retrieve Semanticscholar id from D3 document id."""
@@ -64,7 +59,12 @@ class InferenceDataInputConverter:
 
     def get_arxiv_id_from_d3_document_id(self, d3_document_id: int) -> str:
         """Retrieve Arxiv id from D3 document id."""
-        return cast(str, self.documents_data.loc[d3_document_id, "arxiv_id"])
+        return cast(
+            str,
+            self.documents_data.filter(pl.col("document_id") == d3_document_id)
+            .select("arxiv_id")
+            .item(),
+        )
 
     def get_arxiv_url_from_d3_document_id(self, d3_document_id: int) -> str:
         """Retrieve Arxiv url from D3 document id."""

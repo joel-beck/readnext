@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-import pandas as pd
+import polars as pl
 
 from readnext.data import (
     SemanticscholarRequest,
@@ -125,10 +125,12 @@ class UnseenPaperAttributeGetter(AttributeGetter):
             else []
         )
 
-    def get_co_citation_analysis_scores(self) -> pd.DataFrame:
+    def get_co_citation_analysis_scores(self) -> pl.DataFrame:
         common_citations_scores: list[DocumentScore] = []
 
-        for d3_document_id, candidate_citation_urls in self.documents_data["citations"].items():
+        for d3_document_id, candidate_citation_urls in zip(
+            self.documents_data["document_id"], self.documents_data["citations"]
+        ):
             document_info = DocumentInfo(d3_document_id=d3_document_id.item())  # type: ignore
 
             query_citation_urls = self.get_query_citation_urls()
@@ -139,14 +141,19 @@ class UnseenPaperAttributeGetter(AttributeGetter):
             document_score = DocumentScore(document_info=document_info, score=common_citation_urls)
             common_citations_scores.append(document_score)
 
-        return pd.DataFrame(
-            {"scores": [sort_document_scores(common_citations_scores)]}, index=[-1]
-        ).rename_axis("document_id", axis="index")
+        return pl.DataFrame(
+            {
+                "document_id": [-1],
+                "scores": [sort_document_scores(common_citations_scores)],
+            }
+        )
 
-    def get_bibliographic_coupling_scores(self) -> pd.DataFrame:
+    def get_bibliographic_coupling_scores(self) -> pl.DataFrame:
         common_references_scores: list[DocumentScore] = []
 
-        for d3_document_id, candidate_reference_urls in self.documents_data["references"].items():
+        for d3_document_id, candidate_reference_urls in zip(
+            self.documents_data["document_id"], self.documents_data["references"]
+        ):
             document_info = DocumentInfo(d3_document_id=d3_document_id.item())  # type: ignore
 
             query_reference_urls = self.get_query_reference_urls()
@@ -157,9 +164,12 @@ class UnseenPaperAttributeGetter(AttributeGetter):
             document_score = DocumentScore(document_info=document_info, score=common_references)
             common_references_scores.append(document_score)
 
-        return pd.DataFrame(
-            {"scores": [sort_document_scores(common_references_scores)]}, index=[-1]
-        ).rename_axis("document_id", axis="index")
+        return pl.DataFrame(
+            {
+                "document_id": [-1],
+                "scores": [sort_document_scores(common_references_scores)],
+            }
+        )
 
     def get_citation_model_data(self) -> CitationModelData:
         citation_model_data_constructor = QueryCitationModelDataConstructor(
@@ -184,17 +194,17 @@ class UnseenPaperAttributeGetter(AttributeGetter):
             abstract=self.response.abstract,
         )
 
-    def get_cosine_similarities(self) -> pd.DataFrame:
+    def get_cosine_similarities(self) -> pl.DataFrame:
         query_document_info = self.get_query_document_info()
         query_embedding_function = select_query_embedding_function(self.language_model_choice)
 
         query_embedding = query_embedding_function(query_document_info)
-        candidate_embeddings: pd.DataFrame = load_embeddings_from_choice(self.language_model_choice)
+        candidate_embeddings: pl.DataFrame = load_embeddings_from_choice(self.language_model_choice)
 
         cosine_similarity_scores: list[DocumentScore] = []
 
         for candidate_document_id, candidate_embedding in zip(
-            candidate_embeddings.index, candidate_embeddings["embedding"]
+            candidate_embeddings["document_id"], candidate_embeddings["embedding"]
         ):
             candidate_document_info = DocumentInfo(d3_document_id=candidate_document_id)
             cosine_similarity = CosineSimilarity.score(query_embedding, candidate_embedding)
@@ -204,9 +214,9 @@ class UnseenPaperAttributeGetter(AttributeGetter):
             )
             cosine_similarity_scores.append(document_score)
 
-        return pd.DataFrame(
-            {"scores": [sort_document_scores(cosine_similarity_scores)]}, index=[-1]
-        ).rename_axis("document_id", axis="index")
+        return pl.DataFrame(
+            {"document_id": [-1], "scores": [sort_document_scores(cosine_similarity_scores)]}
+        )
 
     def get_language_model_data(self) -> LanguageModelData:
         language_model_data_constructor = QueryLanguageModelDataConstructor(

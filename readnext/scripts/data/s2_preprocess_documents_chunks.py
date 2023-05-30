@@ -6,10 +6,10 @@ merge arxiv tags as labels by the arxiv id later on.
 
 from pathlib import Path
 
-import pandas as pd
+import polars as pl
 
 from readnext.config import DataPaths
-from readnext.utils import add_rank, load_df_from_pickle, setup_progress_bar, write_df_to_pickle
+from readnext.utils import add_rank, read_df_from_parquet, setup_progress_bar, write_df_to_parquet
 
 
 def flatten_list_of_dicts(list_of_dicts: list[dict], key: str) -> list[str]:
@@ -20,17 +20,17 @@ def remove_duplicates(list_: list[str]) -> list[str]:
     return list(set(list_))
 
 
-def extract_arxiv_id(df: pd.DataFrame) -> pd.Series:
+def extract_arxiv_id(df: pl.DataFrame) -> pl.Series:
     # keep only dictionaries where arxiv id is not None
     return df["externalids"].apply(lambda d: d["ArXiv"])
 
 
-def filter_by_tag(df: pd.DataFrame, tag: str) -> pd.DataFrame:
+def filter_by_tag(df: pl.DataFrame, tag: str) -> pl.DataFrame:
     return df.loc[df["tags"].apply(lambda x: tag in x)]
 
 
 def preprocess_document_chunk(filepath: Path, chunk_index: int) -> None:
-    documents_chunk: pd.DataFrame = load_df_from_pickle(filepath)
+    documents_chunk: pl.DataFrame = read_df_from_parquet(filepath)
 
     documents_ranked = documents_chunk.assign(
         citationcount_rank=add_rank(documents_chunk["citationcount"]),
@@ -58,7 +58,7 @@ def preprocess_document_chunk(filepath: Path, chunk_index: int) -> None:
         arxiv_id=extract_arxiv_id(documents_long_format)
     ).loc[lambda df: df["arxiv_id"].notna()]
 
-    write_df_to_pickle(
+    write_df_to_parquet(
         Path(f"{DataPaths.d3.documents.preprocessed_chunks_stem}_{chunk_index}.pkl"),
         documents_long_format_arxiv,
     )

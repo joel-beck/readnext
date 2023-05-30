@@ -23,15 +23,15 @@ from readnext.utils.convert_id_urls import (
     get_semanticscholar_url_from_semanticscholar_id,
 )
 from readnext.utils.decorators import (
-    dataframe_loader,
+    dataframe_reader,
     dataframe_writer,
-    object_loader,
+    object_reader,
     object_writer,
 )
 from readnext.utils.io import (
-    load_df_from_pickle,
-    load_object_from_pickle,
-    write_df_to_pickle,
+    read_df_from_parquet,
+    read_object_from_pickle,
+    write_df_to_parquet,
     write_object_to_pickle,
 )
 from readnext.utils.logging import suppress_transformers_logging
@@ -68,13 +68,13 @@ __all__ = [
     "get_arxiv_url_from_arxiv_id",
     "get_semanticscholar_id_from_semanticscholar_url",
     "get_semanticscholar_url_from_semanticscholar_id",
-    "dataframe_loader",
+    "dataframe_reader",
     "dataframe_writer",
-    "object_loader",
+    "object_reader",
     "object_writer",
-    "load_df_from_pickle",
-    "load_object_from_pickle",
-    "write_df_to_pickle",
+    "read_df_from_parquet",
+    "read_object_from_pickle",
+    "write_df_to_parquet",
     "write_object_to_pickle",
     "suppress_transformers_logging",
     "add_rank",

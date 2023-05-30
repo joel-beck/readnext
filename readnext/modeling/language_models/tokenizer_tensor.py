@@ -8,7 +8,7 @@ from transformers import BertTokenizerFast, LongformerTokenizerFast
 from readnext.modeling.document_info import DocumentsInfo
 from readnext.modeling.language_models.tokenizer_list import Tokens, TokensMapping
 from readnext.utils import (
-    load_object_from_pickle,
+    read_object_from_pickle,
     write_object_to_pickle,
 )
 from readnext.utils.aliases import TokenIds, TokensIdMapping
@@ -60,7 +60,7 @@ class TensorTokenizer(ABC, Generic[TTorchTokenizer]):
     @staticmethod
     def load_tokens_mapping(path: Path) -> TokensIdMapping:
         """Load a mapping of document ids to token ids from a pickle file."""
-        return load_object_from_pickle(path)  # type: ignore
+        return read_object_from_pickle(path)  # type: ignore
 
 
 @dataclass

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-import pandas as pd
+import polars as pl
 from typing_extensions import Self
 
 from readnext.evaluation.scoring.hybrid_scorer import HybridScorer
@@ -45,9 +45,9 @@ class HybridScore:
             f"Final Score: {self.language_to_citation:.3f}\n"
         )
 
-    def to_frame(self) -> pd.DataFrame:
+    def to_frame(self) -> pl.DataFrame:
         """Collect all scores in a DataFrame."""
-        return pd.DataFrame(
+        return pl.DataFrame(
             {
                 "Language Model": self.language_model_name,
                 "Citation -> Language Candidates": round(
@@ -59,13 +59,12 @@ class HybridScore:
                 ),
                 "Language -> Citation Final": round(self.language_to_citation, ndigits=3),
             },
-            index=[0],
         )
 
 
-def compare_hybrid_scores(*hybrid_scores: HybridScore) -> pd.DataFrame:
+def compare_hybrid_scores(*hybrid_scores: HybridScore) -> pl.DataFrame:
     """
     Stacks the hybrid recommender scores for multiple query documents vertically in a
     DataFrame.
     """
-    return pd.concat([hybrid_score.to_frame() for hybrid_score in hybrid_scores], ignore_index=True)
+    return pl.concat([hybrid_score.to_frame() for hybrid_score in hybrid_scores], ignore_index=True)

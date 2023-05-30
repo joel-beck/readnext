@@ -3,10 +3,10 @@ Combine all chunks from parallel requests for citation information into a single
 dataframe.
 """
 
-import pandas as pd
+import polars as pl
 
 from readnext.config import DataPaths
-from readnext.utils import load_df_from_pickle, setup_progress_bar, write_df_to_pickle
+from readnext.utils import read_df_from_parquet, setup_progress_bar, write_df_to_parquet
 
 
 def main() -> None:
@@ -21,11 +21,11 @@ def main() -> None:
     with setup_progress_bar() as progress_bar:
         for filepath in progress_bar.track(matching_files, total=len(matching_files)):
             print(f"Reading File {filepath.name}")
-            df_chunk = load_df_from_pickle(filepath)
+            df_chunk = read_df_from_parquet(filepath)
             df_list.append(df_chunk)
 
     print("\nConcatenating Dataframes...")
-    df_combined = pd.concat(df_list)
+    df_combined = pl.concat(df_list)
 
     # find all rows with empty lists in the citations or references columns
     # could be potential data quality issues
@@ -34,7 +34,7 @@ def main() -> None:
     #     (df_combined["citations"].apply(len) == 0) | (df_combined["references"].apply(len) == 0)
     # ]
 
-    write_df_to_pickle(df_combined, path_documents_authors_labels_citations)
+    write_df_to_parquet(df_combined, path_documents_authors_labels_citations)
 
 
 if __name__ == "__main__":

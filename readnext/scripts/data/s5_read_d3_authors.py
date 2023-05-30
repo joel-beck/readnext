@@ -4,13 +4,13 @@ https://zenodo.org/record/7071698#.ZA7jbC8w2Lc. This project uses version 2.1, p
 on 2022-11-25.
 """
 
-import pandas as pd
+import polars as pl
 
 from readnext.config import DataPaths
 
 
 def main() -> None:
-    authors: pd.DataFrame = pd.read_json(DataPaths.d3.authors.raw_json, lines=True).convert_dtypes()
+    authors: pl.DataFrame = pl.read_json(DataPaths.d3.authors.raw_json, lines=True).convert_dtypes()
 
     authors_most_cited = authors.sort_values(by="citationcount", ascending=False).iloc[:100_000]
 

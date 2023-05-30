@@ -3,14 +3,14 @@ Filter a subset of the most cited documents from the full documents data and sto
 a separate file.
 """
 
-import pandas as pd
+import polars as pl
 
 from readnext.config import DataPaths
-from readnext.utils import load_df_from_pickle, write_df_to_pickle
+from readnext.utils import read_df_from_parquet, write_df_to_parquet
 
 
 def main() -> None:
-    documents_authors_labels_references: pd.DataFrame = load_df_from_pickle(
+    documents_authors_labels_references: pl.DataFrame = read_df_from_parquet(
         DataPaths.merged.documents_authors_labels_citations_pkl
     )
 
@@ -22,7 +22,7 @@ def main() -> None:
         .set_index("document_id")
     )
 
-    write_df_to_pickle(
+    write_df_to_parquet(
         documents_authors_labels_citations_most_cited,
         DataPaths.merged.documents_authors_labels_citations_most_cited_pkl,
     )

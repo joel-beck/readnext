@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 import pytest
 from pandas.api.types import is_integer_dtype, is_string_dtype
 from pytest_lazyfixture import lazy_fixture
@@ -26,46 +26,32 @@ documents_data_fixtures_slow_skip_ci = [
         ],
     ],
 )
-def test_index(
-    documents_data: pd.DataFrame,
+def test_column_names(
+    documents_data: pl.DataFrame,
 ) -> None:
-    assert documents_data.index.name == "document_id"
-    assert documents_data.index.is_unique
-    assert documents_data.index.dtype == pd.Int64Dtype()
-
-
-@pytest.mark.parametrize(
-    "documents_data",
-    [
-        *[
-            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.skip_ci))
-            for fixture in documents_data_fixtures_skip_ci
-        ],
-        *[
-            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
-            for fixture in documents_data_fixtures_slow_skip_ci
-        ],
-    ],
-)
-def test_contains_columns_subset(
-    documents_data: pd.DataFrame,
-) -> None:
-    columns_subset = [
+    columns = [
+        "document_id",
         "author_id",
         "title",
         "author",
         "publication_date",
-        "publication_year",
+        "publication_date_rank",
         "citationcount_document",
+        "citationcount_document_rank",
         "citationcount_author",
+        "citationcount_author_rank",
+        "citations",
+        "references",
         "abstract",
-        "arxiv_id",
-        "arxiv_labels",
+        "semanticscholar_id",
         "semanticscholar_url",
         "semanticscholar_tags",
+        "arxiv_id",
+        "arxiv_url",
+        "arxiv_labels",
     ]
 
-    assert set(columns_subset).issubset(set(documents_data.columns))
+    assert documents_data.columns == columns
 
 
 @pytest.mark.parametrize(
@@ -82,7 +68,7 @@ def test_contains_columns_subset(
     ],
 )
 def test_dtypes(
-    documents_data: pd.DataFrame,
+    documents_data: pl.DataFrame,
 ) -> None:
     is_integer_dtype(documents_data.index)
     is_integer_dtype(documents_data["author_id"])
@@ -111,7 +97,7 @@ def test_dtypes(
     ],
 )
 def test_arxiv_labels(
-    documents_data: pd.DataFrame,
+    documents_data: pl.DataFrame,
 ) -> None:
     arxiv_labels = documents_data["arxiv_labels"]
     first_observation = arxiv_labels.iloc[0]
@@ -131,7 +117,7 @@ def test_arxiv_labels(
     ],
 )
 def test_arxiv_labels_full_documents_data(
-    documents_data: pd.DataFrame,
+    documents_data: pl.DataFrame,
 ) -> None:
     arxiv_labels = documents_data["arxiv_labels"]
     # `col.sum()` for a dataframe column containing lists returns a set of all unique
@@ -151,7 +137,7 @@ def test_arxiv_labels_full_documents_data(
     ],
 )
 def test_arxiv_labels_subset_documents_data(
-    documents_data: pd.DataFrame,
+    documents_data: pl.DataFrame,
 ) -> None:
     arxiv_labels = documents_data["arxiv_labels"]
     # `col.sum()` for a dataframe column containing lists returns a set of all unique
@@ -177,7 +163,7 @@ def test_arxiv_labels_subset_documents_data(
     ],
 )
 def test_semanticscholar_tags(
-    documents_data: pd.DataFrame,
+    documents_data: pl.DataFrame,
 ) -> None:
     semanticscholar_tags = documents_data["semanticscholar_tags"]
     first_observation = semanticscholar_tags.iloc[0]
@@ -197,7 +183,7 @@ def test_semanticscholar_tags(
     ],
 )
 def test_semanticscholar_tags_full_documents_data(
-    documents_data: pd.DataFrame,
+    documents_data: pl.DataFrame,
 ) -> None:
     semanticscholar_tags = documents_data["semanticscholar_tags"]
 
@@ -214,7 +200,7 @@ def test_semanticscholar_tags_full_documents_data(
     ],
 )
 def test_semanticscholar_tags_subset_documents_data(
-    documents_data: pd.DataFrame,
+    documents_data: pl.DataFrame,
 ) -> None:
     semanticscholar_tags = documents_data["semanticscholar_tags"]
 

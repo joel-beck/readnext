@@ -8,10 +8,8 @@ from readnext.utils import read_df_from_parquet, read_object_from_pickle
 
 # SECTION: Local Data
 @pytest.fixture(scope="session")
-def documents_authors_labels_citations_most_cited() -> pl.DataFrame:
-    return read_df_from_parquet(
-        DataPaths.merged.documents_authors_labels_citations_most_cited_parquet
-    )
+def documents_data() -> pl.DataFrame:
+    return read_df_from_parquet(DataPaths.merged.documents_data_parquet)
 
 
 @pytest.fixture(scope="session")

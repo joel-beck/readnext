@@ -92,6 +92,7 @@ class MergedDataPaths:
         data_dirpath / "documents_authors_labels_citations_most_cited.parquet"
     )
     most_cited_subset_size: int = 10_000
+    documents_data_parquet: Path = data_dirpath / "documents_data.parquet"
 
 
 @dataclass(frozen=True)

@@ -104,7 +104,9 @@ class CosineSimilarity(PairwiseMetric):
     def score(vec_1: Vector, vec_2: Vector) -> float:
         """Compute the cosine similarity between two one-dimensional sequences"""
         PairwiseMetric.check_equal_dimensions(vec_1, vec_2)
-        return np.dot(vec_1, vec_2) / (np.linalg.norm(vec_1) * np.linalg.norm(vec_2))  # type: ignore # noqa: E501
+        cosine_similarity = np.dot(vec_1, vec_2) / (np.linalg.norm(vec_1) * np.linalg.norm(vec_2))
+
+        return float(cosine_similarity)
 
     @staticmethod
     def from_df(df: pl.DataFrame, document_id_1: int, document_id_2: int) -> float:

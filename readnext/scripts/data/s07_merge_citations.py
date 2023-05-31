@@ -54,16 +54,18 @@ def main() -> None:
     SUBSET_END = SUBSET_START + SUBSET_SIZE if USE_SUBSET else len(documents_authors_labels)
 
     if USE_SUBSET:
-        documents_authors_labels = documents_authors_labels.iloc[SUBSET_START:SUBSET_END]
+        documents_authors_labels = documents_authors_labels.slice(
+            offset=SUBSET_START, length=SUBSET_SIZE
+        )
 
     semanticscholar_request = SemanticscholarRequest()
 
-    documents_authors_labels_citations = documents_authors_labels.assign(
-        semanticscholar_request=lambda df: df["semanticscholar_url"].progress_apply(
+    documents_authors_labels_citations = documents_authors_labels.with_columns(
+        semanticscholar_request=pl.col("semanticscholar_url").apply(
             semanticscholar_request.from_semanticscholar_url
         ),
-        citations=lambda df: df["semanticscholar_request"].apply(get_paper_citations),
-        references=lambda df: df["semanticscholar_request"].apply(get_paper_references),
+        citations=pl.col("semanticscholar_request").apply(get_paper_citations),
+        references=pl.col("semanticscholar_request").apply(get_paper_references),
     ).drop(columns=["semanticscholar_request"])
 
     # subtract one from subset end since upper bound of slice is exclusive

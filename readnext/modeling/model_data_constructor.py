@@ -160,9 +160,11 @@ class CitationModelDataConstructor(ModelDataConstructor):
         converts them to a dataframe with a single `score` column and the document ids
         as index.
         """
-        document_scores: list[DocumentScore] = citation_method_data.filter(
-            pl.col("document_id") == self.d3_document_id
-        ).item()
+        document_scores: list[DocumentScore] = (
+            citation_method_data.filter(pl.col("document_id") == self.d3_document_id)
+            .select("scores")
+            .item()
+        )
 
         return self.document_scores_to_frame(document_scores)
 
@@ -230,9 +232,11 @@ class LanguageModelDataConstructor(ModelDataConstructor):
         """
         # output dataframe has length of original full data in tests, even though the
         # test_cosine_similarities data itself only contains 100 rows
-        document_scores: list[DocumentScore] = self.cosine_similarities.filter(
-            pl.col("document_id") == self.d3_document_id
-        ).item()
+        document_scores: list[DocumentScore] = (
+            self.cosine_similarities.filter(pl.col("document_id") == self.d3_document_id)
+            .select("scores")
+            .item()
+        )
 
         return self.document_scores_to_frame(document_scores)
 

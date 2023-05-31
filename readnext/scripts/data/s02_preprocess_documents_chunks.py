@@ -26,41 +26,40 @@ def extract_arxiv_id(df: pl.DataFrame) -> pl.Series:
 
 
 def filter_by_tag(df: pl.DataFrame, tag: str) -> pl.DataFrame:
-    return df.loc[df["tags"].apply(lambda x: tag in x)]
+    return df.filter(pl.col("tags").apply(lambda x: tag in x))
 
 
 def preprocess_document_chunk(filepath: Path, chunk_index: int) -> None:
     documents_chunk: pl.DataFrame = read_df_from_parquet(filepath)
 
-    documents_ranked = documents_chunk.assign(
+    documents_ranked = documents_chunk.with_columns(
         citationcount_rank=add_rank(documents_chunk["citationcount"]),
         influentialcitationcount_rank=add_rank(documents_chunk["influentialcitationcount"]),
     )
 
     documents_long_format = (
-        documents_ranked.assign(
-            author_id=lambda df: df["authors"].apply(
-                lambda x: flatten_list_of_dicts(x, "authorId")
-            ),
-            author_name=lambda df: df["authors"].apply(lambda x: flatten_list_of_dicts(x, "name")),
-            tags=lambda df: df["s2fieldsofstudy"]
+        documents_ranked.with_columns(
+            author_id=pl.col("authors").apply(lambda x: flatten_list_of_dicts(x, "authorId")),
+            author_name=pl.col("authors").apply(lambda x: flatten_list_of_dicts(x, "name")),
+            tags=pl.col("s2fieldsofstudy")
             .apply(lambda x: flatten_list_of_dicts(x, "category"))
             .apply(remove_duplicates),
         )
         .explode(["author_id", "author_name"])
-        .dropna(subset=["author_id", "author_name"])
-        .astype({"author_id": "int"})
-        .convert_dtypes()
+        .drop_nulls(subset=["author_id", "author_name"])
+        .with_columns(
+            author_id=pl.col("author_id").cast(pl.Int64),
+        )
         .pipe(filter_by_tag, tag="Computer Science")
     )
 
-    documents_long_format_arxiv = documents_long_format.assign(
+    documents_long_format_arxiv = documents_long_format.with_columns(
         arxiv_id=extract_arxiv_id(documents_long_format)
-    ).loc[lambda df: df["arxiv_id"].notna()]
+    ).filter(pl.col("arxiv_id").is_not_null())
 
     write_df_to_parquet(
-        Path(f"{DataPaths.d3.documents.preprocessed_chunks_stem}_{chunk_index}.pkl"),
         documents_long_format_arxiv,
+        Path(f"{DataPaths.d3.documents.preprocessed_chunks_stem}_{chunk_index}.pkl"),
     )
 
 

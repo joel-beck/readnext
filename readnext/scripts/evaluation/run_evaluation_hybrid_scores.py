@@ -6,10 +6,6 @@ both hybrid recommender component orders for a given query document.
 import polars as pl
 
 from readnext.config import DataPaths, ResultsPaths
-from readnext.data import (
-    add_citation_feature_rank_cols,
-    set_missing_publication_dates_to_max_rank,
-)
 from readnext.evaluation.metrics import AveragePrecision
 from readnext.evaluation.scoring import HybridScore, HybridScorer, compare_hybrid_scores
 from readnext.modeling import (
@@ -30,9 +26,7 @@ def compare_hybrid_scores_by_document_id(
     # SECTION: Citation Models
     citation_model_data_constructor = CitationModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data.pipe(add_citation_feature_rank_cols).pipe(
-            set_missing_publication_dates_to_max_rank
-        ),
+        documents_data=documents_data,
         co_citation_analysis_scores=co_citation_analysis_scores,
         bibliographic_coupling_scores=bibliographic_coupling_scores,
     )
@@ -251,13 +245,9 @@ def compare_hybrid_scores_by_document_id(
 
 
 def main() -> None:
-    documents_authors_labels_citations_most_cited: pl.DataFrame = read_df_from_parquet(
-        DataPaths.merged.documents_authors_labels_citations_most_cited_parquet
-    )
+    documents_data: pl.DataFrame = read_df_from_parquet(DataPaths.merged.documents_data_parquet)
     # NOTE: Remove to evaluate on full data
-    documents_authors_labels_citations_most_cited = (
-        documents_authors_labels_citations_most_cited.head(1000)
-    )
+    documents_data = documents_data.head(1000)
 
     bibliographic_coupling_scores_most_cited: pl.DataFrame = read_scores_frame_from_parquet(
         ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_parquet
@@ -272,13 +262,11 @@ def main() -> None:
         [
             compare_hybrid_scores_by_document_id(
                 query_d3_document_id,
-                documents_authors_labels_citations_most_cited,
+                documents_data,
                 co_citation_analysis_scores_most_cited,
                 bibliographic_coupling_scores_most_cited,
             )
-            for query_d3_document_id in documents_authors_labels_citations_most_cited[
-                "document_id"
-            ].head(5)
+            for query_d3_document_id in documents_data["document_id"].head(5)
         ]
     )
 
@@ -288,9 +276,9 @@ def main() -> None:
     ).max(axis=1)
 
     # filter best language model for each query document id
-    average_precision_scores.sort(by="Best Score", descending=True).drop_duplicates(
+    average_precision_scores.sort(by="Best Score", descending=True).unique(
         subset="Query Document ID"
-    ).reset_index(drop=True)
+    )
 
 
 if __name__ == "__main__":

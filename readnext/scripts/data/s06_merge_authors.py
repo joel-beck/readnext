@@ -10,7 +10,7 @@ from readnext.utils import add_rank, read_df_from_parquet, write_df_to_parquet
 
 
 def add_author_ranks(authors: pl.DataFrame) -> pl.DataFrame:
-    return authors.assign(
+    return authors.with_columns(
         citationcount_rank=add_rank(authors["citationcount"]),
         hindex_rank=add_rank(authors["hindex"]),
         papercount_rank=add_rank(authors["papercount"]),
@@ -25,21 +25,21 @@ def select_most_popular_author(
     keep first row. Then sort the unique documents again by document citation count.
     """
     return (
-        df.sort_values(["document_id", author_popularity_metric], ascending=False)
-        .drop_duplicates(subset=["document_id"], keep="first")
-        .sort_values("citationcount_document", ascending=False)
+        df.sort(["document_id", author_popularity_metric], descending=True)
+        .unique(subset=["document_id"], keep="first")
+        .sort("citationcount_document", descending=True)
     )
 
 
 def remove_incomplete_data(df: pl.DataFrame) -> pl.DataFrame:
-    return df.dropna(
+    return df.drop_nulls(
         subset=["publication_year", "citationcount_document", "citationcount_author", "abstract"]
     )
 
 
 def main() -> None:
     documents_labels: pl.DataFrame = read_df_from_parquet(DataPaths.merged.documents_labels_pkl)
-    authors: pl.DataFrame = read_df_from_parquet(DataPaths.d3.authors.full_pkl)
+    authors: pl.DataFrame = read_df_from_parquet(DataPaths.d3.authors.full_parquet)
 
     output_columns = [
         "document_id",
@@ -70,14 +70,16 @@ def main() -> None:
     authors_ranked = add_author_ranks(authors)
 
     documents_authors_labels_long = (
-        documents_labels.merge(
+        documents_labels.join(
             authors_ranked,
+            how="left",
             left_on="author_id",
             right_on="authorid",
-            suffixes=("_document", "_author"),
+            # TODO: How to assign different suffixes to left and right dataframe?
+            suffix=("_document", "_author"),
         )
         .rename(
-            columns={
+            {
                 "corpusid": "document_id",
                 "author_name": "author",
                 "aliases": "author_aliases",
@@ -96,7 +98,7 @@ def main() -> None:
                 "tags": "semanticscholar_tags",
             }
         )
-        .loc[:, output_columns]
+        .select(output_columns)
     )
 
     # select one row per document with most cited author and consider only complete document

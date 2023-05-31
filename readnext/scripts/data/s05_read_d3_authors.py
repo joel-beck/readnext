@@ -7,15 +7,16 @@ on 2022-11-25.
 import polars as pl
 
 from readnext.config import DataPaths
+from readnext.utils import write_df_to_parquet
 
 
 def main() -> None:
     authors: pl.DataFrame = pl.read_json(DataPaths.d3.authors.raw_json, lines=True).convert_dtypes()
 
-    authors_most_cited = authors.sort_values(by="citationcount", ascending=False).iloc[:100_000]
+    authors_most_cited = authors.sort(by="citationcount", descending=True).head(100_000)
 
-    authors_most_cited.to_pickle(DataPaths.d3.authors.most_cited_pkl)
-    authors.to_pickle(DataPaths.d3.authors.full_pkl)
+    write_df_to_parquet(authors_most_cited, DataPaths.d3.authors.most_cited_parquet)
+    write_df_to_parquet(authors, DataPaths.d3.authors.full_parquet)
 
 
 if __name__ == "__main__":

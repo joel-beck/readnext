@@ -9,7 +9,7 @@ from transformers import BertTokenizerFast
 
 from readnext.config import DataPaths, ModelVersions
 from readnext.modeling import documents_info_from_df
-from readnext.utils import read_df_from_parquet, suppress_transformers_logging
+from readnext.utils import read_df_from_parquet, setup_progress_bar, suppress_transformers_logging
 
 
 def main() -> None:
@@ -24,11 +24,16 @@ def main() -> None:
 
     token_ids_lengths = []
 
-    for abstract in documents_info.abstracts:
-        token_ids = bert_tokenizer_transformers(
-            abstract, max_length=None, truncation=False, padding=True
-        )["input_ids"]
-        token_ids_lengths.append(len(token_ids))
+    with setup_progress_bar() as progress_bar:
+        for abstract in progress_bar.track(
+            documents_info.abstracts,
+            total=len(documents_info.abstracts),
+            description="Tokenizing...",
+        ):
+            token_ids = bert_tokenizer_transformers(
+                abstract, max_length=None, truncation=False, padding=False
+            )["input_ids"]
+            token_ids_lengths.append(len(token_ids))
 
     fraction_abstracts_above_max_length = np.mean(np.array(token_ids_lengths) > 512)
 

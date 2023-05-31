@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import cast
 
-import numpy as np
 import polars as pl
 
 from readnext.modeling.document_info import DocumentInfo, DocumentScore

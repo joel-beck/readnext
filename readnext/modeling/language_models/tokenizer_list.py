@@ -4,7 +4,6 @@ from pathlib import Path
 
 from spacy.language import Language
 from spacy.tokens.doc import Doc
-import pandas as pd
 
 from readnext.modeling.document_info import DocumentsInfo
 from readnext.utils import (

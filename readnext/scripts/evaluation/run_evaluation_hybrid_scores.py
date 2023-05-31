@@ -18,7 +18,7 @@ from readnext.modeling import (
     LanguageModelData,
     LanguageModelDataConstructor,
 )
-from readnext.utils import read_df_from_parquet
+from readnext.utils import read_df_from_parquet, read_scores_frame_from_parquet
 
 
 def compare_hybrid_scores_by_document_id(
@@ -41,7 +41,7 @@ def compare_hybrid_scores_by_document_id(
     # SECTION: Language Models
     # SUBSECTION: TF-IDF
 
-    tfidf_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
+    tfidf_cosine_similarities_most_cited: pl.DataFrame = read_scores_frame_from_parquet(
         ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_parquet
     )
     tfidf_data_constructor = LanguageModelDataConstructor(
@@ -52,7 +52,7 @@ def compare_hybrid_scores_by_document_id(
     tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
 
     # SUBSECTION: BM25
-    bm25_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
+    bm25_cosine_similarities_most_cited: pl.DataFrame = read_scores_frame_from_parquet(
         ResultsPaths.language_models.bm25_cosine_similarities_most_cited_parquet
     )
     bm25_data_constructor = LanguageModelDataConstructor(
@@ -63,7 +63,7 @@ def compare_hybrid_scores_by_document_id(
     bm25_data = LanguageModelData.from_constructor(bm25_data_constructor)
 
     # SUBSECTION: Word2Vec
-    word2vec_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
+    word2vec_cosine_similarities_most_cited: pl.DataFrame = read_scores_frame_from_parquet(
         ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_parquet
     )
     word2vec_data_constructor = LanguageModelDataConstructor(
@@ -74,7 +74,7 @@ def compare_hybrid_scores_by_document_id(
     word2vec_data = LanguageModelData.from_constructor(word2vec_data_constructor)
 
     # SUBSECTION: GloVe
-    glove_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
+    glove_cosine_similarities_most_cited: pl.DataFrame = read_scores_frame_from_parquet(
         ResultsPaths.language_models.glove_cosine_similarities_most_cited_parquet
     )
     glove_data_constructor = LanguageModelDataConstructor(
@@ -85,7 +85,7 @@ def compare_hybrid_scores_by_document_id(
     glove_data = LanguageModelData.from_constructor(glove_data_constructor)
 
     # SUBSECTION: FastText
-    fasttext_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
+    fasttext_cosine_similarities_most_cited: pl.DataFrame = read_scores_frame_from_parquet(
         ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_parquet
     )
     fasttext_data_constructor = LanguageModelDataConstructor(
@@ -96,7 +96,7 @@ def compare_hybrid_scores_by_document_id(
     fasttext_data = LanguageModelData.from_constructor(fasttext_data_constructor)
 
     # SUBSECTION: BERT
-    bert_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
+    bert_cosine_similarities_most_cited: pl.DataFrame = read_scores_frame_from_parquet(
         ResultsPaths.language_models.bert_cosine_similarities_most_cited_parquet
     )
     bert_data_constructor = LanguageModelDataConstructor(
@@ -107,7 +107,7 @@ def compare_hybrid_scores_by_document_id(
     bert_data = LanguageModelData.from_constructor(bert_data_constructor)
 
     # SUBSECTION: SciBERT
-    scibert_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
+    scibert_cosine_similarities_most_cited: pl.DataFrame = read_scores_frame_from_parquet(
         ResultsPaths.language_models.scibert_cosine_similarities_most_cited_parquet
     )
     scibert_data_constructor = LanguageModelDataConstructor(
@@ -118,7 +118,7 @@ def compare_hybrid_scores_by_document_id(
     scibert_data = LanguageModelData.from_constructor(scibert_data_constructor)
 
     # SUBSECTION: Longformer
-    longformer_cosine_similarities_most_cited: pl.DataFrame = read_df_from_parquet(
+    longformer_cosine_similarities_most_cited: pl.DataFrame = read_scores_frame_from_parquet(
         ResultsPaths.language_models.longformer_cosine_similarities_most_cited_parquet
     )
     longformer_data_constructor = LanguageModelDataConstructor(
@@ -259,11 +259,11 @@ def main() -> None:
         documents_authors_labels_citations_most_cited.head(1000)
     )
 
-    bibliographic_coupling_scores_most_cited: pl.DataFrame = read_df_from_parquet(
+    bibliographic_coupling_scores_most_cited: pl.DataFrame = read_scores_frame_from_parquet(
         ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_parquet
     )
 
-    co_citation_analysis_scores_most_cited: pl.DataFrame = read_df_from_parquet(
+    co_citation_analysis_scores_most_cited: pl.DataFrame = read_scores_frame_from_parquet(
         ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_parquet
     )
 

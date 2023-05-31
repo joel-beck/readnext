@@ -112,7 +112,11 @@ class CosineSimilarity(PairwiseMetric):
         Compute the cosine similarity between two document embeddings that are extracted
         from a DataFrame.
         """
-        row_embedding: EmbeddingVector = df.filter(pl.col("document_id") == document_id_1).item()
-        col_embedding: EmbeddingVector = df.filter(pl.col("document_id") == document_id_2).item()
+        row_embedding: EmbeddingVector = (
+            df.filter(pl.col("document_id") == document_id_1).select("embedding").item()
+        )
+        col_embedding: EmbeddingVector = (
+            df.filter(pl.col("document_id") == document_id_2).select("embedding").item()
+        )
 
         return CosineSimilarity.score(row_embedding, col_embedding)

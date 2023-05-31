@@ -6,13 +6,12 @@ folder to use for testing.
 from dataclasses import fields, is_dataclass
 from pathlib import Path
 
-import pandas as pd
-
 from readnext.config import DataPaths, ResultsPaths
 from readnext.utils import (
-    load_df_from_pickle,
+    read_df_from_parquet,
+    read_object_from_pickle,
     slice_mapping,
-    write_df_to_pickle,
+    write_df_to_parquet,
     write_object_to_pickle,
 )
 
@@ -43,7 +42,7 @@ def main() -> None:
     test_data_dirpath = Path(__file__).parent / "data"
 
     documents_data_most_cited_path = (
-        DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
+        DataPaths.merged.documents_authors_labels_citations_most_cited_parquet
     )
     results_paths = get_all_paths_from_dataclass(ResultsPaths)
 
@@ -51,19 +50,19 @@ def main() -> None:
 
     for path in all_paths:
         destination_path = test_data_dirpath / f"test_{path.name}"
+        file_extension = destination_path.suffix
 
-        # consider only pickle files
-        if destination_path.suffix != ".pkl":
-            continue
-
-        obj = load_df_from_pickle(path)
-
-        if isinstance(obj, pd.DataFrame):
-            write_df_to_pickle(obj.head(TEST_DATA_SIZE), destination_path)
-            continue
-
-        if isinstance(obj, dict):
-            write_object_to_pickle(slice_mapping(obj, size=TEST_DATA_SIZE), destination_path)
+        match file_extension:
+            case ".parquet":
+                df = read_df_from_parquet(path)
+                write_df_to_parquet(df.head(TEST_DATA_SIZE), destination_path)
+            case ".pkl":
+                mapping = read_object_from_pickle(path)
+                write_object_to_pickle(
+                    slice_mapping(mapping, size=TEST_DATA_SIZE), destination_path
+                )
+            case _:
+                continue
 
 
 if __name__ == "__main__":

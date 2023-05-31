@@ -4,7 +4,7 @@ Precompute and store co-citation scores for all documents in a dataframe.
 
 from readnext.config import DataPaths, ResultsPaths
 from readnext.evaluation.scoring import precompute_co_citations
-from readnext.utils import read_df_from_parquet, write_df_to_parquet
+from readnext.utils import read_df_from_parquet, write_scores_frame_to_parquet
 
 
 def main() -> None:
@@ -20,7 +20,7 @@ def main() -> None:
         documents_authors_labels_citations_most_cited
     )
 
-    write_df_to_parquet(
+    write_scores_frame_to_parquet(
         co_citation_analysis_scores_most_cited,
         ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_parquet,
     )

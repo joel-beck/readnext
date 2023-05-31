@@ -7,7 +7,12 @@ and author citation count).
 import polars as pl
 
 from readnext.config import DataPaths
-from readnext.utils import write_df_to_parquet, read_df_from_parquet
+from readnext.utils import (
+    write_df_to_parquet,
+    read_df_from_parquet,
+    get_arxiv_url_from_arxiv_id,
+    get_semanticscholar_id_from_semanticscholar_url,
+)
 
 
 def year_to_first_day_of_year(year: int) -> str:
@@ -33,7 +38,7 @@ def fill_missing_publication_dates_with_year(df: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def add_citation_feature_rank_cols(df: pl.DataFrame) -> pl.DataFrame:
+def add_citation_feature_rank_columns(df: pl.DataFrame) -> pl.DataFrame:
     """
     Add rank columns for publication date, document citation count, and author citation
     count to the dataframe.
@@ -46,6 +51,18 @@ def add_citation_feature_rank_cols(df: pl.DataFrame) -> pl.DataFrame:
         citationcount_author_rank=pl.col("citationcount_author").rank(
             descending=True, method="average"
         ),
+    )
+
+
+def add_identifier_columns(df: pl.DataFrame) -> pl.DataFrame:
+    """
+    Add Semanticscholar ID and Arxiv URL as additional identifiers for each document.
+    """
+    return df.with_columns(
+        semanticscholar_id=pl.col("semanticscholar_url").apply(
+            get_semanticscholar_id_from_semanticscholar_url
+        ),
+        arxiv_url=pl.col("arxiv_id").apply(get_arxiv_url_from_arxiv_id),
     )
 
 
@@ -65,18 +82,21 @@ def main() -> None:
         "citationcount_document_rank",
         "citationcount_author",
         "citationcount_author_rank",
-        "abstract",
-        "arxiv_id",
-        "arxiv_labels",
-        "semanticscholar_url",
-        "semanticscholar_tags",
         "citations",
         "references",
+        "abstract",
+        "semanticscholar_id",
+        "semanticscholar_url",
+        "semanticscholar_tags",
+        "arxiv_id",
+        "arxiv_url",
+        "arxiv_labels",
     ]
 
     documents_data = (
         documents_authors_labels_citations_most_cited.pipe(fill_missing_publication_dates_with_year)
-        .pipe(add_citation_feature_rank_cols)
+        .pipe(add_citation_feature_rank_columns)
+        .pipe(add_identifier_columns)
         .select(output_columns)
     )
 

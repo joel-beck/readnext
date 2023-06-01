@@ -47,7 +47,7 @@ def test_get_citation_method_scores(
     model_data_constructor: CitationModelDataConstructor,
 ) -> None:
     citation_method_data = model_data_constructor.co_citation_analysis_scores
-    scores_df = model_data_constructor.get_citation_method_scores(citation_method_data)
+    scores_df = model_data_constructor.get_query_scores(citation_method_data)
 
     assert isinstance(scores_df, pd.DataFrame)
     assert scores_df.shape[1] == 1

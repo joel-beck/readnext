@@ -106,12 +106,26 @@ class DocumentScore:
     def to_dict(self) -> DocumentScoreDict:
         return {"document_info": self.document_info.to_dict(), "score": self.score}
 
+    def to_frame(self) -> pl.DataFrame:
+        return pl.DataFrame(
+            {"d3_document_id": self.document_info.d3_document_id, "score": self.score}
+        )
+
     def serialize(self) -> str:
         return json.dumps(self.to_dict())
 
     @classmethod
     def deserialize(cls, serialized: str) -> Self:
         return dacite.from_dict(cls, json.loads(serialized))
+
+
+def document_scores_to_frame(document_scores: list[DocumentScore]) -> pl.DataFrame:
+    """
+    Convert the scores of all candidate documents to a dataframe. The output dataframe
+    has six columns: `d3_document_id`, `title`, `author`, `arxiv_labels`, `abstract` and
+    `score`
+    """
+    return pl.concat([document_score.to_frame() for document_score in document_scores])
 
 
 def documents_info_from_df(df: pl.DataFrame) -> DocumentsInfo:

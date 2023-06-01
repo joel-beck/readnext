@@ -5,6 +5,8 @@ model or a single Language Model for a single query document.
 
 import polars as pl
 
+from readnext.modeling.document_info import DocumentInfo, DocumentScore, document_scores_to_frame
+
 from readnext.config import DataPaths, ResultsPaths
 from readnext.evaluation.metrics import AveragePrecision
 from readnext.evaluation.scoring import CitationModelScorer, FeatureWeights, LanguageModelScorer

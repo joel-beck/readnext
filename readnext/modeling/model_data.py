@@ -25,7 +25,7 @@ class ModelData(ABC, Generic[TModelDataConstructor]):
 
     query_document: DocumentInfo
     info_matrix: pl.DataFrame
-    integer_labels: pl.Series
+    integer_labels: pl.DataFrame
 
     @classmethod
     @abstractmethod
@@ -62,9 +62,9 @@ class CitationModelData(ModelData):
     def __getitem__(self, indices: list[int]) -> Self:
         return self.__class__(
             self.query_document,
-            self.info_matrix.filter(pl.col("document_id").is_in(indices)),
-            self.integer_labels.filter(pl.col("document_id").is_in(indices)),
-            self.feature_matrix.filter(pl.col("document_id").is_in(indices)),
+            self.info_matrix.filter(pl.col("d3_document_id").is_in(indices)),
+            self.integer_labels.filter(pl.col("d3_document_id").is_in(indices)),
+            self.feature_matrix.filter(pl.col("d3_document_id").is_in(indices)),
         )
 
     def __repr__(self) -> str:
@@ -82,7 +82,7 @@ class CitationModelData(ModelData):
 
         integer_labels_repr = (
             f"integer_labels=[pl.Series, shape={self.integer_labels.shape}, "
-            f"name={self.integer_labels.name}]"
+            f"columns={self.integer_labels.columns}]"
         )
 
         return (
@@ -140,7 +140,7 @@ class LanguageModelData(ModelData):
 
         integer_labels_repr = (
             f"integer_labels=[pl.Series, shape={self.integer_labels.shape}, "
-            f"name={self.integer_labels.name}]"
+            f"columns={self.integer_labels.columns}]"
         )
 
         return (

@@ -66,14 +66,21 @@ def add_identifier_columns(df: pl.DataFrame) -> pl.DataFrame:
     )
 
 
+def rename_d3_identifiers(df: pl.DataFrame) -> pl.DataFrame:
+    """
+    Add `d3` prefix to document and author id within the D3 dataset.
+    """
+    return df.rename({"document_id": "d3_document_id", "author_id": "d3_author_id"})
+
+
 def main() -> None:
     documents_authors_labels_citations_most_cited: pl.DataFrame = read_df_from_parquet(
         DataPaths.merged.documents_authors_labels_citations_most_cited_parquet
     )
 
     output_columns = [
-        "document_id",
-        "author_id",
+        "d3_document_id",
+        "d3_author_id",
         "title",
         "author",
         "publication_date",
@@ -97,6 +104,7 @@ def main() -> None:
         documents_authors_labels_citations_most_cited.pipe(fill_missing_publication_dates_with_year)
         .pipe(add_citation_feature_rank_columns)
         .pipe(add_identifier_columns)
+        .pipe(rename_d3_identifiers)
         .select(output_columns)
     )
 

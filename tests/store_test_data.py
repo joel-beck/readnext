@@ -51,6 +51,8 @@ def main() -> None:
         file_extension = destination_path.suffix
 
         match file_extension:
+            # parquet has to come first since parquet files should be selected when both
+            # parquet and pickle files exist for this path
             case ".parquet":
                 df = read_df_from_parquet(path)
                 write_df_to_parquet(df.head(TEST_DATA_SIZE), destination_path)

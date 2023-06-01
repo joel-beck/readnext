@@ -12,11 +12,11 @@ from readnext.utils import ScoresFrame, setup_progress_bar, sort_document_scores
 
 def find_top_n_matches_single_document(
     input_df: pl.DataFrame, query_d3_document_id: int, pairwise_metric: PairwiseMetric, n: int
-) -> list[DocumentScore]:
+) -> pl.DataFrame:
     """
     Find the n documents with the highest pairwise score for a single query document.
     """
-    document_scores = []
+    document_score_frames = []
 
     for d3_document_id in input_df["document_id"]:
         if d3_document_id == query_d3_document_id:
@@ -24,9 +24,17 @@ def find_top_n_matches_single_document(
 
         document_info = DocumentInfo(d3_document_id=d3_document_id)
         score = pairwise_metric.from_df(input_df, query_d3_document_id, d3_document_id)
-        document_scores.append(DocumentScore(document_info=document_info, score=score))
+        document_score = DocumentScore(document_info=document_info, score=score)
+        query_frame = pl.DataFrame(
+            {
+                "query_d3_document_id": d3_document_id,
+                "candidate_d3_document_id": document_score.document_info.d3_document_id,
+                "score": document_score.score,
+            }
+        )
+        document_score_frames.append(query_frame)
 
-    return sort_document_scores(document_scores)[:n]
+    return pl.concat(document_score_frames).sort("score", descending=True).head(n)
 
 
 # TODO: Make this function more efficient, try to use apply() on

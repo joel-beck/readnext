@@ -13,6 +13,13 @@ from readnext.utils.decorators import (
 )
 
 
+@object_reader
+def read_object_from_pickle(path: Path) -> Any:
+    """Read any Python object from a pickle file."""
+    with path.open("rb") as f:
+        return pickle.load(f)  # type: ignore
+
+
 @object_writer
 def write_object_to_pickle(
     obj: Any,
@@ -23,21 +30,6 @@ def write_object_to_pickle(
         pickle.dump(obj, f)
 
 
-@object_reader
-def read_object_from_pickle(path: Path) -> Any:
-    """Read any Python object from a pickle file."""
-    with path.open("rb") as f:
-        return pickle.load(f)  # type: ignore
-
-
-def write_df_to_parquet(
-    df: pl.DataFrame,
-    path: Path,
-) -> None:
-    """Write a Polars DataFrame to a parquet file."""
-    df.write_parquet(path)
-
-
 @dataframe_reader
 def read_df_from_parquet(path: Path) -> pl.DataFrame:
     """Read a Polars DataFrame from a parquet file."""
@@ -45,23 +37,11 @@ def read_df_from_parquet(path: Path) -> pl.DataFrame:
 
 
 @dataframe_writer
-def write_scores_frame_to_parquet(
+def write_df_to_parquet(
     df: pl.DataFrame,
     path: Path,
 ) -> None:
-    """
-    Write a Dataframe of type `ScoresFrame` to a parquet file.
-
-    A `ScoresFrame` contains two columns: `document_id` and `scores`, where each row in
-    `scores` is a list of `DocumentScores`. To write this dataframe to a parquet file,
-    we need to serialize the `scores` column and deserialize it when reading the parquet
-    file.
-    """
-
-    scores_colname = df.columns[1]
-    df = df.with_columns(
-        pl.col(scores_colname).apply(lambda scores: [score.serialize() for score in scores]),
-    )
+    """Write a Polars DataFrame to a parquet file."""
     df.write_parquet(path)
 
 
@@ -86,3 +66,24 @@ def read_scores_frame_from_parquet(path: Path) -> pl.DataFrame:
             ],
         }
     )
+
+
+@dataframe_writer
+def write_scores_frame_to_parquet(
+    df: pl.DataFrame,
+    path: Path,
+) -> None:
+    """
+    Write a Dataframe of type `ScoresFrame` to a parquet file.
+
+    A `ScoresFrame` contains two columns: `document_id` and `scores`, where each row in
+    `scores` is a list of `DocumentScores`. To write this dataframe to a parquet file,
+    we need to serialize the `scores` column and deserialize it when reading the parquet
+    file.
+    """
+
+    scores_colname = df.columns[1]
+    df = df.with_columns(
+        pl.col(scores_colname).apply(lambda scores: [score.serialize() for score in scores]),
+    )
+    df.write_parquet(path)

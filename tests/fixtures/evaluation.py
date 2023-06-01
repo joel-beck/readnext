@@ -12,7 +12,7 @@ from readnext.evaluation.scoring import (
 @pytest.fixture
 def document_embeddings_df() -> pd.DataFrame:
     data = {
-        "document_id": [1, 2, 3, 4],
+        "d3_document_id": [1, 2, 3, 4],
         "embedding": [
             np.array([1, 2, 3]),
             np.array([4, 5, 6]),
@@ -20,7 +20,7 @@ def document_embeddings_df() -> pd.DataFrame:
             np.array([1, 1, 0]),
         ],
     }
-    return pd.DataFrame(data).set_index("document_id")
+    return pd.DataFrame(data).set_index("d3_document_id")
 
 
 @pytest.fixture

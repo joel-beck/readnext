@@ -266,7 +266,7 @@ def main() -> None:
                 co_citation_analysis_scores_most_cited,
                 bibliographic_coupling_scores_most_cited,
             )
-            for query_d3_document_id in documents_data["document_id"].head(5)
+            for query_d3_document_id in documents_data["d3_document_id"].head(5)
         ]
     )
 

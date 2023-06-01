@@ -42,12 +42,11 @@ class AggregationStrategy(str, Enum):
 def embeddings_mapping_to_frame(embeddings_mapping: EmbeddingsMapping) -> pl.DataFrame:
     """
     Converts a dictionary of document ids to document embeddings to a pandas DataFrame.
-    The output dataframe has one column named `embedding` and the index named
-    `document_id`.
+    The output dataframe has two columns named `d3_document_id` and `embedding`.
     """
     return pl.DataFrame(
         {
-            "document_id": list(embeddings_mapping.keys()),
+            "d3_document_id": list(embeddings_mapping.keys()),
             "embedding": list(embeddings_mapping.values()),
         }
     )

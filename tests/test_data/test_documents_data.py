@@ -30,8 +30,8 @@ def test_column_names(
     documents_data: pl.DataFrame,
 ) -> None:
     columns = [
-        "document_id",
-        "author_id",
+        "d3_document_id",
+        "d3_author_id",
         "title",
         "author",
         "publication_date",

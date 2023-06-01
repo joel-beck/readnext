@@ -29,10 +29,9 @@ QueryEmbeddingFunction: TypeAlias = Callable[[DocumentInfo], Embedding]
 Vector: TypeAlias = Sequence | NDArray | pl.Series
 EmbeddingVector: TypeAlias = Sequence[float] | NDArray | pl.Series
 
-# data frame with a single column named `score` and an index named `document_id`
-# the `score` column contains lists of `DocumentScore` objects
-# used for storing co-citation analysis scores, bibliographic coupling scores and cosine
-# similarity scores
+# data frame with a three columns named `query_d3_document_id`,
+# `candidate_d3_document_id` and `score`. Used for storing co-citation analysis scores,
+# bibliographic coupling scores and cosine similarity scores
 ScoresFrame = pl.DataFrame
 
 IntegerLabelList: TypeAlias = Sequence[int] | NDArray | pl.Series

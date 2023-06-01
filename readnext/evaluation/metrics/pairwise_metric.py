@@ -55,10 +55,10 @@ class PairwiseMetric(ABC, Generic[TReturn]):
         """
 
         row_value_list: list[str] = (
-            df.filter(pl.col("document_id") == document_id_1).select(colname).item()
+            df.filter(pl.col("d3_document_id") == document_id_1).select(colname).item()
         )
         col_value_list: list[str] = (
-            df.filter(pl.col("document_id") == document_id_2).select(colname).item()
+            df.filter(pl.col("d3_document_id") == document_id_2).select(colname).item()
         )
 
         return PairwiseMetric.count_common_values(row_value_list, col_value_list)
@@ -115,10 +115,10 @@ class CosineSimilarity(PairwiseMetric):
         from a DataFrame.
         """
         row_embedding: EmbeddingVector = (
-            df.filter(pl.col("document_id") == document_id_1).select("embedding").item()
+            df.filter(pl.col("d3_document_id") == document_id_1).select("embedding").item()
         )
         col_embedding: EmbeddingVector = (
-            df.filter(pl.col("document_id") == document_id_2).select("embedding").item()
+            df.filter(pl.col("d3_document_id") == document_id_2).select("embedding").item()
         )
 
         return CosineSimilarity.score(row_embedding, col_embedding)

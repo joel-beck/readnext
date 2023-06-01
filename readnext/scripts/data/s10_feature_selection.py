@@ -8,10 +8,10 @@ import polars as pl
 
 from readnext.config import DataPaths
 from readnext.utils import (
-    write_df_to_parquet,
-    read_df_from_parquet,
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
+    read_df_from_parquet,
+    write_df_to_parquet,
 )
 
 

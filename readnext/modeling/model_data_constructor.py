@@ -87,7 +87,7 @@ class ModelDataConstructor(ABC):
         and `score`.
         """
         document_scores: list[DocumentScore] = (
-            scores_frame.filter(pl.col("document_id") == self.d3_document_id)
+            scores_frame.filter(pl.col("d3_document_id") == self.d3_document_id)
             .select("scores")
             .item()
         )

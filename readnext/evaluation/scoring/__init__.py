@@ -6,7 +6,6 @@ from readnext.evaluation.scoring.model_scorer import (
     LanguageModelScorer,
 )
 from readnext.evaluation.scoring.precompute_scores import (
-    find_top_n_matches_single_document,
     precompute_co_citations,
     precompute_co_references,
     precompute_cosine_similarities,
@@ -19,7 +18,6 @@ __all__ = [
     "CitationModelScorer",
     "FeatureWeights",
     "LanguageModelScorer",
-    "find_top_n_matches_single_document",
     "precompute_co_citations",
     "precompute_co_references",
     "precompute_cosine_similarities",

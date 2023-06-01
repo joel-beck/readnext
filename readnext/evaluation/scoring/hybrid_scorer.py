@@ -64,7 +64,7 @@ class HybridScorer:
         self.set_citation_to_language_candidates(feature_weights, n_candidates)
 
         self.citation_to_language_candidate_ids = self.citation_to_language_candidates[
-            "document_id"
+            "d3_document_id"
         ]
 
     def set_citation_to_language_candidate_scores(
@@ -137,7 +137,7 @@ class HybridScorer:
         self.set_language_to_citation_candidates(n_candidates)
 
         self.language_to_citation_candidate_ids = self.language_to_citation_candidates[
-            "document_id"
+            "d3_document_id"
         ]
 
     def set_language_to_citation_candidate_scores(

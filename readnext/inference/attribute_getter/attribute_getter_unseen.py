@@ -2,11 +2,7 @@ from dataclasses import dataclass, field
 
 import polars as pl
 
-from readnext.data import (
-    SemanticscholarRequest,
-    add_citation_feature_rank_cols,
-    set_missing_publication_dates_to_max_rank,
-)
+from readnext.data import SemanticscholarRequest
 from readnext.evaluation.metrics import (
     CosineSimilarity,
     CountCommonCitations,
@@ -129,7 +125,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
         common_citations_scores: list[DocumentScore] = []
 
         for d3_document_id, candidate_citation_urls in zip(
-            self.documents_data["document_id"], self.documents_data["citations"]
+            self.documents_data["d3_document_id"], self.documents_data["citations"]
         ):
             document_info = DocumentInfo(d3_document_id=d3_document_id.item())  # type: ignore
 
@@ -143,7 +139,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
 
         return pl.DataFrame(
             {
-                "document_id": [-1],
+                "d3_document_id": [-1],
                 "scores": [sort_document_scores(common_citations_scores)],
             }
         )
@@ -152,7 +148,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
         common_references_scores: list[DocumentScore] = []
 
         for d3_document_id, candidate_reference_urls in zip(
-            self.documents_data["document_id"], self.documents_data["references"]
+            self.documents_data["d3_document_id"], self.documents_data["references"]
         ):
             document_info = DocumentInfo(d3_document_id=d3_document_id.item())  # type: ignore
 
@@ -166,7 +162,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
 
         return pl.DataFrame(
             {
-                "document_id": [-1],
+                "d3_document_id": [-1],
                 "scores": [sort_document_scores(common_references_scores)],
             }
         )
@@ -175,9 +171,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
         citation_model_data_constructor = QueryCitationModelDataConstructor(
             response=self.response,
             d3_document_id=-1,
-            documents_data=self.documents_data.pipe(add_citation_feature_rank_cols)
-            .pipe(add_citation_feature_rank_cols)
-            .pipe(set_missing_publication_dates_to_max_rank),
+            documents_data=self.documents_data,
             co_citation_analysis_scores=self.get_co_citation_analysis_scores(),
             bibliographic_coupling_scores=self.get_bibliographic_coupling_scores(),
         )
@@ -204,7 +198,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
         cosine_similarity_scores: list[DocumentScore] = []
 
         for candidate_document_id, candidate_embedding in zip(
-            candidate_embeddings["document_id"], candidate_embeddings["embedding"]
+            candidate_embeddings["d3_document_id"], candidate_embeddings["embedding"]
         ):
             candidate_document_info = DocumentInfo(d3_document_id=candidate_document_id)
             cosine_similarity = CosineSimilarity.score(query_embedding, candidate_embedding)
@@ -215,7 +209,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
             cosine_similarity_scores.append(document_score)
 
         return pl.DataFrame(
-            {"document_id": [-1], "scores": [sort_document_scores(cosine_similarity_scores)]}
+            {"d3_document_id": [-1], "scores": [sort_document_scores(cosine_similarity_scores)]}
         )
 
     def get_language_model_data(self) -> LanguageModelData:

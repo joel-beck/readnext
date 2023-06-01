@@ -131,9 +131,9 @@ def document_scores_to_frame(document_scores: list[DocumentScore]) -> pl.DataFra
 def documents_info_from_df(df: pl.DataFrame) -> DocumentsInfo:
     """
     Generate a `DocumentsInfo` instance from the input documents dataframe, which
-    contains `document_id`, `title`, and `abstract` columns.
+    contains the columns `d3_document_id`, `title`, and `abstract`.
     """
-    document_ids = df["document_id"].to_list()
+    document_ids = df["d3_document_id"].to_list()
     titles = df["title"].to_list()
     abstracts = df["abstract"].to_list()
 

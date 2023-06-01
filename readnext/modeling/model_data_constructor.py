@@ -86,14 +86,8 @@ class ModelDataConstructor(ABC):
         converts them to a dataframe with two columns named `candidate_d3_document_id`
         and `score`.
         """
-        document_scores: list[DocumentScore] = (
-            scores_frame.filter(pl.col("d3_document_id") == self.d3_document_id)
-            .select("scores")
-            .item()
-        )
-
-        return document_scores_to_frame(document_scores).rename(
-            {"d3_document_id": "candidate_d3_document_id"}
+        return scores_frame.filter(pl.col("query_d3_document_id") == self.d3_document_id).drop(
+            "query_d3_document_id"
         )
 
     def get_query_ranks(self, scores_frame: pl.DataFrame) -> pl.DataFrame:

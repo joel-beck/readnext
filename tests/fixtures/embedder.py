@@ -15,12 +15,12 @@ from readnext.utils import (
     TokensMapping,
     Word2VecModelProtocol,
 )
-from readnext.utils.aliases import TokensIdMapping
+from readnext.utils.aliases import TokenIdsMapping
 
 
 @pytest.fixture(scope="session")
 def tfidf_embedder(spacy_tokens_mapping: TokensMapping) -> TFIDFEmbedder:
-    return TFIDFEmbedder(tokens_mapping=spacy_tokens_mapping, keyword_algorithm=tfidf)
+    return TFIDFEmbedder(tokens_frame=spacy_tokens_mapping, keyword_algorithm=tfidf)
 
 
 @pytest.fixture(scope="session")
@@ -39,16 +39,16 @@ def fasttext_embedder(
 
 @pytest.fixture(scope="session")
 def bert_embedder(
-    bert_tokens_id_mapping: TokensIdMapping, bert_model: BertModelProtocol
+    bert_tokens_id_mapping: TokenIdsMapping, bert_model: BertModelProtocol
 ) -> BERTEmbedder:
-    return BERTEmbedder(tokens_tensor_mapping=bert_tokens_id_mapping, torch_model=bert_model)
+    return BERTEmbedder(token_ids_frame=bert_tokens_id_mapping, torch_model=bert_model)
 
 
 @pytest.fixture(scope="session")
 def longformer_embedder(
-    longformer_tokens_id_mapping: TokensIdMapping, longformer_model: LongformerModelProtocol
+    longformer_tokens_id_mapping: TokenIdsMapping, longformer_model: LongformerModelProtocol
 ) -> LongformerEmbedder:
     return LongformerEmbedder(
-        tokens_tensor_mapping=longformer_tokens_id_mapping,
+        token_ids_frame=longformer_tokens_id_mapping,
         torch_model=longformer_model,
     )

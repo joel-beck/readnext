@@ -7,7 +7,7 @@ from readnext.config import ModelVersions
 from readnext.modeling import DocumentsInfo
 from readnext.modeling.language_models import BERTTokenizer, LongformerTokenizer, SpacyTokenizer
 from readnext.utils import Tokens, TokensMapping
-from readnext.utils.aliases import TokensIdMapping
+from readnext.utils.aliases import TokenIdsMapping
 
 
 # SUBSECTION: SpaCy
@@ -83,7 +83,7 @@ def bert_tokenizer(
 
 
 @pytest.fixture(scope="session")
-def bert_tokens_id_mapping(bert_tokenizer: BERTTokenizer) -> TokensIdMapping:
+def bert_tokens_id_mapping(bert_tokenizer: BERTTokenizer) -> TokenIdsMapping:
     return bert_tokenizer.tokenize()
 
 
@@ -149,7 +149,7 @@ def longformer_tokenizer(
 
 
 @pytest.fixture(scope="session")
-def longformer_tokens_id_mapping(longformer_tokenizer: LongformerTokenizer) -> TokensIdMapping:
+def longformer_tokens_id_mapping(longformer_tokenizer: LongformerTokenizer) -> TokenIdsMapping:
     return longformer_tokenizer.tokenize()
 
 

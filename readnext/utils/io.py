@@ -1,32 +1,8 @@
-import pickle
 from pathlib import Path
-from typing import Any
 
 import polars as pl
 
-from readnext.utils.decorators import (
-    dataframe_reader,
-    dataframe_writer,
-    object_reader,
-    object_writer,
-)
-
-
-@object_reader
-def read_object_from_pickle(path: Path) -> Any:
-    """Read any Python object from a pickle file."""
-    with path.open("rb") as f:
-        return pickle.load(f)  # type: ignore
-
-
-@object_writer
-def write_object_to_pickle(
-    obj: Any,
-    path: Path,
-) -> None:
-    """Write any Python object to a pickle file."""
-    with path.open("wb") as f:
-        pickle.dump(obj, f)
+from readnext.utils.decorators import dataframe_reader, dataframe_writer
 
 
 @dataframe_reader

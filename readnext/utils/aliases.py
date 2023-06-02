@@ -3,36 +3,32 @@ from typing import TypeAlias
 
 import numpy as np
 import polars as pl
-import torch
 from numpy.typing import NDArray
 
 from readnext.modeling.document_info import DocumentInfo
 
-# each document is represented as a list of tokens
 Tokens: TypeAlias = list[str]
-TokensMapping: TypeAlias = dict[int, Tokens]
-
-# each document is represented as a tensor of token ids
 TokenIds: TypeAlias = list[int]
-TokensIdMapping: TypeAlias = dict[int, list[int]]
-TokensTensorMapping: TypeAlias = dict[int, torch.Tensor]
+Embedding: TypeAlias = list[float]
+
+# data frame with two columns named `d3_document_id` and `tokens`
+TokensFrame: TypeAlias = pl.DataFrame
+# data frame with two columns named `d3_document_id` and `token_ids`
+TokenIdsFrame: TypeAlias = pl.DataFrame
+# data frame with two columns named `d3_document_id` and `embedding`
+EmbeddingsFrame: TypeAlias = pl.DataFrame
+# data frame with a three columns named `query_d3_document_id`,
+# `candidate_d3_document_id` and `score`.
+ScoresFrame = pl.DataFrame
 
 # tfidf and bm25
 KeywordAlgorithm: TypeAlias = Callable[[Tokens, Sequence[Tokens]], np.ndarray]
-
-Embedding: TypeAlias = NDArray
-EmbeddingsMapping: TypeAlias = dict[int, Embedding]
 
 # language model embedding functions during inference
 QueryEmbeddingFunction: TypeAlias = Callable[[DocumentInfo], Embedding]
 
 Vector: TypeAlias = Sequence | NDArray | pl.Series
 EmbeddingVector: TypeAlias = Sequence[float] | NDArray | pl.Series
-
-# data frame with a three columns named `query_d3_document_id`,
-# `candidate_d3_document_id` and `score`. Used for storing co-citation analysis scores,
-# bibliographic coupling scores and cosine similarity scores
-ScoresFrame = pl.DataFrame
 
 IntegerLabelList: TypeAlias = Sequence[int] | NDArray | pl.Series
 IntegerLabelLists: TypeAlias = Sequence[IntegerLabelList]

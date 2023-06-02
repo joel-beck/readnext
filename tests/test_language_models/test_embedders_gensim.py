@@ -44,7 +44,7 @@ def test_compute_embedding_single_document(
 def test_compute_embeddings_mapping(
     embedder: GensimEmbedder, spacy_tokenized_abstracts: list[Tokens]
 ) -> None:
-    embeddings_mapping = embedder.compute_embeddings_mapping()
+    embeddings_mapping = embedder.compute_embeddings_frame()
 
     assert isinstance(embeddings_mapping, dict)
     assert all(isinstance(key, int) for key in embeddings_mapping)

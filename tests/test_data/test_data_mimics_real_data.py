@@ -3,7 +3,7 @@ import pytest
 from pandas.testing import assert_frame_equal
 from pytest_lazyfixture import lazy_fixture
 
-from readnext.modeling.language_models import TokensIdMapping, TokensMapping
+from readnext.modeling.language_models import TokenIdsMapping, TokensMapping
 from readnext.utils import slice_mapping
 
 real_test_tokens_mapping_pairs_skip_ci = [
@@ -54,8 +54,8 @@ real_test_tokens_id_mapping_pairs_skip_ci = [
 )
 def test_that_test_tokens_id_mappings_mimic_real_tokens_id_mappings(
     test_data_size: int,
-    real_tokens_id_mapping: TokensIdMapping,
-    test_tokens_id_mapping: TokensIdMapping,
+    real_tokens_id_mapping: TokenIdsMapping,
+    test_tokens_id_mapping: TokenIdsMapping,
 ) -> None:
     assert slice_mapping(real_tokens_id_mapping, test_data_size) == test_tokens_id_mapping
 

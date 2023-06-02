@@ -5,7 +5,6 @@ from readnext.modeling.language_models.embedder import (
     GensimEmbedder,
     TFIDFEmbedder,
     Word2VecEmbedder,
-    embeddings_mapping_to_frame,
 )
 from readnext.modeling.language_models.embedder_torch import (
     BERTEmbedder,
@@ -31,14 +30,12 @@ from readnext.modeling.language_models.tokenizer_list import (
     SpacyTokenizer,
     TextProcessingSteps,
     Tokens,
-    TokensMapping,
 )
 from readnext.modeling.language_models.tokenizer_tensor import (
     BERTTokenizer,
     LongformerTokenizer,
     TensorTokenizer,
     TokenIds,
-    TokensIdMapping,
 )
 
 __all__ = [
@@ -53,7 +50,6 @@ __all__ = [
     "TorchEmbedder",
     "TFIDFEmbedder",
     "Word2VecEmbedder",
-    "embeddings_mapping_to_frame",
     "AggregationStrategy",
     "get_cosine_similarities_path_from_choice",
     "get_embeddings_path_from_choice",
@@ -73,6 +69,4 @@ __all__ = [
     "TextProcessingSteps",
     "TokenIds",
     "Tokens",
-    "TokensIdMapping",
-    "TokensMapping",
 ]

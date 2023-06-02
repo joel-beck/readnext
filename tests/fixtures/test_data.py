@@ -6,7 +6,7 @@ import pytest
 from readnext.utils import (
     EmbeddingsMapping,
     ScoresFrame,
-    TokensIdMapping,
+    TokenIdsMapping,
     TokensMapping,
     load_df_from_pickle,
     load_object_from_pickle,
@@ -35,7 +35,7 @@ def test_bert_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
 
 
 @pytest.fixture(scope="session")
-def test_bert_tokenized_abstracts_mapping_most_cited(root_path: Path) -> TokensIdMapping:
+def test_bert_tokenized_abstracts_mapping_most_cited(root_path: Path) -> TokenIdsMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_bert_tokenized_abstracts_mapping_most_cited.pkl"
     )
@@ -112,7 +112,7 @@ def test_longformer_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
 
 
 @pytest.fixture(scope="session")
-def test_longformer_tokenized_abstracts_mapping_most_cited(root_path: Path) -> TokensIdMapping:
+def test_longformer_tokenized_abstracts_mapping_most_cited(root_path: Path) -> TokenIdsMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_longformer_tokenized_abstracts_mapping_most_cited.pkl"
     )
@@ -133,7 +133,7 @@ def test_scibert_embeddings_most_cited(root_path: Path) -> EmbeddingsMapping:
 
 
 @pytest.fixture(scope="session")
-def test_scibert_tokenized_abstracts_mapping_most_cited(root_path: Path) -> TokensIdMapping:
+def test_scibert_tokenized_abstracts_mapping_most_cited(root_path: Path) -> TokenIdsMapping:
     return load_object_from_pickle(
         root_path / "tests" / "data" / "test_scibert_tokenized_abstracts_mapping_most_cited.pkl"
     )

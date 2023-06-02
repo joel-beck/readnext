@@ -23,7 +23,7 @@ def test_compute_embeddings_mapping(
     spacy_tokenized_abstracts: list[Tokens],
     num_unique_corpus_tokens: int,
 ) -> None:
-    tfidf_embeddings_mapping = tfidf_embedder.compute_embeddings_mapping()
+    tfidf_embeddings_mapping = tfidf_embedder.compute_embeddings_frame()
 
     assert isinstance(tfidf_embeddings_mapping, dict)
     assert all(isinstance(key, int) for key in tfidf_embeddings_mapping)

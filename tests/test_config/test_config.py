@@ -89,9 +89,7 @@ def test_citation_models_results_paths() -> None:
 
 def test_language_models_results_paths() -> None:
     language_models_results_paths = LanguageModelsResultsPaths()
-    assert isinstance(
-        language_models_results_paths.spacy_tokenized_abstracts_mapping_most_cited_pkl, Path
-    )
+    assert isinstance(language_models_results_paths.spacy_tokenized_abstracts_parquet, Path)
     assert isinstance(language_models_results_paths.tfidf_embeddings_most_cited_pkl, Path)
     assert isinstance(language_models_results_paths.tfidf_cosine_similarities_most_cited_pkl, Path)
     assert isinstance(language_models_results_paths.word2vec_embeddings_most_cited_pkl, Path)
@@ -104,14 +102,10 @@ def test_language_models_results_paths() -> None:
     assert isinstance(
         language_models_results_paths.fasttext_cosine_similarities_most_cited_pkl, Path
     )
-    assert isinstance(
-        language_models_results_paths.bert_tokenized_abstracts_mapping_most_cited_pkl, Path
-    )
+    assert isinstance(language_models_results_paths.bert_tokenized_abstracts_parquet, Path)
     assert isinstance(language_models_results_paths.bert_embeddings_most_cited_pkl, Path)
     assert isinstance(language_models_results_paths.bert_cosine_similarities_most_cited_pkl, Path)
-    assert isinstance(
-        language_models_results_paths.scibert_tokenized_abstracts_mapping_most_cited_pkl, Path
-    )
+    assert isinstance(language_models_results_paths.scibert_tokenized_abstracts_parquet, Path)
     assert isinstance(language_models_results_paths.scibert_embeddings_most_cited_pkl, Path)
     assert isinstance(
         language_models_results_paths.scibert_cosine_similarities_most_cited_pkl, Path

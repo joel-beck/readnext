@@ -1,17 +1,13 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Generic, TypeVar, cast
 
+import polars as pl
+from tqdm import tqdm
 from transformers import BertTokenizerFast, LongformerTokenizerFast
 
 from readnext.modeling.document_info import DocumentsInfo
-from readnext.modeling.language_models.tokenizer_list import Tokens, TokensMapping
-from readnext.utils import (
-    read_object_from_pickle,
-    write_object_to_pickle,
-)
-from readnext.utils.aliases import TokenIds, TokensIdMapping
+from readnext.utils import TokenIds, TokenIdsFrame, Tokens, TokensFrame, tqdm_progress_bar_wrapper
 
 TTorchTokenizer = TypeVar("TTorchTokenizer", bound=BertTokenizerFast | LongformerTokenizerFast)
 
@@ -27,40 +23,52 @@ class TensorTokenizer(ABC, Generic[TTorchTokenizer]):
     def tokenize_into_ids(self, document: str) -> TokenIds:
         """Tokenizes one or multiple document abstracts into token ids."""
 
-    @abstractmethod
-    def tokenize(self) -> TokensIdMapping:
+    def tokenize(self) -> TokenIdsFrame:
         """
-        Tokenizes multiple document abstracts into token ids. Generates a mapping of
-        document ids to token ids.
+        Tokenizes multiple document abstracts into token ids. Generates a polars
+        dataframe with two columns named `d3_document_id` and `token_ids`.
         """
+        abstracts_frame = pl.DataFrame(
+            {
+                "d3_document_id": self.documents_info.d3_document_ids,
+                "abstract": self.documents_info.abstracts,
+            }
+        )
 
-    def tokens_to_ids(self, tokens: Tokens) -> TokenIds:
+        with tqdm(total=len(abstracts_frame)) as progress_bar:
+            token_ids_frame = abstracts_frame.with_columns(
+                token_ids=pl.col("abstract").apply(
+                    tqdm_progress_bar_wrapper(progress_bar, self.tokenize_into_ids)
+                )
+            )
+
+        return token_ids_frame.drop("abstract")
+
+    def tokens_to_token_ids(self, tokens: Tokens) -> TokenIds:
         """Converts a list of tokens into a list of token ids."""
         return cast(list[int], self.tensor_tokenizer.convert_tokens_to_ids(tokens))
 
-    def ids_to_tokens(self, token_ids: TokenIds) -> Tokens:
+    def tokens_frame_to_token_ids_frame(self, tokens_frame: TokensFrame) -> TokenIdsFrame:
+        """
+        Converts a dataframe with a `tokens` column into a dataframe with a `token_ids`
+        column.
+        """
+        return tokens_frame.with_columns(
+            token_ids=pl.col("tokens").apply(self.tokens_to_token_ids)
+        ).drop("tokens")
+
+    def token_ids_to_tokens(self, token_ids: TokenIds) -> Tokens:
         """Converts a list of token ids into a list of tokens."""
         return cast(list[str], self.tensor_tokenizer.convert_ids_to_tokens(token_ids))
 
-    def id_mapping_to_tokens_mapping(self, tokens_id_mapping: TokensIdMapping) -> TokensMapping:
+    def token_ids_frame_to_tokens_frame(self, token_ids_frame: TokenIdsFrame) -> TokensFrame:
         """
-        Converts a mapping of document ids to token ids into a mapping of D3 document
-        ids to tokens.
+        Converts a dataframe with a `token_ids` column into a dataframe with a `tokens`
+        column.
         """
-        return {
-            d3_document_id: self.ids_to_tokens(token_ids)
-            for d3_document_id, token_ids in tokens_id_mapping.items()
-        }
-
-    @staticmethod
-    def save_tokens_mapping(path: Path, tokens_id_mapping: TokensIdMapping) -> None:
-        """Save a mapping of document ids to token ids to a pickle file."""
-        write_object_to_pickle(tokens_id_mapping, path)
-
-    @staticmethod
-    def load_tokens_mapping(path: Path) -> TokensIdMapping:
-        """Load a mapping of document ids to token ids from a pickle file."""
-        return read_object_from_pickle(path)  # type: ignore
+        return token_ids_frame.with_columns(
+            tokens=pl.col("token_ids").apply(self.token_ids_to_tokens)
+        ).drop("token_ids")
 
 
 @dataclass
@@ -82,10 +90,6 @@ class BERTTokenizer(TensorTokenizer):
             "input_ids"
         ]  # type: ignore
 
-    def tokenize(self) -> TokensIdMapping:
-        token_ids = self.tokenize_into_ids(self.documents_info.abstracts)
-        return dict(zip(self.documents_info.d3_document_ids, token_ids))  # type: ignore
-
 
 @dataclass
 class LongformerTokenizer(TensorTokenizer):
@@ -103,8 +107,3 @@ class LongformerTokenizer(TensorTokenizer):
         )[
             "input_ids"
         ]  # type: ignore
-
-    def tokenize(self) -> TokensIdMapping:
-        token_ids = self.tokenize_into_ids(self.documents_info.abstracts)
-
-        return dict(zip(self.documents_info.d3_document_ids, token_ids))  # type: ignore

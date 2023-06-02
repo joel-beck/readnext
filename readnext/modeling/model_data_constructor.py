@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 
 import polars as pl
 
-from readnext.modeling.document_info import DocumentInfo, DocumentScore, document_scores_to_frame
+from readnext.modeling.document_info import DocumentInfo
 
 
 @dataclass(kw_only=True)

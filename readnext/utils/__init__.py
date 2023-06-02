@@ -1,6 +1,6 @@
 from readnext.utils.aliases import (
     Embedding,
-    EmbeddingsMapping,
+    EmbeddingsFrame,
     EmbeddingVector,
     IntegerLabelList,
     IntegerLabelLists,
@@ -10,10 +10,9 @@ from readnext.utils.aliases import (
     StringLabelList,
     StringLabelLists,
     TokenIds,
+    TokenIdsFrame,
     Tokens,
-    TokensIdMapping,
-    TokensMapping,
-    TokensTensorMapping,
+    TokensFrame,
     Vector,
 )
 from readnext.utils.convert_id_urls import (
@@ -22,17 +21,10 @@ from readnext.utils.convert_id_urls import (
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
 )
-from readnext.utils.decorators import (
-    dataframe_reader,
-    dataframe_writer,
-    object_reader,
-    object_writer,
-)
+from readnext.utils.decorators import dataframe_reader, dataframe_writer
 from readnext.utils.io import (
     read_df_from_parquet,
-    read_object_from_pickle,
     write_df_to_parquet,
-    write_object_to_pickle,
 )
 from readnext.utils.logging import suppress_transformers_logging
 from readnext.utils.preprocessing import add_rank
@@ -49,7 +41,7 @@ from readnext.utils.utils import slice_mapping, sort_document_scores
 
 __all__ = [
     "Embedding",
-    "EmbeddingsMapping",
+    "EmbeddingsFrame",
     "EmbeddingVector",
     "IntegerLabelList",
     "IntegerLabelLists",
@@ -59,10 +51,9 @@ __all__ = [
     "StringLabelList",
     "StringLabelLists",
     "TokenIds",
+    "TokenIdsFrame",
     "Tokens",
-    "TokensIdMapping",
-    "TokensMapping",
-    "TokensTensorMapping",
+    "TokensFrame",
     "Vector",
     "get_arxiv_id_from_arxiv_url",
     "get_arxiv_url_from_arxiv_id",
@@ -70,14 +61,8 @@ __all__ = [
     "get_semanticscholar_url_from_semanticscholar_id",
     "dataframe_reader",
     "dataframe_writer",
-    "object_reader",
-    "object_writer",
     "read_df_from_parquet",
-    "read_object_from_pickle",
-    "read_scores_frame_from_parquet",
     "write_df_to_parquet",
-    "write_object_to_pickle",
-    "write_scores_frame_to_parquet",
     "suppress_transformers_logging",
     "add_rank",
     "setup_progress_bar",

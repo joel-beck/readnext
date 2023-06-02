@@ -22,15 +22,15 @@ from readnext.utils import (
     Embedding,
     QueryEmbeddingFunction,
     TokenIds,
+    TokenIdsMapping,
     Tokens,
-    TokensIdMapping,
     TokensMapping,
 )
 
 
 def spacy_load_training_tokens_mapping() -> TokensMapping:
     return SpacyTokenizer.load_tokens_mapping(
-        ResultsPaths.language_models.spacy_tokenized_abstracts_mapping_most_cited_pkl
+        ResultsPaths.language_models.spacy_tokenized_abstracts_parquet
     )
 
 
@@ -43,9 +43,9 @@ def spacy_tokenize_query(query_document_info: DocumentInfo) -> Tokens:
     return spacy_tokenizer.tokenize_single_document(query_document_info.abstract)
 
 
-def bert_load_training_tokens_mapping() -> TokensIdMapping:
+def bert_load_training_tokens_mapping() -> TokenIdsMapping:
     return BERTTokenizer.load_tokens_mapping(
-        ResultsPaths.language_models.bert_tokenized_abstracts_mapping_most_cited_pkl
+        ResultsPaths.language_models.bert_tokenized_abstracts_parquet
     )
 
 
@@ -60,9 +60,9 @@ def bert_tokenize_query(query_document_info: DocumentInfo) -> TokenIds:
     return bert_tokenizer.tokenize_into_ids(query_document_info.abstract)
 
 
-def scibert_load_training_tokens_mapping() -> TokensIdMapping:
+def scibert_load_training_tokens_mapping() -> TokenIdsMapping:
     return BERTTokenizer.load_tokens_mapping(
-        ResultsPaths.language_models.scibert_tokenized_abstracts_mapping_most_cited_pkl
+        ResultsPaths.language_models.scibert_tokenized_abstracts_parquet
     )
 
 
@@ -77,9 +77,9 @@ def scibert_tokenize_query(query_document_info: DocumentInfo) -> TokenIds:
     return scibert_tokenizer.tokenize_into_ids(query_document_info.abstract)
 
 
-def longformer_load_training_tokens_mapping() -> TokensIdMapping:
+def longformer_load_training_tokens_mapping() -> TokenIdsMapping:
     return LongformerTokenizer.load_tokens_mapping(
-        ResultsPaths.language_models.longformer_tokenized_abstracts_mapping_most_cited_pkl
+        ResultsPaths.language_models.longformer_tokenized_abstracts_parquet
     )
 
 
@@ -101,7 +101,7 @@ def tfidf_embed_query(query_document_info: DocumentInfo) -> Embedding:
     query_abstract_tokenized = spacy_tokenize_query(query_document_info)
 
     tfidf_embedder = TFIDFEmbedder(
-        tokens_mapping=learned_spacy_tokens_mapping,
+        tokens_frame=learned_spacy_tokens_mapping,
         keyword_algorithm=tfidf,
     )
 
@@ -112,9 +112,7 @@ def bm25_embed_query(query_document_info: DocumentInfo) -> Embedding:
     learned_spacy_tokens_mapping = spacy_load_training_tokens_mapping()
     query_abstract_tokenized = spacy_tokenize_query(query_document_info)
 
-    bm25_embedder = TFIDFEmbedder(
-        tokens_mapping=learned_spacy_tokens_mapping, keyword_algorithm=bm25
-    )
+    bm25_embedder = TFIDFEmbedder(tokens_frame=learned_spacy_tokens_mapping, keyword_algorithm=bm25)
 
     return bm25_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
@@ -173,7 +171,7 @@ def bert_embed_query(query_document_info: DocumentInfo) -> Embedding:
 
     bert_model = BertModel.from_pretrained(ModelVersions.bert)
     bert_embedder = BERTEmbedder(
-        tokens_tensor_mapping=learned_bert_tokens_mapping,
+        token_ids_frame=learned_bert_tokens_mapping,
         torch_model=bert_model,  # type: ignore
     )
 
@@ -186,7 +184,7 @@ def scibert_embed_query(query_document_info: DocumentInfo) -> Embedding:
 
     scibert_model = BertModel.from_pretrained(ModelVersions.scibert)
     scibert_embedder = BERTEmbedder(
-        tokens_tensor_mapping=learned_scibert_tokens_mapping,
+        token_ids_frame=learned_scibert_tokens_mapping,
         torch_model=scibert_model,  # type: ignore
     )
 
@@ -199,7 +197,7 @@ def longformer_embed_query(query_document_info: DocumentInfo) -> Embedding:
 
     longformer_model = LongformerModel.from_pretrained(ModelVersions.longformer)
     longformer_embedder = LongformerEmbedder(
-        tokens_tensor_mapping=learned_longformer_tokens_mapping,
+        token_ids_frame=learned_longformer_tokens_mapping,
         torch_model=longformer_model,  # type: ignore
     )
 

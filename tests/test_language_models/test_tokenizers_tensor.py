@@ -47,16 +47,16 @@ def test_ids_to_tokens_bert(bert_tokenizer: BERTTokenizer) -> None:
     ]
 
     # Test functionality and types
-    actual_tokens: Tokens = bert_tokenizer.ids_to_tokens(tokens_ids)
+    actual_tokens: Tokens = bert_tokenizer.token_ids_to_tokens(tokens_ids)
     assert actual_tokens == expected_tokens
     assert all(isinstance(token, str) for token in actual_tokens)
 
     # Test empty list
-    assert bert_tokenizer.ids_to_tokens([]) == []
+    assert bert_tokenizer.token_ids_to_tokens([]) == []
 
     # Test single-item list
     single_token_id: TokenIds = [bert_tokenizer.tensor_tokenizer.cls_token_id]
-    assert bert_tokenizer.ids_to_tokens(single_token_id) == ["[CLS]"]
+    assert bert_tokenizer.token_ids_to_tokens(single_token_id) == ["[CLS]"]
 
 
 def test_tokenize_longformer(longformer_tokenizer: LongformerTokenizer) -> None:
@@ -94,16 +94,16 @@ def test_ids_to_tokens_longformer(longformer_tokenizer: LongformerTokenizer) -> 
     ]
 
     # Test functionality and types
-    actual_tokens: Tokens = longformer_tokenizer.ids_to_tokens(tokens_ids)
+    actual_tokens: Tokens = longformer_tokenizer.token_ids_to_tokens(tokens_ids)
     assert actual_tokens == expected_tokens
     assert all(isinstance(token, str) for token in actual_tokens)
 
     # Test empty list
-    assert longformer_tokenizer.ids_to_tokens([]) == []
+    assert longformer_tokenizer.token_ids_to_tokens([]) == []
 
     # Test single-item list
     single_token_id: TokenIds = [longformer_tokenizer.tensor_tokenizer.bos_token_id]
-    assert longformer_tokenizer.ids_to_tokens(single_token_id) == ["<s>"]
+    assert longformer_tokenizer.token_ids_to_tokens(single_token_id) == ["<s>"]
 
 
 tokenizers = ["bert_tokenizer", "longformer_tokenizer"]

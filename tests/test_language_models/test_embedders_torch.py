@@ -10,7 +10,7 @@ from readnext.modeling.language_models import (
     TorchEmbedder,
 )
 from readnext.utils import BertModelProtocol, LongformerModelProtocol
-from readnext.utils.aliases import TokensIdMapping
+from readnext.utils.aliases import TokenIdsMapping
 
 embedders = ["bert_embedder", "longformer_embedder"]
 
@@ -44,7 +44,7 @@ embedder_tokens_id_mapping_pairs = [
     [(lazy_fixture(x), lazy_fixture(y)) for x, y in embedder_tokens_id_mapping_pairs],
 )
 def test_compute_embedding_single_document(
-    embedder: TorchEmbedder, tokens_id_mapping: TokensIdMapping
+    embedder: TorchEmbedder, tokens_id_mapping: TokenIdsMapping
 ) -> None:
     first_document_token_ids = tokens_id_mapping[1]
     embeddings_single_document = embedder.compute_embedding_single_document(
@@ -58,7 +58,7 @@ def test_compute_embedding_single_document(
 
 @pytest.mark.parametrize("embedder", lazy_fixture(embedders))
 def test_compute_embeddings_mapping(embedder: TorchEmbedder) -> None:
-    embeddings_mapping = embedder.compute_embeddings_mapping()
+    embeddings_mapping = embedder.compute_embeddings_frame()
 
     assert isinstance(embeddings_mapping, dict)
     assert all(isinstance(key, int) for key in embeddings_mapping)

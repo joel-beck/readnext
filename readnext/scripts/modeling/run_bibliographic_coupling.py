@@ -16,7 +16,7 @@ def main() -> None:
 
     write_df_to_parquet(
         bibliographic_coupling_scores_most_cited,
-        ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_parquet,
+        ResultsPaths.citation_models.bibliographic_coupling_scores_parquet,
     )
 
 

@@ -1,7 +1,7 @@
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
-from readnext.modeling.language_models import TokensIdMapping, TokensMapping
+from readnext.modeling.language_models import TokenIdsMapping, TokensMapping
 
 bert_based_tokenized_abstracts_mappings = [
     "bert_tokenized_abstracts_mapping_most_cited",
@@ -52,7 +52,7 @@ def test_spacy_tokenized_abstract_mappings_most_cited(
     "tokenized_abstract_mapping", lazy_fixture(torch_tokenized_abstracts_mappings)
 )
 def test_torch_tokenized_abstract_mappings_token_ids(
-    tokenized_abstract_mapping: TokensIdMapping,
+    tokenized_abstract_mapping: TokenIdsMapping,
 ) -> None:
     # check that tokenized abstract are lists of integers
     single_abstract_token_ids = tokenized_abstract_mapping[13756489]
@@ -63,14 +63,14 @@ def test_torch_tokenized_abstract_mappings_token_ids(
 @pytest.mark.parametrize(
     "tokenized_abstract_mapping", lazy_fixture(bert_based_tokenized_abstracts_mappings)
 )
-def test_bert_based_tokenized_abstracts_length(tokenized_abstract_mapping: TokensIdMapping) -> None:
+def test_bert_based_tokenized_abstracts_length(tokenized_abstract_mapping: TokenIdsMapping) -> None:
     # check that tokenized abstracts have length 512
     assert all(len(abstract_ids) == 512 for abstract_ids in tokenized_abstract_mapping.values())
 
 
 @pytest.mark.skip_ci
 def test_bert_tokenized_abstracts_most_cited(
-    bert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
+    bert_tokenized_abstracts_mapping_most_cited: TokenIdsMapping,
 ) -> None:
     single_abstract_token_ids = bert_tokenized_abstracts_mapping_most_cited[13756489]
     # only padding tokens from index 242 onwards
@@ -80,7 +80,7 @@ def test_bert_tokenized_abstracts_most_cited(
 
 @pytest.mark.skip_ci
 def test_scibert_tokenized_abstracts_most_cited(
-    scibert_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
+    scibert_tokenized_abstracts_mapping_most_cited: TokenIdsMapping,
 ) -> None:
     single_abstract_token_ids = scibert_tokenized_abstracts_mapping_most_cited[13756489]
     # only padding tokens from index 217 onwards
@@ -90,7 +90,7 @@ def test_scibert_tokenized_abstracts_most_cited(
 
 @pytest.mark.skip_ci
 def test_longformer_tokenized_abstracts_most_cited(
-    longformer_tokenized_abstracts_mapping_most_cited: TokensIdMapping,
+    longformer_tokenized_abstracts_mapping_most_cited: TokenIdsMapping,
 ) -> None:
     # check that tokenized abstracts have length 1006
     assert all(

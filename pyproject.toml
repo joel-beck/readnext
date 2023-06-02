@@ -50,11 +50,11 @@ lint = "ruff --fix --exit-non-zero-on-fix --show-fixes ."
 check = "mypy ."
 check-no-tests = "mypy . --exclude tests" # do not run mypy on `tests` directory
 test = "pytest"
-test-cov = "pytest --cov=readnext --cov-config=.coveragerc"
+test-cov = "pytest --cov=readnext"
 test-slow = "pytest -m 'slow'" # run all tests marked with `@pytest.mark.slow`
 test-fast = "pytest -m 'not slow'" # run all tests except those marked with `@pytest.mark.slow`
 # run all tests except those marked with `@pytest.mark.skip_ci` and create coverage report
-test-ci = "pytest -m 'not skip_ci' --cov=readnext --cov-config=.coveragerc --cov-report=xml"
+test-ci = "pytest -m 'not skip_ci' --cov=readnext --cov-report=xml"
 pre = "pre-commit run --all-files"
 serve = "mkdocs serve"
 deploy = { shell = "mkdocs build && mkdocs gh-deploy" }
@@ -120,6 +120,34 @@ addopts = "--verbose"
 filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning"]
 markers = [
     "slow: marks tests as slow (run with `pytest -m 'slow', exclude with `pytest -m 'not slow'`)",
+]
+
+[tool.coverage.run]
+branch = true
+omit = [
+    # exclude files in tests directory from coverage
+    "tests/*",
+    # exclude `__init__.py` files from coverage
+    "*/__init__.py",
+    # exclude executable scripts in `readnext/scripts` directory from coverage
+    "readnext/scripts/*",
+    # exclude loading and saving functions in `readnext/utils/io.py` directory from coverage
+    "readnext/utils/io.py",
+    # exclude files that are tested by loading locally stored data that are not available in CI
+    "readnext/inference/inference_data_constructor.py",
+    "readnext/inference/inference_data.py"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+    "@overload",
+    "def __repr__",
+    "def __str__",
+    "if TYPE_CHECKING:",
+    "from typing_extensions import "
 ]
 
 [tool.ruff]

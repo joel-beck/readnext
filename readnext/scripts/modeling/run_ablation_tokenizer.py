@@ -15,10 +15,8 @@ from readnext.utils import read_df_from_parquet, setup_progress_bar, suppress_tr
 def main() -> None:
     suppress_transformers_logging()
 
-    documents_authors_labels_citations_most_cited = read_df_from_parquet(
-        DataPaths.merged.documents_authors_labels_citations_most_cited_parquet
-    )
-    documents_info = documents_info_from_df(documents_authors_labels_citations_most_cited)
+    documents_data = read_df_from_parquet(DataPaths.merged.documents_data_parquet)
+    documents_info = documents_info_from_df(documents_data)
 
     bert_tokenizer_transformers = BertTokenizerFast.from_pretrained(ModelVersions.bert)
 

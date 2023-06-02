@@ -4,19 +4,11 @@ import pytest
 from pandas.api.types import is_integer_dtype
 from pytest_lazyfixture import lazy_fixture
 
-keyword_algorithm_embeddings = ["tfidf_embeddings_most_cited", "bm25_embeddings_most_cited"]
+keyword_algorithm_embeddings = ["tfidf_embeddings", "bm25_embeddings"]
 
-gensim_embeddings = [
-    "word2vec_embeddings_most_cited",
-    "glove_embeddings_most_cited",
-    "fasttext_embeddings_most_cited",
-]
+gensim_embeddings = ["word2vec_embeddings", "glove_embeddings", "fasttext_embeddings"]
 
-torch_embeddings = [
-    "bert_embeddings_most_cited",
-    "scibert_embeddings_most_cited",
-    "longformer_embeddings_most_cited",
-]
+torch_embeddings = ["bert_embeddings", "scibert_embeddings", "longformer_embeddings"]
 
 all_embeddings = keyword_algorithm_embeddings + gensim_embeddings + torch_embeddings
 

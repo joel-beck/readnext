@@ -12,10 +12,10 @@ def main() -> None:
     # NOTE: Remove to train on full data
     documents_data = documents_data.head(1000)
 
-    co_citation_analysis_scores_most_cited = precompute_co_citations(documents_data)
+    co_citation_analysis_scores = precompute_co_citations(documents_data)
 
     write_df_to_parquet(
-        co_citation_analysis_scores_most_cited,
+        co_citation_analysis_scores,
         ResultsPaths.citation_models.co_citation_analysis_scores_parquet,
     )
 

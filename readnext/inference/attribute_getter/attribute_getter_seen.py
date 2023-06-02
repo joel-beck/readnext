@@ -3,10 +3,6 @@ from dataclasses import dataclass, field
 import polars as pl
 
 from readnext.config import ResultsPaths
-from readnext.data import (
-    add_citation_feature_rank_cols,
-    set_missing_publication_dates_to_max_rank,
-)
 from readnext.inference.attribute_getter.attribute_getter_base import (
     AttributeGetter,
     DocumentIdentifier,
@@ -100,12 +96,12 @@ class SeenPaperAttributeGetter(AttributeGetter):
 
     def get_co_citation_analysis_scores(self) -> pl.DataFrame:
         return read_df_from_parquet(
-            ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl
+            ResultsPaths.citation_models.co_citation_analysis_scores_parquet
         )
 
     def get_bibliographic_coupling_scores(self) -> pl.DataFrame:
         return read_df_from_parquet(
-            ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl
+            ResultsPaths.citation_models.bibliographic_coupling_scores_parquet
         )
 
     def get_citation_model_data(self) -> CitationModelData:
@@ -113,9 +109,7 @@ class SeenPaperAttributeGetter(AttributeGetter):
 
         citation_model_data_constructor = CitationModelDataConstructor(
             d3_document_id=self.identifier.d3_document_id,
-            documents_data=self.documents_data.pipe(add_citation_feature_rank_cols).pipe(
-                set_missing_publication_dates_to_max_rank
-            ),
+            documents_data=self.documents_data,
             co_citation_analysis_scores=self.get_co_citation_analysis_scores(),
             bibliographic_coupling_scores=self.get_bibliographic_coupling_scores(),
         )

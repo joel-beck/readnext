@@ -13,16 +13,16 @@ from readnext.utils import ScoresFrame
 @pytest.fixture(scope="session")
 def citation_model_data_constructor(
     test_documents_data: pl.DataFrame,
-    test_co_citation_analysis_scores_most_cited: ScoresFrame,
-    test_bibliographic_coupling_scores_most_cited: ScoresFrame,
+    test_co_citation_analysis_scores: ScoresFrame,
+    test_bibliographic_coupling_scores: ScoresFrame,
 ) -> CitationModelDataConstructor:
     query_d3_document_id = 13756489
 
     return CitationModelDataConstructor(
         d3_document_id=query_d3_document_id,
         documents_data=test_documents_data,
-        co_citation_analysis_scores=test_co_citation_analysis_scores_most_cited,
-        bibliographic_coupling_scores=test_bibliographic_coupling_scores_most_cited,
+        co_citation_analysis_scores=test_co_citation_analysis_scores,
+        bibliographic_coupling_scores=test_bibliographic_coupling_scores,
     )
 
 
@@ -58,15 +58,15 @@ def citation_model_data_constructor_feature_matrix(
 # SECTION: LanguageModelDataConstructor
 @pytest.fixture(scope="session")
 def language_model_data_constructor(
-    test_documents_authors_labels_citations_most_cited: pl.DataFrame,
-    test_bert_cosine_similarities_most_cited: ScoresFrame,
+    test_documents_authors_labels_citations: pl.DataFrame,
+    test_bert_cosine_similarities: ScoresFrame,
 ) -> LanguageModelDataConstructor:
     query_d3_document_id = 13756489
 
     return LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=test_documents_authors_labels_citations_most_cited,
-        cosine_similarities=test_bert_cosine_similarities_most_cited,
+        documents_data=test_documents_authors_labels_citations,
+        cosine_similarities=test_bert_cosine_similarities,
     )
 
 

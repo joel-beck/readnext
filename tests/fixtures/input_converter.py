@@ -21,6 +21,6 @@ def input_converter_toy_data() -> InferenceDataInputConverter:
 
 @pytest.fixture
 def input_converter(
-    test_documents_authors_labels_citations_most_cited: pl.DataFrame,
+    test_documents_data: pl.DataFrame,
 ) -> InferenceDataInputConverter:
-    return InferenceDataInputConverter(test_documents_authors_labels_citations_most_cited)
+    return InferenceDataInputConverter(test_documents_data)

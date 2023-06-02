@@ -25,18 +25,18 @@ def document_embeddings_df() -> pd.DataFrame:
 
 @pytest.fixture
 def co_citation_analysis_scores(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_authors_labels_citations: pd.DataFrame,
 ) -> pd.DataFrame:
-    return precompute_co_citations(test_documents_authors_labels_citations_most_cited.head(10))
+    return precompute_co_citations(test_documents_authors_labels_citations.head(10))
 
 
 @pytest.fixture
 def bibliographic_coupling_scores(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_authors_labels_citations: pd.DataFrame,
 ) -> pd.DataFrame:
-    return precompute_co_references(test_documents_authors_labels_citations_most_cited.head(10))
+    return precompute_co_references(test_documents_authors_labels_citations.head(10))
 
 
 @pytest.fixture
-def tfidf_embeddings(test_tfidf_embeddings_most_cited: pd.DataFrame) -> pd.DataFrame:
-    return precompute_cosine_similarities(test_tfidf_embeddings_most_cited.head(10))
+def tfidf_embeddings(test_tfidf_embeddings: pd.DataFrame) -> pd.DataFrame:
+    return precompute_cosine_similarities(test_tfidf_embeddings.head(10))

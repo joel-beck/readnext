@@ -2,14 +2,12 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 from pytest_lazyfixture import lazy_fixture
-
-from readnext.modeling.language_models import TokenIdsMapping, TokensMapping
-from readnext.utils import slice_mapping
+from readnext.utils import TokensFrame, TokenIdsFrame
 
 real_test_tokens_mapping_pairs_skip_ci = [
     (
-        "spacy_tokenized_abstracts_mapping_most_cited",
-        "test_spacy_tokenized_abstracts_mapping_most_cited",
+        "spacy_tokenized_abstracts_mapping",
+        "test_spacy_tokenized_abstracts_mapping",
     ),
 ]
 
@@ -23,23 +21,23 @@ real_test_tokens_mapping_pairs_skip_ci = [
     ],
 )
 def test_that_test_tokens_mappings_mimic_real_tokens_mappings(
-    test_data_size: int, real_tokens_mapping: TokensMapping, test_tokens_mapping: TokensMapping
+    test_data_size: int, real_tokens_mapping: TokensFrame, test_tokens_mapping: TokensFrame
 ) -> None:
-    assert slice_mapping(real_tokens_mapping, test_data_size) == test_tokens_mapping
+    assert real_tokens_mapping.head(test_data_size) == test_tokens_mapping
 
 
 real_test_tokens_id_mapping_pairs_skip_ci = [
     (
-        "bert_tokenized_abstracts_mapping_most_cited",
-        "test_bert_tokenized_abstracts_mapping_most_cited",
+        "bert_tokenized_abstracts_mapping",
+        "test_bert_tokenized_abstracts_mapping",
     ),
     (
-        "scibert_tokenized_abstracts_mapping_most_cited",
-        "test_scibert_tokenized_abstracts_mapping_most_cited",
+        "scibert_tokenized_abstracts_mapping",
+        "test_scibert_tokenized_abstracts_mapping",
     ),
     (
-        "longformer_tokenized_abstracts_mapping_most_cited",
-        "test_longformer_tokenized_abstracts_mapping_most_cited",
+        "longformer_tokenized_abstracts_mapping",
+        "test_longformer_tokenized_abstracts_mapping",
     ),
 ]
 
@@ -54,38 +52,38 @@ real_test_tokens_id_mapping_pairs_skip_ci = [
 )
 def test_that_test_tokens_id_mappings_mimic_real_tokens_id_mappings(
     test_data_size: int,
-    real_tokens_id_mapping: TokenIdsMapping,
-    test_tokens_id_mapping: TokenIdsMapping,
+    real_tokens_id_mapping: TokenIdsFrame,
+    test_tokens_id_mapping: TokenIdsFrame,
 ) -> None:
-    assert slice_mapping(real_tokens_id_mapping, test_data_size) == test_tokens_id_mapping
+    assert real_tokens_id_mapping.head(test_data_size) == test_tokens_id_mapping
 
 
 real_test_dataframe_pairs_skip_ci = [
-    ("tfidf_embeddings_most_cited", "test_tfidf_embeddings_most_cited"),
-    ("word2vec_embeddings_most_cited", "test_word2vec_embeddings_most_cited"),
-    ("fasttext_embeddings_most_cited", "test_fasttext_embeddings_most_cited"),
-    ("bert_embeddings_most_cited", "test_bert_embeddings_most_cited"),
-    ("scibert_embeddings_most_cited", "test_scibert_embeddings_most_cited"),
-    ("longformer_embeddings_most_cited", "test_longformer_embeddings_most_cited"),
+    ("tfidf_embeddings", "test_tfidf_embeddings"),
+    ("word2vec_embeddings", "test_word2vec_embeddings"),
+    ("fasttext_embeddings", "test_fasttext_embeddings"),
+    ("bert_embeddings", "test_bert_embeddings"),
+    ("scibert_embeddings", "test_scibert_embeddings"),
+    ("longformer_embeddings", "test_longformer_embeddings"),
     (
-        "documents_authors_labels_citations_most_cited",
-        "test_documents_authors_labels_citations_most_cited",
+        "documents_authors_labels_citations",
+        "test_documents_authors_labels_citations",
     ),
-    ("co_citation_analysis_scores_most_cited", "test_co_citation_analysis_scores_most_cited"),
+    ("co_citation_analysis_scores", "test_co_citation_analysis_scores"),
     (
-        "bibliographic_coupling_scores_most_cited",
-        "test_bibliographic_coupling_scores_most_cited",
+        "bibliographic_coupling_scores",
+        "test_bibliographic_coupling_scores",
     ),
-    ("tfidf_cosine_similarities_most_cited", "test_tfidf_cosine_similarities_most_cited"),
-    ("bm25_cosine_similarities_most_cited", "test_bm25_cosine_similarities_most_cited"),
-    ("word2vec_cosine_similarities_most_cited", "test_word2vec_cosine_similarities_most_cited"),
-    ("glove_cosine_similarities_most_cited", "test_glove_cosine_similarities_most_cited"),
-    ("fasttext_cosine_similarities_most_cited", "test_fasttext_cosine_similarities_most_cited"),
-    ("bert_cosine_similarities_most_cited", "test_bert_cosine_similarities_most_cited"),
-    ("scibert_cosine_similarities_most_cited", "test_scibert_cosine_similarities_most_cited"),
+    ("tfidf_cosine_similarities", "test_tfidf_cosine_similarities"),
+    ("bm25_cosine_similarities", "test_bm25_cosine_similarities"),
+    ("word2vec_cosine_similarities", "test_word2vec_cosine_similarities"),
+    ("glove_cosine_similarities", "test_glove_cosine_similarities"),
+    ("fasttext_cosine_similarities", "test_fasttext_cosine_similarities"),
+    ("bert_cosine_similarities", "test_bert_cosine_similarities"),
+    ("scibert_cosine_similarities", "test_scibert_cosine_similarities"),
     (
-        "longformer_cosine_similarities_most_cited",
-        "test_longformer_cosine_similarities_most_cited",
+        "longformer_cosine_similarities",
+        "test_longformer_cosine_similarities",
     ),
 ]
 

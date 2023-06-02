@@ -3,9 +3,7 @@ import pytest
 from pandas.api.types import is_integer_dtype, is_string_dtype
 from pytest_lazyfixture import lazy_fixture
 
-documents_data_fixtures_skip_ci = [
-    "documents_authors_labels_citations_most_cited",
-]
+documents_data_fixtures_skip_ci = ["documents_data"]
 
 documents_data_fixtures_slow_skip_ci = [
     "inference_data_constructor_seen_documents_data",

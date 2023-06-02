@@ -12,10 +12,10 @@ def main() -> None:
     # NOTE: Remove to train on full data
     documents_data = documents_data.head(1000)
 
-    bibliographic_coupling_scores_most_cited = precompute_co_references(documents_data)
+    bibliographic_coupling_scores = precompute_co_references(documents_data)
 
     write_df_to_parquet(
-        bibliographic_coupling_scores_most_cited,
+        bibliographic_coupling_scores,
         ResultsPaths.citation_models.bibliographic_coupling_scores_parquet,
     )
 

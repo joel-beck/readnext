@@ -1,36 +1,6 @@
-from readnext.evaluation.metrics import CountCommonCitations
-from readnext.evaluation.scoring import find_top_n_matches_single_document
 from readnext.modeling import DocumentScore
 from readnext.modeling.document_info import DocumentInfo
 from readnext.utils import ScoresFrame
-
-
-def test_find_top_n_matches_single_document(
-    test_documents_authors_labels_citations_most_cited: ScoresFrame,
-) -> None:
-    query_d3_document_id = test_documents_authors_labels_citations_most_cited.index[0].item()  # type: ignore # noqa: E501
-    pairwise_metric = CountCommonCitations()
-    n = 5
-
-    top_n_matches = find_top_n_matches_single_document(
-        test_documents_authors_labels_citations_most_cited, query_d3_document_id, pairwise_metric, n
-    )
-
-    assert isinstance(top_n_matches, list)
-    assert len(top_n_matches) == 5
-
-    top_match = top_n_matches[0]
-    assert isinstance(top_match, DocumentScore)
-    assert isinstance(top_match.document_info, DocumentInfo)
-    assert isinstance(top_match.document_info.d3_document_id, int)
-    assert top_match.document_info.title == ""
-    assert top_match.document_info.author == ""
-    assert top_match.document_info.arxiv_labels == []
-    assert top_match.document_info.abstract == ""
-    assert isinstance(top_match.score, int)
-
-    # Check that the top match is the highest scoring match
-    assert all(top_match.score >= match.score for match in top_n_matches)
 
 
 def test_precompute_co_citations(co_citation_analysis_scores: ScoresFrame) -> None:

@@ -239,7 +239,9 @@ class LanguageModelDataConstructor(ModelDataConstructor):
     """
 
     cosine_similarities: pl.DataFrame
-    info_cols: list[str] = field(default_factory=lambda: ["title", "author", "arxiv_labels"])
+    info_cols: list[str] = field(
+        default_factory=lambda: ["candidate_d3_document_id", "title", "author", "arxiv_labels"]
+    )
 
     def get_cosine_similarity_scores(self) -> pl.DataFrame:
         """

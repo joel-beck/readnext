@@ -2,7 +2,8 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 from pytest_lazyfixture import lazy_fixture
-from readnext.utils import TokensFrame, TokenIdsFrame
+
+from readnext.utils import TokenIdsFrame, TokensFrame
 
 real_test_tokens_mapping_pairs_skip_ci = [
     (

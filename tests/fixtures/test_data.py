@@ -4,11 +4,11 @@ import polars as pl
 import pytest
 
 from readnext.utils import (
-    read_df_from_parquet,
-    ScoresFrame,
     EmbeddingsFrame,
+    ScoresFrame,
     TokenIdsFrame,
     TokensFrame,
+    read_df_from_parquet,
 )
 
 

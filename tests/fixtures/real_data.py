@@ -2,7 +2,7 @@ import polars as pl
 import pytest
 
 from readnext.config import DataPaths, ResultsPaths
-from readnext.utils import read_df_from_parquet, TokensFrame, TokenIdsFrame
+from readnext.utils import TokenIdsFrame, TokensFrame, read_df_from_parquet
 
 
 # SECTION: Local Data

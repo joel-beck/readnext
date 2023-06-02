@@ -56,6 +56,7 @@ def main() -> None:
         cosine_similarities=tfidf_cosine_similarities,
     )
     tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
+    tfidf_data.info_matrix
     LanguageModelScorer.display_top_n(tfidf_data, n=20)
 
     # SUBSECTION: BM25
@@ -143,7 +144,7 @@ def main() -> None:
     LanguageModelScorer.display_top_n(longformer_data, n=20)
 
     # SECTION: Evaluate Scores
-    average_precision_scores = pl.DataFrame(
+    average_precision_scores = pl.from_records(
         [
             (
                 "Publication Date",
@@ -226,7 +227,6 @@ def main() -> None:
             ),
         ],
         schema=["Feature", "Average Precision"],
-        orient="col",
     ).sort(by="Average Precision", descending=True)
 
     print(average_precision_scores)

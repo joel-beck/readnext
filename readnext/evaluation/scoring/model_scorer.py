@@ -93,14 +93,14 @@ class ModelScorer(ABC, Generic[TModelData]):
         ...
 
     @staticmethod
-    def add_labels(df: pl.DataFrame, labels: pl.Series) -> pl.DataFrame:
+    def add_labels(df: pl.DataFrame, labels: pl.DataFrame) -> pl.DataFrame:
         """Add a vector of labels to a dataframe."""
-        return pl.merge(df, labels, left_index=True, right_index=True)
+        return df.join(labels, on="d3_document_id", how="left")
 
     @staticmethod
     def compute_weighted_rowsums(df: pl.DataFrame, feature_weights: FeatureWeights) -> pl.Series:
         """Compute the weighted rowsums of a dataframe with one weight for each column."""
-        return df.mul(feature_weights.to_series()).sum(axis=1)
+        return (df * (feature_weights.to_series())).sum(axis=1)
 
 
 @dataclass
@@ -118,10 +118,10 @@ class CitationModelScorer(ModelScorer):
 
         return (
             CitationModelScorer.compute_weighted_rowsums(
-                citation_model_data.feature_matrix.dropna(), feature_weights
+                citation_model_data.feature_matrix.drop_nulls(), feature_weights
             )
             .rename("weighted_rank")
-            .sort_values()
+            .sort()
             .head(n)
             .to_frame()
         )
@@ -129,7 +129,7 @@ class CitationModelScorer(ModelScorer):
     @staticmethod
     def add_info_cols(df: pl.DataFrame, info_matrix: pl.DataFrame) -> pl.DataFrame:
         """Add document info columns to a dataframe."""
-        return pl.merge(df, info_matrix, left_index=True, right_index=True)
+        return df.join(info_matrix, on="d3_document_id", how="left")
 
     @staticmethod
     def display_top_n(
@@ -196,14 +196,12 @@ class LanguageModelScorer(ModelScorer):
 
         The `feature_weights` argument is not used for scoring language models.
         """
-        return language_model_data.cosine_similarity_ranks.sort_values(
-            "cosine_similarity_rank"
-        ).head(n)
+        return language_model_data.cosine_similarity_ranks.sort("rank").head(n)
 
     @staticmethod
     def move_cosine_similarity_first(df: pl.DataFrame) -> pl.DataFrame:
         """Move the cosine similarity column to the first position in a dataframe."""
-        return df[["cosine_similarity", *list(df.columns.drop("cosine_similarity"))]]
+        return df.select(["cosine_similarity", pl.exclude("cosine_similarity")])
 
     @staticmethod
     def add_info_cols(df: pl.DataFrame, info_matrix: pl.DataFrame) -> pl.DataFrame:
@@ -212,8 +210,8 @@ class LanguageModelScorer(ModelScorer):
         to the first position and replaces the cosine similarity rank column.
         """
         return (
-            pl.merge(df, info_matrix, left_index=True, right_index=True)
-            .drop("cosine_similarity_rank", axis="columns")
+            df.join(info_matrix, on="candidate_d3_document_id", how="left")
+            .drop("rank")
             .pipe(LanguageModelScorer.move_cosine_similarity_first)
         )
 

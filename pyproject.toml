@@ -48,6 +48,7 @@ update-all = { composite = ["update-pdm", "update-deps"] }
 format = "black ."
 lint = "ruff --fix --exit-non-zero-on-fix --show-fixes ."
 check = "mypy ."
+check-no-tests = "mypy . --exclude tests" # do not run mypy on `tests` directory
 test = "pytest"
 test-cov = "pytest --cov=readnext --cov-config=.coveragerc"
 test-slow = "pytest -m 'slow'" # run all tests marked with `@pytest.mark.slow`

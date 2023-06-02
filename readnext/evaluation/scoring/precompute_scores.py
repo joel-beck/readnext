@@ -12,30 +12,6 @@ from readnext.evaluation.metrics import (
 )
 from readnext.utils import ScoresFrame, tqdm_progress_bar_wrapper
 
-# def find_top_n_matches_single_document(
-#     input_df: pl.DataFrame, query_d3_document_id: int, pairwise_metric: PairwiseMetric, n: int
-# ) -> pl.DataFrame:
-#     """
-#     Find the n documents with the highest pairwise score for a single query document.
-#     """
-#     document_score_frames = []
-
-#     for d3_document_id in input_df["d3_document_id"]:
-#         if d3_document_id == query_d3_document_id:
-#             continue
-
-#         score = pairwise_metric.from_df(input_df, query_d3_document_id, d3_document_id)
-#         query_frame = pl.DataFrame(
-#             {
-#                 "query_d3_document_id": query_d3_document_id,
-#                 "candidate_d3_document_id": d3_document_id,
-#                 "score": score,
-#             }
-#         )
-#         document_score_frames.append(query_frame)
-
-#     return pl.concat(document_score_frames).sort("score", descending=True).head(n)
-
 
 def column_combinations_to_frame(
     input_df: pl.DataFrame, combinations_column: str, output_columns: Sequence[str]
@@ -46,10 +22,10 @@ def column_combinations_to_frame(
     """
     pairwise_combinations: list[tuple[int, int]] = list(
         itertools.product(
-            input_df[combinations_column],
+            input_df[combinations_column],  # type: ignore
             repeat=2,
         )
-    )  # type: ignore
+    )
 
     # remove combinations of values with themselves
     non_matching_combinations = [

@@ -6,7 +6,6 @@ from spacy.language import Language
 from spacy.tokens.doc import Doc
 from tqdm import tqdm
 
-from readnext.modeling.document_info import DocumentsInfo
 from readnext.utils import Tokens, TokensFrame, tqdm_progress_bar_wrapper
 
 
@@ -30,7 +29,7 @@ class TextProcessingSteps:
 class ListTokenizer(ABC):
     """Base class to tokenize abstracts into a list of string tokens."""
 
-    documents_info: DocumentsInfo
+    documents_data: pl.DataFrame
 
     @abstractmethod
     def tokenize_single_document(self, document: str) -> Tokens:
@@ -42,12 +41,7 @@ class ListTokenizer(ABC):
         columns named `d3_document_id` and `tokens`.
         """
 
-        abstracts_frame = pl.DataFrame(
-            {
-                "d3_document_id": self.documents_info.d3_document_ids,
-                "abstract": self.documents_info.abstracts,
-            }
-        )
+        abstracts_frame = self.documents_data.select(["d3_document_id", "abstract"])
 
         with tqdm(total=len(abstracts_frame)) as progress_bar:
             tokens_frame = abstracts_frame.with_columns(
@@ -63,7 +57,6 @@ class ListTokenizer(ABC):
 class SpacyTokenizer(ListTokenizer):
     """Tokenize abstracts using spacy into a list of string tokens."""
 
-    documents_info: DocumentsInfo
     spacy_model: Language
     text_processing_steps: TextProcessingSteps = TextProcessingSteps()  # noqa: RUF009
 

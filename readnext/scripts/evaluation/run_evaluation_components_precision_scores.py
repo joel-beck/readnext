@@ -56,7 +56,6 @@ def main() -> None:
         cosine_similarities=tfidf_cosine_similarities,
     )
     tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
-    tfidf_data.info_matrix
     LanguageModelScorer.display_top_n(tfidf_data, n=20)
 
     # SUBSECTION: BM25

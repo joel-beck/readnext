@@ -25,14 +25,14 @@ class HybridScorer:
 
     citation_to_language_candidates: pl.DataFrame = field(init=False)
     citation_to_language_candidate_ids: pl.Series = field(init=False)
-    citation_to_language_candidate_scores: float = field(init=False)
-    citation_to_language_scores: float = field(init=False)
+    citation_to_language_candidates_score: float = field(init=False)
+    citation_to_language_score: float = field(init=False)
     citation_to_language_recommendations: pl.DataFrame = field(init=False)
 
     language_to_citation_candidates: pl.DataFrame = field(init=False)
     language_to_citation_candidate_ids: pl.Series = field(init=False)
-    language_to_citation_candidate_scores: float = field(init=False)
-    language_to_citation_scores: float = field(init=False)
+    language_to_citation_candidates_score: float = field(init=False)
+    language_to_citation_score: float = field(init=False)
     language_to_citation_recommendations: pl.DataFrame = field(init=False)
 
     def set_citation_to_language_candidates(
@@ -64,10 +64,10 @@ class HybridScorer:
         self.set_citation_to_language_candidates(feature_weights, n_candidates)
 
         self.citation_to_language_candidate_ids = self.citation_to_language_candidates[
-            "d3_document_id"
+            "candidate_d3_document_id"
         ]
 
-    def set_citation_to_language_candidate_scores(
+    def set_citation_to_language_candidate_score(
         self,
         metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights = FeatureWeights(),
@@ -80,7 +80,7 @@ class HybridScorer:
         # compute again for each method call since a different scoring feature or number
         # of candidates may be used
         self.set_citation_to_language_candidate_ids(feature_weights, n_candidates)
-        self.citation_to_language_candidate_scores = CitationModelScorer.score_top_n(
+        self.citation_to_language_candidates_score = CitationModelScorer.score_top_n(
             self.citation_model_data,
             metric,
             feature_weights=feature_weights,
@@ -100,7 +100,7 @@ class HybridScorer:
         self.set_citation_to_language_candidate_ids(feature_weights, n_candidates)
 
         self.citation_to_language_recommendations = LanguageModelScorer.display_top_n(
-            self.language_model_data[self.citation_to_language_candidate_ids], n=n_final
+            self.language_model_data[self.citation_to_language_candidate_ids.to_list()], n=n_final
         )
 
     def score_citation_to_language(
@@ -114,10 +114,12 @@ class HybridScorer:
         Score the top-n recommendations from a Citation -> Language hybrid recommender
         and set them as an instance attribute.
         """
-        self.set_citation_to_language_candidate_scores(metric, feature_weights, n_candidates)
+        self.set_citation_to_language_candidate_score(metric, feature_weights, n_candidates)
 
-        self.citation_to_language_scores = LanguageModelScorer.score_top_n(
-            self.language_model_data[self.citation_to_language_candidate_ids], metric, n=n_final
+        self.citation_to_language_score = LanguageModelScorer.score_top_n(
+            self.language_model_data[self.citation_to_language_candidate_ids.to_list()],
+            metric,
+            n=n_final,
         )
 
     def set_language_to_citation_candidates(self, n_candidates: int = 20) -> None:
@@ -137,10 +139,10 @@ class HybridScorer:
         self.set_language_to_citation_candidates(n_candidates)
 
         self.language_to_citation_candidate_ids = self.language_to_citation_candidates[
-            "d3_document_id"
+            "candidate_d3_document_id"
         ]
 
-    def set_language_to_citation_candidate_scores(
+    def set_language_to_citation_candidate_score(
         self, metric: AveragePrecision | CountUniqueLabels, n_candidates: int = 20
     ) -> None:
         """
@@ -149,7 +151,7 @@ class HybridScorer:
         """
         self.set_language_to_citation_candidate_ids(n_candidates)
 
-        self.language_to_citation_candidate_scores = LanguageModelScorer.score_top_n(
+        self.language_to_citation_candidates_score = LanguageModelScorer.score_top_n(
             self.language_model_data, metric, n=n_candidates
         )
 
@@ -166,7 +168,7 @@ class HybridScorer:
         self.set_language_to_citation_candidate_ids(n_candidates)
 
         self.language_to_citation_recommendations = CitationModelScorer.display_top_n(
-            self.citation_model_data[self.language_to_citation_candidate_ids],
+            self.citation_model_data[self.language_to_citation_candidate_ids.to_list()],
             feature_weights,
             n=n_final,
         )
@@ -182,10 +184,10 @@ class HybridScorer:
         Score the top-n recommendations from a Language -> Citation hybrid recommender
         and set them as an instance attribute.
         """
-        self.set_language_to_citation_candidate_scores(metric, n_candidates)
+        self.set_language_to_citation_candidate_score(metric, n_candidates)
 
-        self.language_to_citation_scores = CitationModelScorer.score_top_n(
-            self.citation_model_data[self.language_to_citation_candidate_ids],
+        self.language_to_citation_score = CitationModelScorer.score_top_n(
+            self.citation_model_data[self.language_to_citation_candidate_ids.to_list()],
             metric,
             feature_weights,
             n=n_final,

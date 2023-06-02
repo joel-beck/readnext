@@ -143,7 +143,7 @@ def main() -> None:
     LanguageModelScorer.display_top_n(longformer_data, n=20)
 
     # SECTION: Evaluate Scores
-    count_unique_labels_scores = pl.DataFrame(
+    count_unique_labels_scores = pl.from_records(
         [
             (
                 "Publication Date",
@@ -230,7 +230,6 @@ def main() -> None:
             ),
         ],
         schema=["Feature", "Number of Unique Labels"],
-        orient="col",
     ).sort(by="Number of Unique Labels", descending=True)
 
     print(count_unique_labels_scores)

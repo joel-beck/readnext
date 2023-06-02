@@ -6,7 +6,6 @@ import polars as pl
 from tqdm import tqdm
 from transformers import BertTokenizerFast, LongformerTokenizerFast
 
-from readnext.modeling.document_info import DocumentsInfo
 from readnext.utils import TokenIds, TokenIdsFrame, Tokens, TokensFrame, tqdm_progress_bar_wrapper
 
 TTorchTokenizer = TypeVar("TTorchTokenizer", bound=BertTokenizerFast | LongformerTokenizerFast)
@@ -16,7 +15,7 @@ TTorchTokenizer = TypeVar("TTorchTokenizer", bound=BertTokenizerFast | Longforme
 class TensorTokenizer(ABC, Generic[TTorchTokenizer]):
     """Base class to tokenize document abstracts into a tensor of token ids."""
 
-    documents_info: DocumentsInfo
+    documents_data: pl.DataFrame
     tensor_tokenizer: TTorchTokenizer
 
     @abstractmethod
@@ -28,12 +27,7 @@ class TensorTokenizer(ABC, Generic[TTorchTokenizer]):
         Tokenizes multiple document abstracts into token ids. Generates a polars
         dataframe with two columns named `d3_document_id` and `token_ids`.
         """
-        abstracts_frame = pl.DataFrame(
-            {
-                "d3_document_id": self.documents_info.d3_document_ids,
-                "abstract": self.documents_info.abstracts,
-            }
-        )
+        abstracts_frame = self.documents_data.select(["d3_document_id", "abstract"])
 
         with tqdm(total=len(abstracts_frame)) as progress_bar:
             token_ids_frame = abstracts_frame.with_columns(

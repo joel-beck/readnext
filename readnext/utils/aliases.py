@@ -25,7 +25,7 @@ ScoresFrame = pl.DataFrame
 KeywordAlgorithm: TypeAlias = Callable[[Tokens, Sequence[Tokens]], np.ndarray]
 
 # language model embedding functions during inference
-QueryEmbeddingFunction: TypeAlias = Callable[[DocumentInfo], Embedding]
+QueryEmbeddingFunction: TypeAlias = Callable[[pl.DataFrame], Embedding]
 
 Vector: TypeAlias = Sequence | NDArray | pl.Series
 EmbeddingVector: TypeAlias = Sequence[float] | NDArray | pl.Series

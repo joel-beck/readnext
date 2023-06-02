@@ -34,7 +34,6 @@ def compare_hybrid_scores_by_document_id(
 
     # SECTION: Language Models
     # SUBSECTION: TF-IDF
-
     tfidf_cosine_similarities: pl.DataFrame = read_df_from_parquet(
         ResultsPaths.language_models.tfidf_cosine_similarities_parquet
     )
@@ -228,24 +227,21 @@ def compare_hybrid_scores_by_document_id(
     longformer_hybrid_score = HybridScore.from_scorer(longformer_hybrid_scorer)
 
     # SECTION: Compare Scores
-    return (
-        compare_hybrid_scores(
-            tfidf_hybrid_score,
-            bm25_hybrid_score,
-            word2vec_hybrid_score,
-            glove_hybrid_score,
-            fasttext_hybrid_score,
-            bert_hybrid_score,
-            scibert_hybrid_score,
-            longformer_hybrid_score,
-        )
-        .with_columns(query_d3_document_id=query_d3_document_id)
-        .rename({"query_d3_document_id": "Query Document ID"})
-    )
+    return compare_hybrid_scores(
+        tfidf_hybrid_score,
+        bm25_hybrid_score,
+        word2vec_hybrid_score,
+        glove_hybrid_score,
+        fasttext_hybrid_score,
+        bert_hybrid_score,
+        scibert_hybrid_score,
+        longformer_hybrid_score,
+    ).insert_at_idx(0, pl.Series("Query Document ID", [query_d3_document_id] * 8))
 
 
 def main() -> None:
     documents_data: pl.DataFrame = read_df_from_parquet(DataPaths.merged.documents_data_parquet)
+    # query_d3_document_id = documents_data["d3_document_id"][0]
     # NOTE: Remove to evaluate on full data
     documents_data = documents_data.head(1000)
 
@@ -268,12 +264,9 @@ def main() -> None:
             )
             for query_d3_document_id in documents_data["d3_document_id"].head(5)
         ]
-    )
+    ).with_columns(pl.max(pl.exclude(["Query Document ID", "Language Model"])).alias("Best Score"))
 
-    # add best score column for each query document id
-    average_precision_scores["Best Score"] = average_precision_scores.select_dtypes(
-        include="number"
-    ).max(axis=1)
+    print(average_precision_scores)
 
     # filter best language model for each query document id
     average_precision_scores.sort(by="Best Score", descending=True).unique(

@@ -1,6 +1,6 @@
 import json
 from dataclasses import dataclass, field
-from typing import TypedDict, overload
+from typing import TypedDict
 
 import dacite
 import polars as pl
@@ -55,36 +55,36 @@ class DocumentInfo:
         }
 
 
-@dataclass
-class DocumentsInfo:
-    """Represents a collection of multiple documents/papers."""
+# @dataclass
+# class DocumentsInfo:
+#     """Represents a collection of multiple documents/papers."""
 
-    documents_info: list[DocumentInfo]
+#     documents_info: list[DocumentInfo]
 
-    def __post_init__(self) -> None:
-        self.d3_document_ids = [
-            document_info.d3_document_id for document_info in self.documents_info
-        ]
-        self.titles = [document_info.title for document_info in self.documents_info]
-        self.abstracts = [document_info.abstract for document_info in self.documents_info]
+#     def __post_init__(self) -> None:
+#         self.d3_document_ids = [
+#             document_info.d3_document_id for document_info in self.documents_info
+#         ]
+#         self.titles = [document_info.title for document_info in self.documents_info]
+#         self.abstracts = [document_info.abstract for document_info in self.documents_info]
 
-    def __len__(self) -> int:
-        return len(self.documents_info)
+#     def __len__(self) -> int:
+#         return len(self.documents_info)
 
-    @overload
-    def __getitem__(self, index: int) -> DocumentInfo:
-        ...
+#     @overload
+#     def __getitem__(self, index: int) -> DocumentInfo:
+#         ...
 
-    @overload
-    def __getitem__(self, index: slice) -> Self:
-        ...
+#     @overload
+#     def __getitem__(self, index: slice) -> Self:
+#         ...
 
-    def __getitem__(self, index: int | slice) -> DocumentInfo | Self:
-        # return single document info for integer index
-        if isinstance(index, int):
-            return self.documents_info[index]
-        # return list of document infos for slice index
-        return self.__class__(self.documents_info[index])
+#     def __getitem__(self, index: int | slice) -> DocumentInfo | Self:
+#         # return single document info for integer index
+#         if isinstance(index, int):
+#             return self.documents_info[index]
+#         # return list of document infos for slice index
+#         return self.__class__(self.documents_info[index])
 
 
 class DocumentScoreDict(TypedDict):
@@ -126,20 +126,3 @@ def document_scores_to_frame(document_scores: list[DocumentScore]) -> pl.DataFra
     `score`
     """
     return pl.concat([document_score.to_frame() for document_score in document_scores])
-
-
-def documents_info_from_df(df: pl.DataFrame) -> DocumentsInfo:
-    """
-    Generate a `DocumentsInfo` instance from the input documents dataframe, which
-    contains the columns `d3_document_id`, `title`, and `abstract`.
-    """
-    document_ids = df["d3_document_id"].to_list()
-    titles = df["title"].to_list()
-    abstracts = df["abstract"].to_list()
-
-    return DocumentsInfo(
-        [
-            DocumentInfo(d3_document_id=d3_document_id, title=title, abstract=abstract)
-            for d3_document_id, title, abstract in zip(document_ids, titles, abstracts)
-        ]
-    )

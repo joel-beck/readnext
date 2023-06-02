@@ -8,7 +8,6 @@ import numpy as np
 from transformers import BertTokenizerFast
 
 from readnext.config import DataPaths, ModelVersions
-from readnext.modeling import documents_info_from_df
 from readnext.utils import read_df_from_parquet, setup_progress_bar, suppress_transformers_logging
 
 
@@ -16,7 +15,7 @@ def main() -> None:
     suppress_transformers_logging()
 
     documents_data = read_df_from_parquet(DataPaths.merged.documents_data_parquet)
-    documents_info = documents_info_from_df(documents_data)
+    abstracts = documents_data["abstract"]
 
     bert_tokenizer_transformers = BertTokenizerFast.from_pretrained(ModelVersions.bert)
 
@@ -24,9 +23,7 @@ def main() -> None:
 
     with setup_progress_bar() as progress_bar:
         for abstract in progress_bar.track(
-            documents_info.abstracts,
-            total=len(documents_info.abstracts),
-            description="Tokenizing...",
+            abstracts, total=len(abstracts), description="Tokenizing..."
         ):
             token_ids = bert_tokenizer_transformers(
                 abstract, max_length=None, truncation=False, padding=False
@@ -44,11 +41,11 @@ def main() -> None:
     )
     print()
 
-    min_index = np.argmin(token_ids_lengths)
-    print(f"Shortest Abstract: {documents_info.abstracts[min_index]}")
+    min_index = np.argmin(token_ids_lengths).item()
+    print(f"Shortest Abstract: {abstracts[min_index]}")
 
-    max_index = np.argmax(token_ids_lengths)
-    print(f"Longest Abstract: {documents_info.abstracts[max_index]}")
+    max_index = np.argmax(token_ids_lengths).item()
+    print(f"Longest Abstract: {abstracts[max_index]}")
 
 
 if __name__ == "__main__":

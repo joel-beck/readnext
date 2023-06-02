@@ -11,6 +11,7 @@ from readnext.utils import (
     KeywordAlgorithm,
     Tokens,
     TokensFrame,
+    Embedding,
     Word2VecModelProtocol,
     tqdm_progress_bar_wrapper,
 )
@@ -49,7 +50,7 @@ class Embedder(ABC):
     tokens_frame: TokensFrame
 
     @abstractmethod
-    def compute_embedding_single_document(self, document_tokens: Tokens) -> list[float]:
+    def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
         """Computes a single document embedding from a tokenized document."""
 
     def compute_embeddings_frame(self) -> EmbeddingsFrame:
@@ -101,7 +102,7 @@ class TFIDFEmbedder(Embedder):
 
     keyword_algorithm: KeywordAlgorithm
 
-    def compute_embedding_single_document(self, document_tokens: Tokens) -> list[float]:
+    def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
         return self.keyword_algorithm(
             document_tokens, self.tokens_frame["tokens"].to_list()
         ).tolist()
@@ -116,7 +117,7 @@ class GensimEmbedder(Embedder):
     aggregation_strategy: AggregationStrategy = AggregationStrategy.mean
 
     @abstractmethod
-    def compute_embedding_single_document(self, document_tokens: Tokens) -> list[float]:
+    def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
         """
         Stacks all word embeddings of a single document vertically.
 
@@ -133,7 +134,7 @@ class Word2VecEmbedder(GensimEmbedder):
         super().__init__(tokens_frame=tokens_frame)
         self.embedding_model = embedding_model
 
-    def compute_embedding_single_document(self, document_tokens: Tokens) -> list[float]:
+    def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
         # exclude any individual unknown tokens
         stacked_word_embeddings = np.vstack(
             [self.embedding_model[token] for token in document_tokens if token in self.embedding_model]  # type: ignore # noqa: E501
@@ -151,7 +152,7 @@ class FastTextEmbedder(GensimEmbedder):
         super().__init__(tokens_frame=tokens_frame)
         self.embedding_model = embedding_model
 
-    def compute_embedding_single_document(self, document_tokens: Tokens) -> list[float]:
+    def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
         return self.word_embeddings_to_document_embedding(
             self.embedding_model.wv[document_tokens],
             self.aggregation_strategy,

@@ -127,7 +127,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
         for d3_document_id, candidate_citation_urls in zip(
             self.documents_data["d3_document_id"], self.documents_data["citations"]
         ):
-            document_info = DocumentInfo(d3_document_id=d3_document_id.item())  # type: ignore
+            document_info = DocumentInfo(d3_document_id=d3_document_id)
 
             query_citation_urls = self.get_query_citation_urls()
             common_citation_urls = CountCommonCitations.count_common_values(
@@ -150,7 +150,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
         for d3_document_id, candidate_reference_urls in zip(
             self.documents_data["d3_document_id"], self.documents_data["references"]
         ):
-            document_info = DocumentInfo(d3_document_id=d3_document_id.item())  # type: ignore
+            document_info = DocumentInfo(d3_document_id=d3_document_id)
 
             query_reference_urls = self.get_query_reference_urls()
             common_references = CountCommonReferences.count_common_values(
@@ -188,11 +188,21 @@ class UnseenPaperAttributeGetter(AttributeGetter):
             abstract=self.response.abstract,
         )
 
-    def get_cosine_similarities(self) -> pl.DataFrame:
+    def get_query_documents_data(self) -> pl.DataFrame:
         query_document_info = self.get_query_document_info()
+        return pl.DataFrame(
+            {
+                "d3_document_id": query_document_info.d3_document_id,
+                "title": query_document_info.title,
+                "abstract": query_document_info.abstract,
+            }
+        )
+
+    def get_cosine_similarities(self) -> pl.DataFrame:
+        query_document_data = self.get_query_documents_data()
         query_embedding_function = select_query_embedding_function(self.language_model_choice)
 
-        query_embedding = query_embedding_function(query_document_info)
+        query_embedding = query_embedding_function(query_document_data)
         candidate_embeddings: pl.DataFrame = load_embeddings_from_choice(self.language_model_choice)
 
         cosine_similarity_scores: list[DocumentScore] = []

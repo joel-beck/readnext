@@ -25,10 +25,10 @@ class HybridScore:
         """Constructs a HybridScore from a HybridScorer."""
         return cls(
             language_model_name=hybrid_scorer.language_model_name,
-            citation_to_language=hybrid_scorer.citation_to_language_scores,
-            citation_to_language_candidates=hybrid_scorer.citation_to_language_candidate_scores,
-            language_to_citation=hybrid_scorer.language_to_citation_scores,
-            language_to_citation_candidates=hybrid_scorer.language_to_citation_candidate_scores,
+            citation_to_language=hybrid_scorer.citation_to_language_score,
+            citation_to_language_candidates=hybrid_scorer.citation_to_language_candidates_score,
+            language_to_citation=hybrid_scorer.language_to_citation_score,
+            language_to_citation_candidates=hybrid_scorer.language_to_citation_candidates_score,
         )
 
     def __str__(self) -> str:

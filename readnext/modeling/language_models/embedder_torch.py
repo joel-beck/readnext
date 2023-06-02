@@ -12,6 +12,7 @@ from readnext.utils import (
     LongformerModelProtocol,
     TokenIds,
     TokenIdsFrame,
+    Embedding,
     tqdm_progress_bar_wrapper,
 )
 
@@ -46,7 +47,7 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
 
         raise ValueError(f"Aggregation strategy `{aggregation_strategy}` is not implemented.")
 
-    def compute_embedding_single_document(self, token_ids: TokenIds) -> list[float]:
+    def compute_embedding_single_document(self, token_ids: TokenIds) -> Embedding:
         """
         Takes a tensor of a single tokenized document as input and computes the BERT or
         Longformer token embedding.

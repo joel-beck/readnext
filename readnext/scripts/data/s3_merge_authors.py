@@ -14,8 +14,10 @@ def select_most_popular_author(df: pl.DataFrame) -> pl.DataFrame:
     Sort by author popularity metric within each document from highest to lowest and
     keep first row. Then sort the unique documents again by document citation count.
     """
-    return df.sort(["d3_document_id", "citationcount_author"], descending=True).unique(
-        subset=["d3_document_id"], keep="first"
+    return (
+        df.sort(["d3_document_id", "citationcount_author"], descending=True)
+        .unique(subset=["d3_document_id"], keep="first")
+        .sort("citationcount_document", descending=True)
     )
 
 

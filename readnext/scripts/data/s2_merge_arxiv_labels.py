@@ -70,6 +70,14 @@ def rename_document_columns(df: pl.LazyFrame) -> pl.LazyFrame:
     )
 
 
+def select_most_cited_documents(df: pl.LazyFrame) -> pl.LazyFrame:
+    """
+    Select the top milltion most cited documents from the full documents data set.
+    """
+    # TODO: Remove magic number.
+    return df.sort(["citationcount_document"], descending=True).head(1_000_000)
+
+
 def extract_unique_semanticscholar_tags(
     semanticscholar_tags: Sequence[SemanticScholarTag],
 ) -> list[str]:
@@ -143,12 +151,12 @@ def add_non_missing_arxiv_ids(df: pl.LazyFrame) -> pl.LazyFrame:
     )
 
 
-def merge_arxiv_data(documents: pl.DataFrame, arxiv_data: pl.DataFrame) -> pl.DataFrame:
+def merge_arxiv_data(documents_data: pl.DataFrame, arxiv_data: pl.DataFrame) -> pl.DataFrame:
     """
     Merge arxiv labels with the document dataframe. Note that merging operations require
     DataFrames instead of LazyFrames!
     """
-    return documents.join(arxiv_data, on="arxiv_id", how="inner")
+    return documents_data.join(arxiv_data, on="arxiv_id", how="left")
 
 
 def main() -> None:
@@ -180,6 +188,7 @@ def main() -> None:
     documents_data = (
         pl.scan_parquet(DataPaths.raw.documents_parquet)
         .pipe(rename_document_columns)
+        .pipe(select_most_cited_documents)
         .pipe(format_semanticscholar_tags)
         .pipe(fill_missing_publication_dates_with_year)
         .pipe(convert_author_columns_to_long_format)
@@ -192,7 +201,9 @@ def main() -> None:
     #     pl.col("semanticscholar_tags").struct.field("category")
     # )
 
-    merged_data = documents_data.pipe(merge_arxiv_data, arxiv_data).select(output_columns)
+    merged_data = (
+        documents_data.pipe(merge_arxiv_data, arxiv_data).select(output_columns).drop_nulls()
+    )
 
     write_df_to_parquet(merged_data, DataPaths.merged.documents_labels)
 

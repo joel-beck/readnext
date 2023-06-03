@@ -60,7 +60,6 @@ class MergedDataPaths:
     documents data.
     """
 
-    documents_labels_chunk_stem: Path = data_dirpath / "documents_labels_chunks"
     documents_labels: Path = data_dirpath / "documents_labels.parquet"
     documents_authors_labels: Path = data_dirpath / "documents_authors_labels.parquet"
     documents_authors_labels_citations_chunks_stem: Path = (
@@ -69,9 +68,6 @@ class MergedDataPaths:
     documents_authors_labels_citations: Path = (
         data_dirpath / "documents_authors_labels_citations.parquet"
     )
-    # documents_authors_labels_citations_most_cited_parquet: Path = (
-    #     data_dirpath / "documents_authors_labels_citations_most_cited.parquet"
-    # )
     documents_data: Path = data_dirpath / "documents_data.parquet"
     most_cited_subset_size: int = 10_000
 

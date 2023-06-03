@@ -41,6 +41,25 @@ def main() -> None:
     tqdm.pandas()
     load_dotenv()
 
+    output_columns = [
+        "d3_document_id",
+        "d3_author_id",
+        "title",
+        "author",
+        "publication_date",
+        "citationcount_document",
+        "citationcount_author",
+        "citations",
+        "references",
+        "abstract",
+        "semanticscholar_id",
+        "semanticscholar_url",
+        "semanticscholar_tags",
+        "arxiv_id",
+        "arxiv_url",
+        "arxiv_labels",
+    ]
+
     # one GET request is necessary per document, each one takes ~1.5 seconds
     # process subsets of documents in parallel to speed up the process
     USE_SUBSET = True

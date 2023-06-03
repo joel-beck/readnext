@@ -1,6 +1,6 @@
-import pandas as pd
+import polars as pl
 import pytest
-from pandas.testing import assert_frame_equal
+from polars.testing import assert_frame_equal
 from pytest_lazyfixture import lazy_fixture
 
 from readnext.data.semanticscholar import SemanticscholarRequest, SemanticScholarResponse
@@ -62,7 +62,7 @@ def test_attribute_getter_attributes_are_created_correctly(
 
     assert isinstance(attribute_getter.feature_weights, FeatureWeights)
 
-    assert isinstance(attribute_getter.documents_data, pd.DataFrame)
+    assert isinstance(attribute_getter.documents_data, pl.DataFrame)
 
 
 # SECTION: SeenPaperAttributeGetter
@@ -114,7 +114,7 @@ def test_seen_paper_attribute_getter_attributes_are_created_correctly(
 
     assert isinstance(seen_paper_attribute_getter.input_converter, InferenceDataInputConverter)
 
-    assert isinstance(seen_paper_attribute_getter.input_converter.documents_data, pd.DataFrame)
+    assert isinstance(seen_paper_attribute_getter.input_converter.documents_data, pl.DataFrame)
 
     # same data attribute is passed to the input converter
     assert_frame_equal(
@@ -132,7 +132,7 @@ def test_kw_only_initialization_seen_paper_attribute_getter() -> None:
             None,
             LanguageModelChoice.tfidf,
             FeatureWeights(),
-            pd.DataFrame(),
+            pl.DataFrame(),
         )
 
 
@@ -276,5 +276,5 @@ def test_kw_only_initialization_unseen_paper_attribute_getter() -> None:
             None,
             LanguageModelChoice.tfidf,
             FeatureWeights(),
-            pd.DataFrame(),
+            pl.DataFrame(),
         )

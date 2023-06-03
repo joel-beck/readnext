@@ -1,5 +1,5 @@
 import numpy as np
-import pandas as pd
+import polars as pl
 import pytest
 
 from readnext.evaluation.metrics import CosineSimilarity, MismatchingDimensionsError
@@ -31,7 +31,7 @@ def test_cosine_similarity_numpy_arrays() -> None:
 
 
 def test_cosine_similarity_pandas_series() -> None:
-    assert CosineSimilarity.score(pd.Series([1, 2, 3]), pd.Series([4, 5, 6])) == pytest.approx(
+    assert CosineSimilarity.score(pl.Series([1, 2, 3]), pl.Series([4, 5, 6])) == pytest.approx(
         0.9746318
     )
 
@@ -52,13 +52,13 @@ def test_cosine_similarity_long_input() -> None:
     assert CosineSimilarity.score(u, v) == 0.0
 
 
-def test_cosine_similarity_from_df(document_embeddings_df: pd.DataFrame) -> None:
+def test_cosine_similarity_from_df(document_embeddings_df: pl.DataFrame) -> None:
     assert CosineSimilarity.from_df(document_embeddings_df, 1, 2) == pytest.approx(0.9746318)
     assert CosineSimilarity.from_df(document_embeddings_df, 1, 1) == pytest.approx(1.0)
     assert CosineSimilarity.from_df(document_embeddings_df, 3, 4) == pytest.approx(0.0)
 
 
-def test_cosine_similarity_from_df_non_existent_ids(document_embeddings_df: pd.DataFrame) -> None:
+def test_cosine_similarity_from_df_non_existent_ids(document_embeddings_df: pl.DataFrame) -> None:
     with pytest.raises(KeyError):
         CosineSimilarity.from_df(document_embeddings_df, 1, 5)
 
@@ -67,6 +67,6 @@ def test_cosine_similarity_from_df_non_existent_ids(document_embeddings_df: pd.D
 
 
 def test_cosine_similarity_from_df_empty_dataframe() -> None:
-    empty_df = pd.DataFrame(columns=["document_id", "embedding"]).set_index("document_id")
+    empty_df = pl.DataFrame(schema={"d3_document_id": pl.Int64, "embedding": pl.Float64})
     with pytest.raises(KeyError):
         CosineSimilarity.from_df(empty_df, 1, 2)

@@ -30,7 +30,6 @@ from readnext.utils import (
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
-    sort_document_scores,
 )
 
 

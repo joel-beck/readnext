@@ -5,8 +5,6 @@ import numpy as np
 import polars as pl
 from numpy.typing import NDArray
 
-from readnext.modeling.document_info import DocumentInfo
-
 Tokens: TypeAlias = list[str]
 TokenIds: TypeAlias = list[int]
 Embedding: TypeAlias = list[float]

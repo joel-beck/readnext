@@ -12,22 +12,22 @@ def documents_data() -> pl.DataFrame:
 
 
 @pytest.fixture(scope="session")
-def spacy_tokenized_abstracts_mapping() -> TokensFrame:
+def spacy_tokenized_abstracts() -> TokensFrame:
     return read_df_from_parquet(ResultsPaths.language_models.spacy_tokenized_abstracts_parquet)
 
 
 @pytest.fixture(scope="session")
-def bert_tokenized_abstracts_mapping() -> TokenIdsFrame:
+def bert_tokenized_abstracts() -> TokenIdsFrame:
     return read_df_from_parquet(ResultsPaths.language_models.bert_tokenized_abstracts_parquet)
 
 
 @pytest.fixture(scope="session")
-def scibert_tokenized_abstracts_mapping() -> TokenIdsFrame:
+def scibert_tokenized_abstracts() -> TokenIdsFrame:
     return read_df_from_parquet(ResultsPaths.language_models.scibert_tokenized_abstracts_parquet)
 
 
 @pytest.fixture(scope="session")
-def longformer_tokenized_abstracts_mapping() -> TokenIdsFrame:
+def longformer_tokenized_abstracts() -> TokenIdsFrame:
     return read_df_from_parquet(ResultsPaths.language_models.longformer_tokenized_abstracts_parquet)
 
 

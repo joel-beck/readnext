@@ -1,5 +1,5 @@
 import numpy as np
-import pandas as pd
+import polars as pl
 import pytest
 
 from readnext.evaluation.metrics import AveragePrecision
@@ -60,8 +60,8 @@ def test_mean_average_precision_with_numpy_arrays() -> None:
 
 
 def test_mean_average_precision_with_pandas_series() -> None:
-    s1 = pd.Series([0, 1, 0, 0, 1])
-    s2 = pd.Series([1, 1, 0, 1, 0])
+    s1 = pl.Series([0, 1, 0, 0, 1])
+    s2 = pl.Series([1, 1, 0, 1, 0])
     assert AveragePrecision.mean_average_precision([s1, s2]) == pytest.approx(0.683333333333333)
 
 
@@ -71,7 +71,7 @@ def test_mean_average_precision_numpy_arrays() -> None:
 
 
 def test_mean_average_precision_pandas_series() -> None:
-    input_series = [pd.Series([1, 0, 1]), pd.Series([1, 0, 1, 1])]
+    input_series = [pl.Series([1, 0, 1]), pl.Series([1, 0, 1, 1])]
     assert AveragePrecision.mean_average_precision(input_series) == pytest.approx(0.819444)
 
 
@@ -110,12 +110,12 @@ def test_mean_average_precision_numpy_array_all_ones() -> None:
 
 
 def test_mean_average_precision_pandas_series_all_zeros() -> None:
-    input_series = [pd.Series([0, 0, 0, 0]), pd.Series([0, 0, 0, 0, 0])]
+    input_series = [pl.Series([0, 0, 0, 0]), pl.Series([0, 0, 0, 0, 0])]
     assert AveragePrecision.mean_average_precision(input_series) == 0.0
 
 
 def test_mean_average_precision_pandas_series_all_ones() -> None:
-    input_series = [pd.Series([1, 1, 1, 1]), pd.Series([1, 1, 1, 1, 1])]
+    input_series = [pl.Series([1, 1, 1, 1]), pl.Series([1, 1, 1, 1, 1])]
     assert AveragePrecision.mean_average_precision(input_series) == 1.0
 
 
@@ -128,7 +128,7 @@ def test_mean_average_precision_mixed_inputs() -> None:
     assert AveragePrecision.mean_average_precision(input_arrays) == pytest.approx(
         ((1 + 2 / 3 + 3 / 4) / 3 + (1 + 2 / 3 + 3 / 5) / 3) / 2
     )
-    input_series = [pd.Series([1, 0, 1, 1, 0]), pd.Series([1, 0, 1, 0, 1])]
+    input_series = [pl.Series([1, 0, 1, 1, 0]), pl.Series([1, 0, 1, 0, 1])]
     assert AveragePrecision.mean_average_precision(input_series) == pytest.approx(
         ((1 + 2 / 3 + 3 / 4) / 3 + (1 + 2 / 3 + 3 / 5) / 3) / 2
     )

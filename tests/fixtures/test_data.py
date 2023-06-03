@@ -13,7 +13,7 @@ from readnext.utils import (
 
 
 @pytest.fixture(scope="session")
-def test_documents_authors_labels_citations(root_path: Path) -> pl.DataFrame:
+def test_documents_data(root_path: Path) -> pl.DataFrame:
     return read_df_from_parquet(root_path / "tests" / "data" / "test_documents_data.parquet")
 
 
@@ -30,9 +30,9 @@ def test_bert_embeddings(root_path: Path) -> EmbeddingsFrame:
 
 
 @pytest.fixture(scope="session")
-def test_bert_tokenized_abstracts_mapping(root_path: Path) -> TokenIdsFrame:
+def test_bert_tokenized_abstracts(root_path: Path) -> TokenIdsFrame:
     return read_df_from_parquet(
-        root_path / "tests" / "data" / "test_bert_tokenized_abstracts_mapping.parquet"
+        root_path / "tests" / "data" / "test_bert_tokenized_abstracts.parquet"
     )
 
 
@@ -99,9 +99,9 @@ def test_longformer_embeddings(root_path: Path) -> EmbeddingsFrame:
 
 
 @pytest.fixture(scope="session")
-def test_longformer_tokenized_abstracts_mapping(root_path: Path) -> TokenIdsFrame:
+def test_longformer_tokenized_abstracts(root_path: Path) -> TokenIdsFrame:
     return read_df_from_parquet(
-        root_path / "tests" / "data" / "test_longformer_tokenized_abstracts_mapping.parquet"
+        root_path / "tests" / "data" / "test_longformer_tokenized_abstracts.parquet"
     )
 
 
@@ -118,16 +118,16 @@ def test_scibert_embeddings(root_path: Path) -> EmbeddingsFrame:
 
 
 @pytest.fixture(scope="session")
-def test_scibert_tokenized_abstracts_mapping(root_path: Path) -> TokenIdsFrame:
+def test_scibert_tokenized_abstracts(root_path: Path) -> TokenIdsFrame:
     return read_df_from_parquet(
-        root_path / "tests" / "data" / "test_scibert_tokenized_abstracts_mapping.parquet"
+        root_path / "tests" / "data" / "test_scibert_tokenized_abstracts.parquet"
     )
 
 
 @pytest.fixture(scope="session")
-def test_spacy_tokenized_abstracts_mapping(root_path: Path) -> TokensFrame:
+def test_spacy_tokenized_abstracts(root_path: Path) -> TokensFrame:
     return read_df_from_parquet(
-        root_path / "tests" / "data" / "test_spacy_tokenized_abstracts_mapping.parquet"
+        root_path / "tests" / "data" / "test_spacy_tokenized_abstracts.parquet"
     )
 
 

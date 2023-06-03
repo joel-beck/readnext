@@ -37,7 +37,6 @@ from readnext.utils.protocols import (
     Word2VecModelProtocol,
     WordVectorsProtocol,
 )
-from readnext.utils.utils import slice_mapping, sort_document_scores
 
 __all__ = [
     "Embedding",
@@ -74,6 +73,4 @@ __all__ = [
     "TorchModelOutputProtocol",
     "Word2VecModelProtocol",
     "WordVectorsProtocol",
-    "slice_mapping",
-    "sort_document_scores",
 ]

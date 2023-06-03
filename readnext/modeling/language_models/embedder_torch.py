@@ -8,11 +8,11 @@ from tqdm import tqdm
 from readnext.modeling.language_models.embedder import AggregationStrategy
 from readnext.utils import (
     BertModelProtocol,
+    Embedding,
     EmbeddingsFrame,
     LongformerModelProtocol,
     TokenIds,
     TokenIdsFrame,
-    Embedding,
     tqdm_progress_bar_wrapper,
 )
 
@@ -22,8 +22,8 @@ TTorchModel = TypeVar("TTorchModel", bound=BertModelProtocol | LongformerModelPr
 @dataclass(kw_only=True)
 class TorchEmbedder(ABC, Generic[TTorchModel]):
     """
-    Abstract Base class for pytorch embedding models. All embedding models implement a
-    `compute_embeddings_mapping` method.
+    Abstract Base class for pytorch embedding models. All embedding models implement
+    `compute_embedding_single_document()` and `compute_embeddings_frame()` methods.
     """
 
     token_ids_frame: TokenIdsFrame

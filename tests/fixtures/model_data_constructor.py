@@ -36,7 +36,7 @@ def citation_model_data_constructor_query_document(
 @pytest.fixture(scope="session")
 def citation_model_data_constructor_integer_labels(
     citation_model_data_constructor: CitationModelDataConstructor,
-) -> pl.Series:
+) -> pl.DataFrame:
     return citation_model_data_constructor.get_integer_labels()
 
 
@@ -80,7 +80,7 @@ def language_model_data_constructor_query_document(
 @pytest.fixture(scope="session")
 def language_model_data_constructor_integer_labels(
     language_model_data_constructor: LanguageModelDataConstructor,
-) -> pl.Series:
+) -> pl.DataFrame:
     return language_model_data_constructor.get_integer_labels()
 
 

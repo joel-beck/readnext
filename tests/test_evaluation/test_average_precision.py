@@ -1,5 +1,5 @@
 import numpy as np
-import pandas as pd
+import polars as pl
 import pytest
 
 from readnext.evaluation.metrics import AveragePrecision
@@ -30,8 +30,8 @@ def test_average_precision_score_numpy_array() -> None:
     assert AveragePrecision.score(label_list) == pytest.approx(0.533333333)
 
 
-def test_average_precision_score_pandas_series() -> None:
-    label_list = pd.Series([0, 1, 0, 1, 1])
+def test_average_precision_score_polars_series() -> None:
+    label_list = pl.Series([0, 1, 0, 1, 1])
     assert AveragePrecision.score(label_list) == pytest.approx(0.533333333)
 
 
@@ -44,41 +44,41 @@ def test_average_precision_from_df() -> None:
             *[1, 0, 1, 0, 1],
         ]
     }
-    df = pd.DataFrame(data)
+    df = pl.DataFrame(data)
     assert AveragePrecision.from_df(df) == pytest.approx(0.6342532467532468)
 
 
 def test_average_precision_from_df_empty() -> None:
     data: dict[str, list[int]] = {"integer_labels": []}
-    df = pd.DataFrame(data)
+    df = pl.DataFrame(data)
     assert AveragePrecision.from_df(df) == pytest.approx(0.0)
 
 
 def test_average_precision_from_df_zeros() -> None:
     data = {"integer_labels": [0, 0, 0, 0, 0]}
-    df = pd.DataFrame(data)
+    df = pl.DataFrame(data)
     assert AveragePrecision.from_df(df) == pytest.approx(0.0)
 
 
 def test_average_precision_from_df_ones() -> None:
     data = {"integer_labels": [1, 1, 1, 1, 1]}
-    df = pd.DataFrame(data)
+    df = pl.DataFrame(data)
     assert AveragePrecision.from_df(df) == pytest.approx(1.0)
 
 
 def test_average_precision_from_df_mixed() -> None:
     data = {"integer_labels": [0, 1, 0, 1, 1]}
-    df = pd.DataFrame(data)
+    df = pl.DataFrame(data)
     assert AveragePrecision.from_df(df) == pytest.approx(0.533333333)
 
 
 def test_average_precision_from_df_tuple() -> None:
     data = {"integer_labels": (0, 1, 0, 1, 1)}
-    df = pd.DataFrame(data)
+    df = pl.DataFrame(data)
     assert AveragePrecision.from_df(df) == pytest.approx(0.533333333)
 
 
 def test_average_precision_from_df_series_of_integers() -> None:
-    data = {"integer_labels": pd.Series([0, 1, 0, 1, 1])}
-    df = pd.DataFrame(data)
+    data = {"integer_labels": pl.Series([0, 1, 0, 1, 1])}
+    df = pl.DataFrame(data)
     assert AveragePrecision.from_df(df) == pytest.approx(0.533333333)

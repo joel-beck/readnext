@@ -6,12 +6,12 @@ import numpy as np
 from tqdm import tqdm
 
 from readnext.utils import (
+    Embedding,
     EmbeddingsFrame,
     FastTextModelProtocol,
     KeywordAlgorithm,
     Tokens,
     TokensFrame,
-    Embedding,
     Word2VecModelProtocol,
     tqdm_progress_bar_wrapper,
 )
@@ -43,8 +43,8 @@ class AggregationStrategy(str, Enum):
 @dataclass(kw_only=True)
 class Embedder(ABC):
     """
-    Abstract Base class for embedding models. All embedding models implement a
-    `compute_embeddings_mapping` method.
+    Abstract Base class for embedding models. All embedding models implement
+    `compute_embedding_single_document()` and `compute_embeddings_frame()` methods.
     """
 
     tokens_frame: TokensFrame

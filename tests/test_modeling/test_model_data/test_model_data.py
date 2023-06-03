@@ -1,5 +1,5 @@
 import numpy as np
-import pandas as pd
+import polars as pl
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
@@ -137,8 +137,8 @@ integer_labels_fixtures_unseen_skip_ci = [
         ],
     ],
 )
-def test_model_data_integer_labels(integer_labels: pd.Series) -> None:
-    assert isinstance(integer_labels, pd.Series)
+def test_model_data_integer_labels(integer_labels: pl.Series) -> None:
+    assert isinstance(integer_labels, pl.Series)
 
     assert integer_labels.dtype == np.int64  # type: ignore
     assert integer_labels.name == "integer_labels"
@@ -158,7 +158,7 @@ def test_model_data_integer_labels(integer_labels: pd.Series) -> None:
         ],
     ],
 )
-def test_seen_model_data_integer_labels(integer_labels: pd.Series) -> None:
+def test_seen_model_data_integer_labels(integer_labels: pl.Series) -> None:
     assert integer_labels.unique().tolist() == [0, 1]
 
 
@@ -172,5 +172,5 @@ def test_seen_model_data_integer_labels(integer_labels: pd.Series) -> None:
         for fixture in integer_labels_fixtures_unseen_skip_ci
     ],
 )
-def test_unseen_model_data_integer_labels(integer_labels: pd.Series) -> None:
+def test_unseen_model_data_integer_labels(integer_labels: pl.Series) -> None:
     assert integer_labels.unique().tolist() == [0]

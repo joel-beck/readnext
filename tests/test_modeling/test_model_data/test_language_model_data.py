@@ -1,5 +1,5 @@
 import numpy as np
-import pandas as pd
+import polars as pl
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
@@ -136,11 +136,11 @@ language_model_data_info_matrix_fixtures_unseen_skip_ci = [
         ],
     ],
 )
-def test_language_model_data_info_matrix(info_matrix: pd.DataFrame) -> None:
-    assert isinstance(info_matrix, pd.DataFrame)
+def test_language_model_data_info_matrix(info_matrix: pl.DataFrame) -> None:
+    assert isinstance(info_matrix, pl.DataFrame)
 
     assert info_matrix.index.name == "document_id"
-    assert info_matrix.index.dtype == pd.Int64Dtype()
+    assert info_matrix.index.dtype == pl.Int64Dtype()
 
     assert info_matrix.shape[1] == 4
     assert info_matrix.columns.to_list() == [
@@ -150,8 +150,8 @@ def test_language_model_data_info_matrix(info_matrix: pd.DataFrame) -> None:
         "cosine_similarity",
     ]
     assert info_matrix.dtypes.to_list() == [
-        pd.StringDtype(),
-        pd.StringDtype(),
+        pl.StringDtype(),
+        pl.StringDtype(),
         np.dtype("O"),
         np.dtype("float64"),
     ]
@@ -192,9 +192,9 @@ language_model_data_cosine_similarity_ranks_fixtures_unseen_skip_ci = [
     ],
 )
 def test_language_model_data_cosine_similarity_ranks(
-    cosine_similarity_ranks: pd.DataFrame,
+    cosine_similarity_ranks: pl.DataFrame,
 ) -> None:
-    assert isinstance(cosine_similarity_ranks, pd.DataFrame)
+    assert isinstance(cosine_similarity_ranks, pl.DataFrame)
 
     assert cosine_similarity_ranks.index.name == "document_id"
     assert cosine_similarity_ranks.index.dtype == np.int64

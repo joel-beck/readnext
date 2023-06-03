@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
@@ -58,12 +58,12 @@ def test_kw_only_initialization_document_identifier() -> None:
 def test_kw_only_initialization_features() -> None:
     with pytest.raises(TypeError):
         Features(
-            pd.Series(),  # type: ignore
-            pd.Series(),
-            pd.Series(),
-            pd.Series(),
-            pd.Series(),
-            pd.Series(),
+            pl.Series(),  # type: ignore
+            pl.Series(),
+            pl.Series(),
+            pl.Series(),
+            pl.Series(),
+            pl.Series(),
             FeatureWeights(),
         )
 
@@ -71,27 +71,27 @@ def test_kw_only_initialization_features() -> None:
 def test_kw_only_initialization_ranks() -> None:
     with pytest.raises(TypeError):
         Ranks(
-            pd.Series(),  # type: ignore
-            pd.Series(),
-            pd.Series(),
-            pd.Series(),
-            pd.Series(),
-            pd.Series(),
+            pl.Series(),  # type: ignore
+            pl.Series(),
+            pl.Series(),
+            pl.Series(),
+            pl.Series(),
+            pl.Series(),
         )
 
 
 def test_kw_only_initialization_labels() -> None:
     with pytest.raises(TypeError):
-        Labels(pd.Series(), pd.Series())  # type: ignore
+        Labels(pl.Series(), pl.Series())  # type: ignore
 
 
 def test_kw_only_initialization_recommendations() -> None:
     with pytest.raises(TypeError):
         Recommendations(
-            pd.DataFrame(),  # type: ignore
-            pd.DataFrame(),
-            pd.DataFrame(),
-            pd.DataFrame(),
+            pl.DataFrame(),  # type: ignore
+            pl.DataFrame(),
+            pl.DataFrame(),
+            pl.DataFrame(),
         )
 
 

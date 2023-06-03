@@ -5,7 +5,6 @@ from gensim.models.keyedvectors import KeyedVectors, load_word2vec_format
 from transformers import BertModel, BertTokenizerFast, LongformerModel, LongformerTokenizerFast
 
 from readnext.config import ModelPaths, ModelVersions, ResultsPaths
-from readnext.modeling import DocumentInfo
 from readnext.modeling.language_models import (
     BERTEmbedder,
     BERTTokenizer,

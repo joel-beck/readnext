@@ -1,6 +1,5 @@
 import polars as pl
 import pytest
-from pandas.api.types import is_integer_dtype, is_string_dtype
 from pytest_lazyfixture import lazy_fixture
 
 documents_data_fixtures_skip_ci = ["documents_data"]
@@ -68,17 +67,24 @@ def test_column_names(
 def test_dtypes(
     documents_data: pl.DataFrame,
 ) -> None:
-    is_integer_dtype(documents_data.index)
-    is_integer_dtype(documents_data["author_id"])
-    is_string_dtype(documents_data["title"])
-    is_string_dtype(documents_data["author"])
-    is_string_dtype(documents_data["publication_date"])
-    is_integer_dtype(documents_data["publication_year"])
-    is_integer_dtype(documents_data["citationcount_document"])
-    is_integer_dtype(documents_data["citationcount_author"])
-    is_string_dtype(documents_data["abstract"])
-    is_string_dtype(documents_data["arxiv_id"])
-    is_string_dtype(documents_data["semanticscholar_url"])
+    assert documents_data["d3_document_id"].dtype == pl.Int64
+    assert documents_data["d3_author_id"].dtype == pl.Int64
+    assert documents_data["title"].dtype == pl.Utf8
+    assert documents_data["author"].dtype == pl.Utf8
+    assert documents_data["publication_date"].dtype == pl.Utf8
+    assert documents_data["publication_date_rank"].dtype == pl.Int64
+    assert documents_data["citationcount_document"].dtype == pl.Int64
+    assert documents_data["citationcount_document_rank"].dtype == pl.Int64
+    assert documents_data["citationcount_author"].dtype == pl.Int64
+    assert documents_data["citationcount_author_rank"].dtype == pl.Int64
+    assert documents_data["citations"].dtype == pl.List
+    assert documents_data["references"].dtype == pl.List
+    assert documents_data["abstract"].dtype == pl.Utf8
+    assert documents_data["semanticscholar_id"].dtype == pl.Utf8
+    assert documents_data["semanticscholar_url"].dtype == pl.Utf8
+    assert documents_data["semanticscholar_tags"].dtype == pl.List
+    assert documents_data["arxiv_id"].dtype == pl.Utf8
+    assert documents_data["arxiv_url"].dtype == pl.Utf8
 
 
 @pytest.mark.parametrize(
@@ -98,7 +104,7 @@ def test_arxiv_labels(
     documents_data: pl.DataFrame,
 ) -> None:
     arxiv_labels = documents_data["arxiv_labels"]
-    first_observation = arxiv_labels.iloc[0]
+    first_observation = arxiv_labels[0]
 
     assert isinstance(first_observation, list)
     assert isinstance(first_observation[0], str)
@@ -118,9 +124,7 @@ def test_arxiv_labels_full_documents_data(
     documents_data: pl.DataFrame,
 ) -> None:
     arxiv_labels = documents_data["arxiv_labels"]
-    # `col.sum()` for a dataframe column containing lists returns a set of all unique
-    # values!
-    unique_arxiv_labels = set(arxiv_labels.sum())
+    unique_arxiv_labels = {label for labels in arxiv_labels for label in labels}
 
     # Check that all 40 arxiv labels within computer science are contained in the
     # dataset
@@ -138,9 +142,7 @@ def test_arxiv_labels_subset_documents_data(
     documents_data: pl.DataFrame,
 ) -> None:
     arxiv_labels = documents_data["arxiv_labels"]
-    # `col.sum()` for a dataframe column containing lists returns a set of all unique
-    # values!
-    unique_arxiv_labels = set(arxiv_labels.sum())
+    unique_arxiv_labels = {label for labels in arxiv_labels for label in labels}
 
     # Check that all 40 arxiv labels within computer science are contained in the
     # dataset
@@ -164,7 +166,7 @@ def test_semanticscholar_tags(
     documents_data: pl.DataFrame,
 ) -> None:
     semanticscholar_tags = documents_data["semanticscholar_tags"]
-    first_observation = semanticscholar_tags.iloc[0]
+    first_observation = semanticscholar_tags[0]
 
     assert isinstance(first_observation, list)
     assert isinstance(first_observation[0], str)
@@ -185,8 +187,7 @@ def test_semanticscholar_tags_full_documents_data(
 ) -> None:
     semanticscholar_tags = documents_data["semanticscholar_tags"]
 
-    ## 22 unique tags in total
-    unique_semanticscholar_tags = set(semanticscholar_tags.sum())
+    unique_semanticscholar_tags = {tag for tags in semanticscholar_tags for tag in tags}
     assert len(unique_semanticscholar_tags) == 22
 
 
@@ -203,5 +204,5 @@ def test_semanticscholar_tags_subset_documents_data(
     semanticscholar_tags = documents_data["semanticscholar_tags"]
 
     ## 22 unique tags in total
-    unique_semanticscholar_tags = set(semanticscholar_tags.sum())
+    unique_semanticscholar_tags = {tag for tags in semanticscholar_tags for tag in tags}
     assert len(unique_semanticscholar_tags) == 19

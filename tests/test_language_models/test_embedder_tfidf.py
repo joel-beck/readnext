@@ -18,21 +18,19 @@ def test_compute_embedding_single_document(
     assert tfidf_embeddings_single_document.shape == (num_unique_corpus_tokens,)
 
 
-def test_compute_embeddings_mapping(
+def test_compute_embeddings_frame(
     tfidf_embedder: TFIDFEmbedder,
     spacy_tokenized_abstracts: list[Tokens],
     num_unique_corpus_tokens: int,
 ) -> None:
-    tfidf_embeddings_mapping = tfidf_embedder.compute_embeddings_frame()
+    tfidf_embeddings_frame = tfidf_embedder.compute_embeddings_frame()
 
-    assert isinstance(tfidf_embeddings_mapping, dict)
-    assert all(isinstance(key, int) for key in tfidf_embeddings_mapping)
-    assert all(isinstance(value, np.ndarray) for value in tfidf_embeddings_mapping.values())
+    assert isinstance(tfidf_embeddings_frame, dict)
+    assert all(isinstance(key, int) for key in tfidf_embeddings_frame)
+    assert all(isinstance(value, np.ndarray) for value in tfidf_embeddings_frame.values())
 
-    assert len(tfidf_embeddings_mapping) == len(spacy_tokenized_abstracts)
-    assert all(
-        len(value) == num_unique_corpus_tokens for value in tfidf_embeddings_mapping.values()
-    )
+    assert len(tfidf_embeddings_frame) == len(spacy_tokenized_abstracts)
+    assert all(len(value) == num_unique_corpus_tokens for value in tfidf_embeddings_frame.values())
 
 
 def test_kw_only_initialization_tfidf_embedder() -> None:

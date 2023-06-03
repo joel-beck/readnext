@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 import pytest
 
 from readnext.evaluation.metrics import CountUniqueLabels
@@ -62,7 +62,7 @@ def test_count_unique_labels_series_of_lists() -> None:
         ["a", "b", "a"],
         ["a", "a", "b", "c"],
     ]
-    series = pd.Series(data)
+    series = pl.Series(data)
     assert CountUniqueLabels.score(series) == 5
 
 
@@ -73,7 +73,7 @@ def test_count_unique_labels_series_of_tuples() -> None:
         ("a", "b", "a"),
         ("a", "a", "b", "c"),
     ]
-    series = pd.Series(data)
+    series = pl.Series(data)
     assert CountUniqueLabels.score(series) == 5
 
 
@@ -102,13 +102,13 @@ def test_count_unique_labels_from_df() -> None:
             ["a", "a", "b", "c"],
         ]
     }
-    df = pd.DataFrame(data)
+    df = pl.DataFrame(data)
     assert CountUniqueLabels.from_df(df) == 5
 
 
 def test_count_unique_labels_from_df_empty() -> None:
     data: dict[str, list[int]] = {"arxiv_labels": []}
-    df = pd.DataFrame(data)
+    df = pl.DataFrame(data)
     assert CountUniqueLabels.from_df(df) == 0
 
 
@@ -121,7 +121,7 @@ def test_count_unique_labels_from_df_tuples() -> None:
             ("a", "a", "b", "c"),
         ]
     }
-    df = pd.DataFrame(data)
+    df = pl.DataFrame(data)
     assert CountUniqueLabels.from_df(df) == 5
 
 
@@ -134,7 +134,7 @@ def test_count_unique_labels_from_df_mixed_lists_and_tuples() -> None:
             ("a", "a", "b", "c"),
         ]
     }
-    df = pd.DataFrame(data)
+    df = pl.DataFrame(data)
     assert CountUniqueLabels.from_df(df) == 5
 
 
@@ -150,5 +150,5 @@ def test_count_unique_labels_from_df_parametrized(
     arxiv_labels_column: list[list[str]], expected_output: int
 ) -> None:
     data = {"arxiv_labels": arxiv_labels_column}
-    df = pd.DataFrame(data)
+    df = pl.DataFrame(data)
     assert CountUniqueLabels.from_df(df) == expected_output

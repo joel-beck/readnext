@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
@@ -27,7 +27,7 @@ def test_initialization(model_data_constructor: ModelDataConstructor) -> None:
 
     # number of columns is different betwen citation and language model data and tested
     # in individual tests below
-    assert isinstance(model_data_constructor.documents_data, pd.DataFrame)
+    assert isinstance(model_data_constructor.documents_data, pl.DataFrame)
 
     assert isinstance(model_data_constructor.info_cols, list)
     assert all(isinstance(col, str) for col in model_data_constructor.info_cols)
@@ -46,7 +46,7 @@ def test_exclude_query_document(
         model_data_constructor.documents_data
     )
 
-    assert isinstance(excluded_df, pd.DataFrame)
+    assert isinstance(excluded_df, pl.DataFrame)
     assert model_data_constructor.d3_document_id not in excluded_df.index
 
 
@@ -59,7 +59,7 @@ def test_filter_documents_data(
 ) -> None:
     filtered_df = model_data_constructor.filter_documents_data()
 
-    assert isinstance(filtered_df, pd.DataFrame)
+    assert isinstance(filtered_df, pl.DataFrame)
     assert model_data_constructor.d3_document_id not in filtered_df.index
 
 
@@ -70,7 +70,7 @@ def test_filter_documents_data(
 def test_get_info_matrix(model_data_constructor: ModelDataConstructor) -> None:
     info_matrix = model_data_constructor.get_info_matrix()
 
-    assert isinstance(info_matrix, pd.DataFrame)
+    assert isinstance(info_matrix, pl.DataFrame)
     assert model_data_constructor.d3_document_id not in info_matrix.index
     assert all(col in info_matrix.columns for col in model_data_constructor.info_cols)
 
@@ -125,7 +125,7 @@ def test_document_scores_to_frame(model_data_constructor: ModelDataConstructor) 
     ]
     scores_df = model_data_constructor.document_scores_to_frame(document_scores)
 
-    assert isinstance(scores_df, pd.DataFrame)
+    assert isinstance(scores_df, pl.DataFrame)
     assert scores_df.shape[1] == 1
     assert scores_df.columns.to_list() == ["score"]
     assert scores_df.index.name == "document_id"

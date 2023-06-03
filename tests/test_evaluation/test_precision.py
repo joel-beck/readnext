@@ -1,5 +1,5 @@
 import numpy as np
-import pandas as pd
+import polars as pl
 import pytest
 
 from readnext.evaluation.metrics import AveragePrecision
@@ -41,5 +41,5 @@ def test_average_precision_precision_tuple() -> None:
 
 
 def test_average_precision_precision_series_of_integers() -> None:
-    label_list = pd.Series([0, 1, 0, 1, 1])
+    label_list = pl.Series([0, 1, 0, 1, 1])
     assert AveragePrecision.precision(label_list) == pytest.approx(0.6)

@@ -15,29 +15,6 @@ from readnext.utils import (
 )
 
 
-def year_to_first_day_of_year(year: int) -> str:
-    """
-    Convert a year to the first day of that year.
-    """
-    return f"{year}-01-01"
-
-
-def fill_missing_publication_dates_with_year(df: pl.DataFrame) -> pl.DataFrame:
-    """
-    Fill missing publication dates with the publication year if it exists. The first
-    January is chosen as the publication date within this year.
-    """
-    return df.with_columns(
-        publication_date=pl.when(pl.col("publication_date").is_null())
-        .then(
-            pl.when(pl.col("publication_year").is_not_null())
-            .then(pl.col("publication_year").apply(year_to_first_day_of_year))
-            .otherwise(pl.col("publication_date"))
-        )
-        .otherwise(pl.col("publication_date"))
-    )
-
-
 def add_citation_feature_rank_columns(df: pl.DataFrame) -> pl.DataFrame:
     """
     Add rank columns for publication date, document citation count, and author citation
@@ -101,8 +78,7 @@ def main() -> None:
     ]
 
     documents_data = (
-        documents_authors_labels_citations_most_cited.pipe(fill_missing_publication_dates_with_year)
-        .pipe(add_citation_feature_rank_columns)
+        documents_authors_labels_citations_most_cited.pipe(add_citation_feature_rank_columns)
         .pipe(add_identifier_columns)
         .pipe(rename_d3_identifiers)
         .select(output_columns)

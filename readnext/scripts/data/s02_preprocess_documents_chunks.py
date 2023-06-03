@@ -9,7 +9,34 @@ from pathlib import Path
 import polars as pl
 
 from readnext.config import DataPaths
-from readnext.utils import write_df_to_parquet, get_arxiv_url_from_arxiv_id
+from readnext.utils import (
+    write_df_to_parquet,
+    get_arxiv_url_from_arxiv_id,
+    get_semanticscholar_id_from_semanticscholar_url,
+)
+
+
+def year_to_first_day_of_year(year: int) -> str:
+    """
+    Convert a year to the first day of that year.
+    """
+    return f"{year}-01-01"
+
+
+def fill_missing_publication_dates_with_year(df: pl.DataFrame) -> pl.DataFrame:
+    """
+    Fill missing publication dates with the publication year if it exists. The first
+    January is chosen as the publication date within this year.
+    """
+    return df.with_columns(
+        publication_date=pl.when(pl.col("publication_date").is_null())
+        .then(
+            pl.when(pl.col("publication_year").is_not_null())
+            .then(pl.col("publication_year").apply(year_to_first_day_of_year))
+            .otherwise(pl.col("publication_date"))
+        )
+        .otherwise(pl.col("publication_date"))
+    )
 
 
 def flatten_list_of_dicts(list_of_dicts: list[dict], key: str) -> list[str]:
@@ -71,16 +98,31 @@ def main() -> None:
                 "s2fieldsofstudy": "semanticscholar_tags",
             }
         )
-        .with_columns(arxiv_id=pl.col("externalids").apply(lambda d: d["ArXiv"], skip_nulls=False))
+        .with_columns(
+            semanticscholar_id=pl.col("semanticscholar_url").apply(
+                get_semanticscholar_id_from_semanticscholar_url
+            ),
+            arxiv_id=pl.col("externalids").apply(lambda d: d["ArXiv"], skip_nulls=False),
+        )
         .drop_nulls(subset=["arxiv_id"])
         .join(arxiv_labels, on="arxiv_id", how="inner")
         .collect()
     )
 
+    (
+        documents_labels.pipe(fill_missing_publication_dates_with_year)
+        .with_columns(
+            d3_author_id=pl.col("authors").apply(lambda x: flatten_list_of_dicts(x, "authorId")),
+            author=pl.col("authors").apply(lambda x: flatten_list_of_dicts(x, "name")),
+        )
+        .explode(["d3_author_id", "author"])
+        .with_columns(pl.col("d3_author_id").cast(pl.Int64))
+        .select(output_columns)
+    )
+
     # TODO:
-    # 1. Fill missing publication date values with publication year (see script 10)
-    # 2. Extract author id, and author name from dictionary
-    # 3. Convert to long format with one row per author
+    # 2. Simplify semanticscholar tags to list of strings
+    # 3. Remove linting errors
     # 4. Make code modular by using functions that return expression
     # 5. Write merged dataframe to parquet
 

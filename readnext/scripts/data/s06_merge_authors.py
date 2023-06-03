@@ -6,15 +6,7 @@ author id.
 import polars as pl
 
 from readnext.config import DataPaths
-from readnext.utils import add_rank, read_df_from_parquet, write_df_to_parquet
-
-
-def add_author_ranks(authors: pl.DataFrame) -> pl.DataFrame:
-    return authors.with_columns(
-        citationcount_rank=add_rank(authors["citationcount"]),
-        hindex_rank=add_rank(authors["hindex"]),
-        papercount_rank=add_rank(authors["papercount"]),
-    )
+from readnext.utils import read_df_from_parquet, write_df_to_parquet
 
 
 def select_most_popular_author(
@@ -42,8 +34,8 @@ def main() -> None:
     authors: pl.DataFrame = read_df_from_parquet(DataPaths.d3.authors.full_parquet)
 
     output_columns = [
-        "document_id",
-        "author_id",
+        "d3_document_id",
+        "d3_author_id",
         "title",
         "author",
         "author_aliases",
@@ -66,8 +58,6 @@ def main() -> None:
         "semanticscholar_url",
         "semanticscholar_tags",
     ]
-
-    authors_ranked = add_author_ranks(authors)
 
     documents_authors_labels_long = (
         documents_labels.join(

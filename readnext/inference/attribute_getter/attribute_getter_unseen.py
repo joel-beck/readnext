@@ -120,50 +120,46 @@ class UnseenPaperAttributeGetter(AttributeGetter):
             else []
         )
 
+    # TODO: Reduce code duplication with analogous methods below for bibliographic
+    # coupling and cosine similarities
     def get_co_citation_analysis_scores(self) -> pl.DataFrame:
-        common_citations_scores: list[DocumentScore] = []
-
-        for d3_document_id, candidate_citation_urls in zip(
-            self.documents_data["d3_document_id"], self.documents_data["citations"]
-        ):
-            document_info = DocumentInfo(d3_document_id=d3_document_id)
-
-            query_citation_urls = self.get_query_citation_urls()
-            common_citation_urls = CountCommonCitations.count_common_values(
-                query_citation_urls, candidate_citation_urls
+        return (
+            self.documents_data.select(["d3_document_id", "citations"])
+            .rename(
+                {
+                    "d3_document_id": "candidate_d3_document_id",
+                }
             )
-
-            document_score = DocumentScore(document_info=document_info, score=common_citation_urls)
-            common_citations_scores.append(document_score)
-
-        return pl.DataFrame(
-            {
-                "d3_document_id": [-1],
-                "scores": [sort_document_scores(common_citations_scores)],
-            }
+            .with_columns(query_citations=self.get_query_citation_urls())
+            .with_columns(
+                score=pl.struct(["citations", "query_citations"]).apply(
+                    lambda df: CountCommonCitations.count_common_values(
+                        df["citations"], df["query_citations"]
+                    ),
+                ),
+            )
+            .select("candidate_d3_document_id", "score")
+            .sort("score", descending=True)
         )
 
     def get_bibliographic_coupling_scores(self) -> pl.DataFrame:
-        common_references_scores: list[DocumentScore] = []
-
-        for d3_document_id, candidate_reference_urls in zip(
-            self.documents_data["d3_document_id"], self.documents_data["references"]
-        ):
-            document_info = DocumentInfo(d3_document_id=d3_document_id)
-
-            query_reference_urls = self.get_query_reference_urls()
-            common_references = CountCommonReferences.count_common_values(
-                query_reference_urls, candidate_reference_urls
+        return (
+            self.documents_data.select(["d3_document_id", "references"])
+            .rename(
+                {
+                    "d3_document_id": "candidate_d3_document_id",
+                }
             )
-
-            document_score = DocumentScore(document_info=document_info, score=common_references)
-            common_references_scores.append(document_score)
-
-        return pl.DataFrame(
-            {
-                "d3_document_id": [-1],
-                "scores": [sort_document_scores(common_references_scores)],
-            }
+            .with_columns(query_references=self.get_query_citation_urls())
+            .with_columns(
+                score=pl.struct(["references", "query_references"]).apply(
+                    lambda df: CountCommonReferences.count_common_values(
+                        df["references"], df["query_references"]
+                    ),
+                ),
+            )
+            .select("candidate_d3_document_id", "score")
+            .sort("score", descending=True)
         )
 
     def get_citation_model_data(self) -> CitationModelData:
@@ -204,21 +200,21 @@ class UnseenPaperAttributeGetter(AttributeGetter):
         query_embedding = query_embedding_function(query_document_data)
         candidate_embeddings: pl.DataFrame = load_embeddings_from_choice(self.language_model_choice)
 
-        cosine_similarity_scores: list[DocumentScore] = []
-
-        for candidate_document_id, candidate_embedding in zip(
-            candidate_embeddings["d3_document_id"], candidate_embeddings["embedding"]
-        ):
-            candidate_document_info = DocumentInfo(d3_document_id=candidate_document_id)
-            cosine_similarity = CosineSimilarity.score(query_embedding, candidate_embedding)
-
-            document_score = DocumentScore(
-                document_info=candidate_document_info, score=cosine_similarity
+        return (
+            candidate_embeddings.select(["d3_document_id", "embedding"])
+            .rename(
+                {
+                    "d3_document_id": "candidate_d3_document_id",
+                }
             )
-            cosine_similarity_scores.append(document_score)
-
-        return pl.DataFrame(
-            {"d3_document_id": [-1], "scores": [sort_document_scores(cosine_similarity_scores)]}
+            .with_columns(query_embedding=query_embedding)
+            .with_columns(
+                score=pl.struct(["embedding", "query_embedding"]).apply(
+                    lambda df: CosineSimilarity.score(df["embedding"], df["query_embedding"]),
+                ),
+            )
+            .select("candidate_d3_document_id", "score")
+            .sort("score", descending=True)
         )
 
     def get_language_model_data(self) -> LanguageModelData:

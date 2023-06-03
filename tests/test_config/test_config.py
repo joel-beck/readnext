@@ -19,7 +19,7 @@ def test_d3_documents_data_paths() -> None:
     d3_documents_data_paths = D3DocumentsDataPaths()
     assert isinstance(d3_documents_data_paths.raw_json, Path)
     assert isinstance(d3_documents_data_paths.chunks_stem, Path)
-    assert isinstance(d3_documents_data_paths.full_pkl, Path)
+    assert isinstance(d3_documents_data_paths.full_parquet, Path)
     assert isinstance(d3_documents_data_paths.preprocessed_chunks_stem, Path)
 
 

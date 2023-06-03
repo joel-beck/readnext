@@ -32,44 +32,32 @@ models_dirpath = Path(os.getenv("MODELS_DIRPATH", "models"))
 results_dirpath = Path(os.getenv("RESULTS_DIRPATH", "results"))
 
 documents_metadata_json_filename = os.getenv(
-    "DOCUMENTS_METADATA_FILENAME", "2022-11-30-papers.jsonl"
+    "DOCUMENTS_METADATA_FILENAME", "2022-11-30_papers.jsonl"
 )
-authors_metadata_json_filename = os.getenv("AUTHORS_METADATA_FILENAME", "2022-11-30-authors.jsonl")
+authors_metadata_json_filename = os.getenv("AUTHORS_METADATA_FILENAME", "2022-11-30_authors.jsonl")
+arxiv_metadata_json_filename = os.getenv("ARXIV_METADATA_FILENAME", "arxiv_metadata.json")
 
 
 @dataclass(frozen=True)
-class D3DocumentsDataPaths:
-    """Sets file paths for the raw D3 documents data."""
+class RawDataPaths:
+    """
+    Sets file paths for the raw documents, authors and arxiv labels in JSON format.
+    """
 
-    raw_json: Path = data_dirpath / documents_metadata_json_filename
-    chunks_stem: Path = data_dirpath / "2022-11-30_documents_chunks"
-    full_pkl: Path = data_dirpath / "2022-11-30_documents_full.pkl"
-    preprocessed_chunks_stem: Path = data_dirpath / "documents_preprocessed_chunks"
-
-
-@dataclass(frozen=True)
-class D3AuthorsDataPaths:
-    """Sets file paths for the raw D3 authors data."""
-
-    raw_json: Path = data_dirpath / authors_metadata_json_filename
-    most_cited_parquet: Path = data_dirpath / "2022-11-30_authors_most_cited.parquet"
-    full_parquet: Path = data_dirpath / "2022-11-30_authors_full.parquet"
+    documents: Path = data_dirpath / documents_metadata_json_filename
+    authors: Path = data_dirpath / authors_metadata_json_filename
+    arxiv_labels: Path = data_dirpath / arxiv_metadata_json_filename
 
 
 @dataclass(frozen=True)
-class D3:
-    """Collects file paths for the raw D3 data."""
+class D3DataPaths:
+    """
+    Sets file paths for the D3 documents, authors and arxiv labels in Parquet format.
+    """
 
-    documents: D3DocumentsDataPaths = D3DocumentsDataPaths()  # noqa: RUF009
-    authors: D3AuthorsDataPaths = D3AuthorsDataPaths()  # noqa: RUF009
-
-
-@dataclass(frozen=True)
-class ArxivDataPaths:
-    """Sets file paths for the raw arXiv data."""
-
-    raw_json: Path = data_dirpath / "arxiv_metadata.json"
-    id_labels_parquet: Path = data_dirpath / "arxiv_id_labels.parquet"
+    documents_parquet: Path = data_dirpath / "2022-11-30_documents.parquet"
+    authors_parquet: Path = data_dirpath / "2022-11-30_authors.parquet"
+    arxiv_labels_parquet: Path = data_dirpath / "arxiv_metadata.parquet"
 
 
 @dataclass(frozen=True)
@@ -99,8 +87,8 @@ class MergedDataPaths:
 class DataPaths:
     """Collects file paths for all data files."""
 
-    d3: D3 = D3()  # noqa: RUF009
-    arxiv: ArxivDataPaths = ArxivDataPaths()  # noqa: RUF009
+    raw: RawDataPaths = RawDataPaths()  # noqa: RUF009
+    d3: D3DataPaths = D3DataPaths()  # noqa: RUF009
     merged: MergedDataPaths = MergedDataPaths()  # noqa: RUF009
 
 

@@ -1,46 +1,34 @@
 """
-Read documents metadata from the D3 dataset. The data can be downloaded from
-https://zenodo.org/record/7071698#.ZA7jbC8w2Lc. This project uses version 2.1, published
-on 2022-11-25.
+Read documents, authors and arxiv metadata from raw JSON files and write it out into
+Parquet format.
 
-Since the documents dataset is too large to process at once, it is split into chunks of
-100,000 documents
+The raw documents and authors metadata stem from the D3 dataset which can be downloaded
+from https://zenodo.org/record/7071698#.ZA7jbC8w2Lc. This project uses version 2.1 of
+the D3 dataset, published on 2022-11-25.
+
+The raw arxiv metadata can be downloaded from
+https://www.kaggle.com/datasets/Cornell-University/arxiv.
+
+The D3 data builds the foundation of this project and contributes many of the core data
+features. The arxiv metadata is used to add arxiv tags which are used as labels for
+evaluating the recommender system.
 """
 
 import polars as pl
 
 from readnext.config import DataPaths
-from readnext.utils import setup_progress_bar
-
-
-def write_out_chunked_dataframe(dataframe_chunks: list[pl.DataFrame], file_index: int) -> None:
-    print("\nConcatenating dataframes...")
-    dataframe = pl.concat(dataframe_chunks)
-
-    file_path = f"{DataPaths.d3.documents.chunks_stem}_{file_index}.parquet"
-    print(f"Writing to {file_path}\n\n{'-' * 50}\n")
-    dataframe.write_parquet(file_path)
+from readnext.utils import write_df_to_parquet
 
 
 def main() -> None:
-    chunksize = 100_000
-    chunks_per_file = 10
+    # takes roughly 15 minutes
+    documents = pl.scan_ndjson(DataPaths.raw.documents).collect()
+    authors = pl.scan_ndjson(DataPaths.raw.authors).collect()
+    arxiv_labels = pl.scan_ndjson(DataPaths.raw.arxiv_labels).collect()
 
-    dataframe_chunks = []
-    file_index = 1
-
-    with setup_progress_bar() as progress_bar:
-        for i in progress_bar.track(range(1, chunks_per_file + 1)):
-            chunk = pl.read_json(DataPaths.d3.documents.raw_json, lines=True, batch_size=chunksize)
-            dataframe_chunks.append(chunk)
-            print(f"Read {len(dataframe_chunks) * chunksize} documents")
-
-            if i % chunks_per_file == 0:
-                write_out_chunked_dataframe(dataframe_chunks, file_index)
-
-                # remove already processed chunks and increment file index
-                dataframe_chunks = []
-                file_index += 1
+    write_df_to_parquet(documents, DataPaths.d3.documents_parquet)
+    write_df_to_parquet(authors, DataPaths.d3.authors_parquet)
+    write_df_to_parquet(arxiv_labels, DataPaths.d3.arxiv_labels_parquet)
 
 
 if __name__ == "__main__":

@@ -259,7 +259,9 @@ class LanguageModelDataConstructor(ModelDataConstructor):
         the query document. The output dataframe has two columns named
         `candidate_d3_document_id` and `rank`.
         """
-        return self.get_query_ranks(self.cosine_similarities)
+        return self.get_query_ranks(self.cosine_similarities).rename(
+            {"rank": "cosine_similarity_rank"}
+        )
 
     def extend_info_matrix(self, info_matrix: pl.DataFrame) -> pl.DataFrame:
         """

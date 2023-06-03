@@ -58,12 +58,12 @@ def test_kw_only_initialization_document_identifier() -> None:
 def test_kw_only_initialization_features() -> None:
     with pytest.raises(TypeError):
         Features(
-            pl.Series(),  # type: ignore
-            pl.Series(),
-            pl.Series(),
-            pl.Series(),
-            pl.Series(),
-            pl.Series(),
+            pl.DataFrame(),  # type: ignore
+            pl.DataFrame(),
+            pl.DataFrame(),
+            pl.DataFrame(),
+            pl.DataFrame(),
+            pl.DataFrame(),
             FeatureWeights(),
         )
 
@@ -71,18 +71,18 @@ def test_kw_only_initialization_features() -> None:
 def test_kw_only_initialization_ranks() -> None:
     with pytest.raises(TypeError):
         Ranks(
-            pl.Series(),  # type: ignore
-            pl.Series(),
-            pl.Series(),
-            pl.Series(),
-            pl.Series(),
-            pl.Series(),
+            pl.DataFrame(),  # type: ignore
+            pl.DataFrame(),
+            pl.DataFrame(),
+            pl.DataFrame(),
+            pl.DataFrame(),
+            pl.DataFrame(),
         )
 
 
 def test_kw_only_initialization_labels() -> None:
     with pytest.raises(TypeError):
-        Labels(pl.Series(), pl.Series())  # type: ignore
+        Labels(pl.DataFrame(), pl.DataFrame())  # type: ignore
 
 
 def test_kw_only_initialization_recommendations() -> None:

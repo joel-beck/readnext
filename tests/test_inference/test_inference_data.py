@@ -162,37 +162,37 @@ feature_fixtures_skip_ci = [
 def test_inference_data_features(features: Features) -> None:
     assert isinstance(features, Features)
 
-    assert isinstance(features.publication_date, pl.Series)
+    assert isinstance(features.publication_date, pl.DataFrame)
     assert features.publication_date.name == "publication_date"
     assert features.publication_date.dtype == pl.Utf8
     assert features.publication_date.index.name == "document_id"
     assert features.publication_date.index.dtype == pl.Int64Dtype()
 
-    assert isinstance(features.citationcount_document, pl.Series)
+    assert isinstance(features.citationcount_document, pl.DataFrame)
     assert features.citationcount_document.name == "citationcount_document"
     assert features.citationcount_document.dtype == pl.Int64Dtype()
     assert features.citationcount_document.index.name == "document_id"
     assert features.citationcount_document.index.dtype == pl.Int64Dtype()
 
-    assert isinstance(features.citationcount_author, pl.Series)
+    assert isinstance(features.citationcount_author, pl.DataFrame)
     assert features.citationcount_author.name == "citationcount_author"
     assert features.citationcount_author.dtype == pl.Int64Dtype()
     assert features.citationcount_author.index.name == "document_id"
     assert features.citationcount_author.index.dtype == pl.Int64Dtype()
 
-    assert isinstance(features.co_citation_analysis, pl.Series)
+    assert isinstance(features.co_citation_analysis, pl.DataFrame)
     assert features.co_citation_analysis.name == "co_citation_analysis"
     assert features.co_citation_analysis.dtype == np.dtype("int64")
     assert features.co_citation_analysis.index.name == "document_id"
     assert features.co_citation_analysis.index.dtype == pl.Int64Dtype()
 
-    assert isinstance(features.bibliographic_coupling, pl.Series)
+    assert isinstance(features.bibliographic_coupling, pl.DataFrame)
     assert features.bibliographic_coupling.name == "bibliographic_coupling"
     assert features.bibliographic_coupling.dtype == np.dtype("int64")
     assert features.bibliographic_coupling.index.name == "document_id"
     assert features.bibliographic_coupling.index.dtype == pl.Int64Dtype()
 
-    assert isinstance(features.cosine_similarity, pl.Series)
+    assert isinstance(features.cosine_similarity, pl.DataFrame)
     assert features.cosine_similarity.name == "cosine_similarity"
     assert features.cosine_similarity.dtype == np.dtype("float64")
     assert features.cosine_similarity.index.name == "document_id"
@@ -229,37 +229,37 @@ rank_fixtures_skip_ci = [
 def test_inference_data_ranks(ranks: Ranks) -> None:
     assert isinstance(ranks, Ranks)
 
-    assert isinstance(ranks.publication_date, pl.Series)
+    assert isinstance(ranks.publication_date, pl.DataFrame)
     assert ranks.publication_date.name == "publication_date_rank"
     assert ranks.publication_date.dtype == np.dtype("float64")
     assert ranks.publication_date.index.name == "document_id"
     assert ranks.publication_date.index.dtype == pl.Int64Dtype()
 
-    assert isinstance(ranks.citationcount_document, pl.Series)
+    assert isinstance(ranks.citationcount_document, pl.DataFrame)
     assert ranks.citationcount_document.name == "citationcount_document_rank"
     assert ranks.citationcount_document.dtype == np.dtype("float64")
     assert ranks.citationcount_document.index.name == "document_id"
     assert ranks.citationcount_document.index.dtype == pl.Int64Dtype()
 
-    assert isinstance(ranks.citationcount_author, pl.Series)
+    assert isinstance(ranks.citationcount_author, pl.DataFrame)
     assert ranks.citationcount_author.name == "citationcount_author_rank"
     assert ranks.citationcount_author.dtype == np.dtype("float64")
     assert ranks.citationcount_author.index.name == "document_id"
     assert ranks.citationcount_author.index.dtype == pl.Int64Dtype()
 
-    assert isinstance(ranks.co_citation_analysis, pl.Series)
+    assert isinstance(ranks.co_citation_analysis, pl.DataFrame)
     assert ranks.co_citation_analysis.name == "co_citation_analysis_rank"
     assert ranks.co_citation_analysis.dtype == np.dtype("float64")
     assert ranks.co_citation_analysis.index.name == "document_id"
     assert ranks.co_citation_analysis.index.dtype == pl.Int64Dtype()
 
-    assert isinstance(ranks.bibliographic_coupling, pl.Series)
+    assert isinstance(ranks.bibliographic_coupling, pl.DataFrame)
     assert ranks.bibliographic_coupling.name == "bibliographic_coupling_rank"
     assert ranks.bibliographic_coupling.dtype == np.dtype("float64")
     assert ranks.bibliographic_coupling.index.name == "document_id"
     assert ranks.bibliographic_coupling.index.dtype == pl.Int64Dtype()
 
-    assert isinstance(ranks.cosine_similarity, pl.Series)
+    assert isinstance(ranks.cosine_similarity, pl.DataFrame)
     assert ranks.cosine_similarity.name == "cosine_similarity_rank"
     assert ranks.cosine_similarity.dtype == np.dtype("float64")
     assert ranks.cosine_similarity.index.name == "document_id"
@@ -294,7 +294,7 @@ label_fixtures_skip_ci = [
 def test_inference_data_labels(labels: Labels) -> None:
     assert isinstance(labels, Labels)
 
-    assert isinstance(labels.arxiv, pl.Series)
+    assert isinstance(labels.arxiv, pl.DataFrame)
     assert labels.arxiv.name == "arxiv_labels"
     assert labels.arxiv.dtype == object
     assert labels.arxiv.index.name == "document_id"
@@ -303,7 +303,7 @@ def test_inference_data_labels(labels: Labels) -> None:
     assert all(isinstance(label, str) for labels in labels.arxiv for label in labels)
     assert all(len(labels) > 0 for labels in labels.arxiv)
 
-    assert isinstance(labels.integer, pl.Series)
+    assert isinstance(labels.integer, pl.DataFrame)
     assert labels.integer.name == "integer_labels"
     assert labels.integer.dtype == np.dtype("int64")
     assert labels.integer.index.name == "document_id"
@@ -525,25 +525,25 @@ def test_kw_only_initialization_inference_data() -> None:
                 arxiv_labels=[],
             ),
             Features(
-                publication_date=pl.Series(),
-                citationcount_document=pl.Series(),
-                citationcount_author=pl.Series(),
-                co_citation_analysis=pl.Series(),
-                bibliographic_coupling=pl.Series(),
-                cosine_similarity=pl.Series(),
+                publication_date=pl.DataFrame(),
+                citationcount_document=pl.DataFrame(),
+                citationcount_author=pl.DataFrame(),
+                co_citation_analysis=pl.DataFrame(),
+                bibliographic_coupling=pl.DataFrame(),
+                cosine_similarity=pl.DataFrame(),
                 feature_weights=FeatureWeights(),
             ),
             Ranks(
-                publication_date=pl.Series(),
-                citationcount_document=pl.Series(),
-                citationcount_author=pl.Series(),
-                co_citation_analysis=pl.Series(),
-                bibliographic_coupling=pl.Series(),
-                cosine_similarity=pl.Series(),
+                publication_date=pl.DataFrame(),
+                citationcount_document=pl.DataFrame(),
+                citationcount_author=pl.DataFrame(),
+                co_citation_analysis=pl.DataFrame(),
+                bibliographic_coupling=pl.DataFrame(),
+                cosine_similarity=pl.DataFrame(),
             ),
             Labels(
-                arxiv=pl.Series(),
-                integer=pl.Series(),
+                arxiv=pl.DataFrame(),
+                integer=pl.DataFrame(),
             ),
             Recommendations(
                 citation_to_language_candidates=pl.DataFrame(),

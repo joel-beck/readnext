@@ -30,15 +30,13 @@ def main() -> None:
         inference_data_constructor_seen_semanticscholar_id
     )
 
-    type(inference_data_seen_from_semanticscholar_id.document_info.d3_document_id)
-    type(inference_data_seen_from_semanticscholar_id.document_identifier.d3_document_id)
-
     print(inference_data_seen_from_semanticscholar_id.document_identifier)
     print(inference_data_seen_from_semanticscholar_id.document_info)
     print(inference_data_seen_from_semanticscholar_id.features)
     print(inference_data_seen_from_semanticscholar_id.ranks)
     print(inference_data_seen_from_semanticscholar_id.labels)
     print(inference_data_seen_from_semanticscholar_id.recommendations.citation_to_language)
+    print(inference_data_seen_from_semanticscholar_id.recommendations.language_to_citation)
 
     # SUBSECTION: Input is semanticscholar URL
     inference_data_constructor_seen_semanticscholar_url = InferenceDataConstructor(
@@ -95,6 +93,7 @@ def main() -> None:
     arxiv_url = "https://arxiv.org/abs/2303.08774"
     arxiv_id = get_arxiv_id_from_arxiv_url(arxiv_url)
 
+    # TODO: Make analogous to seen paper
     inference_data_constructor_unseen_arxiv_id = InferenceDataConstructor(
         arxiv_url=arxiv_url,
         language_model_choice=LanguageModelChoice.scibert,

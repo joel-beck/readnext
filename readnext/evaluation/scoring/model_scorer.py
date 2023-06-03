@@ -203,12 +203,21 @@ class LanguageModelScorer(ModelScorer):
 
         The `feature_weights` argument is not used for scoring language models.
         """
-        return language_model_data.cosine_similarity_ranks.sort("rank").head(n)
+        return language_model_data.cosine_similarity_ranks.sort("cosine_similarity_rank").head(n)
 
     @staticmethod
-    def move_cosine_similarity_first(df: pl.DataFrame) -> pl.DataFrame:
-        """Move the cosine similarity column to the first position in a dataframe."""
-        return df.select(["cosine_similarity", pl.exclude("cosine_similarity")])
+    def move_cosine_similarity_second(df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Move the `cosine_similarity` column to the second position after the
+        `candidate_d3_document_id` column in a dataframe.
+        """
+        return df.select(
+            [
+                "candidate_d3_document_id",
+                "cosine_similarity",
+                pl.exclude(["candidate_d3_document_id", "cosine_similarity"]),
+            ]
+        )
 
     @staticmethod
     def add_info_cols(df: pl.DataFrame, info_matrix: pl.DataFrame) -> pl.DataFrame:
@@ -218,8 +227,8 @@ class LanguageModelScorer(ModelScorer):
         """
         return (
             df.join(info_matrix, on="candidate_d3_document_id", how="left")
-            .drop("rank")
-            .pipe(LanguageModelScorer.move_cosine_similarity_first)
+            .drop("cosine_similarity_rank")
+            .pipe(LanguageModelScorer.move_cosine_similarity_second)
         )
 
     @staticmethod

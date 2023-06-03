@@ -240,7 +240,7 @@ def compare_hybrid_scores_by_document_id(
 
 
 def main() -> None:
-    documents_data: pl.DataFrame = read_df_from_parquet(DataPaths.merged.documents_data_parquet)
+    documents_data: pl.DataFrame = read_df_from_parquet(DataPaths.merged.documents_data)
     # query_d3_document_id = documents_data["d3_document_id"][0]
     # NOTE: Remove to evaluate on full data
     documents_data = documents_data.head(1000)

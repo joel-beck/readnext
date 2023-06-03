@@ -99,7 +99,7 @@ class InferenceDataConstructor:
     def get_documents_data(self) -> pl.DataFrame:
         # NOTE: For now the data is limited to the first 1000 documents. This number
         # must match the number of precomputed embeddings, cosine similarities, etc!
-        return read_df_from_parquet(DataPaths.merged.documents_data_parquet).head(1000)
+        return read_df_from_parquet(DataPaths.merged.documents_data).head(1000)
 
     def query_document_in_training_data(self) -> bool:
         if self.semanticscholar_id is not None:

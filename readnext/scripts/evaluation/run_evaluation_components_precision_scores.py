@@ -22,7 +22,7 @@ def main() -> None:
     query_d3_document_id = 13756489
 
     # SECTION: Get Raw Data
-    documents_data: pl.DataFrame = read_df_from_parquet(DataPaths.merged.documents_data_parquet)
+    documents_data: pl.DataFrame = read_df_from_parquet(DataPaths.merged.documents_data)
     # NOTE: Remove to evaluate on full data
     documents_data = documents_data.head(1000)
 

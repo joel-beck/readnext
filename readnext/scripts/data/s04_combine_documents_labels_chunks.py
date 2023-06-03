@@ -7,7 +7,7 @@ from readnext.utils import read_df_from_parquet, setup_progress_bar, write_df_to
 
 
 def main() -> None:
-    path_documents_labels = DataPaths.merged.documents_labels_pkl
+    path_documents_labels = DataPaths.merged.documents_labels
     filename_pattern = "documents_labels_chunks_*.pkl"
     matching_files = sorted(path_documents_labels.parent.glob(filename_pattern))
 

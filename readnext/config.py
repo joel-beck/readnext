@@ -41,46 +41,39 @@ arxiv_metadata_json_filename = os.getenv("ARXIV_METADATA_FILENAME", "arxiv_metad
 @dataclass(frozen=True)
 class RawDataPaths:
     """
-    Sets file paths for the raw documents, authors and arxiv labels in JSON format.
+    Sets file paths for the raw documents, authors and arxiv metadata in JSON and
+    Parquet format.
     """
 
-    documents: Path = data_dirpath / documents_metadata_json_filename
-    authors: Path = data_dirpath / authors_metadata_json_filename
-    arxiv_labels: Path = data_dirpath / arxiv_metadata_json_filename
-
-
-@dataclass(frozen=True)
-class D3DataPaths:
-    """
-    Sets file paths for the D3 documents, authors and arxiv labels in Parquet format.
-    """
-
+    documents_json: Path = data_dirpath / documents_metadata_json_filename
     documents_parquet: Path = data_dirpath / "2022-11-30_documents.parquet"
+    authors_json: Path = data_dirpath / authors_metadata_json_filename
     authors_parquet: Path = data_dirpath / "2022-11-30_authors.parquet"
+    arxiv_labels_json: Path = data_dirpath / arxiv_metadata_json_filename
     arxiv_labels_parquet: Path = data_dirpath / "arxiv_metadata.parquet"
 
 
 @dataclass(frozen=True)
 class MergedDataPaths:
     """
-    Sets file paths for all processed data files after adding information to the raw D3
-    data.
+    Sets file paths for all processed data files after adding information to the raw
+    documents data.
     """
 
     documents_labels_chunk_stem: Path = data_dirpath / "documents_labels_chunks"
-    documents_labels_pkl: Path = data_dirpath / "documents_labels.pkl"
-    documents_authors_labels_pkl: Path = data_dirpath / "documents_authors_labels.pkl"
+    documents_labels: Path = data_dirpath / "documents_labels.parquet"
+    documents_authors_labels: Path = data_dirpath / "documents_authors_labels.parquet"
     documents_authors_labels_citations_chunks_stem: Path = (
         data_dirpath / "documents_authors_labels_citations_chunks"
     )
-    documents_authors_labels_citations_pkl: Path = (
-        data_dirpath / "documents_authors_labels_citations.pkl"
+    documents_authors_labels_citations: Path = (
+        data_dirpath / "documents_authors_labels_citations.parquet"
     )
-    documents_authors_labels_citations_most_cited_parquet: Path = (
-        data_dirpath / "documents_authors_labels_citations_most_cited.parquet"
-    )
+    # documents_authors_labels_citations_most_cited_parquet: Path = (
+    #     data_dirpath / "documents_authors_labels_citations_most_cited.parquet"
+    # )
+    documents_data: Path = data_dirpath / "documents_data.parquet"
     most_cited_subset_size: int = 10_000
-    documents_data_parquet: Path = data_dirpath / "documents_data.parquet"
 
 
 @dataclass(frozen=True)
@@ -88,7 +81,6 @@ class DataPaths:
     """Collects file paths for all data files."""
 
     raw: RawDataPaths = RawDataPaths()  # noqa: RUF009
-    d3: D3DataPaths = D3DataPaths()  # noqa: RUF009
     merged: MergedDataPaths = MergedDataPaths()  # noqa: RUF009
 
 

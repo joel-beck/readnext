@@ -45,12 +45,12 @@ def test_arxiv_data_paths() -> None:
 def test_merged_data_paths() -> None:
     merged_data_paths = MergedDataPaths()
     assert isinstance(merged_data_paths.documents_labels_chunk_stem, Path)
-    assert isinstance(merged_data_paths.documents_labels_pkl, Path)
-    assert isinstance(merged_data_paths.documents_authors_labels_pkl, Path)
+    assert isinstance(merged_data_paths.documents_labels, Path)
+    assert isinstance(merged_data_paths.documents_authors_labels, Path)
     assert isinstance(merged_data_paths.documents_authors_labels_citations_chunks_stem, Path)
-    assert isinstance(merged_data_paths.documents_authors_labels_citations_pkl, Path)
-    assert isinstance(merged_data_paths.documents_authors_labels_citations_pkl, Path)
-    assert isinstance(merged_data_paths.documents_data_parquet, Path)
+    assert isinstance(merged_data_paths.documents_authors_labels_citations, Path)
+    assert isinstance(merged_data_paths.documents_authors_labels_citations, Path)
+    assert isinstance(merged_data_paths.documents_data, Path)
     assert isinstance(merged_data_paths.most_cited_subset_size, int)
 
 

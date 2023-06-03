@@ -8,7 +8,7 @@ from readnext.utils import TokenIdsFrame, TokensFrame, read_df_from_parquet
 # SECTION: Local Data
 @pytest.fixture(scope="session")
 def documents_data() -> pl.DataFrame:
-    return read_df_from_parquet(DataPaths.merged.documents_data_parquet)
+    return read_df_from_parquet(DataPaths.merged.documents_data)
 
 
 @pytest.fixture(scope="session")

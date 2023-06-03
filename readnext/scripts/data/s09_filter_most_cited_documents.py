@@ -12,7 +12,7 @@ from readnext.utils import write_df_to_parquet
 
 def main() -> None:
     documents_authors_labels_references: pd.DataFrame = pd.read_pickle(
-        DataPaths.merged.documents_authors_labels_citations_pkl
+        DataPaths.merged.documents_authors_labels_citations
     )
 
     documents_authors_labels_citations_most_cited = documents_authors_labels_references.sort_values(

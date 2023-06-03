@@ -46,7 +46,7 @@ def main() -> None:
     USE_SUBSET = True
 
     documents_authors_labels: pl.DataFrame = read_df_from_parquet(
-        DataPaths.merged.documents_authors_labels_pkl
+        DataPaths.merged.documents_authors_labels
     )
 
     SUBSET_START = int(sys.argv[1]) if USE_SUBSET else 0

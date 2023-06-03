@@ -22,13 +22,13 @@ from readnext.utils import write_df_to_parquet
 
 def main() -> None:
     # takes roughly 15 minutes
-    documents = pl.scan_ndjson(DataPaths.raw.documents).collect()
-    authors = pl.scan_ndjson(DataPaths.raw.authors).collect()
-    arxiv_labels = pl.scan_ndjson(DataPaths.raw.arxiv_labels).collect()
+    documents = pl.scan_ndjson(DataPaths.raw.documents_json).collect()
+    authors = pl.scan_ndjson(DataPaths.raw.authors_json).collect()
+    arxiv_labels = pl.scan_ndjson(DataPaths.raw.arxiv_labels_json).collect()
 
-    write_df_to_parquet(documents, DataPaths.d3.documents_parquet)
-    write_df_to_parquet(authors, DataPaths.d3.authors_parquet)
-    write_df_to_parquet(arxiv_labels, DataPaths.d3.arxiv_labels_parquet)
+    write_df_to_parquet(documents, DataPaths.raw.documents_parquet)
+    write_df_to_parquet(authors, DataPaths.raw.authors_parquet)
+    write_df_to_parquet(arxiv_labels, DataPaths.raw.arxiv_labels_parquet)
 
 
 if __name__ == "__main__":

@@ -84,7 +84,7 @@ def main() -> None:
         .select(output_columns)
     )
 
-    write_df_to_parquet(documents_data, DataPaths.merged.documents_data_parquet)
+    write_df_to_parquet(documents_data, DataPaths.merged.documents_data)
 
 
 if __name__ == "__main__":

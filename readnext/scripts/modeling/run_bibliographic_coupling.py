@@ -8,7 +8,7 @@ from readnext.utils import read_df_from_parquet, write_df_to_parquet
 
 
 def main() -> None:
-    documents_data = read_df_from_parquet(DataPaths.merged.documents_data_parquet)
+    documents_data = read_df_from_parquet(DataPaths.merged.documents_data)
     # NOTE: Remove to train on full data
     documents_data = documents_data.head(1000)
 

@@ -35,7 +35,7 @@ def main() -> None:
     TEST_DATA_SIZE = 100
     test_data_dirpath = Path(__file__).parent / "data"
 
-    documents_data_path = DataPaths.merged.documents_data_parquet
+    documents_data_path = DataPaths.merged.documents_data
     results_paths = get_all_paths_from_dataclass(ResultsPaths)
 
     all_paths = [documents_data_path, *results_paths]

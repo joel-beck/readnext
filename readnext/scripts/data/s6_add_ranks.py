@@ -15,7 +15,7 @@ from readnext.utils import (
 )
 
 
-def add_citation_feature_rank_columns(df: pl.DataFrame) -> pl.DataFrame:
+def add_citation_feature_rank_columns(df: pl.LazyFrame) -> pl.LazyFrame:
     """
     Add rank columns for publication date, document citation count, and author citation
     count to the dataframe.
@@ -31,30 +31,16 @@ def add_citation_feature_rank_columns(df: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def add_identifier_columns(df: pl.DataFrame) -> pl.DataFrame:
+def select_most_cited_documents(df: pl.LazyFrame) -> pl.LazyFrame:
     """
-    Add Semanticscholar ID and Arxiv URL as additional identifiers for each document.
+    Select a subset of the most cited documents from the full documents data set.
     """
-    return df.with_columns(
-        semanticscholar_id=pl.col("semanticscholar_url").apply(
-            get_semanticscholar_id_from_semanticscholar_url
-        ),
-        arxiv_url=pl.col("arxiv_id").apply(get_arxiv_url_from_arxiv_id),
+    return df.sort(["citationcount_document"], descending=True).head(
+        DataPaths.merged.most_cited_subset_size
     )
-
-
-def rename_d3_identifiers(df: pl.DataFrame) -> pl.DataFrame:
-    """
-    Add `d3` prefix to document and author id within the D3 dataset.
-    """
-    return df.rename({"document_id": "d3_document_id", "author_id": "d3_author_id"})
 
 
 def main() -> None:
-    documents_authors_labels_citations_most_cited: pl.DataFrame = read_df_from_parquet(
-        DataPaths.merged.documents_authors_labels_citations_most_cited_parquet
-    )
-
     output_columns = [
         "d3_document_id",
         "d3_author_id",
@@ -78,10 +64,11 @@ def main() -> None:
     ]
 
     documents_data = (
-        documents_authors_labels_citations_most_cited.pipe(add_citation_feature_rank_columns)
-        .pipe(add_identifier_columns)
-        .pipe(rename_d3_identifiers)
+        pl.scan_parquet(DataPaths.merged.documents_authors_labels_citations)
+        .pipe(add_citation_feature_rank_columns)
+        .pipe(select_most_cited_documents)
         .select(output_columns)
+        .collect()
     )
 
     write_df_to_parquet(documents_data, DataPaths.merged.documents_data)

@@ -178,7 +178,7 @@ def main() -> None:
     )
 
     documents_data = (
-        pl.scan_parquet(DataPaths.raw.documents_parquet, n_rows=1000)
+        pl.scan_parquet(DataPaths.raw.documents_parquet)
         .pipe(rename_document_columns)
         .pipe(format_semanticscholar_tags)
         .pipe(fill_missing_publication_dates_with_year)

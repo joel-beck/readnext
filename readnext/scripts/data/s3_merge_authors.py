@@ -14,14 +14,8 @@ def select_most_popular_author(df: pl.DataFrame) -> pl.DataFrame:
     Sort by author popularity metric within each document from highest to lowest and
     keep first row. Then sort the unique documents again by document citation count.
     """
-    return df.sort(["document_id", "citationcount_author"], descending=True).unique(
+    return df.sort(["d3_document_id", "citationcount_author"], descending=True).unique(
         subset=["d3_document_id"], keep="first"
-    )
-
-
-def remove_incomplete_data(df: pl.DataFrame) -> pl.DataFrame:
-    return df.drop_nulls(
-        subset=["publication_year", "citationcount_document", "citationcount_author", "abstract"]
     )
 
 
@@ -48,6 +42,7 @@ def main() -> None:
         pl.scan_parquet(DataPaths.raw.authors_parquet)
         .rename({"authorid": "d3_author_id", "citationcount": "citationcount_author"})
         .select(["d3_author_id", "citationcount_author"])
+        .with_columns(pl.col("d3_author_id").cast(pl.Int64))
         .collect()
     )
 
@@ -55,7 +50,7 @@ def main() -> None:
         documents_labels.join(authors, how="left", on="d3_author_id")
         .select(output_columns)
         .pipe(select_most_popular_author)
-        .pipe(remove_incomplete_data)
+        .drop_nulls()
     )
 
     write_df_to_parquet(documents_authors_labels, DataPaths.merged.documents_authors_labels)

@@ -30,20 +30,12 @@ from readnext.utils import (
 )
 
 
-def spacy_load_training_tokens_frame() -> TokensFrame:
-    return read_df_from_parquet(ResultsPaths.language_models.spacy_tokenized_abstracts_parquet)
-
-
 @status_update("tokenizing query abstract with Spacy")
 def spacy_tokenize_query(query_documents_data: pl.DataFrame) -> Tokens:
     spacy_model = spacy.load(ModelVersions.spacy)
     spacy_tokenizer = SpacyTokenizer(query_documents_data, spacy_model)
 
     return spacy_tokenizer.tokenize_single_document(query_documents_data["abstract"][0])
-
-
-def bert_load_training_tokens_frame() -> TokenIdsFrame:
-    return read_df_from_parquet(ResultsPaths.language_models.bert_tokenized_abstracts_parquet)
 
 
 @status_update("tokenizing query abstract with BERT")
@@ -56,10 +48,6 @@ def bert_tokenize_query(query_documents_data: pl.DataFrame) -> TokenIds:
     return bert_tokenizer.tokenize_into_ids(query_documents_data["abstract"][0])
 
 
-def scibert_load_training_tokens_frame() -> TokenIdsFrame:
-    return read_df_from_parquet(ResultsPaths.language_models.scibert_tokenized_abstracts_parquet)
-
-
 @status_update("tokenizing query abstract with SciBERT")
 def scibert_tokenize_query(query_documents_data: pl.DataFrame) -> TokenIds:
     scibert_tokenizer_transformers = BertTokenizerFast.from_pretrained(
@@ -68,10 +56,6 @@ def scibert_tokenize_query(query_documents_data: pl.DataFrame) -> TokenIds:
     scibert_tokenizer = BERTTokenizer(query_documents_data, scibert_tokenizer_transformers)
 
     return scibert_tokenizer.tokenize_into_ids(query_documents_data["abstract"][0])
-
-
-def longformer_load_training_tokens_frame() -> TokenIdsFrame:
-    return read_df_from_parquet(ResultsPaths.language_models.longformer_tokenized_abstracts_parquet)
 
 
 @status_update("tokenizing query abstract with Longformer")
@@ -84,6 +68,10 @@ def longformer_tokenize_query(query_documents_data: pl.DataFrame) -> TokenIds:
     )
 
     return longformer_tokenizer.tokenize_into_ids(query_documents_data["abstract"][0])
+
+
+def spacy_load_training_tokens_frame() -> TokensFrame:
+    return read_df_from_parquet(ResultsPaths.language_models.spacy_tokenized_abstracts_parquet)
 
 
 @status_update("embedding query abstract with TF-IDF")
@@ -109,7 +97,7 @@ def bm25_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
     return bm25_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
 
-@status_update("loading pretrained Word2Vec Model")
+@status_update("loading pretrained Word2Vec model")
 def word2vec_load_model() -> KeyedVectors:
     return load_word2vec_format(ModelPaths.word2vec, binary=True)
 
@@ -128,7 +116,7 @@ def word2vec_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
     return word2vec_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
 
-@status_update("loading pretrained Glove Model")
+@status_update("loading pretrained Glove model")
 def glove_load_model() -> KeyedVectors:
     return load_word2vec_format(ModelPaths.glove, binary=False, no_header=True)
 
@@ -147,7 +135,7 @@ def glove_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
     return glove_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
 
-@status_update("loading pretrained FastText Model")
+@status_update("loading pretrained FastText model")
 def fasttext_load_model() -> FastText:
     return load_facebook_model(ModelPaths.fasttext)
 
@@ -166,7 +154,11 @@ def fasttest_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
     return fasttext_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
 
-@status_update("loading pretrained BERT Model")
+def bert_load_training_tokens_frame() -> TokenIdsFrame:
+    return read_df_from_parquet(ResultsPaths.language_models.bert_tokenized_abstracts_parquet)
+
+
+@status_update("loading pretrained BERT model")
 def bert_load_model() -> BertModel:
     return BertModel.from_pretrained(ModelVersions.bert)  # type: ignore
 
@@ -185,7 +177,11 @@ def bert_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
     return bert_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
 
-@status_update("loading pretrained SciBERT Model")
+def scibert_load_training_tokens_frame() -> TokenIdsFrame:
+    return read_df_from_parquet(ResultsPaths.language_models.scibert_tokenized_abstracts_parquet)
+
+
+@status_update("loading pretrained SciBERT model")
 def scibert_load_model() -> BertModel:
     return BertModel.from_pretrained(ModelVersions.scibert)  # type: ignore
 
@@ -204,7 +200,11 @@ def scibert_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
     return scibert_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
 
-@status_update("loading pretrained Longformer Model")
+def longformer_load_training_tokens_frame() -> TokenIdsFrame:
+    return read_df_from_parquet(ResultsPaths.language_models.longformer_tokenized_abstracts_parquet)
+
+
+@status_update("loading pretrained Longformer model")
 def longformer_load_model() -> LongformerModel:
     return LongformerModel.from_pretrained(ModelVersions.longformer)  # type: ignore
 

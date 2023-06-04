@@ -199,7 +199,7 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
             }
         )
 
-    @status_update("computing cosine similarities")
+    @status_update("setting cosine similarities attribute")
     def get_cosine_similarities(self) -> pl.DataFrame:
         query_document_data = self.get_query_documents_data()
         query_embedding_function = select_query_embedding_function(self.language_model_choice)

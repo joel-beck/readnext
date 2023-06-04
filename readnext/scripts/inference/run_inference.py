@@ -95,7 +95,7 @@ def main() -> None:
 
     inference_data_constructor_unseen_arxiv_id = InferenceDataConstructor(
         arxiv_url=arxiv_url,
-        language_model_choice=LanguageModelChoice.scibert,
+        language_model_choice=LanguageModelChoice.longformer,
         feature_weights=FeatureWeights(),
     )
 

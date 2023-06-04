@@ -87,6 +87,9 @@ class InferenceDataConstructor:
         constructor plugin is used to set all data attributes needed for inference.
         """
 
+        # documents data must be set before the constructor plugin since documents data
+        # is required to check if the query document is contained in the training data
+        # and, thus, to select the correct constructor plugin
         self._documents_data = self.get_documents_data()
         self.constructor_plugin = self.get_constructor_plugin()
         self._citation_model_data = self.constructor_plugin.get_citation_model_data()

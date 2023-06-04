@@ -4,7 +4,7 @@ from pytest_lazyfixture import lazy_fixture
 
 from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference import DocumentIdentifier, InferenceDataConstructor
-from readnext.inference.attribute_getter import SeenPaperAttributeGetter, UnseenPaperAttributeGetter
+from readnext.inference.attribute_getter import SeenAttributeGetter, UnseenAttributeGetter
 from readnext.inference.inference_data_constructor import Features, Labels, Ranks, Recommendations
 from readnext.modeling.language_models import LanguageModelChoice
 
@@ -25,7 +25,7 @@ def test_seen_attribute_getter_is_selected_correctly(
     assert inference_data_constructor.query_document_in_training_data()
     assert isinstance(
         inference_data_constructor.attribute_getter,
-        SeenPaperAttributeGetter,
+        SeenAttributeGetter,
     )
 
 
@@ -39,7 +39,7 @@ def test_unseen_attribute_getter_is_selected_correctly(
     assert not inference_data_constructor.query_document_in_training_data()
     assert isinstance(
         inference_data_constructor.attribute_getter,
-        UnseenPaperAttributeGetter,
+        UnseenAttributeGetter,
     )
 
 

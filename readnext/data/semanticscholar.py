@@ -1,11 +1,11 @@
 import os
 from dataclasses import dataclass, field
 from typing import Any, Literal, TypedDict
-from typing_extensions import NotRequired
 
 import requests
 from dotenv import load_dotenv
 from joblib import Parallel, delayed
+from typing_extensions import NotRequired
 
 from readnext.utils import (
     get_arxiv_id_from_arxiv_url,

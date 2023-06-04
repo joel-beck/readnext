@@ -8,8 +8,8 @@ from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference import DocumentIdentifier, InferenceDataInputConverter
 from readnext.inference.attribute_getter import (
     AttributeGetter,
-    SeenPaperAttributeGetter,
-    UnseenPaperAttributeGetter,
+    SeenAttributeGetter,
+    UnseenAttributeGetter,
 )
 from readnext.modeling.document_info import DocumentInfo
 from readnext.modeling.language_models import LanguageModelChoice
@@ -67,7 +67,7 @@ def test_attribute_getter_attributes_are_created_correctly(
 
 # SECTION: SeenPaperAttributeGetter
 def test_passing_inputs_to_input_converter_works_for_semanticscholar_id(
-    seen_paper_attribute_getter_from_semanticscholar_id: SeenPaperAttributeGetter,
+    seen_paper_attribute_getter_from_semanticscholar_id: SeenAttributeGetter,
 ) -> None:
     assert seen_paper_attribute_getter_from_semanticscholar_id.semanticscholar_id is not None
     assert isinstance(seen_paper_attribute_getter_from_semanticscholar_id.semanticscholar_id, str)
@@ -77,7 +77,7 @@ def test_passing_inputs_to_input_converter_works_for_semanticscholar_id(
 
 
 def test_passing_inputs_to_input_converter_works_for_semanticscholar_url(
-    seen_paper_attribute_getter_from_semanticscholar_url: SeenPaperAttributeGetter,
+    seen_paper_attribute_getter_from_semanticscholar_url: SeenAttributeGetter,
 ) -> None:
     assert seen_paper_attribute_getter_from_semanticscholar_url.semanticscholar_id is None
     assert seen_paper_attribute_getter_from_semanticscholar_url.semanticscholar_url is not None
@@ -87,7 +87,7 @@ def test_passing_inputs_to_input_converter_works_for_semanticscholar_url(
 
 
 def test_passing_inputs_to_input_converter_works_for_arxiv_id(
-    seen_paper_attribute_getter_from_arxiv_id: SeenPaperAttributeGetter,
+    seen_paper_attribute_getter_from_arxiv_id: SeenAttributeGetter,
 ) -> None:
     assert seen_paper_attribute_getter_from_arxiv_id.semanticscholar_id is None
     assert seen_paper_attribute_getter_from_arxiv_id.semanticscholar_url is None
@@ -97,7 +97,7 @@ def test_passing_inputs_to_input_converter_works_for_arxiv_id(
 
 
 def test_passing_inputs_to_input_converter_works_for_arxiv_url(
-    seen_paper_attribute_getter_from_arxiv_url: SeenPaperAttributeGetter,
+    seen_paper_attribute_getter_from_arxiv_url: SeenAttributeGetter,
 ) -> None:
     assert seen_paper_attribute_getter_from_arxiv_url.semanticscholar_id is None
     assert seen_paper_attribute_getter_from_arxiv_url.semanticscholar_url is None
@@ -108,7 +108,7 @@ def test_passing_inputs_to_input_converter_works_for_arxiv_url(
 
 @pytest.mark.parametrize("seen_paper_attribute_getter", lazy_fixture(seen_paper_attribute_getters))
 def test_seen_paper_attribute_getter_attributes_are_created_correctly(
-    seen_paper_attribute_getter: SeenPaperAttributeGetter,
+    seen_paper_attribute_getter: SeenAttributeGetter,
 ) -> None:
     assert isinstance(seen_paper_attribute_getter.input_converter, InferenceDataInputConverter)
 
@@ -125,7 +125,7 @@ def test_seen_paper_attribute_getter_attributes_are_created_correctly(
 
 def test_kw_only_initialization_seen_paper_attribute_getter() -> None:
     with pytest.raises(TypeError):
-        SeenPaperAttributeGetter(
+        SeenAttributeGetter(
             None,  # type: ignore
             None,
             None,
@@ -141,7 +141,7 @@ def test_kw_only_initialization_seen_paper_attribute_getter() -> None:
     "unseen_paper_attribute_getter", lazy_fixture(unseen_paper_attribute_getters)
 )
 def test_unseen_paper_attribute_getter_attributes_are_created_correctly(
-    unseen_paper_attribute_getter: UnseenPaperAttributeGetter,
+    unseen_paper_attribute_getter: UnseenAttributeGetter,
 ) -> None:
     assert isinstance(unseen_paper_attribute_getter.semanticscholar_request, SemanticscholarRequest)
 
@@ -152,7 +152,7 @@ def test_unseen_paper_attribute_getter_attributes_are_created_correctly(
     "unseen_paper_attribute_getter", lazy_fixture(unseen_paper_attribute_getters)
 )
 def test_send_semanticscholar_request(
-    unseen_paper_attribute_getter: UnseenPaperAttributeGetter,
+    unseen_paper_attribute_getter: UnseenAttributeGetter,
 ) -> None:
     unseen_paper_attribute_getter.send_semanticscholar_request()
 
@@ -209,7 +209,7 @@ def test_send_semanticscholar_request(
     "unseen_paper_attribute_getter", lazy_fixture(unseen_paper_attribute_getters)
 )
 def test_query_citation_urls(
-    unseen_paper_attribute_getter: UnseenPaperAttributeGetter,
+    unseen_paper_attribute_getter: UnseenAttributeGetter,
 ) -> None:
     citation_urls = unseen_paper_attribute_getter.get_query_citation_urls()
 
@@ -228,7 +228,7 @@ def test_query_citation_urls(
     "unseen_paper_attribute_getter", lazy_fixture(unseen_paper_attribute_getters)
 )
 def test_query_reference_urls(
-    unseen_paper_attribute_getter: UnseenPaperAttributeGetter,
+    unseen_paper_attribute_getter: UnseenAttributeGetter,
 ) -> None:
     reference_urls = unseen_paper_attribute_getter.get_query_reference_urls()
 
@@ -247,7 +247,7 @@ def test_query_reference_urls(
     "unseen_paper_attribute_getter", lazy_fixture(unseen_paper_attribute_getters)
 )
 def test_query_document_info(
-    unseen_paper_attribute_getter: UnseenPaperAttributeGetter,
+    unseen_paper_attribute_getter: UnseenAttributeGetter,
 ) -> None:
     document_info = unseen_paper_attribute_getter.get_query_document_info()
 
@@ -269,7 +269,7 @@ def test_query_document_info(
 
 def test_kw_only_initialization_unseen_paper_attribute_getter() -> None:
     with pytest.raises(TypeError):
-        UnseenPaperAttributeGetter(
+        UnseenAttributeGetter(
             None,  # type: ignore
             None,
             None,

@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 import polars as pl
 
 from readnext.modeling.document_info import DocumentInfo
+from readnext.modeling.model_data_constructor_plugin import ModelDataConstructorPlugin
 
 
 @dataclass(kw_only=True)
@@ -21,11 +22,13 @@ class ModelDataConstructor(ABC):
     d3_document_id: int
     documents_data: pl.DataFrame
     info_cols: list[str]
+    constructor_plugin: ModelDataConstructorPlugin
+
     query_document: DocumentInfo = field(init=False)
 
     def __post_init__(self) -> None:
         """Store the query document information in an instance attribute during initialization."""
-        self.query_document = self.collect_query_document()
+        self.query_document = self.constructor_plugin.collect_query_document()
 
     @abstractmethod
     def extend_info_matrix(self, info_matrix: pl.DataFrame) -> pl.DataFrame:
@@ -34,29 +37,9 @@ class ModelDataConstructor(ABC):
         document features.
         """
 
-    def collect_query_document(self) -> DocumentInfo:
-        """Extract and collect the query document information from the documents data."""
-        query_document_row = self.documents_data.filter(
-            pl.col("d3_document_id") == self.d3_document_id
-        )
-
-        return DocumentInfo(
-            d3_document_id=self.d3_document_id,
-            title=query_document_row.select("title").item(),
-            author=query_document_row.select("author").item(),
-            arxiv_labels=query_document_row.select("arxiv_labels").item().to_list(),
-            abstract=query_document_row.select("abstract").item(),
-        )
-
-    def exclude_query_document(self, df: pl.DataFrame) -> pl.DataFrame:
+    def exclude_query_document(self) -> pl.DataFrame:
         """Exclude the query document from the documents data."""
-        return df.filter(pl.col("d3_document_id") != self.d3_document_id)
-
-    def filter_documents_data(self) -> pl.DataFrame:
-        """
-        Exclude the query document from the documents data and return the filtered data.
-        """
-        return self.exclude_query_document(self.documents_data)
+        return self.documents_data.filter(pl.col("d3_document_id") != self.d3_document_id)
 
     @staticmethod
     def rename_to_candidate_id(df: pl.DataFrame) -> pl.DataFrame:
@@ -71,7 +54,7 @@ class ModelDataConstructor(ABC):
         """
         Filter out query document and rename id column to candidate id.
         """
-        return self.filter_documents_data().pipe(self.rename_to_candidate_id)
+        return self.exclude_query_document().pipe(self.rename_to_candidate_id)
 
     def get_info_matrix(self) -> pl.DataFrame:
         """
@@ -80,16 +63,6 @@ class ModelDataConstructor(ABC):
         """
         return self.get_query_documents_data().select(self.info_cols)
 
-    def get_query_scores(self, scores_frame: pl.DataFrame) -> pl.DataFrame:
-        """
-        Extract the scores of all candidate documents for a given scores frame and
-        converts them to a dataframe with two columns named `candidate_d3_document_id`
-        and `score`.
-        """
-        return scores_frame.filter(pl.col("query_d3_document_id") == self.d3_document_id).drop(
-            "query_d3_document_id"
-        )
-
     def get_query_ranks(self, scores_frame: pl.DataFrame) -> pl.DataFrame:
         """
         Computes ranks of all candidate documents for a given scores frame from the
@@ -97,7 +70,7 @@ class ModelDataConstructor(ABC):
         `candidate_d3_document_id` and `rank`.
         """
         return (
-            self.get_query_scores(scores_frame)
+            self.constructor_plugin.get_query_scores(scores_frame)
             .with_columns(rank=pl.col("score").rank(descending=True))
             .drop("score")
         )
@@ -170,7 +143,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
         them to a dataframe with with two columns named `candidate_d3_document_id`
         and `score`.
         """
-        return self.get_query_scores(self.co_citation_analysis_scores)
+        return self.constructor_plugin.get_query_scores(self.co_citation_analysis_scores)
 
     def get_bibliographic_coupling_scores(self) -> pl.DataFrame:
         """
@@ -178,7 +151,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
         converts them to a dataframe with with two columns named `candidate_d3_document_id`
         and `score`.
         """
-        return self.get_query_scores(self.bibliographic_coupling_scores)
+        return self.constructor_plugin.get_query_scores(self.bibliographic_coupling_scores)
 
     def get_co_citation_analysis_ranks(self) -> pl.DataFrame:
         """
@@ -251,7 +224,7 @@ class LanguageModelDataConstructor(ModelDataConstructor):
         """
         # output dataframe has length of original full data in tests, even though the
         # test_cosine_similarities data itself only contains 100 rows
-        return self.get_query_scores(self.cosine_similarities)
+        return self.constructor_plugin.get_query_scores(self.cosine_similarities)
 
     def get_cosine_similarity_ranks(self) -> pl.DataFrame:
         """

@@ -9,6 +9,11 @@ from readnext.modeling.model_data_constructor import (
     LanguageModelDataConstructor,
     ModelDataConstructor,
 )
+from readnext.modeling.model_data_constructor_plugin import (
+    ModelDataConstructorPlugin,
+    SeenModelDataConstructorPlugin,
+    UnseenModelDataConstructorPlugin,
+)
 
 __all__ = [
     "DocumentInfo",
@@ -18,4 +23,7 @@ __all__ = [
     "CitationModelDataConstructor",
     "LanguageModelDataConstructor",
     "ModelDataConstructor",
+    "ModelDataConstructorPlugin",
+    "SeenModelDataConstructorPlugin",
+    "UnseenModelDataConstructorPlugin",
 ]

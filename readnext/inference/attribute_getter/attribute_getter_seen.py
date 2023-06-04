@@ -13,6 +13,7 @@ from readnext.modeling import (
     CitationModelDataConstructor,
     LanguageModelData,
     LanguageModelDataConstructor,
+    SeenModelDataConstructorPlugin,
 )
 from readnext.modeling.language_models import (
     load_cosine_similarities_from_choice,
@@ -21,16 +22,25 @@ from readnext.utils import read_df_from_parquet
 
 
 @dataclass(kw_only=True)
-class SeenPaperAttributeGetter(AttributeGetter):
+class SeenAttributeGetter(AttributeGetter):
     """Get data attributes for a paper that is contained in the training data."""
 
     input_converter: InferenceDataInputConverter = field(init=False)
+    model_data_constructor_plugin: SeenModelDataConstructorPlugin = field(init=False)
 
     def __post_init__(self) -> None:
         # must be called *before* `super().__post_init__()` since
         # `super().__post_init__()` already used the input converter
         self.input_converter = InferenceDataInputConverter(documents_data=self.documents_data)
+
         super().__post_init__()
+
+        # must be called *after* `super().__post_init__()` since it requires the
+        # `identifier` and `documents_data` attributes from the parent class
+        self.model_data_constructor_plugin = SeenModelDataConstructorPlugin(
+            d3_document_id=self.identifier.d3_document_id,
+            documents_data=self.documents_data,
+        )
 
     def get_identifier_from_semanticscholar_id(self, semanticscholar_id: str) -> DocumentIdentifier:
         d3_document_id = self.input_converter.get_d3_document_id_from_semanticscholar_id(
@@ -112,6 +122,7 @@ class SeenPaperAttributeGetter(AttributeGetter):
             documents_data=self.documents_data,
             co_citation_analysis_scores=self.get_co_citation_analysis_scores(),
             bibliographic_coupling_scores=self.get_bibliographic_coupling_scores(),
+            constructor_plugin=self.model_data_constructor_plugin,
         )
         return CitationModelData.from_constructor(citation_model_data_constructor)
 
@@ -125,5 +136,6 @@ class SeenPaperAttributeGetter(AttributeGetter):
             d3_document_id=self.identifier.d3_document_id,
             documents_data=self.documents_data,
             cosine_similarities=self.get_cosine_similarities(),
+            constructor_plugin=self.model_data_constructor_plugin,
         )
         return LanguageModelData.from_constructor(language_model_data_constructor)

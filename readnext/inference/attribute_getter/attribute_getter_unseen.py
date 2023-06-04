@@ -2,23 +2,25 @@ from dataclasses import dataclass, field
 
 import polars as pl
 
-from readnext.data import SemanticscholarRequest
+from readnext.data import SemanticscholarRequest, SemanticScholarResponse
 from readnext.evaluation.metrics import (
     CosineSimilarity,
     CountCommonCitations,
     CountCommonReferences,
 )
 from readnext.inference.attribute_getter.attribute_getter_base import AttributeGetter
-from readnext.inference.attribute_getter.attribute_getter_unseen_base import (
-    QueryCitationModelDataConstructor,
-    QueryLanguageModelDataConstructor,
-    SemanticScholarResponse,
-)
 from readnext.inference.attribute_getter.attribute_getter_unseen_language_models import (
     select_query_embedding_function,
 )
 from readnext.inference.document_identifier import DocumentIdentifier
-from readnext.modeling import CitationModelData, DocumentInfo, LanguageModelData
+from readnext.modeling import (
+    CitationModelData,
+    CitationModelDataConstructor,
+    DocumentInfo,
+    LanguageModelData,
+    LanguageModelDataConstructor,
+    UnseenModelDataConstructorPlugin,
+)
 from readnext.modeling.language_models import load_embeddings_from_choice
 from readnext.utils import (
     get_arxiv_id_from_arxiv_url,
@@ -29,13 +31,17 @@ from readnext.utils import (
 
 
 @dataclass(kw_only=True)
-class UnseenPaperAttributeGetter(AttributeGetter):
+class UnseenAttributeGetter(AttributeGetter):
     semanticscholar_request: SemanticscholarRequest = field(init=False)
     response: SemanticScholarResponse = field(init=False)
+    model_data_constructor_plugin: UnseenModelDataConstructorPlugin = field(init=False)
 
     def __post_init__(self) -> None:
         self.semanticscholar_request = SemanticscholarRequest()
         self.response = self.send_semanticscholar_request()
+        self.model_data_constructor_plugin = UnseenModelDataConstructorPlugin(
+            response=self.response,
+        )
         super().__post_init__()
 
     def send_semanticscholar_request(self) -> SemanticScholarResponse:
@@ -129,7 +135,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
             .with_columns(
                 score=pl.struct(["citations", "query_citations"]).apply(
                     lambda df: CountCommonCitations.count_common_values(
-                        df["citations"], df["query_citations"]
+                        df["citations"], df["query_citations"]  # type: ignore
                     ),
                 ),
             )
@@ -149,7 +155,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
             .with_columns(
                 score=pl.struct(["references", "query_references"]).apply(
                     lambda df: CountCommonReferences.count_common_values(
-                        df["references"], df["query_references"]
+                        df["references"], df["query_references"]  # type: ignore
                     ),
                 ),
             )
@@ -158,12 +164,12 @@ class UnseenPaperAttributeGetter(AttributeGetter):
         )
 
     def get_citation_model_data(self) -> CitationModelData:
-        citation_model_data_constructor = QueryCitationModelDataConstructor(
-            response=self.response,
+        citation_model_data_constructor = CitationModelDataConstructor(
             d3_document_id=-1,
             documents_data=self.documents_data,
             co_citation_analysis_scores=self.get_co_citation_analysis_scores(),
             bibliographic_coupling_scores=self.get_bibliographic_coupling_scores(),
+            constructor_plugin=self.model_data_constructor_plugin,
         )
 
         return CitationModelData.from_constructor(citation_model_data_constructor)
@@ -205,7 +211,7 @@ class UnseenPaperAttributeGetter(AttributeGetter):
             .with_columns(query_embedding=query_embedding)
             .with_columns(
                 score=pl.struct(["embedding", "query_embedding"]).apply(
-                    lambda df: CosineSimilarity.score(df["embedding"], df["query_embedding"]),
+                    lambda df: CosineSimilarity.score(df["embedding"], df["query_embedding"]),  # type: ignore # noqa: E501
                 ),
             )
             .select("candidate_d3_document_id", "score")
@@ -213,11 +219,11 @@ class UnseenPaperAttributeGetter(AttributeGetter):
         )
 
     def get_language_model_data(self) -> LanguageModelData:
-        language_model_data_constructor = QueryLanguageModelDataConstructor(
-            response=self.response,
+        language_model_data_constructor = LanguageModelDataConstructor(
             d3_document_id=-1,
             documents_data=self.documents_data,
             cosine_similarities=self.get_cosine_similarities(),
+            constructor_plugin=self.model_data_constructor_plugin,
         )
 
         return LanguageModelData.from_constructor(language_model_data_constructor)

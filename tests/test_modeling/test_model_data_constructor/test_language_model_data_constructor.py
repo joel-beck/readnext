@@ -3,7 +3,7 @@ import pytest
 from pytest_lazyfixture import lazy_fixture
 
 from readnext.data.semanticscholar import SemanticScholarResponse
-from readnext.inference.attribute_getter import QueryLanguageModelDataConstructor
+from readnext.inference.attribute_getter import UnseenLanguageModelDataConstructor
 from readnext.modeling import LanguageModelData, LanguageModelDataConstructor
 
 language_model_data_constructor_fixtures = ["language_model_data_constructor"]
@@ -79,7 +79,7 @@ def test_kw_only_initialization_language_model_data_constructor() -> None:
 
 def test_kw_only_initialization_query_language_model_data_constructor() -> None:
     with pytest.raises(TypeError):
-        QueryLanguageModelDataConstructor(
+        UnseenLanguageModelDataConstructor(
             -1,  # type: ignore
             pl.DataFrame(),
             pl.DataFrame(),

@@ -204,10 +204,6 @@ def main() -> None:
         .collect()
     )
 
-    # documents_data.explode("semanticscholar_tags").with_columns(
-    #     pl.col("semanticscholar_tags").struct.field("category")
-    # )
-
     merged_data = (
         documents_data.pipe(merge_arxiv_data, arxiv_data).select(output_columns).drop_nulls()
     )

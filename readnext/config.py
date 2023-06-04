@@ -62,9 +62,6 @@ class MergedDataPaths:
 
     documents_labels: Path = data_dirpath / "documents_labels.parquet"
     documents_authors_labels: Path = data_dirpath / "documents_authors_labels.parquet"
-    documents_authors_labels_citations_chunks_stem: Path = (
-        data_dirpath / "documents_authors_labels_citations_chunks"
-    )
     documents_authors_labels_citations: Path = (
         data_dirpath / "documents_authors_labels_citations.parquet"
     )
@@ -82,7 +79,7 @@ class DataPaths:
 @dataclass
 class MagicNumbers:
     """
-    Set numeric values for dataset sizes, scoring and the candidate and final
+    Sets numeric values for dataset sizes, scoring and the candidate and final
     recommendation list.
     """
 

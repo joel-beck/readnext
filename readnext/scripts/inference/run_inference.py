@@ -93,7 +93,6 @@ def main() -> None:
     arxiv_url = "https://arxiv.org/abs/2303.08774"
     arxiv_id = get_arxiv_id_from_arxiv_url(arxiv_url)
 
-    # TODO: Make analogous to seen paper
     inference_data_constructor_unseen_arxiv_id = InferenceDataConstructor(
         arxiv_url=arxiv_url,
         language_model_choice=LanguageModelChoice.scibert,

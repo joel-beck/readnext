@@ -3,7 +3,7 @@ import pytest
 from pytest_lazyfixture import lazy_fixture
 
 from readnext.data.semanticscholar import SemanticScholarResponse
-from readnext.inference.attribute_getter import QueryCitationModelDataConstructor
+from readnext.inference.attribute_getter import UnseenCitationModelDataConstructor
 from readnext.modeling import CitationModelData, CitationModelDataConstructor
 
 citation_model_data_constructor_fixtures = ["citation_model_data_constructor"]
@@ -127,7 +127,7 @@ def test_kw_only_initialization_citation_model_data_constructor() -> None:
 
 def test_kw_only_initialization_query_citation_model_data_constructor() -> None:
     with pytest.raises(TypeError):
-        QueryCitationModelDataConstructor(
+        UnseenCitationModelDataConstructor(
             -1,  # type: ignore
             pl.DataFrame(),
             pl.DataFrame(),

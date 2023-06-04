@@ -8,8 +8,8 @@ from readnext.inference import DocumentIdentifier
 from readnext.inference.attribute_getter.attribute_getter_base import (
     AttributeGetter,
 )
-from readnext.inference.attribute_getter.attribute_getter_seen import SeenPaperAttributeGetter
-from readnext.inference.attribute_getter.attribute_getter_unseen import UnseenPaperAttributeGetter
+from readnext.inference.attribute_getter.attribute_getter_seen import SeenAttributeGetter
+from readnext.inference.attribute_getter.attribute_getter_unseen import UnseenAttributeGetter
 from readnext.modeling import (
     CitationModelData,
     DocumentInfo,
@@ -124,7 +124,7 @@ class InferenceDataConstructor:
         if self.query_document_in_training_data():
             print(">>> Query document is contained in training data <<<")
 
-            return SeenPaperAttributeGetter(
+            return SeenAttributeGetter(
                 semanticscholar_id=self.semanticscholar_id,
                 semanticscholar_url=self.semanticscholar_url,
                 arxiv_id=self.arxiv_id,
@@ -135,7 +135,7 @@ class InferenceDataConstructor:
             )
 
         print(">>> Query document is not contained in training data <<<")
-        return UnseenPaperAttributeGetter(
+        return UnseenAttributeGetter(
             semanticscholar_id=self.semanticscholar_id,
             semanticscholar_url=self.semanticscholar_url,
             arxiv_id=self.arxiv_id,

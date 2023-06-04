@@ -98,6 +98,7 @@ def main() -> None:
         language_model_choice=LanguageModelChoice.scibert,
         feature_weights=FeatureWeights(),
     )
+
     inference_data_unseen_from_arxiv_id = InferenceData.from_constructor(
         inference_data_constructor_unseen_arxiv_id
     )

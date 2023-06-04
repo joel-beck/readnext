@@ -2,7 +2,9 @@ import polars as pl
 import pytest
 
 from readnext.evaluation.scoring import FeatureWeights
-from readnext.inference.attribute_getter import UnseenAttributeGetter
+from readnext.inference.inference_data_constructor_plugin import (
+    UnseenInferenceDataConstructorPlugin,
+)
 from readnext.modeling import (
     CitationModelData,
     DocumentInfo,
@@ -15,10 +17,10 @@ from readnext.utils import ScoresFrame
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_from_semanticscholar_id(
     test_documents_data: pl.DataFrame,
-) -> UnseenAttributeGetter:
+) -> UnseenInferenceDataConstructorPlugin:
     semanticscholar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    return UnseenAttributeGetter(
+    return UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semanticscholar_id,
         semanticscholar_url=None,
         arxiv_id=None,
@@ -32,12 +34,12 @@ def unseen_paper_attribute_getter_from_semanticscholar_id(
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_from_semanticscholar_url(
     test_documents_data: pl.DataFrame,
-) -> UnseenAttributeGetter:
+) -> UnseenInferenceDataConstructorPlugin:
     semanticscholar_url = (
         "https://www.semanticscholar.org/paper/8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
     )
 
-    return UnseenAttributeGetter(
+    return UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=None,
         semanticscholar_url=semanticscholar_url,
         arxiv_id=None,
@@ -51,10 +53,10 @@ def unseen_paper_attribute_getter_from_semanticscholar_url(
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_from_arxiv_id(
     test_documents_data: pl.DataFrame,
-) -> UnseenAttributeGetter:
+) -> UnseenInferenceDataConstructorPlugin:
     arxiv_id = "2303.08774"
 
-    return UnseenAttributeGetter(
+    return UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=None,
         semanticscholar_url=None,
         arxiv_id=arxiv_id,
@@ -68,10 +70,10 @@ def unseen_paper_attribute_getter_from_arxiv_id(
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_from_arxiv_url(
     test_documents_data: pl.DataFrame,
-) -> UnseenAttributeGetter:
+) -> UnseenInferenceDataConstructorPlugin:
     arxiv_url = "https://arxiv.org/abs/2303.08774"
 
-    return UnseenAttributeGetter(
+    return UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=None,
         semanticscholar_url=None,
         arxiv_id=None,
@@ -88,7 +90,7 @@ def unseen_paper_attribute_getter_co_citation_analysis(
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
@@ -107,7 +109,7 @@ def unseen_paper_attribute_getter_bibliographic_coupling(
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
@@ -126,7 +128,7 @@ def unseen_paper_attribute_getter_cosine_similarities_tfidf(
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
@@ -145,7 +147,7 @@ def unseen_paper_attribute_getter_cosine_similarities_bm25(
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
@@ -164,7 +166,7 @@ def unseen_paper_attribute_getter_cosine_similarities_word2vec(
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
@@ -183,7 +185,7 @@ def unseen_paper_attribute_getter_cosine_similarities_glove(
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
@@ -202,7 +204,7 @@ def unseen_paper_attribute_getter_cosine_similarities_fasttext(
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
@@ -221,7 +223,7 @@ def unseen_paper_attribute_getter_cosine_similarities_bert(
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
@@ -240,7 +242,7 @@ def unseen_paper_attribute_getter_cosine_similarities_scibert(
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
@@ -259,7 +261,7 @@ def unseen_paper_attribute_getter_cosine_similarities_longformer(
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
@@ -278,7 +280,7 @@ def unseen_paper_attribute_getter_citation_model_data(
 ) -> CitationModelData:
     semanticscholar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semanticscholar_id,
         semanticscholar_url=None,
         arxiv_id=None,
@@ -325,7 +327,7 @@ def unseen_paper_attribute_getter_language_model_data(
 ) -> LanguageModelData:
     semanticscholar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semanticscholar_id,
         semanticscholar_url=None,
         arxiv_id=None,

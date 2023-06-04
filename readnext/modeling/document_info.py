@@ -1,13 +1,4 @@
 from dataclasses import dataclass, field
-from typing import TypedDict
-
-
-class DocumentInfoDict(TypedDict):
-    d3_document_id: int
-    title: str
-    author: str
-    arxiv_labels: list[str]
-    abstract: str
 
 
 @dataclass(kw_only=True)

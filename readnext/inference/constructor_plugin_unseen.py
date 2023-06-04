@@ -8,8 +8,8 @@ from readnext.evaluation.metrics import (
     CountCommonCitations,
     CountCommonReferences,
 )
-from readnext.inference.attribute_getter.attribute_getter_base import AttributeGetter
-from readnext.inference.attribute_getter.attribute_getter_unseen_language_models import (
+from readnext.inference.constructor_plugin import InferenceDataConstructorPlugin
+from readnext.inference.constructor_plugin_unseen_language_models import (
     select_query_embedding_function,
 )
 from readnext.inference.document_identifier import DocumentIdentifier
@@ -27,11 +27,16 @@ from readnext.utils import (
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
+    status_update,
 )
 
 
 @dataclass(kw_only=True)
-class UnseenAttributeGetter(AttributeGetter):
+class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
+    """
+    `InferenceDataConstructor` methods for unseen query documents only.
+    """
+
     semanticscholar_request: SemanticscholarRequest = field(init=False)
     response: SemanticScholarResponse = field(init=False)
     model_data_constructor_plugin: UnseenModelDataConstructorPlugin = field(init=False)
@@ -194,6 +199,7 @@ class UnseenAttributeGetter(AttributeGetter):
             }
         )
 
+    @status_update("computing cosine similarities")
     def get_cosine_similarities(self) -> pl.DataFrame:
         query_document_data = self.get_query_documents_data()
         query_embedding_function = select_query_embedding_function(self.language_model_choice)

@@ -79,7 +79,7 @@ def dataframe_writer(
         The decorated function.
 
     Usage:
-        @dataframe_writer_decorator
+        @dataframe_writer
         def write_df_to_pickle(df: pl.DataFrame, path: Path) -> None:
             ...
     """
@@ -93,3 +93,39 @@ def dataframe_writer(
         print("✅")
 
     return wrapper
+
+
+def status_update(message: str = "Processing...") -> Callable[[Callable[P, R]], Callable[P, R]]:
+    """
+    Decorator factory for functions that print a status message before calling the
+    decorated function.
+
+    This decorator factory generates a decorator intended for functions that perform a
+    long-running operation. It prints the status message before calling the decorated
+    function and a checkmark after the function returns.
+
+    Args:
+        message: The status message to be printed.
+
+    Returns:
+        A decorator that can be used to decorate long-running functions.
+
+    Usage:
+        @status_update(message="Processing...") def long_running_function(*args: P.args,
+        **kwargs: P.kwargs) -> R:
+            ...
+    """
+
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
+        @functools.wraps(func)
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            print(f"Started {message}...")
+
+            result = func(*args, **kwargs)
+
+            print(f"Finished {message} ✅")
+            return result
+
+        return wrapper
+
+    return decorator

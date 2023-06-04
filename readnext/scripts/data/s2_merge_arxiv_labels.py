@@ -53,7 +53,7 @@ def add_arxiv_features(df: pl.LazyFrame) -> pl.LazyFrame:
     )
 
 
-def select_arxiv_output_columns(df: pl.LazyFrame) -> pl.LazyFrame:
+def select_arxiv_features(df: pl.LazyFrame) -> pl.LazyFrame:
     """
     Select only the columns that are needed in the output dataframe.
     """
@@ -188,7 +188,7 @@ def main() -> None:
         .pipe(rename_arxiv_columns)
         .pipe(filter_cs_labels)
         .pipe(add_arxiv_features)
-        .pipe(select_arxiv_output_columns)
+        .pipe(select_arxiv_features)
         .collect()
     )
 

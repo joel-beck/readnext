@@ -10,10 +10,10 @@ from readnext.modeling.language_models import LanguageModelChoice
 
 
 @dataclass(kw_only=True)
-class AttributeGetter(ABC):
+class InferenceDataConstructorPlugin(ABC):
     """
-    Abstract Base class for getting data attributes in the `InferenceDataConstructor`
-    class.
+    Provides methods for the `InferenceDataConstructor` class that are different for
+    seen and unseen papers.
     """
 
     semanticscholar_id: str | None = None

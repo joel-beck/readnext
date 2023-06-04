@@ -21,7 +21,7 @@ from readnext.utils.convert_id_urls import (
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
 )
-from readnext.utils.decorators import dataframe_reader, dataframe_writer
+from readnext.utils.decorators import dataframe_reader, dataframe_writer, status_update
 from readnext.utils.io import (
     read_df_from_parquet,
     write_df_to_parquet,
@@ -59,6 +59,7 @@ __all__ = [
     "get_semanticscholar_url_from_semanticscholar_id",
     "dataframe_reader",
     "dataframe_writer",
+    "status_update",
     "read_df_from_parquet",
     "write_df_to_parquet",
     "suppress_transformers_logging",

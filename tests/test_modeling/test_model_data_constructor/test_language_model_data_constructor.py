@@ -3,7 +3,7 @@ import pytest
 from pytest_lazyfixture import lazy_fixture
 
 from readnext.data.semanticscholar import SemanticScholarResponse
-from readnext.inference.attribute_getter import UnseenLanguageModelDataConstructor
+from readnext.inference.inference_data_constructor_plugin import UnseenLanguageModelDataConstructor
 from readnext.modeling import LanguageModelData, LanguageModelDataConstructor
 
 language_model_data_constructor_fixtures = ["language_model_data_constructor"]

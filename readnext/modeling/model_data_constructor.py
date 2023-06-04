@@ -3,8 +3,8 @@ from dataclasses import dataclass, field
 
 import polars as pl
 
+from readnext.modeling.constructor_plugin import ModelDataConstructorPlugin
 from readnext.modeling.document_info import DocumentInfo
-from readnext.modeling.model_data_constructor_plugin import ModelDataConstructorPlugin
 
 
 @dataclass(kw_only=True)

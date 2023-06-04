@@ -3,9 +3,9 @@ from dataclasses import dataclass, field
 import polars as pl
 
 from readnext.config import ResultsPaths
-from readnext.inference.attribute_getter.attribute_getter_base import (
-    AttributeGetter,
+from readnext.inference.constructor_plugin import (
     DocumentIdentifier,
+    InferenceDataConstructorPlugin,
 )
 from readnext.inference.input_converter import InferenceDataInputConverter
 from readnext.modeling import (
@@ -22,8 +22,10 @@ from readnext.utils import read_df_from_parquet
 
 
 @dataclass(kw_only=True)
-class SeenAttributeGetter(AttributeGetter):
-    """Get data attributes for a paper that is contained in the training data."""
+class SeenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
+    """
+    `InferenceDataConstructor` methods for seen query documents only.
+    """
 
     input_converter: InferenceDataInputConverter = field(init=False)
     model_data_constructor_plugin: SeenModelDataConstructorPlugin = field(init=False)

@@ -3,7 +3,7 @@ import pytest
 from pytest_lazyfixture import lazy_fixture
 
 from readnext.data.semanticscholar import SemanticScholarResponse
-from readnext.inference.attribute_getter import UnseenCitationModelDataConstructor
+from readnext.inference.inference_data_constructor_plugin import UnseenCitationModelDataConstructor
 from readnext.modeling import CitationModelData, CitationModelDataConstructor
 
 citation_model_data_constructor_fixtures = ["citation_model_data_constructor"]

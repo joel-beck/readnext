@@ -5,11 +5,15 @@ import polars as pl
 from readnext.config import DataPaths
 from readnext.evaluation.scoring import FeatureWeights, HybridScorer
 from readnext.inference import DocumentIdentifier
-from readnext.inference.attribute_getter.attribute_getter_base import (
-    AttributeGetter,
+from readnext.inference.constructor_plugin import (
+    InferenceDataConstructorPlugin,
 )
-from readnext.inference.attribute_getter.attribute_getter_seen import SeenAttributeGetter
-from readnext.inference.attribute_getter.attribute_getter_unseen import UnseenAttributeGetter
+from readnext.inference.constructor_plugin_seen import (
+    SeenInferenceDataConstructorPlugin,
+)
+from readnext.inference.constructor_plugin_unseen import (
+    UnseenInferenceDataConstructorPlugin,
+)
 from readnext.modeling import (
     CitationModelData,
     DocumentInfo,
@@ -67,12 +71,9 @@ class InferenceDataConstructor:
     language_model_choice: LanguageModelChoice
     feature_weights: FeatureWeights
 
-    attribute_getter: AttributeGetter = field(init=False)
+    constructor_plugin: InferenceDataConstructorPlugin = field(init=False)
 
     _documents_data: pl.DataFrame = field(init=False)
-    _co_citation_analysis_scores: pl.DataFrame = field(init=False)
-    _bibliographic_coupling_scores: pl.DataFrame = field(init=False)
-    _cosine_similarities: pl.DataFrame = field(init=False)
     _citation_model_data: CitationModelData = field(init=False)
     _language_model_data: LanguageModelData = field(init=False)
 
@@ -81,20 +82,15 @@ class InferenceDataConstructor:
         Collect all information needed for inference right after initialization.
 
         First, the documents data is loaded to check if the query document is in the
-        training data. Based on the result, the attribute getter is set to either the
-        one for seen papers or the one for unseen papers. Then, the attribute getter is
-        used to set all data attributes needed for inference.
+        training data. Based on the result, the model data constructor plugin is set to
+        either the one for seen papers or the one for unseen papers. Then, the
+        constructor plugin is used to set all data attributes needed for inference.
         """
 
         self._documents_data = self.get_documents_data()
-        self.attribute_getter = self.get_attribute_getter()
-        self._co_citation_analysis_scores = self.attribute_getter.get_co_citation_analysis_scores()
-        self._bibliographic_coupling_scores = (
-            self.attribute_getter.get_bibliographic_coupling_scores()
-        )
-        self._cosine_similarities = self.attribute_getter.get_cosine_similarities()
-        self._citation_model_data = self.attribute_getter.get_citation_model_data()
-        self._language_model_data = self.attribute_getter.get_language_model_data()
+        self.constructor_plugin = self.get_constructor_plugin()
+        self._citation_model_data = self.constructor_plugin.get_citation_model_data()
+        self._language_model_data = self.constructor_plugin.get_language_model_data()
 
     def get_documents_data(self) -> pl.DataFrame:
         # NOTE: For now the data is limited to the first 1000 documents. This number
@@ -120,11 +116,11 @@ class InferenceDataConstructor:
 
         raise ValueError("No query document identifier provided.")
 
-    def get_attribute_getter(self) -> AttributeGetter:
+    def get_constructor_plugin(self) -> InferenceDataConstructorPlugin:
         if self.query_document_in_training_data():
             print(">>> Query document is contained in training data <<<")
 
-            return SeenAttributeGetter(
+            return SeenInferenceDataConstructorPlugin(
                 semanticscholar_id=self.semanticscholar_id,
                 semanticscholar_url=self.semanticscholar_url,
                 arxiv_id=self.arxiv_id,
@@ -135,7 +131,7 @@ class InferenceDataConstructor:
             )
 
         print(">>> Query document is not contained in training data <<<")
-        return UnseenAttributeGetter(
+        return UnseenInferenceDataConstructorPlugin(
             semanticscholar_id=self.semanticscholar_id,
             semanticscholar_url=self.semanticscholar_url,
             arxiv_id=self.arxiv_id,
@@ -146,7 +142,7 @@ class InferenceDataConstructor:
         )
 
     def collect_document_identifier(self) -> DocumentIdentifier:
-        return self.attribute_getter.identifier
+        return self.constructor_plugin.identifier
 
     def collect_document_info(self) -> DocumentInfo:
         return self._citation_model_data.query_document

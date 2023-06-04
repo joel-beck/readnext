@@ -2,16 +2,14 @@ from pathlib import Path
 
 import polars as pl
 
-from readnext.utils.decorators import dataframe_reader, dataframe_writer
 
-
-@dataframe_reader
+# @dataframe_reader
 def read_df_from_parquet(path: Path) -> pl.DataFrame:
     """Read a Polars DataFrame from a parquet file."""
     return pl.read_parquet(path)
 
 
-@dataframe_writer
+# @dataframe_writer
 def write_df_to_parquet(
     df: pl.DataFrame,
     path: Path,

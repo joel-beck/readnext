@@ -1,11 +1,3 @@
-# TODO: Add classes `SeenPaperConstructorPlugin` and `UnseenPaperConstructorPlugin` in a
-# new file that provide methods which are different for seen and unseen papers. Take the
-# plugin as input to the `ModelDataConstructor` class with the name `constructor_plugin`
-# and call the methods of the plugin in the `ModelDataConstructor` methods. Both
-# constructors should inherit from an abstract base class `ConstructorPlugin` that
-# defines the interface for the overwritten methods.
-
-
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 

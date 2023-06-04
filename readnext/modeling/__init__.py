@@ -1,4 +1,4 @@
-from readnext.modeling.document_info import DocumentInfo, DocumentScore
+from readnext.modeling.document_info import DocumentInfo
 from readnext.modeling.model_data import (
     CitationModelData,
     LanguageModelData,
@@ -12,7 +12,6 @@ from readnext.modeling.model_data_constructor import (
 
 __all__ = [
     "DocumentInfo",
-    "DocumentScore",
     "CitationModelData",
     "LanguageModelData",
     "ModelData",

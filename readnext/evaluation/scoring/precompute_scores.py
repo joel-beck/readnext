@@ -66,9 +66,8 @@ def precompute_pairwise_scores(
     input_df: pl.DataFrame, pairwise_metric: PairwiseMetric, n: int | None
 ) -> ScoresFrame:
     """
-    Precompute and store pairwise scores for all documents in a dataframe with one row
-    per query document. The scores are stored as a sorted list of `DocumentScore`
-    objects.
+    Precompute and store pairwise scores for all documents in `ScoresFrame` with three
+    columns named `query_d3_document_id`, `candidate_d3_document_id`, and `score`.
     """
     if n is None:
         n = len(input_df)

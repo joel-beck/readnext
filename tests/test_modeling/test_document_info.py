@@ -1,6 +1,6 @@
 import pytest
 
-from readnext.modeling import DocumentInfo, DocumentScore
+from readnext.modeling import DocumentInfo
 
 
 def test_document_info(sample_document_info: DocumentInfo) -> None:
@@ -18,13 +18,6 @@ def test_document_info(sample_document_info: DocumentInfo) -> None:
         "Arxiv Labels: ['cs.AI', 'cs.CL']"
     )
     assert str(sample_document_info) == str_representation
-
-
-def test_document_score(
-    sample_document_score: DocumentScore, sample_document_info: DocumentInfo
-) -> None:
-    assert sample_document_score.document_info == sample_document_info
-    assert sample_document_score.score == 0.75
 
 
 def test_document_info_defaults() -> None:
@@ -48,18 +41,4 @@ def test_kw_only_initialization_document_info() -> None:
             "Author",
             ["cs.AI", "cs.CL"],
             "Abstract",
-        )
-
-
-def test_kw_only_initialization_document_score() -> None:
-    with pytest.raises(TypeError):
-        DocumentScore(
-            DocumentInfo(
-                d3_document_id=-1,  # type: ignore
-                title="Title",
-                author="Author",
-                arxiv_labels=["cs.AI", "cs.CL"],
-                abstract="Abstract",
-            ),
-            0.75,
         )

@@ -1,10 +1,5 @@
-import json
 from dataclasses import dataclass, field
 from typing import TypedDict
-
-import dacite
-import polars as pl
-from typing_extensions import Self
 
 
 class DocumentInfoDict(TypedDict):
@@ -44,85 +39,3 @@ class DocumentInfo:
             f"Author: {self.author}\n"
             f"Arxiv Labels: {self.arxiv_labels}"
         )
-
-    def to_dict(self) -> DocumentInfoDict:
-        return {
-            "d3_document_id": self.d3_document_id,
-            "title": self.title,
-            "author": self.author,
-            "arxiv_labels": self.arxiv_labels,
-            "abstract": self.abstract,
-        }
-
-
-# @dataclass
-# class DocumentsInfo:
-#     """Represents a collection of multiple documents/papers."""
-
-#     documents_info: list[DocumentInfo]
-
-#     def __post_init__(self) -> None:
-#         self.d3_document_ids = [
-#             document_info.d3_document_id for document_info in self.documents_info
-#         ]
-#         self.titles = [document_info.title for document_info in self.documents_info]
-#         self.abstracts = [document_info.abstract for document_info in self.documents_info]
-
-#     def __len__(self) -> int:
-#         return len(self.documents_info)
-
-#     @overload
-#     def __getitem__(self, index: int) -> DocumentInfo:
-#         ...
-
-#     @overload
-#     def __getitem__(self, index: slice) -> Self:
-#         ...
-
-#     def __getitem__(self, index: int | slice) -> DocumentInfo | Self:
-#         # return single document info for integer index
-#         if isinstance(index, int):
-#             return self.documents_info[index]
-#         # return list of document infos for slice index
-#         return self.__class__(self.documents_info[index])
-
-
-class DocumentScoreDict(TypedDict):
-    document_info: DocumentInfoDict
-    score: float
-
-
-# defined here instead of in readnext.evaluation to avoid circular imports
-@dataclass(kw_only=True)
-class DocumentScore:
-    """
-    Represents a document and its corresponding score. Depending on the context, the
-    score can be e.g. a similarity score or an average precision score.
-    """
-
-    document_info: DocumentInfo
-    score: float
-
-    def to_dict(self) -> DocumentScoreDict:
-        return {"document_info": self.document_info.to_dict(), "score": self.score}
-
-    def to_frame(self) -> pl.DataFrame:
-        return pl.DataFrame(
-            {"d3_document_id": self.document_info.d3_document_id, "score": self.score}
-        )
-
-    def serialize(self) -> str:
-        return json.dumps(self.to_dict())
-
-    @classmethod
-    def deserialize(cls, serialized: str) -> Self:
-        return dacite.from_dict(cls, json.loads(serialized))
-
-
-def document_scores_to_frame(document_scores: list[DocumentScore]) -> pl.DataFrame:
-    """
-    Convert the scores of all candidate documents to a dataframe. The output dataframe
-    has six columns: `d3_document_id`, `title`, `author`, `arxiv_labels`, `abstract` and
-    `score`
-    """
-    return pl.concat([document_score.to_frame() for document_score in document_scores])

@@ -2,11 +2,7 @@ import polars as pl
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
-from readnext.modeling import (
-    DocumentInfo,
-    DocumentScore,
-    ModelDataConstructor,
-)
+from readnext.modeling import DocumentInfo, ModelDataConstructor
 
 citation_model_data_constructor_fixtures = ["citation_model_data_constructor"]
 language_model_data_constructor_fixtures = ["language_model_data_constructor"]
@@ -102,30 +98,3 @@ def test_boolean_to_int(model_data_constructor: ModelDataConstructor) -> None:
 
     assert isinstance(result, int)
     assert result == 1
-
-
-@pytest.mark.parametrize(
-    "model_data_constructor",
-    lazy_fixture(model_data_constructor_fixtures),
-)
-def test_document_scores_to_frame(model_data_constructor: ModelDataConstructor) -> None:
-    document_scores = [
-        DocumentScore(
-            document_info=DocumentInfo(
-                d3_document_id=1, title="A", author="A.A", arxiv_labels=["cs.CV"]
-            ),
-            score=0.5,
-        ),
-        DocumentScore(
-            document_info=DocumentInfo(
-                d3_document_id=2, title="B", author="B.B", arxiv_labels=["stat.ML"]
-            ),
-            score=0.3,
-        ),
-    ]
-    scores_df = model_data_constructor.document_scores_to_frame(document_scores)
-
-    assert isinstance(scores_df, pl.DataFrame)
-    assert scores_df.shape[1] == 1
-    assert scores_df.columns.to_list() == ["score"]
-    assert scores_df.index.name == "document_id"

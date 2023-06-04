@@ -1,7 +1,7 @@
 import polars as pl
 import pytest
 
-from readnext.modeling import DocumentInfo, DocumentScore
+from readnext.modeling import DocumentInfo
 from readnext.utils import Tokens
 
 
@@ -34,11 +34,6 @@ def sample_document_info() -> DocumentInfo:
         arxiv_labels=["cs.AI", "cs.CL"],
         abstract="This is a sample paper.",
     )
-
-
-@pytest.fixture
-def sample_document_score(sample_document_info: DocumentInfo) -> DocumentScore:
-    return DocumentScore(document_info=sample_document_info, score=0.75)
 
 
 @pytest.fixture(scope="session")

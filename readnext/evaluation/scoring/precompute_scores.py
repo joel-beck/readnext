@@ -4,6 +4,7 @@ from collections.abc import Sequence
 import polars as pl
 from tqdm import tqdm
 
+from readnext.config import MagicNumbers
 from readnext.evaluation.metrics import (
     CosineSimilarity,
     CountCommonCitations,
@@ -51,10 +52,10 @@ def pairwise_scores_from_columns(
             score=pl.struct(["query_d3_document_id", "candidate_d3_document_id"]).apply(
                 tqdm_progress_bar_wrapper(
                     progress_bar,
-                    lambda df: pairwise_metric.from_df(
+                    lambda struct: pairwise_metric.from_df(
                         input_df,
-                        df["query_d3_document_id"],
-                        df["candidate_d3_document_id"],
+                        struct["query_d3_document_id"],
+                        struct["candidate_d3_document_id"],
                     ),
                 )
             )
@@ -91,7 +92,7 @@ def precompute_pairwise_scores(
 # more observations the weighted model is able to use.
 def precompute_co_citations(
     df: pl.DataFrame,
-    n: int | None = None,
+    n: int | None = MagicNumbers.scoring_limit,
 ) -> ScoresFrame:
     """
     Precompute and store pairwise co-citation scores for all documents in a dataframe
@@ -104,7 +105,7 @@ def precompute_co_citations(
 
 def precompute_co_references(
     df: pl.DataFrame,
-    n: int | None = None,
+    n: int | None = MagicNumbers.scoring_limit,
 ) -> ScoresFrame:
     """
     Precompute and store pairwise co-reference scores for all documents in a dataframe
@@ -117,7 +118,7 @@ def precompute_co_references(
 
 def precompute_cosine_similarities(
     df: pl.DataFrame,
-    n: int | None = None,
+    n: int | None = MagicNumbers.scoring_limit,
 ) -> ScoresFrame:
     """
     Precompute and store pairwise cosine similarity scores for all documents in a

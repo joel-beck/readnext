@@ -3,11 +3,13 @@ from dataclasses import dataclass, field
 
 import requests
 from dotenv import load_dotenv
+from joblib import Parallel, delayed
 from typing_extensions import TypedDict
 
 from readnext.utils import (
     get_arxiv_id_from_arxiv_url,
     get_semanticscholar_id_from_semanticscholar_url,
+    setup_progress_bar,
 )
 
 
@@ -95,6 +97,22 @@ class SemanticscholarRequest:
         semanticscholar_id = get_semanticscholar_id_from_semanticscholar_url(semanticscholar_url)
         request_url = self.get_request_url_from_semanticscholar_id(semanticscholar_id)
         return self.get_response_from_request_url(request_url)
+
+    def from_semanticscholar_urls(
+        self, semanticscholar_urls: list[str], n_jobs: int = -1
+    ) -> list[SemanticScholarResponse]:
+        """
+        Send GET requests for multiple semanticscholar_urls in parallel.
+        """
+        with setup_progress_bar() as progress_bar:
+            return Parallel(n_jobs=n_jobs)(
+                delayed(self.from_semanticscholar_url)(url)
+                for url in progress_bar.track(
+                    semanticscholar_urls,
+                    total=len(semanticscholar_urls),
+                    description="Sending Requests...",
+                )
+            )  # type: ignore
 
     def from_arxiv_id(self, arxiv_id: str) -> SemanticScholarResponse:
         request_url = self.get_request_url_from_arxiv_id(arxiv_id)

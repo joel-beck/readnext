@@ -18,12 +18,7 @@ from readnext.inference.attribute_getter.attribute_getter_unseen_language_models
     select_query_embedding_function,
 )
 from readnext.inference.document_identifier import DocumentIdentifier
-from readnext.modeling import (
-    CitationModelData,
-    DocumentInfo,
-    DocumentScore,
-    LanguageModelData,
-)
+from readnext.modeling import CitationModelData, DocumentInfo, LanguageModelData
 from readnext.modeling.language_models import load_embeddings_from_choice
 from readnext.utils import (
     get_arxiv_id_from_arxiv_url,

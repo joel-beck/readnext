@@ -1,6 +1,9 @@
 """
-Add author information to documents and labels. Match authors with documents by the
+Preprocess the D3 authors dataset and merge it with the D3 documents dataset via the D3
 author id.
+
+Add the author citationcount to the dataset and select the most popular author for each
+document.
 """
 
 import polars as pl

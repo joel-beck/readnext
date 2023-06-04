@@ -4,6 +4,7 @@ from typing import Generic, TypeVar, overload
 
 import polars as pl
 
+from readnext.config import MagicNumbers
 from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
 from readnext.modeling import CitationModelData, LanguageModelData, ModelData
 
@@ -48,7 +49,7 @@ class ModelScorer(ABC, Generic[TModelData]):
         model_data: TModelData,
         metric: AveragePrecision,
         feature_weights: FeatureWeights | None = None,
-        n: int = 20,
+        n: int = MagicNumbers.n_recommendations,
     ) -> float:
         ...
 
@@ -59,7 +60,7 @@ class ModelScorer(ABC, Generic[TModelData]):
         model_data: TModelData,
         metric: CountUniqueLabels,
         feature_weights: FeatureWeights | None = None,
-        n: int = 20,
+        n: int = MagicNumbers.n_recommendations,
     ) -> int:
         ...
 
@@ -69,14 +70,16 @@ class ModelScorer(ABC, Generic[TModelData]):
         model_data: TModelData,
         metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights | None = None,
-        n: int = 20,
+        n: int = MagicNumbers.n_recommendations,
     ) -> float | int:
         ...
 
     @staticmethod
     @abstractmethod
     def display_top_n(
-        model_data: TModelData, feature_weights: FeatureWeights | None = None, n: int = 20
+        model_data: TModelData,
+        feature_weights: FeatureWeights | None = None,
+        n: int = MagicNumbers.n_recommendations,
     ) -> pl.DataFrame:
         ...
 
@@ -136,7 +139,7 @@ class CitationModelScorer(ModelScorer):
     def display_top_n(
         citation_model_data: CitationModelData,
         feature_weights: FeatureWeights | None = None,
-        n: int = 20,
+        n: int = MagicNumbers.n_recommendations,
     ) -> pl.DataFrame:
         """
         Select and collect the top n recommendations from a citation model in a
@@ -155,7 +158,7 @@ class CitationModelScorer(ModelScorer):
         citation_model_data: CitationModelData,
         metric: AveragePrecision,
         feature_weights: FeatureWeights | None = None,
-        n: int = 20,
+        n: int = MagicNumbers.n_recommendations,
     ) -> float:
         ...
 
@@ -165,7 +168,7 @@ class CitationModelScorer(ModelScorer):
         citation_model_data: CitationModelData,
         metric: CountUniqueLabels,
         feature_weights: FeatureWeights | None = None,
-        n: int = 20,
+        n: int = MagicNumbers.n_recommendations,
     ) -> int:
         ...
 
@@ -174,7 +177,7 @@ class CitationModelScorer(ModelScorer):
         citation_model_data: CitationModelData,
         metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights | None = None,
-        n: int = 20,
+        n: int = MagicNumbers.n_recommendations,
     ) -> float | int:
         """
         Compute the average precision (or a different metric) for the top n
@@ -235,7 +238,7 @@ class LanguageModelScorer(ModelScorer):
     def display_top_n(
         language_model_data: LanguageModelData,
         feature_weights: FeatureWeights | None = None,
-        n: int = 20,
+        n: int = MagicNumbers.n_recommendations,
     ) -> pl.DataFrame:
         """
         Select and collect the top n recommendations from a language model in a
@@ -254,7 +257,7 @@ class LanguageModelScorer(ModelScorer):
         language_model_data: LanguageModelData,
         metric: AveragePrecision,
         feature_weights: FeatureWeights | None = None,
-        n: int = 20,
+        n: int = MagicNumbers.n_recommendations,
     ) -> float:
         ...
 
@@ -264,7 +267,7 @@ class LanguageModelScorer(ModelScorer):
         language_model_data: LanguageModelData,
         metric: CountUniqueLabels,
         feature_weights: FeatureWeights | None = None,
-        n: int = 20,
+        n: int = MagicNumbers.n_recommendations,
     ) -> int:
         ...
 
@@ -273,7 +276,7 @@ class LanguageModelScorer(ModelScorer):
         language_model_data: LanguageModelData,
         metric: AveragePrecision | CountUniqueLabels,
         feature_weights: FeatureWeights | None = None,
-        n: int = 20,
+        n: int = MagicNumbers.n_recommendations,
     ) -> float | int:
         """
         Compute the average precision (or a different metric) for the top n

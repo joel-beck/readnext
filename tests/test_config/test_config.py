@@ -51,7 +51,7 @@ def test_merged_data_paths() -> None:
     assert isinstance(merged_data_paths.documents_authors_labels_citations, Path)
     assert isinstance(merged_data_paths.documents_authors_labels_citations, Path)
     assert isinstance(merged_data_paths.documents_data, Path)
-    assert isinstance(merged_data_paths.most_cited_subset_size, int)
+    assert isinstance(merged_data_paths.documents_data_final_size, int)
 
 
 def test_data_paths() -> None:

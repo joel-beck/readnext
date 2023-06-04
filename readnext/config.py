@@ -69,7 +69,6 @@ class MergedDataPaths:
         data_dirpath / "documents_authors_labels_citations.parquet"
     )
     documents_data: Path = data_dirpath / "documents_data.parquet"
-    most_cited_subset_size: int = 10_000
 
 
 @dataclass(frozen=True)
@@ -78,6 +77,20 @@ class DataPaths:
 
     raw: RawDataPaths = RawDataPaths()  # noqa: RUF009
     merged: MergedDataPaths = MergedDataPaths()  # noqa: RUF009
+
+
+@dataclass
+class MagicNumbers:
+    """
+    Set numeric values for dataset sizes, scoring and the candidate and final
+    recommendation list.
+    """
+
+    documents_data_intermediate_cutoff: int = 1_000_000
+    documents_data_final_size: int = 10_000
+    scoring_limit: int | None = None  # possibly change to 100
+    n_candidates: int = 20
+    n_recommendations: int = 20
 
 
 @dataclass(frozen=True)

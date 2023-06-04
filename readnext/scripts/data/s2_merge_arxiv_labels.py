@@ -1,14 +1,20 @@
 """
-Preprocess all document chunks. Add ranks for the document's citation count and
-influential citation count. Keep only documents where the arxiv id is provided - to
-merge arxiv tags as labels by the arxiv id later on.
+Preprocess the D3 documents dataset and the Arxiv dataset.
+
+Merge the arxiv metadata with the D3 dataset via the arxiv id. Add arxiv labels as new
+feature to the dataset which are later used as ground-truth labels for the recommender
+system.
+
+Reduces the dataset size significantly since only a subset of documents in the D3
+dataset contain an arxiv id as external identifier.
 """
+
 from collections.abc import Sequence
 from typing import TypedDict
 
 import polars as pl
 
-from readnext.config import DataPaths
+from readnext.config import DataPaths, MagicNumbers
 from readnext.utils import (
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
@@ -74,8 +80,9 @@ def select_most_cited_documents(df: pl.LazyFrame) -> pl.LazyFrame:
     """
     Select the top milltion most cited documents from the full documents data set.
     """
-    # TODO: Remove magic number.
-    return df.sort(["citationcount_document"], descending=True).head(1_000_000)
+    return df.sort(["citationcount_document"], descending=True).head(
+        MagicNumbers.documents_data_intermediate_cutoff
+    )
 
 
 def extract_unique_semanticscholar_tags(

@@ -1,6 +1,7 @@
 import os
 from dataclasses import dataclass, field
 from typing import Any, Literal, TypedDict
+from typing_extensions import NotRequired
 
 import requests
 from dotenv import load_dotenv
@@ -30,12 +31,12 @@ class ExternalIds(TypedDict):
 
 
 class SemanticScholarJson(TypedDict):
-    paperId: str | None  # noqa: N815
-    title: str | None
-    abstract: str | None
-    citations: list[SemanticScholarCitation]
-    references: list[SemanticScholarReference]
-    externalIds: ExternalIds | None  # noqa: N815
+    paperId: NotRequired[str | None]  # noqa: N815
+    title: NotRequired[str | None]
+    abstract: NotRequired[str | None]
+    citations: NotRequired[list[SemanticScholarCitation]]
+    references: NotRequired[list[SemanticScholarReference]]
+    externalIds: NotRequired[ExternalIds | None]  # noqa: N815
 
 
 @dataclass(kw_only=True)

@@ -6,11 +6,9 @@ from pytest_lazyfixture import lazy_fixture
 from readnext.data.semanticscholar import SemanticscholarRequest, SemanticScholarResponse
 from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference import DocumentIdentifier, InferenceDataInputConverter
-from readnext.inference.inference_data_constructor_plugin import (
-    InferenceDataConstructorPlugin,
-    SeenInferenceDataConstructorPlugin,
-    UnseenInferenceDataConstructorPlugin,
-)
+from readnext.inference.constructor_plugin import InferenceDataConstructorPlugin
+from readnext.inference.constructor_plugin_seen import SeenInferenceDataConstructorPlugin
+from readnext.inference.constructor_plugin_unseen import UnseenInferenceDataConstructorPlugin
 from readnext.modeling.document_info import DocumentInfo
 from readnext.modeling.language_models import LanguageModelChoice
 

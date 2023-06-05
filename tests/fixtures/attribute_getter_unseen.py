@@ -2,7 +2,7 @@ import polars as pl
 import pytest
 
 from readnext.evaluation.scoring import FeatureWeights
-from readnext.inference.inference_data_constructor_plugin import (
+from readnext.inference.constructor_plugin_unseen import (
     UnseenInferenceDataConstructorPlugin,
 )
 from readnext.modeling import (

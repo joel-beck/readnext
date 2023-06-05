@@ -84,9 +84,9 @@ class ModelScorer(ABC, Generic[TModelData]):
         ...
 
     @staticmethod
-    def add_labels(df: pl.DataFrame, labels: pl.DataFrame) -> pl.DataFrame:
-        """Add a vector of labels to a dataframe."""
-        return df.join(labels, on="candidate_d3_document_id", how="left")
+    def merge_on_candidate_d3_document_id(df: pl.DataFrame, other: pl.DataFrame) -> pl.DataFrame:
+        """Merge two dataframes on the `candidate_d3_document_id` column."""
+        return df.join(other, on="candidate_d3_document_id", how="left")
 
     @staticmethod
     def compute_weighted_rank(
@@ -118,7 +118,11 @@ class CitationModelScorer(ModelScorer):
         citation_model_data: CitationModelData, feature_weights: FeatureWeights, n: int
     ) -> pl.DataFrame:
         """
-        Select and collect the top n recommendations from a citation model in a dataframe.
+        Select and collect the top n recommendations from a citation model in a
+        dataframe.
+
+        The output dataframe has two columns named `candidate_d3_document_id` and
+        `weighted_rank`
         """
 
         return (
@@ -131,11 +135,6 @@ class CitationModelScorer(ModelScorer):
         )
 
     @staticmethod
-    def add_info_cols(df: pl.DataFrame, info_matrix: pl.DataFrame) -> pl.DataFrame:
-        """Add document info columns to a dataframe."""
-        return df.join(info_matrix, on="candidate_d3_document_id", how="left")
-
-    @staticmethod
     def display_top_n(
         citation_model_data: CitationModelData,
         feature_weights: FeatureWeights | None = None,
@@ -143,13 +142,22 @@ class CitationModelScorer(ModelScorer):
     ) -> pl.DataFrame:
         """
         Select and collect the top n recommendations from a citation model in a
-        dataframe together with additional information columns about the documents.
+        dataframe. Add rank columns of the feature matrix and raw score columns of the
+        info matrix to the output dataframe.
         """
         if feature_weights is None:
             feature_weights = FeatureWeights()
 
-        return CitationModelScorer.select_top_n_ranks(citation_model_data, feature_weights, n).pipe(
-            CitationModelScorer.add_info_cols, citation_model_data.info_matrix
+        return (
+            CitationModelScorer.select_top_n_ranks(citation_model_data, feature_weights, n)
+            .pipe(
+                CitationModelScorer.merge_on_candidate_d3_document_id,
+                citation_model_data.feature_matrix,
+            )
+            .pipe(
+                CitationModelScorer.merge_on_candidate_d3_document_id,
+                citation_model_data.info_matrix,
+            )
         )
 
     @overload
@@ -188,7 +196,10 @@ class CitationModelScorer(ModelScorer):
 
         top_n_ranks_with_labels = CitationModelScorer.display_top_n(
             citation_model_data, feature_weights, n
-        ).pipe(CitationModelScorer.add_labels, citation_model_data.integer_labels)
+        ).pipe(
+            CitationModelScorer.merge_on_candidate_d3_document_id,
+            citation_model_data.integer_labels,
+        )
 
         return metric.from_df(top_n_ranks_with_labels)
 
@@ -202,7 +213,11 @@ class LanguageModelScorer(ModelScorer):
         n: int,
     ) -> pl.DataFrame:
         """
-        Select and collect the top n recommendations from a language model in a dataframe.
+        Select and collect the top n recommendations from a language model in a
+        dataframe.
+
+        The output dataframe has two columns named `candidate_d3_document_id` and
+        `cosine_similarity_rank`.
 
         The `feature_weights` argument is not used for scoring language models.
         """
@@ -211,8 +226,8 @@ class LanguageModelScorer(ModelScorer):
     @staticmethod
     def move_cosine_similarity_second(df: pl.DataFrame) -> pl.DataFrame:
         """
-        Move the `cosine_similarity` column to the second position after the
-        `candidate_d3_document_id` column in a dataframe.
+        Move the `cosine_similarity` column with cosine similarity scores to the second
+        position after the `candidate_d3_document_id` column in a dataframe.
         """
         return df.select(
             [
@@ -223,32 +238,29 @@ class LanguageModelScorer(ModelScorer):
         )
 
     @staticmethod
-    def add_info_cols(df: pl.DataFrame, info_matrix: pl.DataFrame) -> pl.DataFrame:
-        """
-        Add document info columns to a dataframe. The cosine similarity column is moved
-        to the first position and replaces the cosine similarity rank column.
-        """
-        return (
-            df.join(info_matrix, on="candidate_d3_document_id", how="left")
-            .drop("cosine_similarity_rank")
-            .pipe(LanguageModelScorer.move_cosine_similarity_second)
-        )
-
-    @staticmethod
     def display_top_n(
         language_model_data: LanguageModelData,
         feature_weights: FeatureWeights | None = None,
         n: int = MagicNumbers.n_recommendations,
     ) -> pl.DataFrame:
         """
-        Select and collect the top n recommendations from a language model in a
-        dataframe together with additional information columns about the documents.
+        Select and collect the top n recommendations from a citation model in a
+        dataframe. Add cosine similarity ranks and raw score columns of the info matrix
+        to the output dataframe.
         """
         if feature_weights is None:
             feature_weights = FeatureWeights()
 
-        return LanguageModelScorer.select_top_n_ranks(language_model_data, feature_weights, n).pipe(
-            LanguageModelScorer.add_info_cols, language_model_data.info_matrix
+        return (
+            LanguageModelScorer.select_top_n_ranks(language_model_data, feature_weights, n)
+            .pipe(
+                LanguageModelScorer.merge_on_candidate_d3_document_id,
+                language_model_data.info_matrix,
+            )
+            .pipe(LanguageModelScorer.move_cosine_similarity_second)
+            # ranks are redundant information given the raw cosine similarity scores in
+            # sorted order
+            .drop("cosine_similarity_rank")
         )
 
     @overload
@@ -287,6 +299,9 @@ class LanguageModelScorer(ModelScorer):
 
         top_n_ranks_with_labels = LanguageModelScorer.display_top_n(
             language_model_data, feature_weights, n
-        ).pipe(LanguageModelScorer.add_labels, language_model_data.integer_labels)
+        ).pipe(
+            LanguageModelScorer.merge_on_candidate_d3_document_id,
+            language_model_data.integer_labels,
+        )
 
         return metric.from_df(top_n_ranks_with_labels)

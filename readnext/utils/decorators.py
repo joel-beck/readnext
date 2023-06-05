@@ -1,56 +1,45 @@
 import functools
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Concatenate, Literal, ParamSpec, TypeVar
+from typing import Concatenate, Literal, ParamSpec, TypeVar
 
 import polars as pl
 
-P = ParamSpec("P")
-R = TypeVar("R")
+TParams = ParamSpec("TParams")
+TReturn = TypeVar("TReturn")
 
 
-def reading_message(path: Path, data_type: Any) -> str:
-    return f"Reading {data_type} from {path.name}..."
-
-
-def writing_message(path: Path, data_type: Any) -> str:
-    return f"Writing {data_type} to {path.name}..."
-
-
-# TODO: Simplify to only dataframe reader but keep factory as typing example
-def reader_decorator_factory(
-    data_type: Literal["Object", "Data Frame"]
-) -> Callable[[Callable[Concatenate[Path, P], R]], Callable[Concatenate[Path, P], R]]:
+def status_update(
+    message: str = "Processing...",
+) -> Callable[[Callable[TParams, TReturn]], Callable[TParams, TReturn]]:
     """
-    Create a decorator for reading data operations.
+    Decorator factory for functions that print a status message before calling the
+    decorated function.
 
-    This decorator factory generates a decorator intended for functions that read data,
-    with the Path to the data file as their first argument. The decorated function
-    can have any number of additional positional and keyword arguments.
-
-    The decorator prints a reading message before calling the decorated function
-    and a checkmark after the function returns.
+    This decorator factory generates a decorator intended for functions that perform a
+    long-running operation. It prints the status message before calling the decorated
+    function and a checkmark after the function returns.
 
     Args:
-        data_type: The type of the data to be readed, must be either "Object" or "Data Frame".
+        message: The status message to be printed.
 
     Returns:
-        A decorator that can be used to decorate data reading functions.
+        A decorator that can be used to decorate long-running functions.
 
     Usage:
-        @reader_decorator_factory(data_type="Object")
-        def read_object_from_pickle(path: Path) -> Any:
+        @status_update(message="Processing...") def long_running_function(*args: P.args,
+        **kwargs: P.kwargs) -> R:
             ...
     """
 
-    def decorator(func: Callable[Concatenate[Path, P], R]) -> Callable[Concatenate[Path, P], R]:
+    def decorator(func: Callable[TParams, TReturn]) -> Callable[TParams, TReturn]:
         @functools.wraps(func)
-        def wrapper(path: Path, *args: P.args, **kwargs: P.kwargs) -> R:
-            print(reading_message(path=path, data_type=data_type), end=" ")
+        def wrapper(*args: TParams.args, **kwargs: TParams.kwargs) -> TReturn:
+            print(f"Started {message}...")
 
-            result = func(path, *args, **kwargs)
+            result = func(*args, **kwargs)
 
-            print("✅")
+            print(f"Finished {message} ✅")
             return result
 
         return wrapper
@@ -58,8 +47,43 @@ def reader_decorator_factory(
     return decorator
 
 
-dataframe_reader = reader_decorator_factory(data_type="Data Frame")
-object_reader = reader_decorator_factory(data_type="Object")
+def reading_dataframe_message(path: Path) -> str:
+    return f"Reading Data Frame from {path.name}..."
+
+
+def writing_dataframe_message(path: Path) -> str:
+    return f"Writing Data Frame to {path.name}..."
+
+
+def dataframe_reader(func: Callable[[Path], pl.DataFrame]) -> Callable[[Path], pl.DataFrame]:
+    """
+    Decorator for reading DataFrame operations.
+
+    This decorator is intended for functions that read a dataframe from a file, with the
+    Filepath as their argument.
+
+    The decorator prints a writing message before calling the decorated function and a
+    checkmark after the function returns.
+
+    Returns:
+        The decorated function.
+
+    Usage:
+        @dataframe_reader
+        def read_df_from_pickle(path: Path) -> pl.Dataframe:
+            ...
+    """
+
+    @functools.wraps(func)
+    def wrapper(path: Path) -> pl.DataFrame:
+        print(reading_dataframe_message(path), end=" ")
+
+        df = func(path)
+
+        print("✅")
+        return df
+
+    return wrapper
 
 
 def dataframe_writer(
@@ -86,7 +110,7 @@ def dataframe_writer(
 
     @functools.wraps(func)
     def wrapper(df: pl.DataFrame, path: Path) -> None:
-        print(writing_message(path=path, data_type="Data Frame"), end=" ")
+        print(writing_dataframe_message(path), end=" ")
 
         func(df, path)
 
@@ -95,37 +119,32 @@ def dataframe_writer(
     return wrapper
 
 
-def status_update(message: str = "Processing...") -> Callable[[Callable[P, R]], Callable[P, R]]:
-    """
-    Decorator factory for functions that print a status message before calling the
-    decorated function.
+def reading_message(path: Path, data_type: str) -> str:
+    return f"Reading {data_type} from {path.name}..."
 
-    This decorator factory generates a decorator intended for functions that perform a
-    long-running operation. It prints the status message before calling the decorated
-    function and a checkmark after the function returns.
 
-    Args:
-        message: The status message to be printed.
-
-    Returns:
-        A decorator that can be used to decorate long-running functions.
-
-    Usage:
-        @status_update(message="Processing...") def long_running_function(*args: P.args,
-        **kwargs: P.kwargs) -> R:
-            ...
-    """
-
-    def decorator(func: Callable[P, R]) -> Callable[P, R]:
+# currently unused, but keep as template for correct typing of decorator factory
+def reader_decorator_factory(
+    data_type: Literal["Object", "Data Frame"]
+) -> Callable[
+    [Callable[Concatenate[Path, TParams], TReturn]], Callable[Concatenate[Path, TParams], TReturn]
+]:
+    def decorator(
+        func: Callable[Concatenate[Path, TParams], TReturn]
+    ) -> Callable[Concatenate[Path, TParams], TReturn]:
         @functools.wraps(func)
-        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-            print(f"Started {message}...")
+        def wrapper(path: Path, *args: TParams.args, **kwargs: TParams.kwargs) -> TReturn:
+            print(reading_message(path=path, data_type=data_type), end=" ")
 
-            result = func(*args, **kwargs)
+            result = func(path, *args, **kwargs)
 
-            print(f"Finished {message} ✅")
+            print("✅")
             return result
 
         return wrapper
 
     return decorator
+
+
+# dataframe_reader = reader_decorator_factory(data_type="Data Frame")
+# object_reader = reader_decorator_factory(data_type="Object")

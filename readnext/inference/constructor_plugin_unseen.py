@@ -27,7 +27,6 @@ from readnext.utils import (
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
-    status_update,
 )
 
 
@@ -126,16 +125,21 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
             else []
         )
 
-    # TODO: Reduce code duplication with analogous methods below for bibliographic
-    # coupling and cosine similarities
+    @staticmethod
+    def select_scoring_input_columns(df: pl.DataFrame, colname: str) -> pl.DataFrame:
+        return df.select(["d3_document_id", colname]).rename(
+            {
+                "d3_document_id": "candidate_d3_document_id",
+            }
+        )
+
+    @staticmethod
+    def select_scoring_output_columns(df: pl.DataFrame) -> pl.DataFrame:
+        return df.select("candidate_d3_document_id", "score").sort("score", descending=True)
+
     def get_co_citation_analysis_scores(self) -> pl.DataFrame:
         return (
-            self.documents_data.select(["d3_document_id", "citations"])
-            .rename(
-                {
-                    "d3_document_id": "candidate_d3_document_id",
-                }
-            )
+            self.documents_data.pipe(self.select_scoring_input_columns, "citations")
             .with_columns(query_citations=self.get_query_citation_urls())
             .with_columns(
                 score=pl.struct(["citations", "query_citations"]).apply(
@@ -144,19 +148,13 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
                     ),
                 ),
             )
-            .select("candidate_d3_document_id", "score")
-            .sort("score", descending=True)
+            .pipe(self.select_scoring_output_columns)
         )
 
     def get_bibliographic_coupling_scores(self) -> pl.DataFrame:
         return (
-            self.documents_data.select(["d3_document_id", "references"])
-            .rename(
-                {
-                    "d3_document_id": "candidate_d3_document_id",
-                }
-            )
-            .with_columns(query_references=self.get_query_citation_urls())
+            self.documents_data.pipe(self.select_scoring_input_columns, "references")
+            .with_columns(query_references=self.get_query_reference_urls())
             .with_columns(
                 score=pl.struct(["references", "query_references"]).apply(
                     lambda df: CountCommonReferences.count_common_values(
@@ -164,8 +162,7 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
                     ),
                 ),
             )
-            .select("candidate_d3_document_id", "score")
-            .sort("score", descending=True)
+            .pipe(self.select_scoring_output_columns)
         )
 
     def get_citation_model_data(self) -> CitationModelData:
@@ -199,7 +196,6 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
             }
         )
 
-    @status_update("setting cosine similarities attribute")
     def get_cosine_similarities(self) -> pl.DataFrame:
         query_document_data = self.get_query_documents_data()
         query_embedding_function = select_query_embedding_function(self.language_model_choice)
@@ -208,20 +204,14 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
         candidate_embeddings: pl.DataFrame = load_embeddings_from_choice(self.language_model_choice)
 
         return (
-            candidate_embeddings.select(["d3_document_id", "embedding"])
-            .rename(
-                {
-                    "d3_document_id": "candidate_d3_document_id",
-                }
-            )
+            candidate_embeddings.pipe(self.select_scoring_input_columns, "embedding")
             .with_columns(query_embedding=query_embedding)
             .with_columns(
                 score=pl.struct(["embedding", "query_embedding"]).apply(
                     lambda df: CosineSimilarity.score(df["embedding"], df["query_embedding"]),  # type: ignore # noqa: E501
                 ),
             )
-            .select("candidate_d3_document_id", "score")
-            .sort("score", descending=True)
+            .pipe(self.select_scoring_output_columns)
         )
 
     def get_language_model_data(self) -> LanguageModelData:

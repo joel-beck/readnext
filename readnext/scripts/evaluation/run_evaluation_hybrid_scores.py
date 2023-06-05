@@ -13,6 +13,7 @@ from readnext.modeling import (
     CitationModelDataConstructor,
     LanguageModelData,
     LanguageModelDataConstructor,
+    SeenModelDataConstructorPlugin,
 )
 from readnext.utils import read_df_from_parquet
 
@@ -24,11 +25,16 @@ def compare_hybrid_scores_by_document_id(
     bibliographic_coupling_scores: pl.DataFrame,
 ) -> pl.DataFrame:
     # SECTION: Citation Models
+    model_data_constructor_plugin = SeenModelDataConstructorPlugin(
+        query_d3_document_id, documents_data
+    )
+
     citation_model_data_constructor = CitationModelDataConstructor(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         co_citation_analysis_scores=co_citation_analysis_scores,
         bibliographic_coupling_scores=bibliographic_coupling_scores,
+        constructor_plugin=model_data_constructor_plugin,
     )
     citation_model_data = CitationModelData.from_constructor(citation_model_data_constructor)
 
@@ -41,6 +47,7 @@ def compare_hybrid_scores_by_document_id(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=tfidf_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
 
@@ -52,6 +59,7 @@ def compare_hybrid_scores_by_document_id(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=bm25_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     bm25_data = LanguageModelData.from_constructor(bm25_data_constructor)
 
@@ -63,6 +71,7 @@ def compare_hybrid_scores_by_document_id(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=word2vec_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     word2vec_data = LanguageModelData.from_constructor(word2vec_data_constructor)
 
@@ -74,6 +83,7 @@ def compare_hybrid_scores_by_document_id(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=glove_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     glove_data = LanguageModelData.from_constructor(glove_data_constructor)
 
@@ -85,6 +95,7 @@ def compare_hybrid_scores_by_document_id(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=fasttext_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     fasttext_data = LanguageModelData.from_constructor(fasttext_data_constructor)
 
@@ -96,6 +107,7 @@ def compare_hybrid_scores_by_document_id(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=bert_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     bert_data = LanguageModelData.from_constructor(bert_data_constructor)
 
@@ -107,6 +119,7 @@ def compare_hybrid_scores_by_document_id(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=scibert_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     scibert_data = LanguageModelData.from_constructor(scibert_data_constructor)
 
@@ -118,6 +131,7 @@ def compare_hybrid_scores_by_document_id(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
         cosine_similarities=longformer_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     longformer_data = LanguageModelData.from_constructor(longformer_data_constructor)
 

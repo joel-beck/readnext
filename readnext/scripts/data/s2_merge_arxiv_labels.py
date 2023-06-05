@@ -95,7 +95,6 @@ def format_semanticscholar_tags(df: pl.LazyFrame) -> pl.LazyFrame:
     """
     Format the semanticscholar tags column from a struct into a list of strings.
     """
-    # TODO: Can this be solved in a more efficient way in polars style?
     return df.with_columns(
         semanticscholar_tags=pl.col("semanticscholar_tags").apply(
             extract_unique_semanticscholar_tags

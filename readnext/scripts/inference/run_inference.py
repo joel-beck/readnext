@@ -35,8 +35,12 @@ def main() -> None:
     print(inference_data_seen_from_semanticscholar_id.features)
     print(inference_data_seen_from_semanticscholar_id.ranks)
     print(inference_data_seen_from_semanticscholar_id.labels)
-    print(inference_data_seen_from_semanticscholar_id.recommendations.citation_to_language)
-    print(inference_data_seen_from_semanticscholar_id.recommendations.language_to_citation)
+    print(
+        inference_data_seen_from_semanticscholar_id.recommendations.citation_to_language_candidates
+    )
+    print(
+        inference_data_seen_from_semanticscholar_id.recommendations.language_to_citation_candidates
+    )
 
     # SUBSECTION: Input is semanticscholar URL
     inference_data_constructor_seen_semanticscholar_url = InferenceDataConstructor(

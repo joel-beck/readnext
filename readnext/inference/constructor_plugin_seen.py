@@ -120,8 +120,8 @@ class SeenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
         citation_model_data_constructor = CitationModelDataConstructor(
             d3_document_id=self.identifier.d3_document_id,
             documents_data=self.documents_data,
-            co_citation_analysis_scores=self.get_co_citation_analysis_scores(),
-            bibliographic_coupling_scores=self.get_bibliographic_coupling_scores(),
+            co_citation_analysis_scores_frame=self.get_co_citation_analysis_scores(),
+            bibliographic_coupling_scores_frame=self.get_bibliographic_coupling_scores(),
             constructor_plugin=self.model_data_constructor_plugin,
         )
         return CitationModelData.from_constructor(citation_model_data_constructor)
@@ -135,7 +135,7 @@ class SeenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
         language_model_data_constructor = LanguageModelDataConstructor(
             d3_document_id=self.identifier.d3_document_id,
             documents_data=self.documents_data,
-            cosine_similarities=self.get_cosine_similarities(),
+            cosine_similarity_scores_frame=self.get_cosine_similarities(),
             constructor_plugin=self.model_data_constructor_plugin,
         )
         return LanguageModelData.from_constructor(language_model_data_constructor)

@@ -18,8 +18,8 @@ def test_kw_only_initialization_hybrid_scorer() -> None:
                     abstract="Abstract",
                     arxiv_labels=[],
                 ),
-                info_matrix=pl.DataFrame(),
-                integer_labels=pl.DataFrame(),
+                info_frame=pl.DataFrame(),
+                integer_labels_frame=pl.DataFrame(),
                 cosine_similarity_ranks=pl.DataFrame(),
             ),
             CitationModelData(
@@ -30,8 +30,8 @@ def test_kw_only_initialization_hybrid_scorer() -> None:
                     abstract="Abstract",
                     arxiv_labels=[],
                 ),
-                info_matrix=pl.DataFrame(),
-                feature_matrix=pl.DataFrame(),
-                integer_labels=pl.DataFrame(),
+                info_frame=pl.DataFrame(),
+                features_frame=pl.DataFrame(),
+                integer_labels_frame=pl.DataFrame(),
             ),
         )

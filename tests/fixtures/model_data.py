@@ -29,21 +29,21 @@ def citation_model_data_query_document(
 def citation_model_data_integer_labels(
     citation_model_data: CitationModelData,
 ) -> pl.DataFrame:
-    return citation_model_data.integer_labels
+    return citation_model_data.integer_labels_frame
 
 
 @pytest.fixture(scope="session")
 def citation_model_data_info_matrix(
     citation_model_data: CitationModelData,
 ) -> pl.DataFrame:
-    return citation_model_data.info_matrix
+    return citation_model_data.info_frame
 
 
 @pytest.fixture(scope="session")
 def citation_model_data_feature_matrix(
     citation_model_data: CitationModelData,
 ) -> pl.DataFrame:
-    return citation_model_data.feature_matrix
+    return citation_model_data.features_frame
 
 
 # SECTION: LanguageModelData
@@ -65,14 +65,14 @@ def language_model_data_query_document(
 def language_model_data_integer_labels(
     language_model_data: LanguageModelData,
 ) -> pl.DataFrame:
-    return language_model_data.integer_labels
+    return language_model_data.integer_labels_frame
 
 
 @pytest.fixture(scope="session")
 def language_model_data_info_matrix(
     language_model_data: LanguageModelData,
 ) -> pl.DataFrame:
-    return language_model_data.info_matrix
+    return language_model_data.info_frame
 
 
 @pytest.fixture(scope="session")

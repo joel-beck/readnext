@@ -4,9 +4,9 @@ from pytest_lazyfixture import lazy_fixture
 
 from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference import DocumentIdentifier, InferenceDataConstructor
+from readnext.inference.constructor import Features, Labels, Ranks, Recommendations
 from readnext.inference.constructor_plugin_seen import SeenInferenceDataConstructorPlugin
 from readnext.inference.constructor_plugin_unseen import UnseenInferenceDataConstructorPlugin
-from readnext.inference.inference_data_constructor import Features, Labels, Ranks, Recommendations
 from readnext.modeling.language_models import LanguageModelChoice
 
 seen_inference_data_constructors_slow_skip_ci = [

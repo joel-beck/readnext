@@ -41,7 +41,7 @@ def test_magic_numbers() -> None:
     magic_numbers = MagicNumbers()
     assert isinstance(magic_numbers.documents_data_intermediate_cutoff, int)
     assert isinstance(magic_numbers.documents_data_final_size, int)
-    assert isinstance(magic_numbers.scoring_limit, int) or magic_numbers.scoring_limit is None
+    assert isinstance(magic_numbers.scoring_limit, int)
     assert isinstance(magic_numbers.n_candidates, int)
     assert isinstance(magic_numbers.n_recommendations, int)
 

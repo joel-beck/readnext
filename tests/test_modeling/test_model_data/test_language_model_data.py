@@ -46,7 +46,7 @@ language_model_data_fixtures_unseen_skip_ci = (
     ],
 )
 def test_language_model_data_getitem(model_data: LanguageModelData) -> None:
-    index_info_matrix = model_data.info_matrix.index
+    index_info_matrix = model_data.info_frame.index
     index_cosine_similarity_ranks = model_data.cosine_similarity_ranks.index
     shared_indices = index_info_matrix.intersection(index_cosine_similarity_ranks)
 
@@ -54,8 +54,8 @@ def test_language_model_data_getitem(model_data: LanguageModelData) -> None:
     sliced_model_data = model_data[shared_indices]
     assert isinstance(sliced_model_data, LanguageModelData)
 
-    assert len(sliced_model_data.info_matrix) == len(shared_indices)
-    assert len(sliced_model_data.integer_labels) == len(shared_indices)
+    assert len(sliced_model_data.info_frame) == len(shared_indices)
+    assert len(sliced_model_data.integer_labels_frame) == len(shared_indices)
     assert len(sliced_model_data.cosine_similarity_ranks) == len(shared_indices)
 
 
@@ -72,7 +72,7 @@ def test_language_model_data_getitem(model_data: LanguageModelData) -> None:
 def test_seen_language_model_data_getitem(
     model_data: LanguageModelData, test_data_size: int
 ) -> None:
-    index_info_matrix = model_data.info_matrix.index
+    index_info_matrix = model_data.info_frame.index
     assert len(index_info_matrix) == test_data_size - 1
 
     index_cosine_similarity_ranks = model_data.cosine_similarity_ranks.index
@@ -95,7 +95,7 @@ def test_seen_language_model_data_getitem(
 def test_unseen_language_model_data_getitem(
     model_data: LanguageModelData, test_data_size: int
 ) -> None:
-    index_info_matrix = model_data.info_matrix.index
+    index_info_matrix = model_data.info_frame.index
     assert len(index_info_matrix) == test_data_size
 
     index_cosine_similarity_ranks = model_data.cosine_similarity_ranks.index

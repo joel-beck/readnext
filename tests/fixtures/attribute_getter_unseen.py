@@ -304,21 +304,21 @@ def unseen_paper_attribute_getter_citation_model_data_query_document(
 def unseen_paper_attribute_getter_citation_model_data_integer_labels(
     unseen_paper_attribute_getter_citation_model_data: CitationModelData,
 ) -> pl.DataFrame:
-    return unseen_paper_attribute_getter_citation_model_data.integer_labels
+    return unseen_paper_attribute_getter_citation_model_data.integer_labels_frame
 
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_citation_model_data_info_matrix(
     unseen_paper_attribute_getter_citation_model_data: CitationModelData,
 ) -> pl.DataFrame:
-    return unseen_paper_attribute_getter_citation_model_data.info_matrix
+    return unseen_paper_attribute_getter_citation_model_data.info_frame
 
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_citation_model_data_feature_matrix(
     unseen_paper_attribute_getter_citation_model_data: CitationModelData,
 ) -> pl.DataFrame:
-    return unseen_paper_attribute_getter_citation_model_data.feature_matrix
+    return unseen_paper_attribute_getter_citation_model_data.features_frame
 
 
 @pytest.fixture(scope="session")
@@ -351,14 +351,14 @@ def unseen_paper_attribute_getter_language_model_data_query_document(
 def unseen_paper_attribute_getter_language_model_data_integer_labels(
     unseen_paper_attribute_getter_language_model_data: LanguageModelData,
 ) -> pl.DataFrame:
-    return unseen_paper_attribute_getter_language_model_data.integer_labels
+    return unseen_paper_attribute_getter_language_model_data.integer_labels_frame
 
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_language_model_data_info_matrix(
     unseen_paper_attribute_getter_language_model_data: LanguageModelData,
 ) -> pl.DataFrame:
-    return unseen_paper_attribute_getter_language_model_data.info_matrix
+    return unseen_paper_attribute_getter_language_model_data.info_frame
 
 
 @pytest.fixture(scope="session")

@@ -76,21 +76,21 @@ def inference_data_constructor_unseen_citation_model_data_query_document(
 def inference_data_constructor_unseen_citation_model_data_integer_labels(
     inference_data_constructor_unseen_citation_model_data: CitationModelData,
 ) -> pl.DataFrame:
-    return inference_data_constructor_unseen_citation_model_data.integer_labels
+    return inference_data_constructor_unseen_citation_model_data.integer_labels_frame
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_unseen_citation_model_data_info_matrix(
     inference_data_constructor_unseen_citation_model_data: CitationModelData,
 ) -> pl.DataFrame:
-    return inference_data_constructor_unseen_citation_model_data.info_matrix
+    return inference_data_constructor_unseen_citation_model_data.info_frame
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_unseen_citation_model_data_feature_matrix(
     inference_data_constructor_unseen_citation_model_data: CitationModelData,
 ) -> pl.DataFrame:
-    return inference_data_constructor_unseen_citation_model_data.feature_matrix
+    return inference_data_constructor_unseen_citation_model_data.features_frame
 
 
 @pytest.fixture(scope="session")
@@ -111,14 +111,14 @@ def inference_data_constructor_unseen_language_model_data_query_document(
 def inference_data_constructor_unseen_language_model_data_integer_labels(
     inference_data_constructor_unseen_language_model_data: LanguageModelData,
 ) -> pl.DataFrame:
-    return inference_data_constructor_unseen_language_model_data.integer_labels
+    return inference_data_constructor_unseen_language_model_data.integer_labels_frame
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_unseen_language_model_data_info_matrix(
     inference_data_constructor_unseen_language_model_data: LanguageModelData,
 ) -> pl.DataFrame:
-    return inference_data_constructor_unseen_language_model_data.info_matrix
+    return inference_data_constructor_unseen_language_model_data.info_frame
 
 
 @pytest.fixture(scope="session")

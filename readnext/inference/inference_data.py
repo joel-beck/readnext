@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from typing_extensions import Self
 
-from readnext.inference.inference_data_constructor import (
+from readnext.inference.constructor import (
     DocumentIdentifier,
     DocumentInfo,
     Features,

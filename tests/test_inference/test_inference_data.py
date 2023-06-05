@@ -8,7 +8,7 @@ from readnext.inference import DocumentIdentifier, InferenceData
 
 # These imports must not come from `readnext.inference`, otherwise they are really
 # imported twice with different module scopes and `isinstance()` checks fail.
-from readnext.inference.inference_data_constructor import Features, Labels, Ranks, Recommendations
+from readnext.inference.constructor import Features, Labels, Ranks, Recommendations
 from readnext.modeling import DocumentInfo
 
 # SECTION: Document Identifier

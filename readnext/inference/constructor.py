@@ -152,22 +152,22 @@ class InferenceDataConstructor:
 
     def collect_features(self) -> Features:
         return Features(
-            publication_date=self._citation_model_data.info_matrix.select(
+            publication_date=self._citation_model_data.info_frame.select(
                 "candidate_d3_document_id", "publication_date"
             ),
-            citationcount_document=self._citation_model_data.info_matrix.select(
+            citationcount_document=self._citation_model_data.info_frame.select(
                 "candidate_d3_document_id", "citationcount_document"
             ),
-            citationcount_author=self._citation_model_data.info_matrix.select(
+            citationcount_author=self._citation_model_data.info_frame.select(
                 "candidate_d3_document_id", "citationcount_author"
             ),
-            co_citation_analysis=self._citation_model_data.info_matrix.select(
+            co_citation_analysis=self._citation_model_data.info_frame.select(
                 "candidate_d3_document_id", "co_citation_analysis"
             ),
-            bibliographic_coupling=self._citation_model_data.info_matrix.select(
+            bibliographic_coupling=self._citation_model_data.info_frame.select(
                 "candidate_d3_document_id", "bibliographic_coupling"
             ),
-            cosine_similarity=self._language_model_data.info_matrix.select(
+            cosine_similarity=self._language_model_data.info_frame.select(
                 "candidate_d3_document_id", "cosine_similarity"
             ),
             feature_weights=self.feature_weights,
@@ -175,19 +175,19 @@ class InferenceDataConstructor:
 
     def collect_ranks(self) -> Ranks:
         return Ranks(
-            publication_date=self._citation_model_data.feature_matrix.select(
+            publication_date=self._citation_model_data.features_frame.select(
                 "candidate_d3_document_id", "publication_date_rank"
             ),
-            citationcount_document=self._citation_model_data.feature_matrix.select(
+            citationcount_document=self._citation_model_data.features_frame.select(
                 "candidate_d3_document_id", "citationcount_document_rank"
             ),
-            citationcount_author=self._citation_model_data.feature_matrix.select(
+            citationcount_author=self._citation_model_data.features_frame.select(
                 "candidate_d3_document_id", "citationcount_author_rank"
             ),
-            co_citation_analysis=self._citation_model_data.feature_matrix.select(
+            co_citation_analysis=self._citation_model_data.features_frame.select(
                 "candidate_d3_document_id", "co_citation_analysis_rank"
             ),
-            bibliographic_coupling=self._citation_model_data.feature_matrix.select(
+            bibliographic_coupling=self._citation_model_data.features_frame.select(
                 "candidate_d3_document_id", "bibliographic_coupling_rank"
             ),
             cosine_similarity=self._language_model_data.cosine_similarity_ranks.select(
@@ -197,10 +197,10 @@ class InferenceDataConstructor:
 
     def collect_labels(self) -> Labels:
         return Labels(
-            arxiv=self._citation_model_data.info_matrix.select(
+            arxiv=self._citation_model_data.info_frame.select(
                 "candidate_d3_document_id", "arxiv_labels"
             ),
-            integer=self._citation_model_data.integer_labels,
+            integer=self._citation_model_data.integer_labels_frame,
         )
 
     def collect_recommendations(self) -> Recommendations:

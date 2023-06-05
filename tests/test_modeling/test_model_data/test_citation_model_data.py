@@ -46,17 +46,17 @@ citation_model_data_fixtures_unseen_skip_ci = (
     ],
 )
 def test_citation_model_data_getitem(model_data: CitationModelData) -> None:
-    index_info_matrix = model_data.info_matrix.index
-    index_feature_matrix = model_data.feature_matrix.index
+    index_info_matrix = model_data.info_frame.index
+    index_feature_matrix = model_data.features_frame.index
     shared_indices = index_info_matrix.intersection(index_feature_matrix)
 
     # check that slicing works for info matrix, feature matrix and integer labels
     sliced_model_data = model_data[shared_indices]
     assert isinstance(sliced_model_data, CitationModelData)
 
-    assert len(sliced_model_data.info_matrix) == len(shared_indices)
-    assert len(sliced_model_data.integer_labels) == len(shared_indices)
-    assert len(sliced_model_data.feature_matrix) == len(shared_indices)
+    assert len(sliced_model_data.info_frame) == len(shared_indices)
+    assert len(sliced_model_data.integer_labels_frame) == len(shared_indices)
+    assert len(sliced_model_data.features_frame) == len(shared_indices)
 
 
 @pytest.mark.parametrize(
@@ -72,11 +72,11 @@ def test_citation_model_data_getitem(model_data: CitationModelData) -> None:
 def test_seen_citation_model_data_getitem(
     model_data: CitationModelData, test_data_size: int
 ) -> None:
-    index_info_matrix = model_data.info_matrix.index
+    index_info_matrix = model_data.info_frame.index
     # -1 since query document is excluded from candidates
     assert len(index_info_matrix) == test_data_size - 1
 
-    index_feature_matrix = model_data.feature_matrix.index
+    index_feature_matrix = model_data.features_frame.index
     assert len(index_feature_matrix) == test_data_size - 1
 
     # index of info matrix and feature matrix is identical
@@ -94,10 +94,10 @@ def test_seen_citation_model_data_getitem(
 def test_unseen_citation_model_data_getitem(
     model_data: CitationModelData, test_data_size: int
 ) -> None:
-    index_info_matrix = model_data.info_matrix.index
+    index_info_matrix = model_data.info_frame.index
     assert len(index_info_matrix) == test_data_size
 
-    index_feature_matrix = model_data.feature_matrix.index
+    index_feature_matrix = model_data.features_frame.index
     assert len(index_feature_matrix) == test_data_size
 
     shared_indices = index_info_matrix.intersection(index_feature_matrix)

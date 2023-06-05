@@ -85,7 +85,7 @@ class MagicNumbers:
 
     documents_data_intermediate_cutoff: int = 1_000_000
     documents_data_final_size: int = 10_000
-    scoring_limit: int | None = None  # possibly change to 100
+    scoring_limit: int = 100
     n_candidates: int = 20
     n_recommendations: int = 20
 

@@ -44,8 +44,8 @@ def main() -> None:
     citation_model_data_constructor = CitationModelDataConstructor(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
-        co_citation_analysis_scores=co_citation_analysis_scores,
-        bibliographic_coupling_scores=bibliographic_coupling_scores,
+        co_citation_analysis_scores_frame=co_citation_analysis_scores,
+        bibliographic_coupling_scores_frame=bibliographic_coupling_scores,
         constructor_plugin=model_data_constructor_plugin,
     )
     citation_model_data = CitationModelData.from_constructor(citation_model_data_constructor)
@@ -59,7 +59,7 @@ def main() -> None:
     tfidf_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
-        cosine_similarities=tfidf_cosine_similarities,
+        cosine_similarity_scores_frame=tfidf_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
@@ -72,7 +72,7 @@ def main() -> None:
     bm25_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
-        cosine_similarities=bm25_cosine_similarities,
+        cosine_similarity_scores_frame=bm25_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     bm25_data = LanguageModelData.from_constructor(bm25_data_constructor)
@@ -85,7 +85,7 @@ def main() -> None:
     word2vec_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
-        cosine_similarities=word2vec_cosine_similarities,
+        cosine_similarity_scores_frame=word2vec_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     word2vec_data = LanguageModelData.from_constructor(word2vec_data_constructor)
@@ -98,7 +98,7 @@ def main() -> None:
     glove_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
-        cosine_similarities=glove_cosine_similarities,
+        cosine_similarity_scores_frame=glove_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     glove_data = LanguageModelData.from_constructor(glove_data_constructor)
@@ -111,7 +111,7 @@ def main() -> None:
     fasttext_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
-        cosine_similarities=fasttext_cosine_similarities,
+        cosine_similarity_scores_frame=fasttext_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     fasttext_data = LanguageModelData.from_constructor(fasttext_data_constructor)
@@ -124,7 +124,7 @@ def main() -> None:
     bert_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
-        cosine_similarities=bert_cosine_similarities,
+        cosine_similarity_scores_frame=bert_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     bert_data = LanguageModelData.from_constructor(bert_data_constructor)
@@ -137,7 +137,7 @@ def main() -> None:
     scibert_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
-        cosine_similarities=scibert_cosine_similarities,
+        cosine_similarity_scores_frame=scibert_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     scibert_data = LanguageModelData.from_constructor(scibert_data_constructor)
@@ -150,7 +150,7 @@ def main() -> None:
     longformer_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
         documents_data=documents_data,
-        cosine_similarities=longformer_cosine_similarities,
+        cosine_similarity_scores_frame=longformer_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     longformer_data = LanguageModelData.from_constructor(longformer_data_constructor)

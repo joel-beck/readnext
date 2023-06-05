@@ -131,7 +131,7 @@ class CitationModelScorer(ModelScorer):
 
         return (
             cls.compute_weighted_rank(
-                citation_model_data.feature_matrix,
+                citation_model_data.features_frame,
                 feature_weights,
             )
             .sort(by="weighted_rank")
@@ -157,11 +157,11 @@ class CitationModelScorer(ModelScorer):
             cls.select_top_n_ranks(citation_model_data, feature_weights, n)
             .pipe(
                 cls.merge_on_candidate_d3_document_id,
-                citation_model_data.feature_matrix,
+                citation_model_data.features_frame,
             )
             .pipe(
                 cls.merge_on_candidate_d3_document_id,
-                citation_model_data.info_matrix,
+                citation_model_data.info_frame,
             )
         )
 
@@ -204,7 +204,7 @@ class CitationModelScorer(ModelScorer):
 
         top_n_ranks_with_labels = cls.display_top_n(citation_model_data, feature_weights, n).pipe(
             cls.merge_on_candidate_d3_document_id,
-            citation_model_data.integer_labels,
+            citation_model_data.integer_labels_frame,
         )
 
         return metric.from_df(top_n_ranks_with_labels)
@@ -263,7 +263,7 @@ class LanguageModelScorer(ModelScorer):
             cls.select_top_n_ranks(language_model_data, feature_weights, n)
             .pipe(
                 cls.merge_on_candidate_d3_document_id,
-                language_model_data.info_matrix,
+                language_model_data.info_frame,
             )
             .pipe(cls.move_cosine_similarity_second)
             # ranks are redundant information given the raw cosine similarity scores in
@@ -310,7 +310,7 @@ class LanguageModelScorer(ModelScorer):
 
         top_n_ranks_with_labels = cls.display_top_n(language_model_data, feature_weights, n).pipe(
             cls.merge_on_candidate_d3_document_id,
-            language_model_data.integer_labels,
+            language_model_data.integer_labels_frame,
         )
 
         return metric.from_df(top_n_ranks_with_labels)

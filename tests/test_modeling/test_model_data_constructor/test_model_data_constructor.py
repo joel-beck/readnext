@@ -25,8 +25,8 @@ def test_initialization(model_data_constructor: ModelDataConstructor) -> None:
     # in individual tests below
     assert isinstance(model_data_constructor.documents_data, pl.DataFrame)
 
-    assert isinstance(model_data_constructor.info_cols, list)
-    assert all(isinstance(col, str) for col in model_data_constructor.info_cols)
+    assert isinstance(model_data_constructor.info_columns, list)
+    assert all(isinstance(col, str) for col in model_data_constructor.info_columns)
 
     assert isinstance(model_data_constructor.query_document, DocumentInfo)
 
@@ -64,11 +64,11 @@ def test_filter_documents_data(
     lazy_fixture(model_data_constructor_fixtures),
 )
 def test_get_info_matrix(model_data_constructor: ModelDataConstructor) -> None:
-    info_matrix = model_data_constructor.get_info_matrix()
+    info_matrix = model_data_constructor.get_info_frame()
 
     assert isinstance(info_matrix, pl.DataFrame)
     assert model_data_constructor.d3_document_id not in info_matrix.index
-    assert all(col in info_matrix.columns for col in model_data_constructor.info_cols)
+    assert all(col in info_matrix.columns for col in model_data_constructor.info_columns)
 
 
 @pytest.mark.parametrize(

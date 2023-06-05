@@ -4,6 +4,7 @@ from readnext.inference.constructor import (
     InferenceDataConstructor,
     Labels,
     LanguageModelChoice,
+    Points,
     Ranks,
     Recommendations,
 )
@@ -25,6 +26,7 @@ __all__ = [
     "InferenceDataConstructor",
     "Labels",
     "LanguageModelChoice",
+    "Points",
     "Ranks",
     "Recommendations",
     "InferenceDataInputConverter",

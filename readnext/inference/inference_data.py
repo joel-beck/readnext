@@ -10,6 +10,7 @@ from readnext.inference.constructor import (
     Labels,
     Ranks,
     Recommendations,
+    Points,
 )
 
 
@@ -19,6 +20,7 @@ class InferenceData:
     document_info: DocumentInfo
     features: Features
     ranks: Ranks
+    points: Points
     labels: Labels
     recommendations: Recommendations
 
@@ -29,6 +31,7 @@ class InferenceData:
             document_info=constructor.collect_document_info(),
             features=constructor.collect_features(),
             ranks=constructor.collect_ranks(),
+            points=constructor.collect_points(),
             labels=constructor.collect_labels(),
             recommendations=constructor.collect_recommendations(),
         )

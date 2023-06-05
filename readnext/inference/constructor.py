@@ -45,7 +45,15 @@ class Ranks:
     citationcount_author: pl.DataFrame
     co_citation_analysis: pl.DataFrame
     bibliographic_coupling: pl.DataFrame
-    cosine_similarity: pl.DataFrame
+
+
+@dataclass(kw_only=True)
+class Points:
+    publication_date: pl.DataFrame
+    citationcount_document: pl.DataFrame
+    citationcount_author: pl.DataFrame
+    co_citation_analysis: pl.DataFrame
+    bibliographic_coupling: pl.DataFrame
 
 
 @dataclass(kw_only=True)
@@ -152,22 +160,22 @@ class InferenceDataConstructor:
 
     def collect_features(self) -> Features:
         return Features(
-            publication_date=self._citation_model_data.info_frame.select(
+            publication_date=self._citation_model_data.features_frame.select(
                 "candidate_d3_document_id", "publication_date"
             ),
-            citationcount_document=self._citation_model_data.info_frame.select(
+            citationcount_document=self._citation_model_data.features_frame.select(
                 "candidate_d3_document_id", "citationcount_document"
             ),
-            citationcount_author=self._citation_model_data.info_frame.select(
+            citationcount_author=self._citation_model_data.features_frame.select(
                 "candidate_d3_document_id", "citationcount_author"
             ),
-            co_citation_analysis=self._citation_model_data.info_frame.select(
-                "candidate_d3_document_id", "co_citation_analysis"
+            co_citation_analysis=self._citation_model_data.features_frame.select(
+                "candidate_d3_document_id", "co_citation_analysis_score"
             ),
-            bibliographic_coupling=self._citation_model_data.info_frame.select(
-                "candidate_d3_document_id", "bibliographic_coupling"
+            bibliographic_coupling=self._citation_model_data.features_frame.select(
+                "candidate_d3_document_id", "bibliographic_coupling_score"
             ),
-            cosine_similarity=self._language_model_data.info_frame.select(
+            cosine_similarity=self._language_model_data.features_frame.select(
                 "candidate_d3_document_id", "cosine_similarity"
             ),
             feature_weights=self.feature_weights,
@@ -175,23 +183,39 @@ class InferenceDataConstructor:
 
     def collect_ranks(self) -> Ranks:
         return Ranks(
-            publication_date=self._citation_model_data.features_frame.select(
+            publication_date=self._citation_model_data.points_frame.select(
                 "candidate_d3_document_id", "publication_date_rank"
             ),
-            citationcount_document=self._citation_model_data.features_frame.select(
+            citationcount_document=self._citation_model_data.ranks_frame.select(
                 "candidate_d3_document_id", "citationcount_document_rank"
             ),
-            citationcount_author=self._citation_model_data.features_frame.select(
+            citationcount_author=self._citation_model_data.ranks_frame.select(
                 "candidate_d3_document_id", "citationcount_author_rank"
             ),
-            co_citation_analysis=self._citation_model_data.features_frame.select(
+            co_citation_analysis=self._citation_model_data.ranks_frame.select(
                 "candidate_d3_document_id", "co_citation_analysis_rank"
             ),
-            bibliographic_coupling=self._citation_model_data.features_frame.select(
+            bibliographic_coupling=self._citation_model_data.ranks_frame.select(
                 "candidate_d3_document_id", "bibliographic_coupling_rank"
             ),
-            cosine_similarity=self._language_model_data.cosine_similarity_ranks.select(
-                "candidate_d3_document_id", "cosine_similarity_rank"
+        )
+
+    def collect_points(self) -> Points:
+        return Points(
+            publication_date=self._citation_model_data.points_frame.select(
+                "candidate_d3_document_id", "publication_date_points"
+            ),
+            citationcount_document=self._citation_model_data.points_frame.select(
+                "candidate_d3_document_id", "citationcount_document_points"
+            ),
+            citationcount_author=self._citation_model_data.points_frame.select(
+                "candidate_d3_document_id", "citationcount_author_points"
+            ),
+            co_citation_analysis=self._citation_model_data.points_frame.select(
+                "candidate_d3_document_id", "co_citation_analysis_points"
+            ),
+            bibliographic_coupling=self._citation_model_data.points_frame.select(
+                "candidate_d3_document_id", "bibliographic_coupling_points"
             ),
         )
 

@@ -11,6 +11,7 @@ from readnext.modeling.model_data_constructor import (
     LanguageModelDataConstructor,
     ModelDataConstructor,
 )
+from readnext.utils import CandidateRanksFrame
 
 TModelDataConstructor = TypeVar("TModelDataConstructor", bound=ModelDataConstructor)
 
@@ -102,7 +103,7 @@ class LanguageModelData(ModelData):
     similarity ranks of all candidate documents with respect to the query document.
     """
 
-    cosine_similarity_ranks: pl.DataFrame
+    cosine_similarity_ranks: CandidateRanksFrame
 
     @classmethod
     def from_constructor(cls, constructor: LanguageModelDataConstructor) -> Self:

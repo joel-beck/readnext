@@ -53,7 +53,9 @@ class ModelDataConstructor(ABC):
 
     def get_query_documents_data(self) -> pl.DataFrame:
         """
-        Filter out query document and rename id column to candidate id.
+        Get a subset of the documents data for a single query document by filtering out
+        the query document row and renaming the `d3_document_id` column to
+        `candidate_d3_document_id`.
         """
         return self.exclude_query_document().pipe(self.rename_to_candidate_id)
 
@@ -64,7 +66,7 @@ class ModelDataConstructor(ABC):
         """
         return self.get_query_documents_data().select(self.info_cols)
 
-    def get_query_ranks(
+    def get_candidate_ranks(
         self, scores_frame: ScoresFrame | CandidateScoresFrame
     ) -> CandidateRanksFrame:
         """
@@ -73,7 +75,7 @@ class ModelDataConstructor(ABC):
         `candidate_d3_document_id` and `rank`.
         """
         return (
-            self.constructor_plugin.get_query_scores(scores_frame)
+            self.constructor_plugin.get_candidate_scores(scores_frame)
             .with_columns(rank=pl.col("score").rank(descending=True))
             .drop("score")
         )
@@ -146,7 +148,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
         them to a dataframe with with two columns named `candidate_d3_document_id`
         and `score`.
         """
-        return self.constructor_plugin.get_query_scores(self.co_citation_analysis_scores)
+        return self.constructor_plugin.get_candidate_scores(self.co_citation_analysis_scores)
 
     def get_bibliographic_coupling_scores(self) -> CandidateScoresFrame:
         """
@@ -154,7 +156,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
         converts them to a dataframe with with two columns named `candidate_d3_document_id`
         and `score`.
         """
-        return self.constructor_plugin.get_query_scores(self.bibliographic_coupling_scores)
+        return self.constructor_plugin.get_candidate_scores(self.bibliographic_coupling_scores)
 
     def get_co_citation_analysis_ranks(self) -> CandidateRanksFrame:
         """
@@ -162,7 +164,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
         them to a dataframe with with two columns named `candidate_d3_document_id`
         and `rank`.
         """
-        return self.get_query_ranks(self.co_citation_analysis_scores)
+        return self.get_candidate_ranks(self.co_citation_analysis_scores)
 
     def get_bibliographic_coupling_ranks(self) -> CandidateRanksFrame:
         """
@@ -170,13 +172,16 @@ class CitationModelDataConstructor(ModelDataConstructor):
         converts them to a dataframe with with two columns named `candidate_d3_document_id`
         and `rank`.
         """
-        return self.get_query_ranks(self.bibliographic_coupling_scores)
+        return self.get_candidate_ranks(self.bibliographic_coupling_scores)
 
     def extend_info_matrix(self, info_matrix: pl.DataFrame) -> pl.DataFrame:
         """
         Adds the co-citation analysis and bibliographic coupling scores to the
         information features about the candidate documents. Join them sequentially on
         the shared `candidate_d3_document_id` column.
+
+        Renames the `score` columns of the co-citation analysis and bibliographic candidate score
+        frames to more specific names.
         """
         return (
             info_matrix.join(
@@ -193,6 +198,9 @@ class CitationModelDataConstructor(ModelDataConstructor):
         """
         Collects all citation-based and global document feature ranks that are used for
         the weighted citation recommender model in a single dataframe.
+
+        Renames the `rank` columns of the co-citation analysis and bibliographic
+        candidate rank frames to more specific names.
         """
         return (
             self.get_query_documents_data()
@@ -227,15 +235,17 @@ class LanguageModelDataConstructor(ModelDataConstructor):
         """
         # output dataframe has length of original full data in tests, even though the
         # test_cosine_similarities data itself only contains 100 rows
-        return self.constructor_plugin.get_query_scores(self.cosine_similarities)
+        return self.constructor_plugin.get_candidate_scores(self.cosine_similarities)
 
     def get_cosine_similarity_ranks(self) -> CandidateRanksFrame:
         """
         Computes the cosine similarity ranks of all candidate documents with respect to
-        the query document. The output dataframe has two columns named
-        `candidate_d3_document_id` and `rank`.
+        the query document.
+
+        Renames the `rank` column of the cosine similarity candidate rank frame to a
+        more specific name.
         """
-        return self.get_query_ranks(self.cosine_similarities).rename(
+        return self.get_candidate_ranks(self.cosine_similarities).rename(
             {"rank": "cosine_similarity_rank"}
         )
 
@@ -243,6 +253,9 @@ class LanguageModelDataConstructor(ModelDataConstructor):
         """
         Adds the cosine similarity scores to the information features about the
         candidate documents.
+
+        Renames the `score` column of the cosine similarity candidate score frame to a
+        more specific name.
         """
         return info_matrix.join(
             self.get_cosine_similarity_scores(), on="candidate_d3_document_id", how="left"

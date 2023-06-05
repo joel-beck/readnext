@@ -20,7 +20,7 @@ class ModelDataConstructorPlugin(ABC):
         ...
 
     @abstractmethod
-    def get_query_scores(
+    def get_candidate_scores(
         self, scores_frame: ScoresFrame | CandidateScoresFrame
     ) -> CandidateScoresFrame:
         ...
@@ -49,7 +49,7 @@ class SeenModelDataConstructorPlugin(ModelDataConstructorPlugin):
             abstract=query_document_row.select("abstract").item(),
         )
 
-    def get_query_scores(self, scores_frame: ScoresFrame) -> CandidateScoresFrame:
+    def get_candidate_scores(self, scores_frame: ScoresFrame) -> CandidateScoresFrame:
         """
         Extract the scores of all candidate documents for a given scores frame and
         converts them to a dataframe with two columns named `candidate_d3_document_id`
@@ -74,7 +74,7 @@ class UnseenModelDataConstructorPlugin(ModelDataConstructorPlugin):
 
         return DocumentInfo(d3_document_id=-1, title=title, abstract=abstract)
 
-    def get_query_scores(self, scores_frame: CandidateScoresFrame) -> CandidateScoresFrame:
+    def get_candidate_scores(self, scores_frame: CandidateScoresFrame) -> CandidateScoresFrame:
         """
         For unseen documents the query document is not contained in the training data.
         Thus, a filtering step is not necessary. The input and output dataframes contain

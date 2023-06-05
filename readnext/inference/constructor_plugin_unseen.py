@@ -23,6 +23,7 @@ from readnext.modeling import (
 )
 from readnext.modeling.language_models import load_embeddings_from_choice
 from readnext.utils import (
+    CandidateScoresFrame,
     get_arxiv_id_from_arxiv_url,
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
@@ -134,10 +135,10 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
         )
 
     @staticmethod
-    def select_scoring_output_columns(df: pl.DataFrame) -> pl.DataFrame:
+    def select_scoring_output_columns(df: pl.DataFrame) -> CandidateScoresFrame:
         return df.select("candidate_d3_document_id", "score").sort("score", descending=True)
 
-    def get_co_citation_analysis_scores(self) -> pl.DataFrame:
+    def get_co_citation_analysis_scores(self) -> CandidateScoresFrame:
         return (
             self.documents_data.pipe(self.select_scoring_input_columns, "citations")
             .with_columns(query_citations=self.get_query_citation_urls())
@@ -151,7 +152,7 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
             .pipe(self.select_scoring_output_columns)
         )
 
-    def get_bibliographic_coupling_scores(self) -> pl.DataFrame:
+    def get_bibliographic_coupling_scores(self) -> CandidateScoresFrame:
         return (
             self.documents_data.pipe(self.select_scoring_input_columns, "references")
             .with_columns(query_references=self.get_query_reference_urls())
@@ -196,7 +197,7 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
             }
         )
 
-    def get_cosine_similarities(self) -> pl.DataFrame:
+    def get_cosine_similarities(self) -> CandidateScoresFrame:
         query_document_data = self.get_query_documents_data()
         query_embedding_function = select_query_embedding_function(self.language_model_choice)
 

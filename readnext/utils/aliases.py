@@ -9,15 +9,18 @@ Tokens: TypeAlias = list[str]
 TokenIds: TypeAlias = list[int]
 Embedding: TypeAlias = list[float]
 
-# data frame with two columns named `d3_document_id` and `tokens`
+# tokens_frame.columns = ["d3_document_id", "tokens"]
 TokensFrame: TypeAlias = pl.DataFrame
-# data frame with two columns named `d3_document_id` and `token_ids`
+# token_ids_frame.columns = ["d3_document_id", "token_ids"]
 TokenIdsFrame: TypeAlias = pl.DataFrame
-# data frame with two columns named `d3_document_id` and `embedding`
+# embeddings_frame.columns = ["d3_document_id", "embedding"]
 EmbeddingsFrame: TypeAlias = pl.DataFrame
-# data frame with a three columns named `query_d3_document_id`,
-# `candidate_d3_document_id` and `score`.
+# scores_frame.columns = ["query_d3_document_id", "candidate_d3_document_id", "score"]
 ScoresFrame = pl.DataFrame
+# candidate_scores_frame.columns = ["candidate_d3_document_id", "score"]
+CandidateScoresFrame: TypeAlias = pl.DataFrame
+# candidate_ranks_frame.columns = ["d3_document_id", "rank"]
+CandidateRanksFrame: TypeAlias = pl.DataFrame
 
 # tfidf and bm25
 KeywordAlgorithm: TypeAlias = Callable[[Tokens, Sequence[Tokens]], np.ndarray]

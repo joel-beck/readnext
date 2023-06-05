@@ -1,4 +1,6 @@
 from readnext.utils.aliases import (
+    CandidateRanksFrame,
+    CandidateScoresFrame,
     Embedding,
     EmbeddingsFrame,
     EmbeddingVector,
@@ -39,6 +41,7 @@ from readnext.utils.protocols import (
 from readnext.utils.utils import slice_mapping
 
 __all__ = [
+    "CandidateScoresFrame",
     "Embedding",
     "EmbeddingsFrame",
     "EmbeddingVector",
@@ -46,6 +49,7 @@ __all__ = [
     "IntegerLabelLists",
     "KeywordAlgorithm",
     "QueryEmbeddingFunction",
+    "CandidateRanksFrame",
     "ScoresFrame",
     "StringLabelList",
     "StringLabelLists",

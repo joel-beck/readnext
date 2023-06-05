@@ -5,6 +5,7 @@ import polars as pl
 
 from readnext.modeling.constructor_plugin import ModelDataConstructorPlugin
 from readnext.modeling.document_info import DocumentInfo
+from readnext.utils import CandidateRanksFrame, CandidateScoresFrame, ScoresFrame
 
 
 @dataclass(kw_only=True)
@@ -63,7 +64,9 @@ class ModelDataConstructor(ABC):
         """
         return self.get_query_documents_data().select(self.info_cols)
 
-    def get_query_ranks(self, scores_frame: pl.DataFrame) -> pl.DataFrame:
+    def get_query_ranks(
+        self, scores_frame: ScoresFrame | CandidateScoresFrame
+    ) -> CandidateRanksFrame:
         """
         Computes ranks of all candidate documents for a given scores frame from the
         corresponding scores. Returns a dataframe with two columns named
@@ -115,8 +118,8 @@ class CitationModelDataConstructor(ModelDataConstructor):
     analysis and bibliographic coupling scores as additional inputs.
     """
 
-    co_citation_analysis_scores: pl.DataFrame
-    bibliographic_coupling_scores: pl.DataFrame
+    co_citation_analysis_scores: ScoresFrame | CandidateScoresFrame
+    bibliographic_coupling_scores: ScoresFrame | CandidateScoresFrame
     info_cols: list[str] = field(
         default_factory=lambda: [
             "candidate_d3_document_id",
@@ -137,7 +140,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
         ]
     )
 
-    def get_co_citation_analysis_scores(self) -> pl.DataFrame:
+    def get_co_citation_analysis_scores(self) -> CandidateScoresFrame:
         """
         Extract the co-citation analysis scores of all candidate documents and converts
         them to a dataframe with with two columns named `candidate_d3_document_id`
@@ -145,7 +148,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
         """
         return self.constructor_plugin.get_query_scores(self.co_citation_analysis_scores)
 
-    def get_bibliographic_coupling_scores(self) -> pl.DataFrame:
+    def get_bibliographic_coupling_scores(self) -> CandidateScoresFrame:
         """
         Extract the bibliographic coupling scores of all candidate documents and
         converts them to a dataframe with with two columns named `candidate_d3_document_id`
@@ -153,7 +156,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
         """
         return self.constructor_plugin.get_query_scores(self.bibliographic_coupling_scores)
 
-    def get_co_citation_analysis_ranks(self) -> pl.DataFrame:
+    def get_co_citation_analysis_ranks(self) -> CandidateRanksFrame:
         """
         Extract the co-citation analysis ranks of all candidate documents and converts
         them to a dataframe with with two columns named `candidate_d3_document_id`
@@ -161,7 +164,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
         """
         return self.get_query_ranks(self.co_citation_analysis_scores)
 
-    def get_bibliographic_coupling_ranks(self) -> pl.DataFrame:
+    def get_bibliographic_coupling_ranks(self) -> CandidateRanksFrame:
         """
         Extract the bibliographic coupling ranks of all candidate documents and
         converts them to a dataframe with with two columns named `candidate_d3_document_id`
@@ -211,12 +214,12 @@ class LanguageModelDataConstructor(ModelDataConstructor):
     additional input.
     """
 
-    cosine_similarities: pl.DataFrame
+    cosine_similarities: ScoresFrame | CandidateScoresFrame
     info_cols: list[str] = field(
         default_factory=lambda: ["candidate_d3_document_id", "title", "author", "arxiv_labels"]
     )
 
-    def get_cosine_similarity_scores(self) -> pl.DataFrame:
+    def get_cosine_similarity_scores(self) -> CandidateScoresFrame:
         """
         Extracts the cosine similarity scores of all candidate documents with respect to
         the query document and converts them to a dataframe with two columns named
@@ -226,7 +229,7 @@ class LanguageModelDataConstructor(ModelDataConstructor):
         # test_cosine_similarities data itself only contains 100 rows
         return self.constructor_plugin.get_query_scores(self.cosine_similarities)
 
-    def get_cosine_similarity_ranks(self) -> pl.DataFrame:
+    def get_cosine_similarity_ranks(self) -> CandidateRanksFrame:
         """
         Computes the cosine similarity ranks of all candidate documents with respect to
         the query document. The output dataframe has two columns named

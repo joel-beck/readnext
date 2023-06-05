@@ -1,7 +1,5 @@
 from dataclasses import dataclass, field
 
-import polars as pl
-
 from readnext.config import ResultsPaths
 from readnext.inference.constructor_plugin import (
     DocumentIdentifier,
@@ -18,7 +16,7 @@ from readnext.modeling import (
 from readnext.modeling.language_models import (
     load_cosine_similarities_from_choice,
 )
-from readnext.utils import read_df_from_parquet
+from readnext.utils import ScoresFrame, read_df_from_parquet
 
 
 @dataclass(kw_only=True)
@@ -106,12 +104,12 @@ class SeenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
             arxiv_url=arxiv_url,
         )
 
-    def get_co_citation_analysis_scores(self) -> pl.DataFrame:
+    def get_co_citation_analysis_scores(self) -> ScoresFrame:
         return read_df_from_parquet(
             ResultsPaths.citation_models.co_citation_analysis_scores_parquet
         )
 
-    def get_bibliographic_coupling_scores(self) -> pl.DataFrame:
+    def get_bibliographic_coupling_scores(self) -> ScoresFrame:
         return read_df_from_parquet(
             ResultsPaths.citation_models.bibliographic_coupling_scores_parquet
         )
@@ -128,7 +126,7 @@ class SeenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
         )
         return CitationModelData.from_constructor(citation_model_data_constructor)
 
-    def get_cosine_similarities(self) -> pl.DataFrame:
+    def get_cosine_similarities(self) -> ScoresFrame:
         return load_cosine_similarities_from_choice(self.language_model_choice)
 
     def get_language_model_data(self) -> LanguageModelData:

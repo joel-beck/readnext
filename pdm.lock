@@ -1595,7 +1595,7 @@ summary = "A Python module for creating Excel XLSX files."
 lock_version = "4.2"
 cross_platform = true
 groups = ["default", "dev"]
-content_hash = "sha256:1ca9bbc987f32c65d1808867dc59d155e23d8abbe5ca7fd09dffbb65c22e24d2"
+content_hash = "sha256:90cb14c89267be6c9756da21a53ab6f1d4ab51d7c5fdb542de2e9b4122ff59ba"
 
 [metadata.files]
 "anyio 3.6.2" = [

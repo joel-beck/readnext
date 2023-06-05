@@ -15,7 +15,7 @@ from readnext.modeling import (
     LanguageModelDataConstructor,
     SeenModelDataConstructorPlugin,
 )
-from readnext.utils import read_df_from_parquet
+from readnext.utils import read_df_from_parquet, ScoresFrame
 
 
 def main() -> None:
@@ -23,15 +23,15 @@ def main() -> None:
     query_d3_document_id = 13756489
 
     # SECTION: Get Raw Data
-    documents_data: pl.DataFrame = read_df_from_parquet(DataPaths.merged.documents_data)
+    documents_data = read_df_from_parquet(DataPaths.merged.documents_data)
     # NOTE: Remove to evaluate on full data
     documents_data = documents_data.head(1000)
 
-    bibliographic_coupling_scores: pl.DataFrame = read_df_from_parquet(
+    bibliographic_coupling_scores: ScoresFrame = read_df_from_parquet(
         ResultsPaths.citation_models.bibliographic_coupling_scores_parquet
     )
 
-    co_citation_analysis_scores: pl.DataFrame = read_df_from_parquet(
+    co_citation_analysis_scores: ScoresFrame = read_df_from_parquet(
         ResultsPaths.citation_models.co_citation_analysis_scores_parquet
     )
 

@@ -15,14 +15,14 @@ TReturn = TypeVar("TReturn", int, float)
 class EvaluationMetric(ABC, Generic[TLabelList, TReturn]):
     """Base class for all evaluation metrics."""
 
-    @staticmethod
+    @classmethod
     @abstractmethod
-    def score(label_list: TLabelList) -> TReturn:
+    def score(cls, label_list: TLabelList) -> TReturn:
         ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
-    def from_df(df: pl.DataFrame) -> TReturn:
+    def from_df(cls, df: pl.DataFrame) -> TReturn:
         ...
 
 
@@ -47,8 +47,8 @@ class AveragePrecision(EvaluationMetric):
 
         return np.mean(label_list)  # type: ignore
 
-    @staticmethod
-    def score(label_list: IntegerLabelList) -> float:
+    @classmethod
+    def score(cls, label_list: IntegerLabelList) -> float:
         """
         Compute the average precision for a list of integer recommendation labels.
 
@@ -78,13 +78,13 @@ class AveragePrecision(EvaluationMetric):
         precision_scores = []
         for k, _ in enumerate(label_list, 1):
             partial_labels = label_list[:k]
-            partial_precision = AveragePrecision.precision(partial_labels)
+            partial_precision = cls.precision(partial_labels)
             precision_scores.append(partial_precision)
 
         return (1 / num_relevant_items) * np.dot(precision_scores, relevance_scores)  # type: ignore
 
-    @staticmethod
-    def mean_average_precision(label_lists: IntegerLabelLists) -> float:
+    @classmethod
+    def mean_average_precision(cls, label_lists: IntegerLabelLists) -> float:
         """
         Computes the mean average precision for multiple integer recommendation label lists.
 
@@ -93,15 +93,15 @@ class AveragePrecision(EvaluationMetric):
         if not len(label_lists):
             return 0.0
 
-        return np.mean([AveragePrecision.score(label_list) for label_list in label_lists])  # type: ignore # noqa: E501
+        return np.mean([cls.score(label_list) for label_list in label_lists])  # type: ignore # noqa: E501
 
-    @staticmethod
-    def from_df(df: pl.DataFrame) -> float:
+    @classmethod
+    def from_df(cls, df: pl.DataFrame) -> float:
         """
         Compute the average precision for a list of integer recommendation labels that are
         contained in a dataframe column.
         """
-        return AveragePrecision.score(df["integer_labels"])
+        return cls.score(df["integer_labels"])
 
 
 @dataclass
@@ -116,10 +116,10 @@ class CountUniqueLabels(EvaluationMetric):
         """
         return len({label for labels in label_list for label in labels})
 
-    @staticmethod
-    def from_df(df: pl.DataFrame) -> int:
+    @classmethod
+    def from_df(cls, df: pl.DataFrame) -> int:
         """
         Count the number of unique labels in a list of labels that are contained in a
         dataframe column.
         """
-        return CountUniqueLabels.score(df["arxiv_labels"])  # type: ignore
+        return cls.score(df["arxiv_labels"])  # type: ignore

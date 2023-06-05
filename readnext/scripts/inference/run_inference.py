@@ -35,7 +35,6 @@ def main() -> None:
     print(inference_data_seen_from_semanticscholar_id.features)
     print(inference_data_seen_from_semanticscholar_id.ranks)
     print(inference_data_seen_from_semanticscholar_id.labels)
-    # TODO: Fix null columns
     print(
         inference_data_seen_from_semanticscholar_id.recommendations.citation_to_language_candidates
     )

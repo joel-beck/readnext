@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 import pytest
 
 from readnext.evaluation.scoring import FeatureWeights
@@ -33,7 +33,7 @@ def inference_data_constructor_unseen_from_arxiv_url() -> InferenceDataConstruct
 @pytest.fixture(scope="session")
 def inference_data_constructor_unseen_documents_data(
     inference_data_constructor_unseen_from_arxiv_url: InferenceDataConstructor,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return inference_data_constructor_unseen_from_arxiv_url._documents_data
 
 
@@ -75,21 +75,21 @@ def inference_data_constructor_unseen_citation_model_data_query_document(
 @pytest.fixture(scope="session")
 def inference_data_constructor_unseen_citation_model_data_integer_labels(
     inference_data_constructor_unseen_citation_model_data: CitationModelData,
-) -> pd.Series:
+) -> pl.DataFrame:
     return inference_data_constructor_unseen_citation_model_data.integer_labels
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_unseen_citation_model_data_info_matrix(
     inference_data_constructor_unseen_citation_model_data: CitationModelData,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return inference_data_constructor_unseen_citation_model_data.info_matrix
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_unseen_citation_model_data_feature_matrix(
     inference_data_constructor_unseen_citation_model_data: CitationModelData,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return inference_data_constructor_unseen_citation_model_data.feature_matrix
 
 
@@ -110,21 +110,21 @@ def inference_data_constructor_unseen_language_model_data_query_document(
 @pytest.fixture(scope="session")
 def inference_data_constructor_unseen_language_model_data_integer_labels(
     inference_data_constructor_unseen_language_model_data: LanguageModelData,
-) -> pd.Series:
+) -> pl.DataFrame:
     return inference_data_constructor_unseen_language_model_data.integer_labels
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_unseen_language_model_data_info_matrix(
     inference_data_constructor_unseen_language_model_data: LanguageModelData,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return inference_data_constructor_unseen_language_model_data.info_matrix
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_unseen_language_model_data_cosine_similarity_ranks(
     inference_data_constructor_unseen_language_model_data: LanguageModelData,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return inference_data_constructor_unseen_language_model_data.cosine_similarity_ranks
 
 

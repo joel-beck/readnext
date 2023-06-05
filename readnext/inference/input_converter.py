@@ -21,7 +21,7 @@ class InferenceDataInputConverter:
         """Retrieve D3 document id from Semanticscholar url."""
         return (
             self.documents_data.filter(pl.col("semanticscholar_url") == semanticscholar_url)
-            .select("document_id")
+            .select("d3_document_id")
             .item()
         )
 
@@ -34,7 +34,9 @@ class InferenceDataInputConverter:
         """Retrieve D3 document id from Arxiv id."""
 
         return (
-            self.documents_data.filter(pl.col("arxiv_id") == arxiv_id).select("document_id").item()
+            self.documents_data.filter(pl.col("arxiv_id") == arxiv_id)
+            .select("d3_document_id")
+            .item()
         )
 
     def get_d3_document_id_from_arxiv_url(self, arxiv_url: str) -> int:
@@ -47,7 +49,7 @@ class InferenceDataInputConverter:
         """Retrieve Semanticscholar url from D3 document id."""
         return cast(
             str,
-            self.documents_data.filter(pl.col("document_id") == d3_document_id)
+            self.documents_data.filter(pl.col("d3_document_id") == d3_document_id)
             .select("semanticscholar_url")
             .item(),
         )
@@ -61,7 +63,7 @@ class InferenceDataInputConverter:
         """Retrieve Arxiv id from D3 document id."""
         return cast(
             str,
-            self.documents_data.filter(pl.col("document_id") == d3_document_id)
+            self.documents_data.filter(pl.col("d3_document_id") == d3_document_id)
             .select("arxiv_id")
             .item(),
         )

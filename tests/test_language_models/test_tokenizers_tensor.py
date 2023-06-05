@@ -13,14 +13,14 @@ from readnext.modeling.language_models import (
 
 
 def test_tokenize_bert(bert_tokenizer: BERTTokenizer) -> None:
-    token_ids_mapping = bert_tokenizer.tokenize()
-    assert isinstance(token_ids_mapping, dict)
+    token_ids_frame = bert_tokenizer.tokenize()
+    assert isinstance(token_ids_frame, dict)
 
-    assert all(isinstance(key, int) for key in token_ids_mapping)
-    assert all(isinstance(value, list) for value in token_ids_mapping.values())
-    assert all(isinstance(token, int) for value in token_ids_mapping.values() for token in value)
+    assert all(isinstance(key, int) for key in token_ids_frame)
+    assert all(isinstance(value, list) for value in token_ids_frame.values())
+    assert all(isinstance(token, int) for value in token_ids_frame.values() for token in value)
 
-    assert list(token_ids_mapping.keys()) == [1, 2, 3]
+    assert list(token_ids_frame.keys()) == [1, 2, 3]
 
 
 def test_ids_to_tokens_bert(bert_tokenizer: BERTTokenizer) -> None:
@@ -47,27 +47,27 @@ def test_ids_to_tokens_bert(bert_tokenizer: BERTTokenizer) -> None:
     ]
 
     # Test functionality and types
-    actual_tokens: Tokens = bert_tokenizer.ids_to_tokens(tokens_ids)
+    actual_tokens: Tokens = bert_tokenizer.token_ids_to_tokens(tokens_ids)
     assert actual_tokens == expected_tokens
     assert all(isinstance(token, str) for token in actual_tokens)
 
     # Test empty list
-    assert bert_tokenizer.ids_to_tokens([]) == []
+    assert bert_tokenizer.token_ids_to_tokens([]) == []
 
     # Test single-item list
     single_token_id: TokenIds = [bert_tokenizer.tensor_tokenizer.cls_token_id]
-    assert bert_tokenizer.ids_to_tokens(single_token_id) == ["[CLS]"]
+    assert bert_tokenizer.token_ids_to_tokens(single_token_id) == ["[CLS]"]
 
 
 def test_tokenize_longformer(longformer_tokenizer: LongformerTokenizer) -> None:
-    token_ids_mapping = longformer_tokenizer.tokenize()
-    assert isinstance(token_ids_mapping, dict)
+    token_ids_frame = longformer_tokenizer.tokenize()
+    assert isinstance(token_ids_frame, dict)
 
-    assert all(isinstance(key, int) for key in token_ids_mapping)
-    assert all(isinstance(value, list) for value in token_ids_mapping.values())
-    assert all(isinstance(token, int) for value in token_ids_mapping.values() for token in value)
+    assert all(isinstance(key, int) for key in token_ids_frame)
+    assert all(isinstance(value, list) for value in token_ids_frame.values())
+    assert all(isinstance(token, int) for value in token_ids_frame.values() for token in value)
 
-    assert list(token_ids_mapping.keys()) == [1, 2, 3]
+    assert list(token_ids_frame.keys()) == [1, 2, 3]
 
 
 def test_ids_to_tokens_longformer(longformer_tokenizer: LongformerTokenizer) -> None:
@@ -94,16 +94,16 @@ def test_ids_to_tokens_longformer(longformer_tokenizer: LongformerTokenizer) -> 
     ]
 
     # Test functionality and types
-    actual_tokens: Tokens = longformer_tokenizer.ids_to_tokens(tokens_ids)
+    actual_tokens: Tokens = longformer_tokenizer.token_ids_to_tokens(tokens_ids)
     assert actual_tokens == expected_tokens
     assert all(isinstance(token, str) for token in actual_tokens)
 
     # Test empty list
-    assert longformer_tokenizer.ids_to_tokens([]) == []
+    assert longformer_tokenizer.token_ids_to_tokens([]) == []
 
     # Test single-item list
     single_token_id: TokenIds = [longformer_tokenizer.tensor_tokenizer.bos_token_id]
-    assert longformer_tokenizer.ids_to_tokens(single_token_id) == ["<s>"]
+    assert longformer_tokenizer.token_ids_to_tokens(single_token_id) == ["<s>"]
 
 
 tokenizers = ["bert_tokenizer", "longformer_tokenizer"]
@@ -113,39 +113,39 @@ tokenizers = ["bert_tokenizer", "longformer_tokenizer"]
     "tokenizer",
     lazy_fixture(tokenizers),
 )
-def test_id_mapping_to_tokens_mapping(tokenizer: TensorTokenizer) -> None:
-    token_ids_mapping = tokenizer.tokenize()
-    tokens_mapping = tokenizer.id_mapping_to_tokens_mapping(token_ids_mapping)
-    assert isinstance(tokens_mapping, dict)
+def test_token_ids_frame_to_tokens_frame(tokenizer: TensorTokenizer) -> None:
+    token_ids_frame = tokenizer.tokenize()
+    tokens_frame = tokenizer.token_ids_frame_to_tokens_frame(token_ids_frame)
+    assert isinstance(tokens_frame, dict)
 
-    assert all(isinstance(key, int) for key in tokens_mapping)
-    assert all(isinstance(value, list) for value in tokens_mapping.values())
-    assert all(isinstance(token, str) for value in tokens_mapping.values() for token in value)
+    assert all(isinstance(key, int) for key in tokens_frame)
+    assert all(isinstance(value, list) for value in tokens_frame.values())
+    assert all(isinstance(token, str) for value in tokens_frame.values() for token in value)
 
     # tokenizer has taken fixture `documents_info` as input which consists of 3 abstracts
-    assert list(tokens_mapping.keys()) == [1, 2, 3]
+    assert list(tokens_frame.keys()) == [1, 2, 3]
 
 
-def test_id_to_tokens_mapping_bert(
-    bert_tokenizer: BERTTokenizer, bert_exptected_tokenized_abstract: Tokens
+def test_token_ids_frame_to_tokens_frame_bert(
+    bert_tokenizer: BERTTokenizer, bert_expected_tokenized_abstract: Tokens
 ) -> None:
-    token_ids_mapping = bert_tokenizer.tokenize()
-    tokens_mapping = bert_tokenizer.id_mapping_to_tokens_mapping(token_ids_mapping)
-    actual_tokenized_abstract = tokens_mapping[1]
+    token_ids_frame = bert_tokenizer.tokenize()
+    tokens_frame = bert_tokenizer.token_ids_frame_to_tokens_frame(token_ids_frame)
+    actual_tokenized_abstract = tokens_frame["tokens"][0]
 
-    assert actual_tokenized_abstract == bert_exptected_tokenized_abstract
+    assert actual_tokenized_abstract == bert_expected_tokenized_abstract
     assert len(actual_tokenized_abstract) == 40
     assert actual_tokenized_abstract[0] == "[CLS]"
     assert "[SEP]" in actual_tokenized_abstract
     assert actual_tokenized_abstract[-1] == "[PAD]"
 
 
-def test_id_to_tokens_mapping_longformer(
+def test_token_ids_frame_to_tokens_frame_longformer(
     longformer_tokenizer: LongformerTokenizer, longformer_expected_tokenized_abstract: Tokens
 ) -> None:
-    token_ids_mapping = longformer_tokenizer.tokenize()
-    tokens_mapping = longformer_tokenizer.id_mapping_to_tokens_mapping(token_ids_mapping)
-    actual_tokenized_abstract = tokens_mapping[1]
+    token_ids_frame = longformer_tokenizer.tokenize()
+    tokens_frame = longformer_tokenizer.token_ids_frame_to_tokens_frame(token_ids_frame)
+    actual_tokenized_abstract = tokens_frame["tokens"][0]
 
     assert actual_tokenized_abstract == longformer_expected_tokenized_abstract
     assert len(actual_tokenized_abstract) == 107

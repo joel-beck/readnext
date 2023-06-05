@@ -7,13 +7,7 @@ from dataclasses import fields, is_dataclass
 from pathlib import Path
 
 from readnext.config import DataPaths, ResultsPaths
-from readnext.utils import (
-    read_df_from_parquet,
-    read_object_from_pickle,
-    slice_mapping,
-    write_df_to_parquet,
-    write_object_to_pickle,
-)
+from readnext.utils import read_df_from_parquet, write_df_to_parquet
 
 
 def get_all_paths_from_dataclass(dataclass: object, paths: list[Path] | None = None) -> list[Path]:
@@ -41,26 +35,19 @@ def main() -> None:
     TEST_DATA_SIZE = 100
     test_data_dirpath = Path(__file__).parent / "data"
 
-    documents_data_path = DataPaths.merged.documents_data_parquet
+    documents_data_path = DataPaths.merged.documents_data
     results_paths = get_all_paths_from_dataclass(ResultsPaths)
 
     all_paths = [documents_data_path, *results_paths]
 
     for path in all_paths:
         destination_path = test_data_dirpath / f"test_{path.name}"
-        file_extension = destination_path.suffix
 
-        match file_extension:
-            case ".parquet":
-                df = read_df_from_parquet(path)
-                write_df_to_parquet(df.head(TEST_DATA_SIZE), destination_path)
-            case ".pkl":
-                mapping = read_object_from_pickle(path)
-                write_object_to_pickle(
-                    slice_mapping(mapping, size=TEST_DATA_SIZE), destination_path
-                )
-            case _:
-                continue
+        if destination_path.suffix != ".parquet":
+            continue
+
+        df = read_df_from_parquet(path)
+        write_df_to_parquet(df.head(TEST_DATA_SIZE), destination_path)
 
 
 if __name__ == "__main__":

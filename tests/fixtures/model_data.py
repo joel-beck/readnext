@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 import pytest
 
 from readnext.modeling import (
@@ -28,21 +28,21 @@ def citation_model_data_query_document(
 @pytest.fixture(scope="session")
 def citation_model_data_integer_labels(
     citation_model_data: CitationModelData,
-) -> pd.Series:
+) -> pl.DataFrame:
     return citation_model_data.integer_labels
 
 
 @pytest.fixture(scope="session")
 def citation_model_data_info_matrix(
     citation_model_data: CitationModelData,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return citation_model_data.info_matrix
 
 
 @pytest.fixture(scope="session")
 def citation_model_data_feature_matrix(
     citation_model_data: CitationModelData,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return citation_model_data.feature_matrix
 
 
@@ -64,19 +64,19 @@ def language_model_data_query_document(
 @pytest.fixture(scope="session")
 def language_model_data_integer_labels(
     language_model_data: LanguageModelData,
-) -> pd.Series:
+) -> pl.DataFrame:
     return language_model_data.integer_labels
 
 
 @pytest.fixture(scope="session")
 def language_model_data_info_matrix(
     language_model_data: LanguageModelData,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return language_model_data.info_matrix
 
 
 @pytest.fixture(scope="session")
 def language_model_data_cosine_similarity_ranks(
     language_model_data: LanguageModelData,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return language_model_data.cosine_similarity_ranks

@@ -1,14 +1,10 @@
-from readnext.modeling.document_info import (
-    DocumentInfo,
-    DocumentScore,
-    DocumentsInfo,
-    documents_info_from_df,
+from readnext.modeling.constructor_plugin import (
+    ModelDataConstructorPlugin,
+    SeenModelDataConstructorPlugin,
+    UnseenModelDataConstructorPlugin,
 )
-from readnext.modeling.model_data import (
-    CitationModelData,
-    LanguageModelData,
-    ModelData,
-)
+from readnext.modeling.document_info import DocumentInfo
+from readnext.modeling.model_data import CitationModelData, LanguageModelData, ModelData
 from readnext.modeling.model_data_constructor import (
     CitationModelDataConstructor,
     LanguageModelDataConstructor,
@@ -17,13 +13,13 @@ from readnext.modeling.model_data_constructor import (
 
 __all__ = [
     "DocumentInfo",
-    "DocumentScore",
-    "DocumentsInfo",
-    "documents_info_from_df",
     "CitationModelData",
     "LanguageModelData",
     "ModelData",
     "CitationModelDataConstructor",
     "LanguageModelDataConstructor",
     "ModelDataConstructor",
+    "ModelDataConstructorPlugin",
+    "SeenModelDataConstructorPlugin",
+    "UnseenModelDataConstructorPlugin",
 ]

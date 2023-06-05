@@ -1,13 +1,16 @@
 import os
 from dataclasses import dataclass, field
+from typing import Any, Literal, TypedDict
 
 import requests
 from dotenv import load_dotenv
-from typing_extensions import TypedDict
+from joblib import Parallel, delayed
+from typing_extensions import NotRequired
 
 from readnext.utils import (
     get_arxiv_id_from_arxiv_url,
     get_semanticscholar_id_from_semanticscholar_url,
+    setup_progress_bar,
 )
 
 
@@ -28,12 +31,12 @@ class ExternalIds(TypedDict):
 
 
 class SemanticScholarJson(TypedDict):
-    paperId: str | None  # noqa: N815
-    title: str | None
-    abstract: str | None
-    citations: list[SemanticScholarCitation]
-    references: list[SemanticScholarReference]
-    externalIds: ExternalIds  # noqa: N815
+    paperId: NotRequired[str | None]  # noqa: N815
+    title: NotRequired[str | None]
+    abstract: NotRequired[str | None]
+    citations: NotRequired[list[SemanticScholarCitation]]
+    references: NotRequired[list[SemanticScholarReference]]
+    externalIds: NotRequired[ExternalIds | None]  # noqa: N815
 
 
 @dataclass(kw_only=True)
@@ -65,22 +68,51 @@ class SemanticscholarRequest:
     def send_semanticscholar_request(self, request_url: str) -> SemanticScholarJson:
         return requests.get(request_url, headers=self.request_headers).json()
 
+    def extract_key_from_json_response(
+        self,
+        json_response: SemanticScholarJson,
+        key: Literal["paperId", "title", "abstract", "citations", "references", "externalIds"],
+        default_value: str | list[str] = "",
+    ) -> Any:
+        return value if (value := json_response.get(key)) is not None else default_value
+
+    def extract_semanticscholar_id_from_json_response(
+        self, json_response: SemanticScholarJson
+    ) -> str:
+        return self.extract_key_from_json_response(json_response, "paperId")
+
+    def extract_arxiv_id_from_json_response(self, json_response: SemanticScholarJson) -> str:
+        if (external_ids := json_response.get("externalIds")) is None:
+            return ""
+
+        return arxiv_id if (arxiv_id := external_ids.get("ArXiv")) is not None else ""
+
+    def extract_title_from_json_response(self, json_response: SemanticScholarJson) -> str:
+        return self.extract_key_from_json_response(json_response, "title")
+
+    def extract_abstract_from_json_response(self, json_response: SemanticScholarJson) -> str:
+        return self.extract_key_from_json_response(json_response, "abstract")
+
+    def extract_citations_from_json_response(
+        self, json_response: SemanticScholarJson
+    ) -> list[SemanticScholarCitation]:
+        return self.extract_key_from_json_response(json_response, "citations", default_value=[])
+
+    def extract_references_from_json_response(
+        self, json_response: SemanticScholarJson
+    ) -> list[SemanticScholarReference]:
+        return self.extract_key_from_json_response(json_response, "references", default_value=[])
+
     def get_response_from_request(
         self, json_response: SemanticScholarJson
     ) -> SemanticScholarResponse:
-        arxiv_id = ""
-        if (external_ids := json_response.get("externalIds", None)) is not None:
-            arxiv_id = external_ids["ArXiv"] if external_ids["ArXiv"] is not None else ""
-
         return SemanticScholarResponse(
-            semanticscholar_id=json_response["paperId"]
-            if json_response["paperId"] is not None
-            else "",
-            arxiv_id=arxiv_id,
-            title=json_response["title"] if json_response["title"] is not None else "",
-            abstract=json_response["abstract"] if json_response["abstract"] is not None else "",
-            citations=json_response["citations"],
-            references=json_response["references"],
+            semanticscholar_id=self.extract_semanticscholar_id_from_json_response(json_response),
+            arxiv_id=self.extract_arxiv_id_from_json_response(json_response),
+            title=self.extract_title_from_json_response(json_response),
+            abstract=self.extract_abstract_from_json_response(json_response),
+            citations=self.extract_citations_from_json_response(json_response),
+            references=self.extract_references_from_json_response(json_response),
         )
 
     def get_response_from_request_url(self, request_url: str) -> SemanticScholarResponse:
@@ -95,6 +127,22 @@ class SemanticscholarRequest:
         semanticscholar_id = get_semanticscholar_id_from_semanticscholar_url(semanticscholar_url)
         request_url = self.get_request_url_from_semanticscholar_id(semanticscholar_id)
         return self.get_response_from_request_url(request_url)
+
+    def from_semanticscholar_urls(
+        self, semanticscholar_urls: list[str], n_jobs: int = -1
+    ) -> list[SemanticScholarResponse]:
+        """
+        Send GET requests for multiple semanticscholar_urls in parallel.
+        """
+        with setup_progress_bar() as progress_bar:
+            return Parallel(n_jobs=n_jobs)(
+                delayed(self.from_semanticscholar_url)(url)
+                for url in progress_bar.track(
+                    semanticscholar_urls,
+                    total=len(semanticscholar_urls),
+                    description="Sending Requests...",
+                )
+            )  # type: ignore
 
     def from_arxiv_id(self, arxiv_id: str) -> SemanticScholarResponse:
         request_url = self.get_request_url_from_arxiv_id(arxiv_id)

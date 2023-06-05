@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 import pytest
 
 from readnext.evaluation.metrics import CountCommonCitations
@@ -28,61 +28,63 @@ def test_count_common_citations_different_lengths() -> None:
 
 
 def test_count_common_citations_pandas_series() -> None:
-    u = pd.Series([1, 2, 3, 4, 5])
-    v = pd.Series([4, 5, 6, 7, 8])
+    u = pl.Series([1, 2, 3, 4, 5])
+    v = pl.Series([4, 5, 6, 7, 8])
     assert CountCommonCitations.score(u, v) == 2
 
 
 def test_count_common_citations_mixed_inputs() -> None:
     u = [1, 2, 3, 4, 5]
-    v = pd.Series([4, 5, 6, 7, 8])
+    v = pl.Series([4, 5, 6, 7, 8])
     assert CountCommonCitations.score(u, v) == 2
 
 
 def test_count_common_citations_from_df() -> None:
-    index = pd.Index([1, 2, 3], name="document_id")
-    data = {
-        "citations": [
-            [1, 2, 3, 4, 5],
-            [4, 5, 6, 7, 8],
-            [1, 3, 5, 7, 9],
-        ],
-    }
-    df = pd.DataFrame(data, index=index)
+    df = pl.DataFrame(
+        {
+            "d3_document_id": [1, 2, 3],
+            "citations": [
+                [1, 2, 3, 4, 5],
+                [4, 5, 6, 7, 8],
+                [1, 3, 5, 7, 9],
+            ],
+        }
+    )
     assert CountCommonCitations.from_df(df, 1, 2) == 2
     assert CountCommonCitations.from_df(df, 1, 3) == 3
     assert CountCommonCitations.from_df(df, 2, 3) == 2
 
 
 def test_count_common_citations_from_df_empty_dataframe() -> None:
-    index = pd.Index([], name="document_id")
-    df = pd.DataFrame(columns=["citations"], index=index)
+    df = pl.DataFrame(schema={"d3_document_id": pl.Int64, "citations": pl.List})
 
     with pytest.raises(KeyError):
         CountCommonCitations.from_df(df, 1, 2)
 
 
 def test_count_common_citations_from_df_missing_document_id() -> None:
-    index = pd.Index([1, 2, 3], name="document_id")
-    data = {
-        "citations": [[1, 2, 3, 4, 5], [4, 5, 6, 7, 8], [1, 3, 5, 7, 9]],
-    }
-    df = pd.DataFrame(data, index=index)
+    df = pl.DataFrame(
+        {
+            "d3_document_id": [1, 2, 3],
+            "citations": [[1, 2, 3, 4, 5], [4, 5, 6, 7, 8], [1, 3, 5, 7, 9]],
+        }
+    )
 
     with pytest.raises(KeyError):
         CountCommonCitations.from_df(df, 1, 4)
 
 
 def test_count_common_citations_from_df_different_data_types() -> None:
-    index = pd.Index([1, 2, 3], name="document_id")
-    data = {
-        "citations": [
-            ["A", "B", "C", "D", "E"],
-            ["D", "E", "F", "G", "H"],
-            ["A", "C", "E", "G", "I"],
-        ],
-    }
-    df = pd.DataFrame(data, index=index)
+    df = pl.DataFrame(
+        {
+            "d3_document_id": [1, 2, 3],
+            "citations": [
+                ["A", "B", "C", "D", "E"],
+                ["D", "E", "F", "G", "H"],
+                ["A", "C", "E", "G", "I"],
+            ],
+        }
+    )
 
     assert CountCommonCitations.from_df(df, 1, 2) == 2
     assert CountCommonCitations.from_df(df, 1, 3) == 3

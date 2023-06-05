@@ -1,11 +1,11 @@
 from spacy.language import Language
 from spacy.tokens.doc import Doc
 
-from readnext.modeling import DocumentInfo, DocumentsInfo
+from readnext.modeling import DocumentInfo
 from readnext.modeling.language_models import SpacyTokenizer
 
 
-def test_to_spacy_doc(spacy_tokenizer: SpacyTokenizer, documents_info: DocumentsInfo) -> None:
+def test_to_spacy_doc(spacy_tokenizer: SpacyTokenizer) -> None:
     assert all(
         isinstance(spacy_tokenizer.to_spacy_doc(abstract), Doc)
         for abstract in documents_info.abstracts
@@ -14,7 +14,6 @@ def test_to_spacy_doc(spacy_tokenizer: SpacyTokenizer, documents_info: Documents
 
 def test_clean_spacy_doc(
     spacy_tokenizer: SpacyTokenizer,
-    documents_info: DocumentsInfo,
     spacy_tokenized_abstracts: list[list[str]],
 ) -> None:
     docs = [spacy_tokenizer.to_spacy_doc(abstract) for abstract in documents_info.abstracts]
@@ -30,15 +29,15 @@ def test_clean_spacy_doc(
 def test_tokenize(
     spacy_tokenizer: SpacyTokenizer, spacy_tokenized_abstracts: list[list[str]]
 ) -> None:
-    tokens_mapping = spacy_tokenizer.tokenize()
-    assert isinstance(tokens_mapping, dict)
+    tokens_frame = spacy_tokenizer.tokenize()
+    assert isinstance(tokens_frame, dict)
 
-    assert all(isinstance(key, int) for key in tokens_mapping)
-    assert all(isinstance(value, list) for value in tokens_mapping.values())
-    assert all(isinstance(token, str) for value in tokens_mapping.values() for token in value)
+    assert all(isinstance(key, int) for key in tokens_frame)
+    assert all(isinstance(value, list) for value in tokens_frame.values())
+    assert all(isinstance(token, str) for value in tokens_frame.values() for token in value)
 
-    assert list(tokens_mapping.keys()) == [1, 2, 3]
-    assert list(tokens_mapping.values()) == spacy_tokenized_abstracts
+    assert list(tokens_frame.keys()) == [1, 2, 3]
+    assert list(tokens_frame.values()) == spacy_tokenized_abstracts
 
 
 def test_tokenize_empty_abstract(spacy_model: Language) -> None:
@@ -49,27 +48,27 @@ def test_tokenize_empty_abstract(spacy_model: Language) -> None:
     )
 
     spacy_tokenizer = SpacyTokenizer(documents_info, spacy_model)
-    tokenized_abstracts_mapping = spacy_tokenizer.tokenize()
-    assert tokenized_abstracts_mapping[1] == []
+    tokenized_abstracts_frame = spacy_tokenizer.tokenize()
+    assert tokenized_abstracts_frame[1] == []
 
 
 def test_tokenize_stopwords(spacy_tokenizer: SpacyTokenizer) -> None:
     stopwords = set(spacy_tokenizer.spacy_model.Defaults.stop_words)
-    tokenized_abstracts_mapping = spacy_tokenizer.tokenize()
+    tokenized_abstracts_frame = spacy_tokenizer.tokenize()
 
-    for tokens in tokenized_abstracts_mapping.values():
+    for tokens in tokenized_abstracts_frame.values():
         assert all(token not in stopwords for token in tokens)
 
 
 def test_tokenize_punctuation(spacy_tokenizer: SpacyTokenizer) -> None:
-    tokenized_abstracts_mapping = spacy_tokenizer.tokenize()
+    tokenized_abstracts_frame = spacy_tokenizer.tokenize()
 
-    for tokens in tokenized_abstracts_mapping.values():
+    for tokens in tokenized_abstracts_frame.values():
         assert all(token.isalnum() for token in tokens)
 
 
 def test_tokenize_lowercase(spacy_tokenizer: SpacyTokenizer) -> None:
-    tokenized_abstracts_mapping = spacy_tokenizer.tokenize()
+    tokenized_abstracts_frame = spacy_tokenizer.tokenize()
 
-    for tokens in tokenized_abstracts_mapping.values():
+    for tokens in tokenized_abstracts_frame.values():
         assert all(token.islower() for token in tokens)

@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 import pytest
 
 from readnext.evaluation.metrics import CountCommonReferences
@@ -28,27 +28,28 @@ def test_count_common_references_different_lengths() -> None:
 
 
 def test_count_common_references_pandas_series() -> None:
-    u = pd.Series([1, 2, 3, 4, 5])
-    v = pd.Series([4, 5, 6, 7, 8])
+    u = pl.Series([1, 2, 3, 4, 5])
+    v = pl.Series([4, 5, 6, 7, 8])
     assert CountCommonReferences.score(u, v) == 2
 
 
 def test_count_common_references_mixed_inputs() -> None:
     u = [1, 2, 3, 4, 5]
-    v = pd.Series([4, 5, 6, 7, 8])
+    v = pl.Series([4, 5, 6, 7, 8])
     assert CountCommonReferences.score(u, v) == 2
 
 
 def test_count_common_references_from_df() -> None:
-    index = pd.Index([1, 2, 3], name="document_id")
-    data = {
-        "references": [
-            [1, 2, 3, 4, 5],
-            [4, 5, 6, 7, 8],
-            [1, 3, 5, 7, 9],
-        ],
-    }
-    df = pd.DataFrame(data, index=index)
+    df = pl.DataFrame(
+        {
+            "d3_document_id": [1, 2, 3],
+            "references": [
+                [1, 2, 3, 4, 5],
+                [4, 5, 6, 7, 8],
+                [1, 3, 5, 7, 9],
+            ],
+        }
+    )
 
     assert CountCommonReferences.from_df(df, 1, 2) == 2
     assert CountCommonReferences.from_df(df, 1, 3) == 3
@@ -56,36 +57,35 @@ def test_count_common_references_from_df() -> None:
 
 
 def test_count_common_references_from_df_empty_dataframe() -> None:
-    index = pd.Index([], name="document_id")
-    df = pd.DataFrame(columns=["references"], index=index)
+    df = pl.DataFrame(schema={"d3_document_id": pl.Int64, "references": pl.List})
 
     with pytest.raises(KeyError):
         CountCommonReferences.from_df(df, 1, 2)
 
 
 def test_count_common_references_from_df_missing_document_id() -> None:
-    index = pd.Index([1, 2, 3], name="document_id")
-    data = {
-        "document_id": [1, 2, 3],
-        "references": [[1, 2, 3, 4, 5], [4, 5, 6, 7, 8], [1, 3, 5, 7, 9]],
-    }
-    df = pd.DataFrame(data, index=index)
+    df = pl.DataFrame(
+        {
+            "d3_document_id": [1, 2, 3],
+            "references": [[1, 2, 3, 4, 5], [4, 5, 6, 7, 8], [1, 3, 5, 7, 9]],
+        }
+    )
 
     with pytest.raises(KeyError):
         CountCommonReferences.from_df(df, 1, 4)
 
 
 def test_count_common_references_from_df_different_data_types() -> None:
-    index = pd.Index([1, 2, 3], name="document_id")
-    data = {
-        "document_id": [1, 2, 3],
-        "references": [
-            ["A", "B", "C", "D", "E"],
-            ["D", "E", "F", "G", "H"],
-            ["A", "C", "E", "G", "I"],
-        ],
-    }
-    df = pd.DataFrame(data, index=index)
+    df = pl.DataFrame(
+        {
+            "d3_document_id": [1, 2, 3],
+            "references": [
+                ["A", "B", "C", "D", "E"],
+                ["D", "E", "F", "G", "H"],
+                ["A", "C", "E", "G", "I"],
+            ],
+        }
+    )
 
     assert CountCommonReferences.from_df(df, 1, 2) == 2
     assert CountCommonReferences.from_df(df, 1, 3) == 3

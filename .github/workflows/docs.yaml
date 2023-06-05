@@ -1,8 +1,6 @@
 name: Publish Docs with MkDocs via GitHub Pages
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
 

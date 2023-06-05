@@ -41,14 +41,14 @@ def test_compute_embedding_single_document(
 
 
 @pytest.mark.parametrize("embedder", lazy_fixture(embedders))
-def test_compute_embeddings_mapping(
+def test_compute_embeddings_frame(
     embedder: GensimEmbedder, spacy_tokenized_abstracts: list[Tokens]
 ) -> None:
-    embeddings_mapping = embedder.compute_embeddings_mapping()
+    embeddings_frame = embedder.compute_embeddings_frame()
 
-    assert isinstance(embeddings_mapping, dict)
-    assert all(isinstance(key, int) for key in embeddings_mapping)
-    assert all(isinstance(value, np.ndarray) for value in embeddings_mapping.values())
+    assert isinstance(embeddings_frame, dict)
+    assert all(isinstance(key, int) for key in embeddings_frame)
+    assert all(isinstance(value, np.ndarray) for value in embeddings_frame.values())
 
-    assert len(embeddings_mapping) == len(spacy_tokenized_abstracts)
-    assert all(len(value) == 300 for value in embeddings_mapping.values())
+    assert len(embeddings_frame) == len(spacy_tokenized_abstracts)
+    assert all(len(value) == 300 for value in embeddings_frame.values())

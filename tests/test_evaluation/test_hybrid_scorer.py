@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 import pytest
 
 from readnext.evaluation.scoring import HybridScorer
@@ -18,9 +18,9 @@ def test_kw_only_initialization_hybrid_scorer() -> None:
                     abstract="Abstract",
                     arxiv_labels=[],
                 ),
-                info_matrix=pd.DataFrame(),
-                integer_labels=pd.Series(),
-                cosine_similarity_ranks=pd.DataFrame(),
+                info_matrix=pl.DataFrame(),
+                integer_labels=pl.DataFrame(),
+                cosine_similarity_ranks=pl.DataFrame(),
             ),
             CitationModelData(
                 query_document=DocumentInfo(
@@ -30,8 +30,8 @@ def test_kw_only_initialization_hybrid_scorer() -> None:
                     abstract="Abstract",
                     arxiv_labels=[],
                 ),
-                info_matrix=pd.DataFrame(),
-                feature_matrix=pd.DataFrame(),
-                integer_labels=pd.Series(),
+                info_matrix=pl.DataFrame(),
+                feature_matrix=pl.DataFrame(),
+                integer_labels=pl.DataFrame(),
             ),
         )

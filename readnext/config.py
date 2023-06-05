@@ -32,76 +32,62 @@ models_dirpath = Path(os.getenv("MODELS_DIRPATH", "models"))
 results_dirpath = Path(os.getenv("RESULTS_DIRPATH", "results"))
 
 documents_metadata_json_filename = os.getenv(
-    "DOCUMENTS_METADATA_FILENAME", "2022-11-30-papers.jsonl"
+    "DOCUMENTS_METADATA_FILENAME", "2022-11-30_papers.jsonl"
 )
-authors_metadata_json_filename = os.getenv("AUTHORS_METADATA_FILENAME", "2022-11-30-authors.jsonl")
+authors_metadata_json_filename = os.getenv("AUTHORS_METADATA_FILENAME", "2022-11-30_authors.jsonl")
+arxiv_metadata_json_filename = os.getenv("ARXIV_METADATA_FILENAME", "arxiv_metadata.json")
 
 
 @dataclass(frozen=True)
-class D3DocumentsDataPaths:
-    """Sets file paths for the raw D3 documents data."""
+class RawDataPaths:
+    """
+    Sets file paths for the raw documents, authors and arxiv metadata in JSON and
+    Parquet format.
+    """
 
-    raw_json: Path = data_dirpath / documents_metadata_json_filename
-    chunks_stem: Path = data_dirpath / "2022-11-30_documents_chunks"
-    full_pkl: Path = data_dirpath / "2022-11-30_documents_full.pkl"
-    preprocessed_chunks_stem: Path = data_dirpath / "documents_preprocessed_chunks"
-
-
-@dataclass(frozen=True)
-class D3AuthorsDataPaths:
-    """Sets file paths for the raw D3 authors data."""
-
-    raw_json: Path = data_dirpath / authors_metadata_json_filename
-    most_cited_parquet: Path = data_dirpath / "2022-11-30_authors_most_cited.parquet"
-    full_parquet: Path = data_dirpath / "2022-11-30_authors_full.parquet"
-
-
-@dataclass(frozen=True)
-class D3:
-    """Collects file paths for the raw D3 data."""
-
-    documents: D3DocumentsDataPaths = D3DocumentsDataPaths()  # noqa: RUF009
-    authors: D3AuthorsDataPaths = D3AuthorsDataPaths()  # noqa: RUF009
-
-
-@dataclass(frozen=True)
-class ArxivDataPaths:
-    """Sets file paths for the raw arXiv data."""
-
-    raw_json: Path = data_dirpath / "arxiv_metadata.json"
-    id_labels_parquet: Path = data_dirpath / "arxiv_id_labels.parquet"
+    documents_json: Path = data_dirpath / documents_metadata_json_filename
+    documents_parquet: Path = data_dirpath / "2022-11-30_documents.parquet"
+    authors_json: Path = data_dirpath / authors_metadata_json_filename
+    authors_parquet: Path = data_dirpath / "2022-11-30_authors.parquet"
+    arxiv_labels_json: Path = data_dirpath / arxiv_metadata_json_filename
+    arxiv_labels_parquet: Path = data_dirpath / "arxiv_metadata.parquet"
 
 
 @dataclass(frozen=True)
 class MergedDataPaths:
     """
-    Sets file paths for all processed data files after adding information to the raw D3
-    data.
+    Sets file paths for all processed data files after adding information to the raw
+    documents data.
     """
 
-    documents_labels_chunk_stem: Path = data_dirpath / "documents_labels_chunks"
-    documents_labels_pkl: Path = data_dirpath / "documents_labels.pkl"
-    documents_authors_labels_pkl: Path = data_dirpath / "documents_authors_labels.pkl"
-    documents_authors_labels_citations_chunks_stem: Path = (
-        data_dirpath / "documents_authors_labels_citations_chunks"
+    documents_labels: Path = data_dirpath / "documents_labels.parquet"
+    documents_authors_labels: Path = data_dirpath / "documents_authors_labels.parquet"
+    documents_authors_labels_citations: Path = (
+        data_dirpath / "documents_authors_labels_citations.parquet"
     )
-    documents_authors_labels_citations_pkl: Path = (
-        data_dirpath / "documents_authors_labels_citations.pkl"
-    )
-    documents_authors_labels_citations_most_cited_parquet: Path = (
-        data_dirpath / "documents_authors_labels_citations_most_cited.parquet"
-    )
-    most_cited_subset_size: int = 10_000
-    documents_data_parquet: Path = data_dirpath / "documents_data.parquet"
+    documents_data: Path = data_dirpath / "documents_data.parquet"
 
 
 @dataclass(frozen=True)
 class DataPaths:
     """Collects file paths for all data files."""
 
-    d3: D3 = D3()  # noqa: RUF009
-    arxiv: ArxivDataPaths = ArxivDataPaths()  # noqa: RUF009
+    raw: RawDataPaths = RawDataPaths()  # noqa: RUF009
     merged: MergedDataPaths = MergedDataPaths()  # noqa: RUF009
+
+
+@dataclass
+class MagicNumbers:
+    """
+    Sets numeric values for dataset sizes, scoring and the candidate and final
+    recommendation list.
+    """
+
+    documents_data_intermediate_cutoff: int = 1_000_000
+    documents_data_final_size: int = 10_000
+    scoring_limit: int | None = None  # possibly change to 100
+    n_candidates: int = 20
+    n_recommendations: int = 20
 
 
 @dataclass(frozen=True)
@@ -130,11 +116,11 @@ class ModelPaths:
 class CitationModelsResultsPaths:
     """Sets file paths for citation model results."""
 
-    bibliographic_coupling_scores_most_cited_parquet: Path = (
-        results_dirpath / "bibliographic_coupling_scores_most_cited.parquet"
+    bibliographic_coupling_scores_parquet: Path = (
+        results_dirpath / "bibliographic_coupling_scores.parquet"
     )
-    co_citation_analysis_scores_most_cited_parquet: Path = (
-        results_dirpath / "co_citation_analysis_scores_most_cited.parquet"
+    co_citation_analysis_scores_parquet: Path = (
+        results_dirpath / "co_citation_analysis_scores.parquet"
     )
 
 
@@ -142,65 +128,45 @@ class CitationModelsResultsPaths:
 class LanguageModelsResultsPaths:
     """Sets file paths for language model results."""
 
-    spacy_tokenized_abstracts_mapping_most_cited_pkl: Path = (
-        results_dirpath / "spacy_tokenized_abstracts_mapping_most_cited.pkl"
+    spacy_tokenized_abstracts_parquet: Path = results_dirpath / "spacy_tokenized_abstracts.parquet"
+
+    tfidf_embeddings_parquet: Path = results_dirpath / "tfidf_embeddings.parquet"
+    tfidf_cosine_similarities_parquet: Path = results_dirpath / "tfidf_cosine_similarities.parquet"
+
+    bm25_embeddings_parquet: Path = results_dirpath / "bm25_embeddings.parquet"
+    bm25_cosine_similarities_parquet: Path = results_dirpath / "bm25_cosine_similarities.parquet"
+
+    word2vec_embeddings_parquet: Path = results_dirpath / "word2vec_embeddings.parquet"
+    word2vec_cosine_similarities_parquet: Path = (
+        results_dirpath / "word2vec_cosine_similarities.parquet"
     )
-    tfidf_embeddings_most_cited_parquet: Path = (
-        results_dirpath / "tfidf_embeddings_most_cited.parquet"
+
+    glove_embeddings_parquet: Path = results_dirpath / "glove_embeddings.parquet"
+    glove_cosine_similarities_parquet: Path = results_dirpath / "glove_cosine_similarities.parquet"
+
+    fasttext_embeddings_parquet: Path = results_dirpath / "fasttext_embeddings.parquet"
+    fasttext_cosine_similarities_parquet: Path = (
+        results_dirpath / "fasttext_cosine_similarities.parquet"
     )
-    tfidf_cosine_similarities_most_cited_parquet: Path = (
-        results_dirpath / "tfidf_cosine_similarities_most_cited.parquet"
+
+    bert_tokenized_abstracts_parquet: Path = results_dirpath / "bert_tokenized_abstracts.parquet"
+    bert_embeddings_parquet: Path = results_dirpath / "bert_embeddings.parquet"
+    bert_cosine_similarities_parquet: Path = results_dirpath / "bert_cosine_similarities.parquet"
+
+    scibert_tokenized_abstracts_parquet: Path = (
+        results_dirpath / "scibert_tokenized_abstracts.parquet"
     )
-    bm25_embeddings_most_cited_parquet: Path = (
-        results_dirpath / "bm25_embeddings_most_cited.parquet"
+    scibert_embeddings_parquet: Path = results_dirpath / "scibert_embeddings.parquet"
+    scibert_cosine_similarities_parquet: Path = (
+        results_dirpath / "scibert_cosine_similarities.parquet"
     )
-    bm25_cosine_similarities_most_cited_parquet: Path = (
-        results_dirpath / "bm25_cosine_similarities_most_cited.parquet"
+
+    longformer_tokenized_abstracts_parquet: Path = (
+        results_dirpath / "longformer_tokenized_abstracts.parquet"
     )
-    word2vec_embeddings_most_cited_parquet: Path = (
-        results_dirpath / "word2vec_embeddings_most_cited.parquet"
-    )
-    word2vec_cosine_similarities_most_cited_parquet: Path = (
-        results_dirpath / "word2vec_cosine_similarities_most_cited.parquet"
-    )
-    glove_embeddings_most_cited_parquet: Path = (
-        results_dirpath / "glove_embeddings_most_cited.parquet"
-    )
-    glove_cosine_similarities_most_cited_parquet: Path = (
-        results_dirpath / "glove_cosine_similarities_most_cited.parquet"
-    )
-    fasttext_embeddings_most_cited_parquet: Path = (
-        results_dirpath / "fasttext_embeddings_most_cited.parquet"
-    )
-    fasttext_cosine_similarities_most_cited_parquet: Path = (
-        results_dirpath / "fasttext_cosine_similarities_most_cited.parquet"
-    )
-    bert_tokenized_abstracts_mapping_most_cited_pkl: Path = (
-        results_dirpath / "bert_tokenized_abstracts_mapping_most_cited.pkl"
-    )
-    bert_embeddings_most_cited_parquet: Path = (
-        results_dirpath / "bert_embeddings_most_cited.parquet"
-    )
-    bert_cosine_similarities_most_cited_parquet: Path = (
-        results_dirpath / "bert_cosine_similarities_most_cited.parquet"
-    )
-    scibert_tokenized_abstracts_mapping_most_cited_pkl: Path = (
-        results_dirpath / "scibert_tokenized_abstracts_mapping_most_cited.pkl"
-    )
-    scibert_embeddings_most_cited_parquet: Path = (
-        results_dirpath / "scibert_embeddings_most_cited.parquet"
-    )
-    scibert_cosine_similarities_most_cited_parquet: Path = (
-        results_dirpath / "scibert_cosine_similarities_most_cited.parquet"
-    )
-    longformer_tokenized_abstracts_mapping_most_cited_pkl: Path = (
-        results_dirpath / "longformer_tokenized_abstracts_mapping_most_cited.pkl"
-    )
-    longformer_embeddings_most_cited_parquet: Path = (
-        results_dirpath / "longformer_embeddings_most_cited.parquet"
-    )
-    longformer_cosine_similarities_most_cited_parquet: Path = (
-        results_dirpath / "longformer_cosine_similarities_most_cited.parquet"
+    longformer_embeddings_parquet: Path = results_dirpath / "longformer_embeddings.parquet"
+    longformer_cosine_similarities_parquet: Path = (
+        results_dirpath / "longformer_cosine_similarities.parquet"
     )
 
 

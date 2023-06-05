@@ -41,25 +41,25 @@ repos:
       - id: black
         stages: [commit]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.265
+    rev: v0.0.270
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix, --show-fixes]
         stages: [commit]
         exclude: ^pyproject\.toml$
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.2
+    rev: v3.4.0
     hooks:
       - id: pyupgrade
         args: [--py310-plus]
         stages: [push]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.2.0
+    rev: v1.3.0
     hooks:
       - id: mypy
         args: [--ignore-missing-imports]
         stages: [push]
   - repo: https://github.com/pdm-project/pdm
-    rev: 2.5.3
+    rev: 2.7.0
     hooks:
       - id: pdm-lock-check

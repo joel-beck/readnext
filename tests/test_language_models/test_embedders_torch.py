@@ -1,4 +1,5 @@
 import numpy as np
+import polars as pl
 import pytest
 import torch
 from pytest_lazyfixture import lazy_fixture
@@ -9,8 +10,7 @@ from readnext.modeling.language_models import (
     LongformerEmbedder,
     TorchEmbedder,
 )
-from readnext.utils import BertModelProtocol, LongformerModelProtocol
-from readnext.utils.aliases import TokensIdMapping
+from readnext.utils import BertModelProtocol, LongformerModelProtocol, TokenIdsFrame
 
 embedders = ["bert_embedder", "longformer_embedder"]
 
@@ -33,39 +33,41 @@ def test_aggregate_document_embeddings(embedder: TorchEmbedder) -> None:
     )
 
 
-embedder_tokens_id_mapping_pairs = [
-    ("bert_embedder", "bert_tokens_id_mapping"),
-    ("longformer_embedder", "longformer_tokens_id_mapping"),
+embedder_token_ids_frame_pairs = [
+    ("bert_embedder", "bert_token_ids_frame"),
+    ("longformer_embedder", "longformer_token_ids_frame"),
 ]
 
 
 @pytest.mark.parametrize(
-    ("embedder", "tokens_id_mapping"),
-    [(lazy_fixture(x), lazy_fixture(y)) for x, y in embedder_tokens_id_mapping_pairs],
+    ("embedder", "token_ids_frame"),
+    [(lazy_fixture(x), lazy_fixture(y)) for x, y in embedder_token_ids_frame_pairs],
 )
 def test_compute_embedding_single_document(
-    embedder: TorchEmbedder, tokens_id_mapping: TokensIdMapping
+    embedder: TorchEmbedder, token_ids_frame: TokenIdsFrame
 ) -> None:
-    first_document_token_ids = tokens_id_mapping[1]
+    first_document_token_ids = token_ids_frame["token_ids"][0]
     embeddings_single_document = embedder.compute_embedding_single_document(
         first_document_token_ids
     )
 
-    assert isinstance(embeddings_single_document, np.ndarray)
-    assert embeddings_single_document.dtype == np.dtype("float32")
-    assert embeddings_single_document.shape == (768,)
+    assert isinstance(embeddings_single_document, list)
+    assert all(
+        isinstance(embedding_dimension, float) for embedding_dimension in embeddings_single_document
+    )
+    assert all(len())
 
 
 @pytest.mark.parametrize("embedder", lazy_fixture(embedders))
-def test_compute_embeddings_mapping(embedder: TorchEmbedder) -> None:
-    embeddings_mapping = embedder.compute_embeddings_mapping()
+def test_compute_embeddings_frame(embedder: TorchEmbedder) -> None:
+    embeddings_frame = embedder.compute_embeddings_frame()
 
-    assert isinstance(embeddings_mapping, dict)
-    assert all(isinstance(key, int) for key in embeddings_mapping)
-    assert all(isinstance(value, np.ndarray) for value in embeddings_mapping.values())
+    assert isinstance(embeddings_frame, pl.DataFrame)
+    assert all(isinstance(key, int) for key in embeddings_frame)
+    assert all(isinstance(value, np.ndarray) for value in embeddings_frame.values())
 
-    assert len(embeddings_mapping) == 3
-    assert all(len(value) == 768 for value in embeddings_mapping.values())
+    assert len(embeddings_frame) == 3
+    assert all(len(value) == 768 for value in embeddings_frame.values())
 
 
 def test_kw_only_initialization_bert_embedder(bert_model: BertModelProtocol) -> None:

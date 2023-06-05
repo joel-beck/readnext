@@ -1,10 +1,11 @@
-import pandas as pd
+import polars as pl
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
 from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference import DocumentIdentifier, InferenceDataConstructor
-from readnext.inference.attribute_getter import SeenPaperAttributeGetter, UnseenPaperAttributeGetter
+from readnext.inference.constructor_plugin_seen import SeenInferenceDataConstructorPlugin
+from readnext.inference.constructor_plugin_unseen import UnseenInferenceDataConstructorPlugin
 from readnext.inference.inference_data_constructor import Features, Labels, Ranks, Recommendations
 from readnext.modeling.language_models import LanguageModelChoice
 
@@ -24,8 +25,8 @@ def test_seen_attribute_getter_is_selected_correctly(
 ) -> None:
     assert inference_data_constructor.query_document_in_training_data()
     assert isinstance(
-        inference_data_constructor.attribute_getter,
-        SeenPaperAttributeGetter,
+        inference_data_constructor.constructor_plugin,
+        SeenInferenceDataConstructorPlugin,
     )
 
 
@@ -38,8 +39,8 @@ def test_unseen_attribute_getter_is_selected_correctly(
 ) -> None:
     assert not inference_data_constructor.query_document_in_training_data()
     assert isinstance(
-        inference_data_constructor.attribute_getter,
-        UnseenPaperAttributeGetter,
+        inference_data_constructor.constructor_plugin,
+        UnseenInferenceDataConstructorPlugin,
     )
 
 
@@ -58,12 +59,12 @@ def test_kw_only_initialization_document_identifier() -> None:
 def test_kw_only_initialization_features() -> None:
     with pytest.raises(TypeError):
         Features(
-            pd.Series(),  # type: ignore
-            pd.Series(),
-            pd.Series(),
-            pd.Series(),
-            pd.Series(),
-            pd.Series(),
+            pl.DataFrame(),  # type: ignore
+            pl.DataFrame(),
+            pl.DataFrame(),
+            pl.DataFrame(),
+            pl.DataFrame(),
+            pl.DataFrame(),
             FeatureWeights(),
         )
 
@@ -71,27 +72,27 @@ def test_kw_only_initialization_features() -> None:
 def test_kw_only_initialization_ranks() -> None:
     with pytest.raises(TypeError):
         Ranks(
-            pd.Series(),  # type: ignore
-            pd.Series(),
-            pd.Series(),
-            pd.Series(),
-            pd.Series(),
-            pd.Series(),
+            pl.DataFrame(),  # type: ignore
+            pl.DataFrame(),
+            pl.DataFrame(),
+            pl.DataFrame(),
+            pl.DataFrame(),
+            pl.DataFrame(),
         )
 
 
 def test_kw_only_initialization_labels() -> None:
     with pytest.raises(TypeError):
-        Labels(pd.Series(), pd.Series())  # type: ignore
+        Labels(pl.DataFrame(), pl.DataFrame())  # type: ignore
 
 
 def test_kw_only_initialization_recommendations() -> None:
     with pytest.raises(TypeError):
         Recommendations(
-            pd.DataFrame(),  # type: ignore
-            pd.DataFrame(),
-            pd.DataFrame(),
-            pd.DataFrame(),
+            pl.DataFrame(),  # type: ignore
+            pl.DataFrame(),
+            pl.DataFrame(),
+            pl.DataFrame(),
         )
 
 

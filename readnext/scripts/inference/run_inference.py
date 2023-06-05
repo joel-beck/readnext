@@ -30,15 +30,13 @@ def main() -> None:
         inference_data_constructor_seen_semanticscholar_id
     )
 
-    type(inference_data_seen_from_semanticscholar_id.document_info.d3_document_id)
-    type(inference_data_seen_from_semanticscholar_id.document_identifier.d3_document_id)
-
     print(inference_data_seen_from_semanticscholar_id.document_identifier)
     print(inference_data_seen_from_semanticscholar_id.document_info)
     print(inference_data_seen_from_semanticscholar_id.features)
     print(inference_data_seen_from_semanticscholar_id.ranks)
     print(inference_data_seen_from_semanticscholar_id.labels)
     print(inference_data_seen_from_semanticscholar_id.recommendations.citation_to_language)
+    print(inference_data_seen_from_semanticscholar_id.recommendations.language_to_citation)
 
     # SUBSECTION: Input is semanticscholar URL
     inference_data_constructor_seen_semanticscholar_url = InferenceDataConstructor(
@@ -97,9 +95,10 @@ def main() -> None:
 
     inference_data_constructor_unseen_arxiv_id = InferenceDataConstructor(
         arxiv_url=arxiv_url,
-        language_model_choice=LanguageModelChoice.scibert,
+        language_model_choice=LanguageModelChoice.longformer,
         feature_weights=FeatureWeights(),
     )
+
     inference_data_unseen_from_arxiv_id = InferenceData.from_constructor(
         inference_data_constructor_unseen_arxiv_id
     )
@@ -110,7 +109,9 @@ def main() -> None:
     print(inference_data_unseen_from_arxiv_id.ranks)
     print(inference_data_unseen_from_arxiv_id.labels)
     print(inference_data_unseen_from_arxiv_id.recommendations.citation_to_language)
-    print(inference_data_unseen_from_arxiv_id.recommendations.citation_to_language)
+    print(inference_data_unseen_from_arxiv_id.recommendations.citation_to_language_candidates)
+    print(inference_data_unseen_from_arxiv_id.recommendations.language_to_citation)
+    print(inference_data_unseen_from_arxiv_id.recommendations.language_to_citation_candidates)
 
 
 if __name__ == "__main__":

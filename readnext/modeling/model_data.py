@@ -25,7 +25,7 @@ class ModelData(ABC, Generic[TModelDataConstructor]):
 
     query_document: DocumentInfo
     info_matrix: pl.DataFrame
-    integer_labels: pl.Series
+    integer_labels: pl.DataFrame
 
     @classmethod
     @abstractmethod
@@ -62,9 +62,9 @@ class CitationModelData(ModelData):
     def __getitem__(self, indices: list[int]) -> Self:
         return self.__class__(
             self.query_document,
-            self.info_matrix.filter(pl.col("document_id").is_in(indices)),
-            self.integer_labels.filter(pl.col("document_id").is_in(indices)),
-            self.feature_matrix.filter(pl.col("document_id").is_in(indices)),
+            self.info_matrix.filter(pl.col("candidate_d3_document_id").is_in(indices)),
+            self.integer_labels.filter(pl.col("candidate_d3_document_id").is_in(indices)),
+            self.feature_matrix.filter(pl.col("candidate_d3_document_id").is_in(indices)),
         )
 
     def __repr__(self) -> str:
@@ -82,7 +82,7 @@ class CitationModelData(ModelData):
 
         integer_labels_repr = (
             f"integer_labels=[pl.Series, shape={self.integer_labels.shape}, "
-            f"name={self.integer_labels.name}]"
+            f"columns={self.integer_labels.columns}]"
         )
 
         return (
@@ -116,13 +116,13 @@ class LanguageModelData(ModelData):
     def __getitem__(self, indices: list[int]) -> Self:
         return self.__class__(
             self.query_document,
-            self.info_matrix.filter(pl.col("document_id").is_in(indices)),
-            self.integer_labels.filter(pl.col("document_id").is_in(indices)),
+            self.info_matrix.filter(pl.col("candidate_d3_document_id").is_in(indices)),
+            self.integer_labels.filter(pl.col("candidate_d3_document_id").is_in(indices)),
             # This line raises an IndexError if at least one of the indices is not
             # present in the cosine similarity ranks dataframe. This might occur when
             # the full documents data with 10000 documents is used but the cosine
             # similarity ranks are only precomputed for the top 1000 documents.
-            self.cosine_similarity_ranks.filter(pl.col("document_id").is_in(indices)),
+            self.cosine_similarity_ranks.filter(pl.col("candidate_d3_document_id").is_in(indices)),
         )
 
     def __repr__(self) -> str:
@@ -140,7 +140,7 @@ class LanguageModelData(ModelData):
 
         integer_labels_repr = (
             f"integer_labels=[pl.Series, shape={self.integer_labels.shape}, "
-            f"name={self.integer_labels.name}]"
+            f"columns={self.integer_labels.columns}]"
         )
 
         return (

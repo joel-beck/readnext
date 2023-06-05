@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 import pytest
 
 # These imports must not come from `readnext.inference`, otherwise they are really
@@ -65,26 +65,26 @@ def inference_data_seen_recommendations(
 @pytest.fixture(scope="session")
 def inference_data_seen_recommendations_citation_to_language(
     inference_data_seen_recommendations: Recommendations,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return inference_data_seen_recommendations.citation_to_language
 
 
 @pytest.fixture(scope="session")
 def inference_data_seen_recommendations_citation_to_language_candidates(
     inference_data_seen_recommendations: Recommendations,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return inference_data_seen_recommendations.citation_to_language_candidates
 
 
 @pytest.fixture(scope="session")
 def inference_data_seen_recommendations_language_to_citation(
     inference_data_seen_recommendations: Recommendations,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return inference_data_seen_recommendations.language_to_citation
 
 
 @pytest.fixture(scope="session")
 def inference_data_seen_recommendations_language_to_citation_candidates(
     inference_data_seen_recommendations: Recommendations,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return inference_data_seen_recommendations.language_to_citation_candidates

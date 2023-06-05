@@ -4,14 +4,11 @@ version = "0.0.1"
 description = "Hybrid recommender system for computer science papers"
 authors = [{ name = "Joel Beck", email = "joel.beck@stud.uni-goettingen.de" }]
 dependencies = [
-    # spacy model can be installed with pip from GitHub release
-    "en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.5.0/en_core_web_sm-3.5.0-py3-none-any.whl",
     "gensim>=4.3.1",
-    "ipywidgets>=8.0.6",
+    "joblib>=1.2.0",
     "matplotlib>=3.7.1",
     "numpy>=1.24.2",
-    "pandas>=2.0.0",
-    "pip>=23.0.1",
+    "polars[all]>=0.18.0",
     "python-dotenv>=1.0.0",
     "requests>=2.28.2",
     "rich[jupyter]>=13.3.4",
@@ -19,9 +16,8 @@ dependencies = [
     "torch>=2.0.0",
     "tqdm>=4.65.0",
     "transformers>=4.27.4",
-    "polars[all]>=0.18.0",
-    "pyarrow>=12.0.0",
-    "dacite>=1.8.1",
+    # spacy model can be installed with pip from GitHub release
+    "en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.5.0/en_core_web_sm-3.5.0-py3-none-any.whl",
 ]
 requires-python = "==3.10.*"
 readme = "README.md"
@@ -48,12 +44,13 @@ update-all = { composite = ["update-pdm", "update-deps"] }
 format = "black ."
 lint = "ruff --fix --exit-non-zero-on-fix --show-fixes ."
 check = "mypy ."
+check-no-tests = "mypy . --exclude tests" # do not run mypy on `tests` directory
 test = "pytest"
-test-cov = "pytest --cov=readnext --cov-config=.coveragerc"
+test-cov = "pytest --cov=readnext"
 test-slow = "pytest -m 'slow'" # run all tests marked with `@pytest.mark.slow`
 test-fast = "pytest -m 'not slow'" # run all tests except those marked with `@pytest.mark.slow`
 # run all tests except those marked with `@pytest.mark.skip_ci` and create coverage report
-test-ci = "pytest -m 'not skip_ci' --cov=readnext --cov-config=.coveragerc --cov-report=xml"
+test-ci = "pytest -m 'not skip_ci' --cov=readnext --cov-report=xml"
 pre = "pre-commit run --all-files"
 serve = "mkdocs serve"
 deploy = { shell = "mkdocs build && mkdocs gh-deploy" }
@@ -68,11 +65,11 @@ dev = [
     "notebook>=6.5.4",
     "pre-commit>=3.2.2",
     "pytest-cov>=4.0.0",
+    "pytest-lazy-fixture>=0.6.3",
+    "pytest-mock>=3.10.0",
     "pytest>=7.2.2",
     "ruff>=0.0.261",
     "types-requests>=2.28.11.17",
-    "pytest-lazy-fixture>=0.6.3",
-    "pytest-mock>=3.10.0",
 ]
 
 [tool.black]
@@ -119,6 +116,34 @@ addopts = "--verbose"
 filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning"]
 markers = [
     "slow: marks tests as slow (run with `pytest -m 'slow', exclude with `pytest -m 'not slow'`)",
+]
+
+[tool.coverage.run]
+branch = true
+omit = [
+    # exclude files in tests directory from coverage
+    "tests/*",
+    # exclude `__init__.py` files from coverage
+    "*/__init__.py",
+    # exclude executable scripts in `readnext/scripts` directory from coverage
+    "readnext/scripts/*",
+    # exclude loading and saving functions in `readnext/utils/io.py` directory from coverage
+    "readnext/utils/io.py",
+    # exclude files that are tested by loading locally stored data that are not available in CI
+    "readnext/inference/inference_data_constructor.py",
+    "readnext/inference/inference_data.py"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+    "@overload",
+    "def __repr__",
+    "def __str__",
+    "if TYPE_CHECKING:",
+    "from typing_extensions import "
 ]
 
 [tool.ruff]

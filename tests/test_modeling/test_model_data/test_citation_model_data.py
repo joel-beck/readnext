@@ -1,5 +1,5 @@
 import numpy as np
-import pandas as pd
+import polars as pl
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
@@ -138,11 +138,11 @@ citation_model_data_info_matrix_fixtures_unseen_skip_ci = [
         ],
     ],
 )
-def test_citation_model_data_info_matrix(info_matrix: pd.DataFrame) -> None:
-    assert isinstance(info_matrix, pd.DataFrame)
+def test_citation_model_data_info_matrix(info_matrix: pl.DataFrame) -> None:
+    assert isinstance(info_matrix, pl.DataFrame)
 
     assert info_matrix.index.name == "document_id"
-    assert info_matrix.index.dtype == pd.Int64Dtype()
+    assert info_matrix.index.dtype == pl.Int64Dtype()
 
     assert info_matrix.shape[1] == 8
     assert info_matrix.columns.to_list() == [
@@ -156,12 +156,12 @@ def test_citation_model_data_info_matrix(info_matrix: pd.DataFrame) -> None:
         "bibliographic_coupling",
     ]
     assert info_matrix.dtypes.to_list() == [
-        pd.StringDtype(),
-        pd.StringDtype(),
+        pl.StringDtype(),
+        pl.StringDtype(),
         np.dtype("O"),
-        pd.StringDtype(),
-        pd.Int64Dtype(),
-        pd.Int64Dtype(),
+        pl.StringDtype(),
+        pl.Int64Dtype(),
+        pl.Int64Dtype(),
         np.dtype("int64"),
         np.dtype("int64"),
     ]
@@ -198,11 +198,11 @@ citation_model_data_feature_matrix_fixtures_unseen_skip_ci = [
         ],
     ],
 )
-def test_citation_model_data_feature_matrix(feature_matrix: pd.DataFrame) -> None:
-    assert isinstance(feature_matrix, pd.DataFrame)
+def test_citation_model_data_feature_matrix(feature_matrix: pl.DataFrame) -> None:
+    assert isinstance(feature_matrix, pl.DataFrame)
 
     assert feature_matrix.index.name == "document_id"
-    assert feature_matrix.index.dtype == pd.Int64Dtype()
+    assert feature_matrix.index.dtype == pl.Int64Dtype()
 
     assert feature_matrix.shape[1] == 5
     assert feature_matrix.columns.to_list() == [

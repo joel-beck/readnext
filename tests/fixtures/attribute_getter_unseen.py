@@ -1,8 +1,10 @@
-import pandas as pd
+import polars as pl
 import pytest
 
 from readnext.evaluation.scoring import FeatureWeights
-from readnext.inference.attribute_getter import UnseenPaperAttributeGetter
+from readnext.inference.constructor_plugin_unseen import (
+    UnseenInferenceDataConstructorPlugin,
+)
 from readnext.modeling import (
     CitationModelData,
     DocumentInfo,
@@ -14,88 +16,88 @@ from readnext.utils import ScoresFrame
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_from_semanticscholar_id(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
-) -> UnseenPaperAttributeGetter:
+    test_documents_data: pl.DataFrame,
+) -> UnseenInferenceDataConstructorPlugin:
     semanticscholar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    return UnseenPaperAttributeGetter(
+    return UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semanticscholar_id,
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_from_semanticscholar_url(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
-) -> UnseenPaperAttributeGetter:
+    test_documents_data: pl.DataFrame,
+) -> UnseenInferenceDataConstructorPlugin:
     semanticscholar_url = (
         "https://www.semanticscholar.org/paper/8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
     )
 
-    return UnseenPaperAttributeGetter(
+    return UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=None,
         semanticscholar_url=semanticscholar_url,
         arxiv_id=None,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_from_arxiv_id(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
-) -> UnseenPaperAttributeGetter:
+    test_documents_data: pl.DataFrame,
+) -> UnseenInferenceDataConstructorPlugin:
     arxiv_id = "2303.08774"
 
-    return UnseenPaperAttributeGetter(
+    return UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=None,
         semanticscholar_url=None,
         arxiv_id=arxiv_id,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_from_arxiv_url(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
-) -> UnseenPaperAttributeGetter:
+    test_documents_data: pl.DataFrame,
+) -> UnseenInferenceDataConstructorPlugin:
     arxiv_url = "https://arxiv.org/abs/2303.08774"
 
-    return UnseenPaperAttributeGetter(
+    return UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=None,
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=arxiv_url,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_co_citation_analysis(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_data: pl.DataFrame,
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenPaperAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
     return unseen_paper_attribute_getter.get_co_citation_analysis_scores()
@@ -103,18 +105,18 @@ def unseen_paper_attribute_getter_co_citation_analysis(
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_bibliographic_coupling(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_data: pl.DataFrame,
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenPaperAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
     return unseen_paper_attribute_getter.get_bibliographic_coupling_scores()
@@ -122,18 +124,18 @@ def unseen_paper_attribute_getter_bibliographic_coupling(
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_cosine_similarities_tfidf(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_data: pl.DataFrame,
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenPaperAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
     return unseen_paper_attribute_getter.get_cosine_similarities()
@@ -141,18 +143,18 @@ def unseen_paper_attribute_getter_cosine_similarities_tfidf(
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_cosine_similarities_bm25(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_data: pl.DataFrame,
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenPaperAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.bm25,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
     return unseen_paper_attribute_getter.get_cosine_similarities()
@@ -160,18 +162,18 @@ def unseen_paper_attribute_getter_cosine_similarities_bm25(
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_cosine_similarities_word2vec(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_data: pl.DataFrame,
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenPaperAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.word2vec,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
     return unseen_paper_attribute_getter.get_cosine_similarities()
@@ -179,18 +181,18 @@ def unseen_paper_attribute_getter_cosine_similarities_word2vec(
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_cosine_similarities_glove(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_data: pl.DataFrame,
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenPaperAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.glove,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
     return unseen_paper_attribute_getter.get_cosine_similarities()
@@ -198,18 +200,18 @@ def unseen_paper_attribute_getter_cosine_similarities_glove(
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_cosine_similarities_fasttext(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_data: pl.DataFrame,
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenPaperAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.fasttext,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
     return unseen_paper_attribute_getter.get_cosine_similarities()
@@ -217,18 +219,18 @@ def unseen_paper_attribute_getter_cosine_similarities_fasttext(
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_cosine_similarities_bert(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_data: pl.DataFrame,
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenPaperAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.bert,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
     return unseen_paper_attribute_getter.get_cosine_similarities()
@@ -236,18 +238,18 @@ def unseen_paper_attribute_getter_cosine_similarities_bert(
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_cosine_similarities_scibert(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_data: pl.DataFrame,
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenPaperAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.scibert,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
     return unseen_paper_attribute_getter.get_cosine_similarities()
@@ -255,18 +257,18 @@ def unseen_paper_attribute_getter_cosine_similarities_scibert(
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_cosine_similarities_longformer(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_data: pl.DataFrame,
 ) -> ScoresFrame:
     semantischolar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenPaperAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semantischolar_id,
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.longformer,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
     return unseen_paper_attribute_getter.get_cosine_similarities()
@@ -274,18 +276,18 @@ def unseen_paper_attribute_getter_cosine_similarities_longformer(
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_citation_model_data(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_data: pl.DataFrame,
 ) -> CitationModelData:
     semanticscholar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenPaperAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semanticscholar_id,
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
     return unseen_paper_attribute_getter.get_citation_model_data()
@@ -301,38 +303,38 @@ def unseen_paper_attribute_getter_citation_model_data_query_document(
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_citation_model_data_integer_labels(
     unseen_paper_attribute_getter_citation_model_data: CitationModelData,
-) -> pd.Series:
+) -> pl.DataFrame:
     return unseen_paper_attribute_getter_citation_model_data.integer_labels
 
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_citation_model_data_info_matrix(
     unseen_paper_attribute_getter_citation_model_data: CitationModelData,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return unseen_paper_attribute_getter_citation_model_data.info_matrix
 
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_citation_model_data_feature_matrix(
     unseen_paper_attribute_getter_citation_model_data: CitationModelData,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return unseen_paper_attribute_getter_citation_model_data.feature_matrix
 
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_language_model_data(
-    test_documents_authors_labels_citations_most_cited: pd.DataFrame,
+    test_documents_data: pl.DataFrame,
 ) -> LanguageModelData:
     semanticscholar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
 
-    unseen_paper_attribute_getter = UnseenPaperAttributeGetter(
+    unseen_paper_attribute_getter = UnseenInferenceDataConstructorPlugin(
         semanticscholar_id=semanticscholar_id,
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
-        documents_data=test_documents_authors_labels_citations_most_cited,
+        documents_data=test_documents_data,
     )
 
     return unseen_paper_attribute_getter.get_language_model_data()
@@ -348,19 +350,19 @@ def unseen_paper_attribute_getter_language_model_data_query_document(
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_language_model_data_integer_labels(
     unseen_paper_attribute_getter_language_model_data: LanguageModelData,
-) -> pd.Series:
+) -> pl.DataFrame:
     return unseen_paper_attribute_getter_language_model_data.integer_labels
 
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_language_model_data_info_matrix(
     unseen_paper_attribute_getter_language_model_data: LanguageModelData,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return unseen_paper_attribute_getter_language_model_data.info_matrix
 
 
 @pytest.fixture(scope="session")
 def unseen_paper_attribute_getter_language_model_data_cosine_similarity_ranks(
     unseen_paper_attribute_getter_language_model_data: LanguageModelData,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     return unseen_paper_attribute_getter_language_model_data.cosine_similarity_ranks

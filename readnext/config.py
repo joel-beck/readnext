@@ -65,7 +65,7 @@ class MergedDataPaths:
     documents_authors_labels_citations: Path = (
         data_dirpath / "documents_authors_labels_citations.parquet"
     )
-    documents_data: Path = data_dirpath / "documents_data.parquet"
+    documents_frame: Path = data_dirpath / "documents_frame.parquet"
 
 
 @dataclass(frozen=True)
@@ -83,8 +83,8 @@ class MagicNumbers:
     recommendation list.
     """
 
-    documents_data_intermediate_cutoff: int = 1_000_000
-    documents_data_final_size: int = 10_000
+    documents_frame_intermediate_cutoff: int = 1_000_000
+    documents_frame_final_size: int = 10_000
     scoring_limit: int = 100
     n_candidates: int = 20
     n_recommendations: int = 20

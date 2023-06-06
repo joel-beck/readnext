@@ -7,6 +7,7 @@ from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference.document_identifier import DocumentIdentifier
 from readnext.modeling import CitationModelData, LanguageModelData
 from readnext.modeling.language_models import LanguageModelChoice
+from readnext.utils import DocumentsFrame
 
 
 @dataclass(kw_only=True)
@@ -22,7 +23,7 @@ class InferenceDataConstructorPlugin(ABC):
     arxiv_url: str | None = None
     language_model_choice: LanguageModelChoice
     feature_weights: FeatureWeights
-    documents_data: pl.DataFrame
+    documents_frame: DocumentsFrame
 
     identifier: DocumentIdentifier = field(init=False)
 

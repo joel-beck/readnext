@@ -28,7 +28,7 @@ def test_merged_data_paths() -> None:
     assert isinstance(merged_data_paths.documents_labels, Path)
     assert isinstance(merged_data_paths.documents_authors_labels, Path)
     assert isinstance(merged_data_paths.documents_authors_labels_citations, Path)
-    assert isinstance(merged_data_paths.documents_data, Path)
+    assert isinstance(merged_data_paths.documents_frame, Path)
 
 
 def test_data_paths() -> None:
@@ -39,8 +39,8 @@ def test_data_paths() -> None:
 
 def test_magic_numbers() -> None:
     magic_numbers = MagicNumbers()
-    assert isinstance(magic_numbers.documents_data_intermediate_cutoff, int)
-    assert isinstance(magic_numbers.documents_data_final_size, int)
+    assert isinstance(magic_numbers.documents_frame_intermediate_cutoff, int)
+    assert isinstance(magic_numbers.documents_frame_final_size, int)
     assert isinstance(magic_numbers.scoring_limit, int)
     assert isinstance(magic_numbers.n_candidates, int)
     assert isinstance(magic_numbers.n_recommendations, int)

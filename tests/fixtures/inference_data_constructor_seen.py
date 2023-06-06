@@ -31,10 +31,10 @@ def inference_data_constructor_seen_from_semanticscholar_id() -> InferenceDataCo
 
 # SECTION: Attribute Fixtures
 @pytest.fixture(scope="session")
-def inference_data_constructor_seen_documents_data(
+def inference_data_constructor_seen_documents_frame(
     inference_data_constructor_seen_from_semanticscholar_id: InferenceDataConstructor,
 ) -> pl.DataFrame:
-    return inference_data_constructor_seen_from_semanticscholar_id._documents_data
+    return inference_data_constructor_seen_from_semanticscholar_id._documents_frame
 
 
 @pytest.fixture(scope="session")

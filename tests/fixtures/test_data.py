@@ -1,9 +1,9 @@
 from pathlib import Path
 
-import polars as pl
 import pytest
 
 from readnext.utils import (
+    DocumentsFrame,
     EmbeddingsFrame,
     ScoresFrame,
     TokenIdsFrame,
@@ -13,8 +13,8 @@ from readnext.utils import (
 
 
 @pytest.fixture(scope="session")
-def test_documents_data(root_path: Path) -> pl.DataFrame:
-    return read_df_from_parquet(root_path / "tests" / "data" / "test_documents_data.parquet")
+def test_documents_frame(root_path: Path) -> DocumentsFrame:
+    return read_df_from_parquet(root_path / "tests" / "data" / "test_documents_frame.parquet")
 
 
 @pytest.fixture(scope="session")

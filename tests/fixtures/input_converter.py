@@ -2,6 +2,7 @@ import polars as pl
 import pytest
 
 from readnext.inference import InferenceDataInputConverter
+from readnext.utils import DocumentsFrame
 
 
 @pytest.fixture
@@ -20,7 +21,5 @@ def input_converter_toy_data() -> InferenceDataInputConverter:
 
 
 @pytest.fixture
-def input_converter(
-    test_documents_data: pl.DataFrame,
-) -> InferenceDataInputConverter:
-    return InferenceDataInputConverter(test_documents_data)
+def input_converter(test_documents_frame: DocumentsFrame) -> InferenceDataInputConverter:
+    return InferenceDataInputConverter(test_documents_frame)

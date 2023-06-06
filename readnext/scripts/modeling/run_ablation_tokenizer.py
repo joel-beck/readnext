@@ -14,8 +14,8 @@ from readnext.utils import read_df_from_parquet, setup_progress_bar, suppress_tr
 def main() -> None:
     suppress_transformers_logging()
 
-    documents_data = read_df_from_parquet(DataPaths.merged.documents_data)
-    abstracts = documents_data["abstract"]
+    documents_frame = read_df_from_parquet(DataPaths.merged.documents_frame)
+    abstracts = documents_frame["abstract"]
 
     bert_tokenizer_transformers = BertTokenizerFast.from_pretrained(ModelVersions.bert)
 

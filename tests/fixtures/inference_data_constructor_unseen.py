@@ -31,10 +31,10 @@ def inference_data_constructor_unseen_from_arxiv_url() -> InferenceDataConstruct
 
 # SECTION: Attribute Fixtures
 @pytest.fixture(scope="session")
-def inference_data_constructor_unseen_documents_data(
+def inference_data_constructor_unseen_documents_frame(
     inference_data_constructor_unseen_from_arxiv_url: InferenceDataConstructor,
 ) -> pl.DataFrame:
-    return inference_data_constructor_unseen_from_arxiv_url._documents_data
+    return inference_data_constructor_unseen_from_arxiv_url._documents_frame
 
 
 @pytest.fixture(scope="session")

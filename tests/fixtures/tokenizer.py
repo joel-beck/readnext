@@ -6,7 +6,7 @@ from transformers import BertTokenizerFast, LongformerTokenizerFast
 
 from readnext.config import ModelVersions
 from readnext.modeling.language_models import BERTTokenizer, LongformerTokenizer, SpacyTokenizer
-from readnext.utils import TokenIdsFrame, Tokens, TokensFrame
+from readnext.utils import DocumentsFrame, TokenIdsFrame, Tokens, TokensFrame
 
 
 # SUBSECTION: SpaCy
@@ -17,8 +17,8 @@ def spacy_model() -> Language:
 
 
 @pytest.fixture(scope="session")
-def spacy_tokenizer(test_documents_data: pl.DataFrame, spacy_model: Language) -> SpacyTokenizer:
-    return SpacyTokenizer(test_documents_data, spacy_model)
+def spacy_tokenizer(test_documents_frame: DocumentsFrame, spacy_model: Language) -> SpacyTokenizer:
+    return SpacyTokenizer(test_documents_frame, spacy_model)
 
 
 @pytest.fixture(scope="session")
@@ -78,9 +78,9 @@ def bert_tokenizer_transformers() -> BertTokenizerFast:
 
 @pytest.fixture(scope="session")
 def bert_tokenizer(
-    test_documents_data: pl.DataFrame, bert_tokenizer_transformers: BertTokenizerFast
+    test_documents_frame: DocumentsFrame, bert_tokenizer_transformers: BertTokenizerFast
 ) -> BERTTokenizer:
-    return BERTTokenizer(test_documents_data, bert_tokenizer_transformers)
+    return BERTTokenizer(test_documents_frame, bert_tokenizer_transformers)
 
 
 @pytest.fixture(scope="session")
@@ -144,9 +144,9 @@ def longformer_tokenizer_transformers() -> LongformerTokenizerFast:
 
 @pytest.fixture(scope="session")
 def longformer_tokenizer(
-    test_documents_data: pl.DataFrame, longformer_tokenizer_transformers: LongformerTokenizerFast
+    test_documents_frame: DocumentsFrame, longformer_tokenizer_transformers: LongformerTokenizerFast
 ) -> LongformerTokenizer:
-    return LongformerTokenizer(test_documents_data, longformer_tokenizer_transformers)
+    return LongformerTokenizer(test_documents_frame, longformer_tokenizer_transformers)
 
 
 @pytest.fixture(scope="session")

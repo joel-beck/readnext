@@ -31,6 +31,10 @@ CandidateRanksFrame: TypeAlias = pl.DataFrame
 # contains all columns of the full documents dataset
 DocumentsFrame: TypeAlias = pl.DataFrame
 
+# contains all columns of the full documents dataset with the column
+# `candidate_d3_document_id` instead of `d3_document_id`
+QueryDocumentsFrame: TypeAlias = pl.DataFrame
+
 # info_frame.columns = ["candidate_d3_document_id", "title", "author", "arxiv_labels"]
 InfoFrame: TypeAlias = pl.DataFrame
 

@@ -16,6 +16,7 @@ from readnext.utils import (
     InfoFrame,
     IntegerLabelsFrame,
     LanguageFeaturesFrame,
+    generate_frame_repr,
 )
 
 TModelDataConstructor = TypeVar("TModelDataConstructor", bound=ModelDataConstructor)
@@ -46,10 +47,6 @@ class ModelData(ABC, Generic[TModelDataConstructor]):
     @abstractmethod
     def __repr__(self) -> str:
         """Specify how to represent a `ModelData` instance as a string."""
-
-    def generate_frame_repr(self, frame: pl.DataFrame) -> str:
-        """Generate a string representation of a `pl.DataFrame`."""
-        return f"[pl.DataFrame, shape={frame.shape}, columns={frame.columns}]"
 
 
 @dataclass(kw_only=True)
@@ -96,12 +93,12 @@ class CitationModelData(ModelData):
 
     def __repr__(self) -> str:
         query_document_repr = f"query_document={self.query_document!r}"
-        info_frame_repr = f"info_frame={self.generate_frame_repr(self.info_frame)}"
-        features_frame_repr = f"features_frame={self.generate_frame_repr(self.features_frame)}"
-        ranks_frame_repr = f"ranks_frame={self.generate_frame_repr(self.ranks_frame)}"
-        points_frame_repr = f"points_frame={self.generate_frame_repr(self.points_frame)}"
+        info_frame_repr = f"info_frame={generate_frame_repr(self.info_frame)}"
+        features_frame_repr = f"features_frame={generate_frame_repr(self.features_frame)}"
+        ranks_frame_repr = f"ranks_frame={generate_frame_repr(self.ranks_frame)}"
+        points_frame_repr = f"points_frame={generate_frame_repr(self.points_frame)}"
         integer_labels_frame_repr = (
-            f"integer_labels_frame={self.generate_frame_repr(self.integer_labels_frame)}"
+            f"integer_labels_frame={generate_frame_repr(self.integer_labels_frame)}"
         )
 
         return (
@@ -148,10 +145,10 @@ class LanguageModelData(ModelData):
 
     def __repr__(self) -> str:
         query_document_repr = f"query_document={self.query_document!r}"
-        info_frame_repr = f"info_frame={self.generate_frame_repr(self.info_frame)}"
-        features_frame_repr = f"features_frame={self.generate_frame_repr(self.features_frame)}"
+        info_frame_repr = f"info_frame={generate_frame_repr(self.info_frame)}"
+        features_frame_repr = f"features_frame={generate_frame_repr(self.features_frame)}"
         integer_labels_frame_repr = (
-            f"integer_labels_frame={self.generate_frame_repr(self.integer_labels_frame)}"
+            f"integer_labels_frame={generate_frame_repr(self.integer_labels_frame)}"
         )
 
         return (

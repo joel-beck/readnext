@@ -14,6 +14,7 @@ from readnext.utils.aliases import (
     IntegerLabelsFrame,
     KeywordAlgorithm,
     LanguageFeaturesFrame,
+    QueryDocumentsFrame,
     QueryEmbeddingFunction,
     ScoresFrame,
     StringLabelList,
@@ -45,6 +46,7 @@ from readnext.utils.protocols import (
     Word2VecModelProtocol,
     WordVectorsProtocol,
 )
+from readnext.utils.repr import generate_frame_repr
 from readnext.utils.utils import slice_mapping
 
 __all__ = [
@@ -69,6 +71,7 @@ __all__ = [
     "CitationPointsFrame",
     "IntegerLabelsFrame",
     "DocumentsFrame",
+    "QueryDocumentsFrame",
     "Tokens",
     "TokensFrame",
     "Vector",
@@ -91,5 +94,6 @@ __all__ = [
     "TorchModelOutputProtocol",
     "Word2VecModelProtocol",
     "WordVectorsProtocol",
+    "generate_frame_repr",
     "slice_mapping",  # keep as export for unit testing
 ]

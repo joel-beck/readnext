@@ -15,7 +15,7 @@ from readnext.modeling import (
     LanguageModelDataConstructor,
     SeenModelDataConstructorPlugin,
 )
-from readnext.utils import read_df_from_parquet
+from readnext.utils import ScoresFrame, read_df_from_parquet
 
 
 def main() -> None:
@@ -23,34 +23,41 @@ def main() -> None:
     query_d3_document_id = 13756489
 
     # SECTION: Get Raw Data
-    documents_data: pl.DataFrame = read_df_from_parquet(DataPaths.merged.documents_data)
+    documents_frame = read_df_from_parquet(DataPaths.merged.documents_frame)
     # NOTE: Remove to evaluate on full data
-    documents_data = documents_data.head(2000)
+    documents_frame = documents_frame.head(1000)
 
-    bibliographic_coupling_scores: pl.DataFrame = read_df_from_parquet(
+    pl.DataFrame(dict(query_d3_document_id=documents_frame["d3_document_id"])).join(
+        pl.DataFrame(dict(candidate_d3_document_id=documents_frame["d3_document_id"])), how="cross"
+    )
+
+    bibliographic_coupling_scores: ScoresFrame = read_df_from_parquet(
         ResultsPaths.citation_models.bibliographic_coupling_scores_parquet
     )
 
-    co_citation_analysis_scores: pl.DataFrame = read_df_from_parquet(
+    co_citation_analysis_scores: ScoresFrame = read_df_from_parquet(
         ResultsPaths.citation_models.co_citation_analysis_scores_parquet
     )
 
     model_data_constructor_plugin = SeenModelDataConstructorPlugin(
-        query_d3_document_id, documents_data
+        query_d3_document_id, documents_frame
     )
 
     # SECTION: Get Model Data
     # SUBSECTION: Citation Models
     citation_model_data_constructor = CitationModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
+        documents_frame=documents_frame,
         co_citation_analysis_scores_frame=co_citation_analysis_scores,
         bibliographic_coupling_scores_frame=bibliographic_coupling_scores,
         constructor_plugin=model_data_constructor_plugin,
     )
     citation_model_data = CitationModelData.from_constructor(citation_model_data_constructor)
+    citation_model_scorer = CitationModelScorer(citation_model_data)
 
     print(citation_model_data.query_document)
+
+    citation_model_scorer.display_top_n()
 
     # SUBSECTION: TF-IDF
     tfidf_cosine_similarities: pl.DataFrame = read_df_from_parquet(
@@ -58,12 +65,14 @@ def main() -> None:
     )
     tfidf_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
+        documents_frame=documents_frame,
         cosine_similarity_scores_frame=tfidf_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
-    LanguageModelScorer.display_top_n(tfidf_data, n=20)
+    tfidf_language_model_scorer = LanguageModelScorer(tfidf_data)
+
+    tfidf_language_model_scorer.display_top_n()
 
     # SUBSECTION: BM25
     bm25_cosine_similarities: pl.DataFrame = read_df_from_parquet(
@@ -71,12 +80,14 @@ def main() -> None:
     )
     bm25_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
+        documents_frame=documents_frame,
         cosine_similarity_scores_frame=bm25_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     bm25_data = LanguageModelData.from_constructor(bm25_data_constructor)
-    LanguageModelScorer.display_top_n(bm25_data, n=20)
+    bm25_language_model_scorer = LanguageModelScorer(bm25_data)
+
+    bm25_language_model_scorer.display_top_n()
 
     # SUBSECTION: Word2Vec
     word2vec_cosine_similarities: pl.DataFrame = read_df_from_parquet(
@@ -84,12 +95,14 @@ def main() -> None:
     )
     word2vec_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
+        documents_frame=documents_frame,
         cosine_similarity_scores_frame=word2vec_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     word2vec_data = LanguageModelData.from_constructor(word2vec_data_constructor)
-    LanguageModelScorer.display_top_n(word2vec_data, n=20)
+    word2vec_language_model_scorer = LanguageModelScorer(word2vec_data)
+
+    word2vec_language_model_scorer.display_top_n()
 
     # SUBSECTION: GloVe
     glove_cosine_similarities: pl.DataFrame = read_df_from_parquet(
@@ -97,12 +110,14 @@ def main() -> None:
     )
     glove_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
+        documents_frame=documents_frame,
         cosine_similarity_scores_frame=glove_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     glove_data = LanguageModelData.from_constructor(glove_data_constructor)
-    LanguageModelScorer.display_top_n(glove_data, n=20)
+    glove_language_model_scorer = LanguageModelScorer(glove_data)
+
+    glove_language_model_scorer.display_top_n()
 
     # SUBSECTION: FastText
     fasttext_cosine_similarities: pl.DataFrame = read_df_from_parquet(
@@ -110,12 +125,14 @@ def main() -> None:
     )
     fasttext_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
+        documents_frame=documents_frame,
         cosine_similarity_scores_frame=fasttext_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     fasttext_data = LanguageModelData.from_constructor(fasttext_data_constructor)
-    LanguageModelScorer.display_top_n(fasttext_data, n=20)
+    fasttext_language_model_scorer = LanguageModelScorer(fasttext_data)
+
+    fasttext_language_model_scorer.display_top_n()
 
     # SUBSECTION: BERT
     bert_cosine_similarities: pl.DataFrame = read_df_from_parquet(
@@ -123,12 +140,14 @@ def main() -> None:
     )
     bert_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
+        documents_frame=documents_frame,
         cosine_similarity_scores_frame=bert_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     bert_data = LanguageModelData.from_constructor(bert_data_constructor)
-    LanguageModelScorer.display_top_n(bert_data, n=20)
+    bert_language_model_scorer = LanguageModelScorer(bert_data)
+
+    bert_language_model_scorer.display_top_n()
 
     # SUBSECTION: SciBERT
     scibert_cosine_similarities: pl.DataFrame = read_df_from_parquet(
@@ -136,12 +155,14 @@ def main() -> None:
     )
     scibert_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
+        documents_frame=documents_frame,
         cosine_similarity_scores_frame=scibert_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     scibert_data = LanguageModelData.from_constructor(scibert_data_constructor)
-    LanguageModelScorer.display_top_n(scibert_data, n=20)
+    scibert_language_model_scorer = LanguageModelScorer(scibert_data)
+
+    scibert_language_model_scorer.display_top_n()
 
     # SUBSECTION: Longformer
     longformer_cosine_similarities: pl.DataFrame = read_df_from_parquet(
@@ -149,104 +170,94 @@ def main() -> None:
     )
     longformer_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
+        documents_frame=documents_frame,
         cosine_similarity_scores_frame=longformer_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     longformer_data = LanguageModelData.from_constructor(longformer_data_constructor)
-    LanguageModelScorer.display_top_n(longformer_data, n=20)
+    longformer_language_model_scorer = LanguageModelScorer(longformer_data)
+
+    longformer_language_model_scorer.display_top_n()
 
     # SECTION: Evaluate Scores
-    count_unique_labels_scores = pl.from_records(
+    average_precision_scores = pl.from_records(
         [
             (
                 "Publication Date",
-                CitationModelScorer.score_top_n(
-                    citation_model_data,
+                citation_model_scorer.score_top_n(
                     CountUniqueLabels(),
                     FeatureWeights(1, 0, 0, 0, 0),
-                    n=20,
                 ),
             ),
             (
                 "Citation Count Document",
-                CitationModelScorer.score_top_n(
-                    citation_model_data,
+                citation_model_scorer.score_top_n(
                     CountUniqueLabels(),
                     FeatureWeights(0, 1, 0, 0, 0),
-                    n=20,
                 ),
             ),
             (
                 "Citation Count Author",
-                CitationModelScorer.score_top_n(
-                    citation_model_data,
+                citation_model_scorer.score_top_n(
                     CountUniqueLabels(),
                     FeatureWeights(0, 0, 1, 0, 0),
-                    n=20,
                 ),
             ),
             (
                 "Co-Citation Analysis",
-                CitationModelScorer.score_top_n(
-                    citation_model_data,
+                citation_model_scorer.score_top_n(
                     CountUniqueLabels(),
                     FeatureWeights(0, 0, 0, 1, 0),
-                    n=20,
                 ),
             ),
             (
                 "Bibliographic Coupling",
-                CitationModelScorer.score_top_n(
-                    citation_model_data,
+                citation_model_scorer.score_top_n(
                     CountUniqueLabels(),
                     FeatureWeights(0, 0, 0, 0, 1),
-                    n=20,
                 ),
             ),
             (
                 "Weighted",
-                CitationModelScorer.score_top_n(
-                    citation_model_data, CountUniqueLabels(), FeatureWeights(), n=20
-                ),
+                citation_model_scorer.score_top_n(CountUniqueLabels()),
             ),
             (
                 "TF-IDF",
-                LanguageModelScorer.score_top_n(tfidf_data, CountUniqueLabels(), n=20),
+                tfidf_language_model_scorer.score_top_n(CountUniqueLabels()),
             ),
             (
                 "BM25",
-                LanguageModelScorer.score_top_n(bm25_data, CountUniqueLabels(), n=20),
+                bm25_language_model_scorer.score_top_n(CountUniqueLabels()),
             ),
             (
                 "Word2Vec",
-                LanguageModelScorer.score_top_n(word2vec_data, CountUniqueLabels(), n=20),
+                word2vec_language_model_scorer.score_top_n(CountUniqueLabels()),
             ),
             (
                 "GloVe",
-                LanguageModelScorer.score_top_n(glove_data, CountUniqueLabels(), n=20),
+                glove_language_model_scorer.score_top_n(CountUniqueLabels()),
             ),
             (
                 "FastText",
-                LanguageModelScorer.score_top_n(fasttext_data, CountUniqueLabels(), n=20),
+                fasttext_language_model_scorer.score_top_n(CountUniqueLabels()),
             ),
             (
                 "BERT",
-                LanguageModelScorer.score_top_n(bert_data, CountUniqueLabels(), n=20),
+                bert_language_model_scorer.score_top_n(CountUniqueLabels()),
             ),
             (
                 "SciBERT",
-                LanguageModelScorer.score_top_n(scibert_data, CountUniqueLabels(), n=20),
+                scibert_language_model_scorer.score_top_n(CountUniqueLabels()),
             ),
             (
                 "Longformer",
-                LanguageModelScorer.score_top_n(longformer_data, CountUniqueLabels(), n=20),
+                longformer_language_model_scorer.score_top_n(CountUniqueLabels()),
             ),
         ],
-        schema=["Feature", "Number of Unique Labels"],
-    ).sort(by="Number of Unique Labels", descending=True)
+        schema=["Feature", "Average Precision"],
+    ).sort(by="Average Precision", descending=True)
 
-    print(count_unique_labels_scores)
+    print(average_precision_scores)
 
 
 if __name__ == "__main__":

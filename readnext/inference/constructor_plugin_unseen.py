@@ -140,7 +140,7 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
 
     def get_co_citation_analysis_scores(self) -> CandidateScoresFrame:
         return (
-            self.documents_data.pipe(self.select_scoring_input_columns, "citations")
+            self.documents_frame.pipe(self.select_scoring_input_columns, "citations")
             .with_columns(query_citations=self.get_query_citation_urls())
             .with_columns(
                 score=pl.struct(["citations", "query_citations"]).apply(
@@ -154,7 +154,7 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
 
     def get_bibliographic_coupling_scores(self) -> CandidateScoresFrame:
         return (
-            self.documents_data.pipe(self.select_scoring_input_columns, "references")
+            self.documents_frame.pipe(self.select_scoring_input_columns, "references")
             .with_columns(query_references=self.get_query_reference_urls())
             .with_columns(
                 score=pl.struct(["references", "query_references"]).apply(
@@ -169,7 +169,7 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
     def get_citation_model_data(self) -> CitationModelData:
         citation_model_data_constructor = CitationModelDataConstructor(
             d3_document_id=-1,
-            documents_data=self.documents_data,
+            documents_frame=self.documents_frame,
             constructor_plugin=self.model_data_constructor_plugin,
             co_citation_analysis_scores_frame=self.get_co_citation_analysis_scores(),
             bibliographic_coupling_scores_frame=self.get_bibliographic_coupling_scores(),
@@ -187,7 +187,7 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
             abstract=self.response.abstract,
         )
 
-    def get_query_documents_data(self) -> pl.DataFrame:
+    def get_query_documents_frame(self) -> pl.DataFrame:
         query_document_info = self.get_query_document_info()
         return pl.DataFrame(
             {
@@ -198,7 +198,7 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
         )
 
     def get_cosine_similarities(self) -> CandidateScoresFrame:
-        query_document_data = self.get_query_documents_data()
+        query_document_data = self.get_query_documents_frame()
         query_embedding_function = select_query_embedding_function(self.language_model_choice)
 
         query_embedding = query_embedding_function(query_document_data)
@@ -218,7 +218,7 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
     def get_language_model_data(self) -> LanguageModelData:
         language_model_data_constructor = LanguageModelDataConstructor(
             d3_document_id=-1,
-            documents_data=self.documents_data,
+            documents_frame=self.documents_frame,
             constructor_plugin=self.model_data_constructor_plugin,
             cosine_similarity_scores_frame=self.get_cosine_similarities(),
         )

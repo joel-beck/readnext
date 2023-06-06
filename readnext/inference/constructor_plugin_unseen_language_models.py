@@ -1,4 +1,3 @@
-import polars as pl
 import spacy
 from gensim.models.fasttext import FastText, load_facebook_model
 from gensim.models.keyedvectors import KeyedVectors, load_word2vec_format
@@ -19,6 +18,7 @@ from readnext.modeling.language_models import (
     tfidf,
 )
 from readnext.utils import (
+    DocumentsFrame,
     Embedding,
     QueryEmbeddingFunction,
     TokenIds,
@@ -31,43 +31,43 @@ from readnext.utils import (
 
 
 @status_update("tokenizing query abstract with Spacy")
-def spacy_tokenize_query(query_documents_data: pl.DataFrame) -> Tokens:
+def spacy_tokenize_query(query_documents_frame: DocumentsFrame) -> Tokens:
     spacy_model = spacy.load(ModelVersions.spacy)
-    spacy_tokenizer = SpacyTokenizer(query_documents_data, spacy_model)
+    spacy_tokenizer = SpacyTokenizer(query_documents_frame, spacy_model)
 
-    return spacy_tokenizer.tokenize_single_document(query_documents_data["abstract"][0])
+    return spacy_tokenizer.tokenize_single_document(query_documents_frame["abstract"][0])
 
 
 @status_update("tokenizing query abstract with BERT")
-def bert_tokenize_query(query_documents_data: pl.DataFrame) -> TokenIds:
+def bert_tokenize_query(query_documents_frame: DocumentsFrame) -> TokenIds:
     bert_tokenizer_transformers = BertTokenizerFast.from_pretrained(
         ModelVersions.bert, do_lower_case=True, clean_text=True
     )
-    bert_tokenizer = BERTTokenizer(query_documents_data, bert_tokenizer_transformers)
+    bert_tokenizer = BERTTokenizer(query_documents_frame, bert_tokenizer_transformers)
 
-    return bert_tokenizer.tokenize_into_ids(query_documents_data["abstract"][0])
+    return bert_tokenizer.tokenize_into_ids(query_documents_frame["abstract"][0])
 
 
 @status_update("tokenizing query abstract with SciBERT")
-def scibert_tokenize_query(query_documents_data: pl.DataFrame) -> TokenIds:
+def scibert_tokenize_query(query_documents_frame: DocumentsFrame) -> TokenIds:
     scibert_tokenizer_transformers = BertTokenizerFast.from_pretrained(
         ModelVersions.scibert, do_lower_case=True, clean_text=True
     )
-    scibert_tokenizer = BERTTokenizer(query_documents_data, scibert_tokenizer_transformers)
+    scibert_tokenizer = BERTTokenizer(query_documents_frame, scibert_tokenizer_transformers)
 
-    return scibert_tokenizer.tokenize_into_ids(query_documents_data["abstract"][0])
+    return scibert_tokenizer.tokenize_into_ids(query_documents_frame["abstract"][0])
 
 
 @status_update("tokenizing query abstract with Longformer")
-def longformer_tokenize_query(query_documents_data: pl.DataFrame) -> TokenIds:
+def longformer_tokenize_query(query_documents_frame: DocumentsFrame) -> TokenIds:
     longformer_tokenizer_transformers = LongformerTokenizerFast.from_pretrained(
         ModelVersions.longformer
     )
     longformer_tokenizer = LongformerTokenizer(
-        query_documents_data, longformer_tokenizer_transformers
+        query_documents_frame, longformer_tokenizer_transformers
     )
 
-    return longformer_tokenizer.tokenize_into_ids(query_documents_data["abstract"][0])
+    return longformer_tokenizer.tokenize_into_ids(query_documents_frame["abstract"][0])
 
 
 def spacy_load_training_tokens_frame() -> TokensFrame:
@@ -75,9 +75,9 @@ def spacy_load_training_tokens_frame() -> TokensFrame:
 
 
 @status_update("embedding query abstract with TF-IDF")
-def tfidf_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
+def tfidf_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     learned_spacy_tokens_frame = spacy_load_training_tokens_frame()
-    query_abstract_tokenized = spacy_tokenize_query(query_documents_data)
+    query_abstract_tokenized = spacy_tokenize_query(query_documents_frame)
 
     tfidf_embedder = TFIDFEmbedder(
         tokens_frame=learned_spacy_tokens_frame,
@@ -88,9 +88,9 @@ def tfidf_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
 
 
 @status_update("embedding query abstract with BM25")
-def bm25_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
+def bm25_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     learned_spacy_tokens_frame = spacy_load_training_tokens_frame()
-    query_abstract_tokenized = spacy_tokenize_query(query_documents_data)
+    query_abstract_tokenized = spacy_tokenize_query(query_documents_frame)
 
     bm25_embedder = TFIDFEmbedder(tokens_frame=learned_spacy_tokens_frame, keyword_algorithm=bm25)
 
@@ -103,9 +103,9 @@ def word2vec_load_model() -> KeyedVectors:
 
 
 @status_update("embedding query abstract with Word2Vec")
-def word2vec_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
+def word2vec_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     learned_spacy_tokens_frame = spacy_load_training_tokens_frame()
-    query_abstract_tokenized = spacy_tokenize_query(query_documents_data)
+    query_abstract_tokenized = spacy_tokenize_query(query_documents_frame)
 
     word2vec_model = word2vec_load_model()
     word2vec_embedder = Word2VecEmbedder(
@@ -122,9 +122,9 @@ def glove_load_model() -> KeyedVectors:
 
 
 @status_update("embedding query abstract with Word2Vec")
-def glove_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
+def glove_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     learned_spacy_tokens_frame = spacy_load_training_tokens_frame()
-    query_abstract_tokenized = spacy_tokenize_query(query_documents_data)
+    query_abstract_tokenized = spacy_tokenize_query(query_documents_frame)
 
     glove_model = glove_load_model()
     glove_embedder = Word2VecEmbedder(
@@ -141,9 +141,9 @@ def fasttext_load_model() -> FastText:
 
 
 @status_update("embedding query abstract with FastText")
-def fasttest_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
+def fasttest_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     learned_spacy_tokens_frame = spacy_load_training_tokens_frame()
-    query_abstract_tokenized = spacy_tokenize_query(query_documents_data)
+    query_abstract_tokenized = spacy_tokenize_query(query_documents_frame)
 
     fasttext_model = fasttext_load_model()
     fasttext_embedder = FastTextEmbedder(
@@ -164,9 +164,9 @@ def bert_load_model() -> BertModel:
 
 
 @status_update("embedding query abstract with BERT")
-def bert_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
+def bert_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     learned_bert_tokens_frame = bert_load_training_tokens_frame()
-    query_abstract_tokenized = bert_tokenize_query(query_documents_data)
+    query_abstract_tokenized = bert_tokenize_query(query_documents_frame)
 
     bert_model = bert_load_model()
     bert_embedder = BERTEmbedder(
@@ -187,9 +187,9 @@ def scibert_load_model() -> BertModel:
 
 
 @status_update("embedding query abstract with SciBERT")
-def scibert_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
+def scibert_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     learned_scibert_tokens_frame = scibert_load_training_tokens_frame()
-    query_abstract_tokenized = scibert_tokenize_query(query_documents_data)
+    query_abstract_tokenized = scibert_tokenize_query(query_documents_frame)
 
     scibert_model = scibert_load_model()
     scibert_embedder = BERTEmbedder(
@@ -210,9 +210,9 @@ def longformer_load_model() -> LongformerModel:
 
 
 @status_update("embedding query abstract with Longformer")
-def longformer_embed_query(query_documents_data: pl.DataFrame) -> Embedding:
+def longformer_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     learned_longformer_tokens_frame = longformer_load_training_tokens_frame()
-    query_abstract_tokenized = longformer_tokenize_query(query_documents_data)
+    query_abstract_tokenized = longformer_tokenize_query(query_documents_frame)
 
     longformer_model = longformer_load_model()
     longformer_embedder = LongformerEmbedder(

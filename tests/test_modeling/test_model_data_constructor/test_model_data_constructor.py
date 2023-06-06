@@ -23,7 +23,7 @@ def test_initialization(model_data_constructor: ModelDataConstructor) -> None:
 
     # number of columns is different betwen citation and language model data and tested
     # in individual tests below
-    assert isinstance(model_data_constructor.documents_data, pl.DataFrame)
+    assert isinstance(model_data_constructor.documents_frame, pl.DataFrame)
 
     assert isinstance(model_data_constructor.info_columns, list)
     assert all(isinstance(col, str) for col in model_data_constructor.info_columns)
@@ -39,7 +39,7 @@ def test_exclude_query_document(
     model_data_constructor: ModelDataConstructor,
 ) -> None:
     excluded_df = model_data_constructor.exclude_query_document(
-        model_data_constructor.documents_data
+        model_data_constructor.documents_frame
     )
 
     assert isinstance(excluded_df, pl.DataFrame)
@@ -50,10 +50,10 @@ def test_exclude_query_document(
     "model_data_constructor",
     lazy_fixture(model_data_constructor_fixtures),
 )
-def test_filter_documents_data(
+def test_filter_documents_frame(
     model_data_constructor: ModelDataConstructor,
 ) -> None:
-    filtered_df = model_data_constructor.filter_documents_data()
+    filtered_df = model_data_constructor.filter_documents_frame()
 
     assert isinstance(filtered_df, pl.DataFrame)
     assert model_data_constructor.d3_document_id not in filtered_df.index

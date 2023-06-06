@@ -10,6 +10,7 @@ from readnext.utils import (
     CitationPointsFrame,
     CitationRanksFrame,
     ScoresFrame,
+    generate_frame_repr,
 )
 
 
@@ -53,6 +54,39 @@ class CitationModelDataConstructor(ModelDataConstructor):
         ]
     )
 
+    def __repr__(self) -> str:
+        d3_document_id_repr = f"d3_document_id={self.d3_document_id}"
+        query_document_repr = f"query_document={self.query_document!r}"
+        documents_frame_repr = f"documents_frame={generate_frame_repr(self.documents_frame)}"
+        constructor_plugin_repr = f"constructor_plugin={self.constructor_plugin!r}"
+        co_citation_analysis_scores_frame_repr = (
+            f"co_citation_analysis_scores_frame="
+            f"{generate_frame_repr(self.co_citation_analysis_scores_frame)}"
+        )
+        bibliographic_coupling_scores_frame_repr = (
+            f"bibliographic_coupling_scores_frame="
+            f"{generate_frame_repr(self.bibliographic_coupling_scores_frame)}"
+        )
+        info_columns_repr = f"info_columns={self.info_columns}"
+        feature_columns_repr = f"feature_columns={self.feature_columns}"
+        rank_columns_repr = f"rank_columns={self.rank_columns}"
+        points_columns_repr = f"points_columns={self.points_columns}"
+
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"  {d3_document_id_repr},\n"
+            f"  {query_document_repr},\n"
+            f"  {documents_frame_repr},\n"
+            f"  {constructor_plugin_repr},\n"
+            f"  {co_citation_analysis_scores_frame_repr},\n"
+            f"  {bibliographic_coupling_scores_frame_repr},\n"
+            f"  {info_columns_repr},\n"
+            f"  {feature_columns_repr},\n"
+            f"  {rank_columns_repr},\n"
+            f"  {points_columns_repr}\n"
+            ")"
+        )
+
     def get_co_citation_analysis_scores(self) -> CandidateScoresFrame:
         """
         Extract the co-citation analysis scores of all candidate documents and converts
@@ -73,20 +107,31 @@ class CitationModelDataConstructor(ModelDataConstructor):
 
     def get_features_frame(self) -> CitationFeaturesFrame:
         """
-        Collects all rank features into a dataframe with six columns:
+        Collects all citation feature into a dataframe with six columns:
         `candidate_d3_document_id`, `publication_date`, `citationcount_document`,
         `citationcount_author`, `co_citation_analysis_score`, and
         `bibliographic_coupling_score`.
+
+        Each joined scores frame contains a subset of the rows of the query documents
+        frame. For weighted scoring all candidate documents are kept (left join) and the
+        score is set to 0 for documents not present in the scores frame.
         """
         return (
-            self.get_query_documents_data()
-            .join(self.get_co_citation_analysis_scores(), on="candidate_d3_document_id", how="left")
+            self.get_query_documents_frame()
+            .join(
+                self.get_co_citation_analysis_scores(),
+                on="candidate_d3_document_id",
+                how="left",
+            )
             .rename({"score": "co_citation_analysis_score"})
             .join(
-                self.get_bibliographic_coupling_scores(), on="candidate_d3_document_id", how="left"
+                self.get_bibliographic_coupling_scores(),
+                on="candidate_d3_document_id",
+                how="left",
             )
             .rename({"score": "bibliographic_coupling_score"})
             .select(self.feature_columns)
+            .fill_null(0)
         )
 
     @staticmethod

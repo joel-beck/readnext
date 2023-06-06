@@ -21,6 +21,7 @@ from readnext.modeling import (
 )
 from readnext.modeling.language_models import LanguageModelChoice
 from readnext.utils import (
+    DocumentsFrame,
     get_arxiv_id_from_arxiv_url,
     get_semanticscholar_url_from_semanticscholar_id,
     read_df_from_parquet,
@@ -81,7 +82,7 @@ class InferenceDataConstructor:
 
     constructor_plugin: InferenceDataConstructorPlugin = field(init=False)
 
-    _documents_data: pl.DataFrame = field(init=False)
+    _documents_frame: DocumentsFrame = field(init=False)
     _citation_model_data: CitationModelData = field(init=False)
     _language_model_data: LanguageModelData = field(init=False)
 
@@ -98,32 +99,33 @@ class InferenceDataConstructor:
         # documents data must be set before the constructor plugin since documents data
         # is required to check if the query document is contained in the training data
         # and, thus, to select the correct constructor plugin
-        self._documents_data = self.get_documents_data()
+        self._documents_frame = self.get_documents_frame()
         self.constructor_plugin = self.get_constructor_plugin()
         self._citation_model_data = self.constructor_plugin.get_citation_model_data()
         self._language_model_data = self.constructor_plugin.get_language_model_data()
 
-    def get_documents_data(self) -> pl.DataFrame:
-        # NOTE: For now the data is limited to the first 1000 documents. This number
-        # must match the number of precomputed embeddings, cosine similarities, etc!
-        return read_df_from_parquet(DataPaths.merged.documents_data).head(1000)
+    def get_documents_frame(self) -> DocumentsFrame:
+        # NOTE: Remove head() call to use the whole documents frame
+        return read_df_from_parquet(DataPaths.merged.documents_frame).head(1000)
 
     def query_document_in_training_data(self) -> bool:
         if self.semanticscholar_id is not None:
             semanticscholar_url = get_semanticscholar_url_from_semanticscholar_id(
                 self.semanticscholar_id
             )
-            return semanticscholar_url in self._documents_data["semanticscholar_url"].to_list()
+            return semanticscholar_url in self._documents_frame["semanticscholar_url"].to_list()
 
         if self.semanticscholar_url is not None:
-            return self.semanticscholar_url in self._documents_data["semanticscholar_url"].to_list()
+            return (
+                self.semanticscholar_url in self._documents_frame["semanticscholar_url"].to_list()
+            )
 
         if self.arxiv_id is not None:
-            return self.arxiv_id in self._documents_data["arxiv_id"].to_list()
+            return self.arxiv_id in self._documents_frame["arxiv_id"].to_list()
 
         if self.arxiv_url is not None:
             arxiv_id = get_arxiv_id_from_arxiv_url(self.arxiv_url)
-            return arxiv_id in self._documents_data["arxiv_id"].to_list()
+            return arxiv_id in self._documents_frame["arxiv_id"].to_list()
 
         raise ValueError("No query document identifier provided.")
 
@@ -138,7 +140,7 @@ class InferenceDataConstructor:
                 arxiv_url=self.arxiv_url,
                 language_model_choice=self.language_model_choice,
                 feature_weights=self.feature_weights,
-                documents_data=self._documents_data,
+                documents_frame=self._documents_frame,
             )
 
         print(">>> Query document is not contained in training data <<<")
@@ -149,7 +151,7 @@ class InferenceDataConstructor:
             arxiv_url=self.arxiv_url,
             language_model_choice=self.language_model_choice,
             feature_weights=self.feature_weights,
-            documents_data=self._documents_data,
+            documents_frame=self._documents_frame,
         )
 
     def collect_document_identifier(self) -> DocumentIdentifier:

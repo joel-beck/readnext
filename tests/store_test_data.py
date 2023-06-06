@@ -35,10 +35,10 @@ def main() -> None:
     TEST_DATA_SIZE = 100
     test_data_dirpath = Path(__file__).parent / "data"
 
-    documents_data_path = DataPaths.merged.documents_data
+    documents_frame_path = DataPaths.merged.documents_frame
     results_paths = get_all_paths_from_dataclass(ResultsPaths)
 
-    all_paths = [documents_data_path, *results_paths]
+    all_paths = [documents_frame_path, *results_paths]
 
     for path in all_paths:
         destination_path = test_data_dirpath / f"test_{path.name}"

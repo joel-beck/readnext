@@ -24,6 +24,9 @@ class HybridScorer:
     language_model_data: LanguageModelData
     citation_model_data: CitationModelData
 
+    citation_model_scorer: CitationModelScorer = field(init=False)
+    language_model_scorer: LanguageModelScorer = field(init=False)
+
     citation_to_language_candidates: pl.DataFrame = field(init=False)
     citation_to_language_candidate_ids: pl.Series = field(init=False)
     citation_to_language_candidates_score: float = field(init=False)
@@ -36,6 +39,10 @@ class HybridScorer:
     language_to_citation_score: float = field(init=False)
     language_to_citation_recommendations: pl.DataFrame = field(init=False)
 
+    def __post_init__(self) -> None:
+        self.citation_model_scorer = CitationModelScorer(self.citation_model_data)
+        self.language_model_scorer = LanguageModelScorer(self.language_model_data)
+
     def set_citation_to_language_candidates(
         self,
         feature_weights: FeatureWeights = FeatureWeights(),
@@ -47,8 +54,8 @@ class HybridScorer:
         """
         # compute again for each method call since a different scoring feature or number
         # of candidates may be used
-        self.citation_to_language_candidates = CitationModelScorer.display_top_n(
-            self.citation_model_data, feature_weights, n=n_candidates
+        self.citation_to_language_candidates = self.citation_model_scorer.display_top_n(
+            feature_weights, n=n_candidates
         )
 
     def set_citation_to_language_candidate_ids(
@@ -81,11 +88,8 @@ class HybridScorer:
         # compute again for each method call since a different scoring feature or number
         # of candidates may be used
         self.set_citation_to_language_candidate_ids(feature_weights, n_candidates)
-        self.citation_to_language_candidates_score = CitationModelScorer.score_top_n(
-            self.citation_model_data,
-            metric,
-            feature_weights=feature_weights,
-            n=n_candidates,
+        self.citation_to_language_candidates_score = self.citation_model_scorer.score_top_n(
+            metric, feature_weights=feature_weights, n=n_candidates
         )
 
     def top_n_citation_to_language(
@@ -174,7 +178,8 @@ class HybridScorer:
         """
         self.set_language_to_citation_candidate_ids(n_candidates)
 
-        self.language_to_citation_recommendations = CitationModelScorer.display_top_n(
+        self.language_to_citation_recommendations = self.citation_model_scorer.display_top_n(
+            # TODO: How to pass a different input to the scorer?
             self.citation_model_data[self.language_to_citation_candidate_ids.to_list()],
             feature_weights,
             n=n_final,
@@ -193,7 +198,7 @@ class HybridScorer:
         """
         self.set_language_to_citation_candidate_score(metric, n_candidates)
 
-        self.language_to_citation_score = CitationModelScorer.score_top_n(
+        self.language_to_citation_score = self.citation_model_scorer.score_top_n(
             self.citation_model_data[self.language_to_citation_candidate_ids.to_list()],
             metric,
             feature_weights,

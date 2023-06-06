@@ -31,15 +31,15 @@ class SeenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
     def __post_init__(self) -> None:
         # must be called *before* `super().__post_init__()` since
         # `super().__post_init__()` already used the input converter
-        self.input_converter = InferenceDataInputConverter(documents_data=self.documents_data)
+        self.input_converter = InferenceDataInputConverter(documents_frame=self.documents_frame)
 
         super().__post_init__()
 
         # must be called *after* `super().__post_init__()` since it requires the
-        # `identifier` and `documents_data` attributes from the parent class
+        # `identifier` and `documents_frame` attributes from the parent class
         self.model_data_constructor_plugin = SeenModelDataConstructorPlugin(
             d3_document_id=self.identifier.d3_document_id,
-            documents_data=self.documents_data,
+            documents_frame=self.documents_frame,
         )
 
     def get_identifier_from_semanticscholar_id(self, semanticscholar_id: str) -> DocumentIdentifier:
@@ -119,7 +119,7 @@ class SeenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
 
         citation_model_data_constructor = CitationModelDataConstructor(
             d3_document_id=self.identifier.d3_document_id,
-            documents_data=self.documents_data,
+            documents_frame=self.documents_frame,
             constructor_plugin=self.model_data_constructor_plugin,
             co_citation_analysis_scores_frame=self.get_co_citation_analysis_scores(),
             bibliographic_coupling_scores_frame=self.get_bibliographic_coupling_scores(),
@@ -134,7 +134,7 @@ class SeenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
 
         language_model_data_constructor = LanguageModelDataConstructor(
             d3_document_id=self.identifier.d3_document_id,
-            documents_data=self.documents_data,
+            documents_frame=self.documents_frame,
             constructor_plugin=self.model_data_constructor_plugin,
             cosine_similarity_scores_frame=self.get_cosine_similarities(),
         )

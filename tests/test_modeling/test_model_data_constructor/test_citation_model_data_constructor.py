@@ -36,7 +36,7 @@ def test_citation_model_constructor_initialization(
     assert isinstance(model_data_constructor.bibliographic_coupling_scores_frame, pl.DataFrame)
     assert model_data_constructor.bibliographic_coupling_scores_frame.shape[1] == 1
 
-    assert model_data_constructor.documents_data.shape[1] == 25
+    assert model_data_constructor.documents_frame.shape[1] == 25
 
 
 @pytest.mark.parametrize(
@@ -127,7 +127,7 @@ def test_kw_only_initialization_citation_model_data_constructor() -> None:
 
 def test_kw_only_initialization_query_citation_model_data_constructor() -> None:
     with pytest.raises(TypeError):
-        UnseenCitationModelDataConstructor(
+        UnseenInferenceDataConstructorPlugin(
             -1,  # type: ignore
             pl.DataFrame(),
             pl.DataFrame(),

@@ -4,6 +4,7 @@ from typing import cast
 import polars as pl
 
 from readnext.utils import (
+    DocumentsFrame,
     get_arxiv_id_from_arxiv_url,
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
@@ -15,12 +16,12 @@ from readnext.utils import (
 class InferenceDataInputConverter:
     """Converts input to `InferenceDataConstructor` from and to D3 document ID."""
 
-    documents_data: pl.DataFrame
+    documents_frame: DocumentsFrame
 
     def get_d3_document_id_from_semanticscholar_url(self, semanticscholar_url: str) -> int:
         """Retrieve D3 document id from Semanticscholar url."""
         return (
-            self.documents_data.filter(pl.col("semanticscholar_url") == semanticscholar_url)
+            self.documents_frame.filter(pl.col("semanticscholar_url") == semanticscholar_url)
             .select("d3_document_id")
             .item()
         )
@@ -34,7 +35,7 @@ class InferenceDataInputConverter:
         """Retrieve D3 document id from Arxiv id."""
 
         return (
-            self.documents_data.filter(pl.col("arxiv_id") == arxiv_id)
+            self.documents_frame.filter(pl.col("arxiv_id") == arxiv_id)
             .select("d3_document_id")
             .item()
         )
@@ -49,7 +50,7 @@ class InferenceDataInputConverter:
         """Retrieve Semanticscholar url from D3 document id."""
         return cast(
             str,
-            self.documents_data.filter(pl.col("d3_document_id") == d3_document_id)
+            self.documents_frame.filter(pl.col("d3_document_id") == d3_document_id)
             .select("semanticscholar_url")
             .item(),
         )
@@ -63,7 +64,7 @@ class InferenceDataInputConverter:
         """Retrieve Arxiv id from D3 document id."""
         return cast(
             str,
-            self.documents_data.filter(pl.col("d3_document_id") == d3_document_id)
+            self.documents_frame.filter(pl.col("d3_document_id") == d3_document_id)
             .select("arxiv_id")
             .item(),
         )

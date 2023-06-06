@@ -8,9 +8,9 @@ from readnext.inference.constructor import (
     Features,
     InferenceDataConstructor,
     Labels,
+    Points,
     Ranks,
     Recommendations,
-    Points,
 )
 
 

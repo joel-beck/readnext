@@ -60,7 +60,7 @@ def test_attribute_getter_attributes_are_created_correctly(
 
     assert isinstance(attribute_getter.feature_weights, FeatureWeights)
 
-    assert isinstance(attribute_getter.documents_data, pl.DataFrame)
+    assert isinstance(attribute_getter.documents_frame, pl.DataFrame)
 
 
 # SECTION: SeenPaperAttributeGetter
@@ -112,12 +112,12 @@ def test_seen_paper_attribute_getter_attributes_are_created_correctly(
 
     assert isinstance(seen_paper_attribute_getter.input_converter, InferenceDataInputConverter)
 
-    assert isinstance(seen_paper_attribute_getter.input_converter.documents_data, pl.DataFrame)
+    assert isinstance(seen_paper_attribute_getter.input_converter.documents_frame, pl.DataFrame)
 
     # same data attribute is passed to the input converter
     assert_frame_equal(
-        seen_paper_attribute_getter.documents_data,
-        seen_paper_attribute_getter.input_converter.documents_data,
+        seen_paper_attribute_getter.documents_frame,
+        seen_paper_attribute_getter.input_converter.documents_frame,
     )
 
 

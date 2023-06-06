@@ -60,7 +60,7 @@ def main() -> None:
     citation_model_scorer.display_top_n()
 
     # SUBSECTION: TF-IDF
-    tfidf_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    tfidf_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.tfidf_cosine_similarities_parquet
     )
     tfidf_data_constructor = LanguageModelDataConstructor(
@@ -75,7 +75,7 @@ def main() -> None:
     tfidf_language_model_scorer.display_top_n()
 
     # SUBSECTION: BM25
-    bm25_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    bm25_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.bm25_cosine_similarities_parquet
     )
     bm25_data_constructor = LanguageModelDataConstructor(
@@ -90,7 +90,7 @@ def main() -> None:
     bm25_language_model_scorer.display_top_n()
 
     # SUBSECTION: Word2Vec
-    word2vec_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    word2vec_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.word2vec_cosine_similarities_parquet
     )
     word2vec_data_constructor = LanguageModelDataConstructor(
@@ -105,7 +105,7 @@ def main() -> None:
     word2vec_language_model_scorer.display_top_n()
 
     # SUBSECTION: GloVe
-    glove_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    glove_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.glove_cosine_similarities_parquet
     )
     glove_data_constructor = LanguageModelDataConstructor(
@@ -120,7 +120,7 @@ def main() -> None:
     glove_language_model_scorer.display_top_n()
 
     # SUBSECTION: FastText
-    fasttext_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    fasttext_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.fasttext_cosine_similarities_parquet
     )
     fasttext_data_constructor = LanguageModelDataConstructor(
@@ -135,7 +135,7 @@ def main() -> None:
     fasttext_language_model_scorer.display_top_n()
 
     # SUBSECTION: BERT
-    bert_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    bert_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.bert_cosine_similarities_parquet
     )
     bert_data_constructor = LanguageModelDataConstructor(
@@ -150,7 +150,7 @@ def main() -> None:
     bert_language_model_scorer.display_top_n()
 
     # SUBSECTION: SciBERT
-    scibert_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    scibert_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.scibert_cosine_similarities_parquet
     )
     scibert_data_constructor = LanguageModelDataConstructor(
@@ -165,7 +165,7 @@ def main() -> None:
     scibert_language_model_scorer.display_top_n()
 
     # SUBSECTION: Longformer
-    longformer_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    longformer_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.longformer_cosine_similarities_parquet
     )
     longformer_data_constructor = LanguageModelDataConstructor(

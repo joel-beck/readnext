@@ -40,7 +40,7 @@ def compare_hybrid_scores_by_document_id(
 
     # SECTION: Language Models
     # SUBSECTION: TF-IDF
-    tfidf_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    tfidf_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.tfidf_cosine_similarities_parquet
     )
     tfidf_data_constructor = LanguageModelDataConstructor(
@@ -52,7 +52,7 @@ def compare_hybrid_scores_by_document_id(
     tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
 
     # SUBSECTION: BM25
-    bm25_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    bm25_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.bm25_cosine_similarities_parquet
     )
     bm25_data_constructor = LanguageModelDataConstructor(
@@ -64,7 +64,7 @@ def compare_hybrid_scores_by_document_id(
     bm25_data = LanguageModelData.from_constructor(bm25_data_constructor)
 
     # SUBSECTION: Word2Vec
-    word2vec_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    word2vec_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.word2vec_cosine_similarities_parquet
     )
     word2vec_data_constructor = LanguageModelDataConstructor(
@@ -76,7 +76,7 @@ def compare_hybrid_scores_by_document_id(
     word2vec_data = LanguageModelData.from_constructor(word2vec_data_constructor)
 
     # SUBSECTION: GloVe
-    glove_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    glove_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.glove_cosine_similarities_parquet
     )
     glove_data_constructor = LanguageModelDataConstructor(
@@ -88,7 +88,7 @@ def compare_hybrid_scores_by_document_id(
     glove_data = LanguageModelData.from_constructor(glove_data_constructor)
 
     # SUBSECTION: FastText
-    fasttext_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    fasttext_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.fasttext_cosine_similarities_parquet
     )
     fasttext_data_constructor = LanguageModelDataConstructor(
@@ -100,7 +100,7 @@ def compare_hybrid_scores_by_document_id(
     fasttext_data = LanguageModelData.from_constructor(fasttext_data_constructor)
 
     # SUBSECTION: BERT
-    bert_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    bert_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.bert_cosine_similarities_parquet
     )
     bert_data_constructor = LanguageModelDataConstructor(
@@ -112,7 +112,7 @@ def compare_hybrid_scores_by_document_id(
     bert_data = LanguageModelData.from_constructor(bert_data_constructor)
 
     # SUBSECTION: SciBERT
-    scibert_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    scibert_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.scibert_cosine_similarities_parquet
     )
     scibert_data_constructor = LanguageModelDataConstructor(
@@ -124,7 +124,7 @@ def compare_hybrid_scores_by_document_id(
     scibert_data = LanguageModelData.from_constructor(scibert_data_constructor)
 
     # SUBSECTION: Longformer
-    longformer_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    longformer_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.longformer_cosine_similarities_parquet
     )
     longformer_data_constructor = LanguageModelDataConstructor(
@@ -259,11 +259,11 @@ def main() -> None:
     # NOTE: Remove to evaluate on full data
     documents_frame = documents_frame.head(1000)
 
-    bibliographic_coupling_scores: pl.DataFrame = read_df_from_parquet(
+    bibliographic_coupling_scores: ScoresFrame = read_df_from_parquet(
         ResultsPaths.citation_models.bibliographic_coupling_scores_parquet
     )
 
-    co_citation_analysis_scores: pl.DataFrame = read_df_from_parquet(
+    co_citation_analysis_scores: ScoresFrame = read_df_from_parquet(
         ResultsPaths.citation_models.co_citation_analysis_scores_parquet
     )
 

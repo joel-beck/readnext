@@ -53,7 +53,7 @@ class ModelDataConstructor(ABC):
     @abstractmethod
     def get_features_frame(self) -> CitationFeaturesFrame | LanguageFeaturesFrame:
         """
-        Construct the feature matrix consisting of a `candidate_d3_document_id` column
+        Construct the features frame consisting of a `candidate_d3_document_id` column
         and all rank columns.
         """
 

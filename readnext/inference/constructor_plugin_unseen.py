@@ -28,6 +28,7 @@ from readnext.utils import (
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
+    EmbeddingsFrame,
 )
 
 
@@ -202,7 +203,9 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
         query_embedding_function = select_query_embedding_function(self.language_model_choice)
 
         query_embedding = query_embedding_function(query_document_data)
-        candidate_embeddings: pl.DataFrame = load_embeddings_from_choice(self.language_model_choice)
+        candidate_embeddings: EmbeddingsFrame = load_embeddings_from_choice(
+            self.language_model_choice
+        )
 
         return (
             candidate_embeddings.pipe(self.select_scoring_input_columns, "embedding")

@@ -35,5 +35,5 @@ def bibliographic_coupling_scores(test_documents_frame: DocumentsFrame) -> pl.Da
 
 
 @pytest.fixture
-def tfidf_embeddings(test_tfidf_embeddings: pl.DataFrame) -> pl.DataFrame:
+def tfidf_embeddings(test_tfidf_embeddings: EmbeddingsFrame) -> pl.DataFrame:
     return precompute_cosine_similarities(test_tfidf_embeddings.head(10))

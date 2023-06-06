@@ -134,8 +134,7 @@ class CitationModelScorer(ModelScorer):
     ) -> pl.DataFrame:
         """
         Select and collect the top n recommendations from a citation model in a
-        dataframe. Add rank columns of the feature matrix and raw score columns of the
-        info matrix to the output dataframe.
+        dataframe.
 
         Note that the row order is NOT maintained by left joins! Thus, the output
         dataframe has to be sorted again in descending order by the `weighted_points`

@@ -52,8 +52,7 @@ class ModelData(ABC, Generic[TModelDataConstructor]):
 @dataclass(kw_only=True)
 class CitationModelData(ModelData):
     """
-    Holds the required data for the citation recommender model. Adds a feature matrix
-    which contains the citation and global document features.
+    Holds the required data for the citation recommender model.
     """
 
     features_frame: CitationFeaturesFrame

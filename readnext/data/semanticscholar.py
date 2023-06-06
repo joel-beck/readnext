@@ -10,7 +10,7 @@ from typing_extensions import NotRequired
 from readnext.utils import (
     get_arxiv_id_from_arxiv_url,
     get_semanticscholar_id_from_semanticscholar_url,
-    setup_progress_bar,
+    rich_progress_bar,
 )
 
 
@@ -134,7 +134,7 @@ class SemanticscholarRequest:
         """
         Send GET requests for multiple semanticscholar_urls in parallel.
         """
-        with setup_progress_bar() as progress_bar:
+        with rich_progress_bar() as progress_bar:
             return Parallel(n_jobs=n_jobs)(
                 delayed(self.from_semanticscholar_url)(url)
                 for url in progress_bar.track(

@@ -37,7 +37,7 @@ from readnext.utils.io import (
     write_df_to_parquet,
 )
 from readnext.utils.logging import suppress_transformers_logging
-from readnext.utils.progress_bar import setup_progress_bar, tqdm_progress_bar_wrapper
+from readnext.utils.progress_bar import rich_progress_bar, tqdm_progress_bar_wrapper
 from readnext.utils.protocols import (
     BertModelProtocol,
     FastTextModelProtocol,
@@ -85,7 +85,7 @@ __all__ = [
     "read_df_from_parquet",
     "write_df_to_parquet",
     "suppress_transformers_logging",
-    "setup_progress_bar",
+    "rich_progress_bar",
     "tqdm_progress_bar_wrapper",
     "WordVectorsProtocol",
     "BertModelProtocol",

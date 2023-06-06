@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from enum import Enum
 
 import numpy as np
-from tqdm import tqdm
+import polars as pl
+from joblib import Parallel, delayed
 
 from readnext.utils import (
     Embedding,
@@ -13,7 +14,7 @@ from readnext.utils import (
     Tokens,
     TokensFrame,
     Word2VecModelProtocol,
-    tqdm_progress_bar_wrapper,
+    rich_progress_bar,
 )
 
 
@@ -55,25 +56,35 @@ class Embedder(ABC):
 
     def compute_embeddings_frame(self) -> EmbeddingsFrame:
         """
-        Takes a mapping of document ids to tokenized documents (each document is a list
-        of strings) as input and computes the document embeddings.
+        Takes a tokens frame with the two columns `d3_document_id` and `tokens` as input
+        and computes the abstract embeddings for all documents.
 
         Output is a polars data frame with two columns named `d3_document_id` and
         `embedding`.
         """
-        with tqdm(total=len(self.tokens_frame)) as progress_bar:
-            embeddings_frame = self.tokens_frame.with_columns(
-                embedding=self.tokens_frame["tokens"].apply(
-                    tqdm_progress_bar_wrapper(
-                        progress_bar,
-                        # each row is implicitly converted to a polars Series from a
-                        # Python list during `apply()`
-                        lambda row: self.compute_embedding_single_document(row.to_list()),
-                    )
+        with rich_progress_bar() as progress_bar:
+            embeddings = Parallel(n_jobs=-1, prefer="threads")(
+                delayed(self.compute_embedding_single_document)(row["tokens"])
+                for row in progress_bar.track(
+                    self.tokens_frame.iter_rows(named=True), total=len(self.tokens_frame)
                 )
             )
 
-        return embeddings_frame.drop("tokens")
+        return self.tokens_frame.with_columns(embedding=pl.Series(embeddings))
+
+        # with tqdm(total=len(self.tokens_frame)) as progress_bar:
+        #     embeddings_frame = self.tokens_frame.with_columns(
+        #         embedding=self.tokens_frame["tokens"].apply(
+        #             tqdm_progress_bar_wrapper(
+        #                 progress_bar,
+        #                 # each row is implicitly converted to a polars Series from a
+        #                 # Python list during `apply()`
+        #                 lambda row: self.compute_embedding_single_document(row.to_list()),
+        #             )
+        #         )
+        #     )
+
+        # return embeddings_frame.drop("tokens")
 
     @staticmethod
     def word_embeddings_to_document_embedding(

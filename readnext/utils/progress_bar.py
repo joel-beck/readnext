@@ -12,7 +12,7 @@ from rich.progress import (
 from tqdm import tqdm
 
 
-def setup_progress_bar() -> Progress:
+def rich_progress_bar() -> Progress:
     """Setup a pretty `rich` progress bar."""
     return Progress(
         TextColumn("[progress.description]{task.description}"),

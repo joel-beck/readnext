@@ -24,11 +24,11 @@ from readnext.modeling import (
 from readnext.modeling.language_models import load_embeddings_from_choice
 from readnext.utils import (
     CandidateScoresFrame,
+    EmbeddingsFrame,
     get_arxiv_id_from_arxiv_url,
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
-    EmbeddingsFrame,
 )
 
 

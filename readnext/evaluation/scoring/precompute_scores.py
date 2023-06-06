@@ -1,5 +1,5 @@
 import polars as pl
-from tqdm import tqdm
+from joblib import Parallel, delayed
 
 from readnext.config import MagicNumbers
 from readnext.evaluation.metrics import (
@@ -8,7 +8,7 @@ from readnext.evaluation.metrics import (
     CountCommonReferences,
     PairwiseMetric,
 )
-from readnext.utils import DocumentsFrame, ScoresFrame, tqdm_progress_bar_wrapper
+from readnext.utils import DocumentsFrame, ScoresFrame, rich_progress_bar
 
 
 def generate_id_combinations_frame(documents_frame: DocumentsFrame) -> pl.DataFrame:
@@ -40,24 +40,22 @@ def pairwise_scores_from_columns(
     pairwise_metric: PairwiseMetric,
 ) -> ScoresFrame:
     """
-    Add third `score` that is computed from the `query_d3_document_id` and
+    Add third `score` column that is computed from the `query_d3_document_id` and
     `candidate_d3_document_id` columns by means of a given `pairwise_metric`.
     """
-    with tqdm(total=len(id_combinations_frame)) as progress_bar:
-        progress_bar.set_description(f"Precomputing {pairwise_metric.__class__.__name__} Scores...")
-
-        return id_combinations_frame.with_columns(
-            score=pl.struct(["query_d3_document_id", "candidate_d3_document_id"]).apply(
-                tqdm_progress_bar_wrapper(
-                    progress_bar,
-                    lambda struct: pairwise_metric.from_df(
-                        documents_frame,
-                        struct["query_d3_document_id"],
-                        struct["candidate_d3_document_id"],
-                    ),
-                )
+    with rich_progress_bar() as progress_bar:
+        scores = Parallel(n_jobs=-1, prefer="threads")(
+            delayed(pairwise_metric.from_df)(
+                documents_frame,
+                row["query_d3_document_id"],
+                row["candidate_d3_document_id"],
+            )
+            for row in progress_bar.track(
+                id_combinations_frame.iter_rows(named=True), total=len(id_combinations_frame)
             )
         )
+
+    return id_combinations_frame.with_columns(score=pl.Series(scores))
 
 
 def precompute_pairwise_scores(

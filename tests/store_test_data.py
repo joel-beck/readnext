@@ -6,7 +6,7 @@ folder to use for testing.
 from dataclasses import fields, is_dataclass
 from pathlib import Path
 
-from readnext.config import DataPaths, ResultsPaths, MagicNumbers
+from readnext.config import DataPaths, MagicNumbers, ResultsPaths
 from readnext.utils import read_df_from_parquet, write_df_to_parquet
 
 

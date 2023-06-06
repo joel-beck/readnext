@@ -7,11 +7,11 @@ from rich.progress import (
     TimeRemainingColumn,
 )
 
-from readnext.utils import setup_progress_bar
+from readnext.utils import rich_progress_bar
 
 
 def test_setup_progress_bar() -> None:
-    progress_bar = setup_progress_bar()
+    progress_bar = rich_progress_bar()
 
     assert isinstance(progress_bar, Progress)
     assert len(progress_bar.columns) == 9

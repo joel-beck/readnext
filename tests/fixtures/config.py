@@ -1,6 +1,8 @@
 from pathlib import Path
-from readnext.config import MagicNumbers
+
 import pytest
+
+from readnext.config import MagicNumbers
 
 
 @pytest.fixture(scope="session")

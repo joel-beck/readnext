@@ -3,7 +3,7 @@ from enum import Enum
 from pathlib import Path
 
 from readnext.config import ResultsPaths
-from readnext.utils import read_df_from_parquet, EmbeddingsFrame, ScoresFrame
+from readnext.utils import EmbeddingsFrame, ScoresFrame, read_df_from_parquet
 
 
 class LanguageModelChoice(Enum):

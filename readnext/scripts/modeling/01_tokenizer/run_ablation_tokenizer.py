@@ -8,7 +8,7 @@ import numpy as np
 from transformers import BertTokenizerFast
 
 from readnext.config import DataPaths, ModelVersions
-from readnext.utils import read_df_from_parquet, setup_progress_bar, suppress_transformers_logging
+from readnext.utils import read_df_from_parquet, rich_progress_bar, suppress_transformers_logging
 
 
 def main() -> None:
@@ -21,7 +21,7 @@ def main() -> None:
 
     token_ids_lengths = []
 
-    with setup_progress_bar() as progress_bar:
+    with rich_progress_bar() as progress_bar:
         for abstract in progress_bar.track(
             abstracts, total=len(abstracts), description="Tokenizing..."
         ):

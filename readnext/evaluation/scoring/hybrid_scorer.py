@@ -40,7 +40,6 @@ class HybridScorer:
     language_to_citation_recommendations: pl.DataFrame = field(init=False)
 
     def __post_init__(self) -> None:
-        # compute scores to create the candidate lists
         self.citation_model_scorer_candidates = CitationModelScorer(self.citation_model_data)
         self.language_model_scorer_candidates = LanguageModelScorer(self.language_model_data)
 
@@ -48,8 +47,8 @@ class HybridScorer:
         self, feature_weights: FeatureWeights, n_candidates: int
     ) -> pl.DataFrame:
         """
-        Store the intermediate candidate list from a Citation -> Language hybrid
-        recommender in instance attributes.
+        Get the intermediate candidate list from a Citation -> Language hybrid
+        recommender.
         """
         return self.citation_model_scorer_candidates.display_top_n(feature_weights, n_candidates)
 
@@ -58,8 +57,8 @@ class HybridScorer:
         citation_to_language_candidates: pl.DataFrame,
     ) -> list[int]:
         """
-        Store the intermediate candidate document ids from a Citation -> Language hybrid
-        recommender in instance attributes.
+        Get the intermediate candidate document ids from a Citation -> Language hybrid
+        recommender.
         """
         return citation_to_language_candidates["candidate_d3_document_id"].to_list()
 
@@ -70,8 +69,8 @@ class HybridScorer:
         n_candidates: int,
     ) -> int | float:
         """
-        Store the intermediate candidate scores from a Citation -> Language hybrid
-        recommender in instance attributes.
+        Computes the intermediate candidate scores from a Citation -> Language hybrid
+        recommender.
         """
         return self.citation_model_scorer_candidates.score_top_n(
             metric, feature_weights, n_candidates
@@ -93,8 +92,7 @@ class HybridScorer:
         n_final: int,
     ) -> pl.DataFrame:
         """
-        Select the top-n recommendations from a Citation -> Language hybrid recommender
-        and set them as an instance attribute.
+        Select the top-n recommendations from a Citation -> Language hybrid recommender.
         """
         return language_model_scorer_final.display_top_n(feature_weights, n_final)
 
@@ -106,8 +104,7 @@ class HybridScorer:
         n_final: int,
     ) -> int | float:
         """
-        Score the top-n recommendations from a Citation -> Language hybrid recommender
-        and set them as an instance attribute.
+        Score the top-n recommendations from a Citation -> Language hybrid recommender.
         """
         return language_model_scorer_final.score_top_n(metric, feature_weights, n_final)
 
@@ -118,6 +115,9 @@ class HybridScorer:
         n_candidates: int,
         n_final: int,
     ) -> None:
+        """
+        Set the instance attributes for the Citation -> Language hybrid recommender.
+        """
         self.citation_to_language_candidates = self.get_citation_to_language_candidates(
             feature_weights, n_candidates
         )
@@ -142,8 +142,8 @@ class HybridScorer:
         self, feature_weights: FeatureWeights, n_candidates: int
     ) -> pl.DataFrame:
         """
-        Store the intermediate candidate list from a Language -> Citation hybrid
-        recommender in instance attributes.
+        Get the intermediate candidate list from a Language -> Citation hybrid
+        recommender.
         """
         return self.language_model_scorer_candidates.display_top_n(feature_weights, n_candidates)
 
@@ -151,8 +151,8 @@ class HybridScorer:
         self, language_to_citation_candidates: pl.DataFrame
     ) -> list[int]:
         """
-        Store the intermediate candidate document ids from a Language -> Citation hybrid
-        recommender in instance attributes.
+        Get the intermediate candidate document ids from a Language -> Citation hybrid
+        recommender.
         """
         return language_to_citation_candidates["candidate_d3_document_id"].to_list()
 
@@ -163,8 +163,8 @@ class HybridScorer:
         n_candidates: int,
     ) -> int | float:
         """
-        Store the intermediate candidate scores from a Language -> Citation hybrid
-        recommender in instance attributes.
+        Computes the intermediate candidate scores from a Language -> Citation hybrid
+        recommender.
         """
         return self.language_model_scorer_candidates.score_top_n(
             metric, feature_weights, n_candidates
@@ -186,8 +186,7 @@ class HybridScorer:
         n_final: int,
     ) -> pl.DataFrame:
         """
-        Select the top-n recommendations from a Language -> Citation hybrid recommender
-        and set them as an instance attribute.
+        Select the top-n recommendations from a Language -> Citation hybrid recommender.
         """
         return citation_model_scorer_final.display_top_n(feature_weights, n_final)
 
@@ -199,8 +198,7 @@ class HybridScorer:
         n_final: int,
     ) -> int | float:
         """
-        Score the top-n recommendations from a Language -> Citation hybrid recommender
-        and set them as an instance attribute.
+        Score the top-n recommendations from a Language -> Citation hybrid recommender.
         """
         return citation_model_scorer_final.score_top_n(metric, feature_weights, n_final)
 
@@ -211,6 +209,10 @@ class HybridScorer:
         n_candidates: int,
         n_final: int,
     ) -> None:
+        """
+        Set instance attributes for the Language -> Citation hybrid recommender.
+        """
+
         self.language_to_citation_candidates = self.get_language_to_citation_candidates(
             feature_weights, n_candidates
         )

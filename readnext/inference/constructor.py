@@ -4,7 +4,6 @@ import polars as pl
 
 from readnext.config import DataPaths
 from readnext.evaluation.scoring import FeatureWeights, HybridScorer
-from readnext.inference import DocumentIdentifier
 from readnext.inference.constructor_plugin import (
     InferenceDataConstructorPlugin,
 )
@@ -14,6 +13,7 @@ from readnext.inference.constructor_plugin_seen import (
 from readnext.inference.constructor_plugin_unseen import (
     UnseenInferenceDataConstructorPlugin,
 )
+from readnext.inference.document_identifier import DocumentIdentifier
 from readnext.modeling import (
     CitationModelData,
     DocumentInfo,
@@ -185,7 +185,7 @@ class InferenceDataConstructor:
 
     def collect_ranks(self) -> Ranks:
         return Ranks(
-            publication_date=self._citation_model_data.points_frame.select(
+            publication_date=self._citation_model_data.ranks_frame.select(
                 "candidate_d3_document_id", "publication_date_rank"
             ),
             citationcount_document=self._citation_model_data.ranks_frame.select(
@@ -235,7 +235,7 @@ class InferenceDataConstructor:
             citation_model_data=self._citation_model_data,
             language_model_data=self._language_model_data,
         )
-        hybrid_scorer.recommend(feature_weights=self.feature_weights)
+        hybrid_scorer.fit(feature_weights=self.feature_weights)
 
         return Recommendations(
             citation_to_language_candidates=hybrid_scorer.citation_to_language_candidates,

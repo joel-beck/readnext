@@ -34,6 +34,7 @@ def main() -> None:
     print(inference_data_seen_from_semanticscholar_id.document_info)
     print(inference_data_seen_from_semanticscholar_id.features)
     print(inference_data_seen_from_semanticscholar_id.ranks)
+    print(inference_data_seen_from_semanticscholar_id.points)
     print(inference_data_seen_from_semanticscholar_id.labels)
     print(
         inference_data_seen_from_semanticscholar_id.recommendations.citation_to_language_candidates
@@ -56,6 +57,7 @@ def main() -> None:
     print(inference_data_seen_from_semanticscholar_url.document_info)
     print(inference_data_seen_from_semanticscholar_url.features)
     print(inference_data_seen_from_semanticscholar_url.ranks)
+    print(inference_data_seen_from_semanticscholar_url.points)
     print(inference_data_seen_from_semanticscholar_url.labels)
     print(inference_data_seen_from_semanticscholar_url.recommendations.citation_to_language)
 
@@ -73,6 +75,7 @@ def main() -> None:
     print(inference_data_seen_from_arxiv_id.document_info)
     print(inference_data_seen_from_arxiv_id.features)
     print(inference_data_seen_from_arxiv_id.ranks)
+    print(inference_data_seen_from_arxiv_id.points)
     print(inference_data_seen_from_arxiv_id.labels)
     print(inference_data_seen_from_arxiv_id.recommendations.citation_to_language)
 
@@ -90,6 +93,7 @@ def main() -> None:
     print(inference_data_seen_from_arxiv_url.document_info)
     print(inference_data_seen_from_arxiv_url.features)
     print(inference_data_seen_from_arxiv_url.ranks)
+    print(inference_data_seen_from_arxiv_url.points)
     print(inference_data_seen_from_arxiv_url.labels)
     print(inference_data_seen_from_arxiv_url.recommendations.citation_to_language)
 
@@ -111,6 +115,7 @@ def main() -> None:
     print(inference_data_unseen_from_arxiv_id.document_info)
     print(inference_data_unseen_from_arxiv_id.features)
     print(inference_data_unseen_from_arxiv_id.ranks)
+    print(inference_data_unseen_from_arxiv_id.points)
     print(inference_data_unseen_from_arxiv_id.labels)
     print(inference_data_unseen_from_arxiv_id.recommendations.citation_to_language)
     print(inference_data_unseen_from_arxiv_id.recommendations.citation_to_language_candidates)

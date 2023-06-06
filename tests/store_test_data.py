@@ -6,7 +6,7 @@ folder to use for testing.
 from dataclasses import fields, is_dataclass
 from pathlib import Path
 
-from readnext.config import DataPaths, ResultsPaths
+from readnext.config import DataPaths, ResultsPaths, MagicNumbers
 from readnext.utils import read_df_from_parquet, write_df_to_parquet
 
 
@@ -30,9 +30,6 @@ def get_all_paths_from_dataclass(dataclass: object, paths: list[Path] | None = N
 
 
 def main() -> None:
-    # NOTE: This number must be the same as the value of the `test_data_size()` fixture in
-    # `conftest.py`
-    TEST_DATA_SIZE = 100
     test_data_dirpath = Path(__file__).parent / "data"
 
     documents_frame_path = DataPaths.merged.documents_frame
@@ -47,7 +44,7 @@ def main() -> None:
             continue
 
         df = read_df_from_parquet(path)
-        write_df_to_parquet(df.head(TEST_DATA_SIZE), destination_path)
+        write_df_to_parquet(df.head(MagicNumbers.documents_frame_test_size), destination_path)
 
 
 if __name__ == "__main__":

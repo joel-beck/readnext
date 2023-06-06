@@ -1,4 +1,7 @@
-"""Tokenize paper abstracts in order to pass it to embedding models."""
+"""
+Tokenize abstracts for all documents to pass the tokenized abstracts to the embedding
+models.
+"""
 
 import spacy
 from transformers import BertTokenizerFast, LongformerTokenizerFast
@@ -10,8 +13,6 @@ from readnext.utils import read_df_from_parquet, write_df_to_parquet
 
 def main() -> None:
     documents_frame = read_df_from_parquet(DataPaths.merged.documents_frame)
-    # NOTE: Remove to train on full data
-    documents_frame = documents_frame.head(1000)
 
     spacy_model = spacy.load(ModelVersions.spacy)
     spacy_tokenizer = SpacyTokenizer(documents_frame, spacy_model)

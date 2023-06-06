@@ -85,6 +85,7 @@ class MagicNumbers:
 
     documents_frame_intermediate_cutoff: int = 1_000_000
     documents_frame_final_size: int = 10_000
+    documents_frame_test_size: int = 100
     scoring_limit: int = 100
     n_candidates: int = 20
     n_recommendations: int = 20

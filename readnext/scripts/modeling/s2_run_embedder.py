@@ -1,4 +1,6 @@
-"""Generate mappings of document ids to embeddings for all language models."""
+"""
+Generate embedding frames of document abstracts for all language models.
+"""
 
 from gensim.models.fasttext import load_facebook_model
 from gensim.models.keyedvectors import KeyedVectors, load_word2vec_format
@@ -27,26 +29,15 @@ def main() -> None:
     spacy_tokens_frame = read_df_from_parquet(
         ResultsPaths.language_models.spacy_tokenized_abstracts_parquet
     )
-    # NOTE: Remove to train on full data
-    spacy_tokens_frame = spacy_tokens_frame.head(1000)
-
     bert_token_ids_frame = read_df_from_parquet(
         ResultsPaths.language_models.bert_tokenized_abstracts_parquet
     )
-    # NOTE: Remove to train on full data
-    bert_token_ids_frame = bert_token_ids_frame.head(1000)
-
     scibert_token_ids_frame = read_df_from_parquet(
         ResultsPaths.language_models.scibert_tokenized_abstracts_parquet
     )
-    # NOTE: Remove to train on full data
-    scibert_token_ids_frame = scibert_token_ids_frame.head(1000)
-
     longformer_token_ids_frame = read_df_from_parquet(
         ResultsPaths.language_models.longformer_tokenized_abstracts_parquet
     )
-    # NOTE: Remove to train on full data
-    longformer_token_ids_frame = longformer_token_ids_frame.head(1000)
 
     tfidf_embedder = TFIDFEmbedder(tokens_frame=spacy_tokens_frame, keyword_algorithm=tfidf)
     tfidf_embeddings_frame = tfidf_embedder.compute_embeddings_frame()

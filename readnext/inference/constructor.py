@@ -1,6 +1,9 @@
 from dataclasses import dataclass, field
 
 import polars as pl
+from rich import box
+from rich.console import Console
+from rich.panel import Panel
 
 from readnext.config import DataPaths
 from readnext.evaluation.scoring import FeatureWeights, HybridScorer
@@ -129,8 +132,16 @@ class InferenceDataConstructor:
         raise ValueError("No query document identifier provided.")
 
     def get_constructor_plugin(self) -> InferenceDataConstructorPlugin:
+        console = Console()
+
         if self.query_document_in_training_data():
-            print(">>> Query document is contained in training data <<<")
+            console.print(
+                Panel.fit(
+                    "Query document is contained in the training data",
+                    box=box.ROUNDED,
+                    padding=(1, 1, 1, 1),
+                )
+            )
 
             return SeenInferenceDataConstructorPlugin(
                 semanticscholar_id=self.semanticscholar_id,
@@ -142,7 +153,13 @@ class InferenceDataConstructor:
                 documents_frame=self._documents_frame,
             )
 
-        print(">>> Query document is not contained in training data <<<")
+        console.print(
+            Panel.fit(
+                "Query document is [bold]not[/bold] contained in the training data",
+                box=box.ROUNDED,
+                padding=(1, 1, 1, 1),
+            )
+        )
         return UnseenInferenceDataConstructorPlugin(
             semanticscholar_id=self.semanticscholar_id,
             semanticscholar_url=self.semanticscholar_url,

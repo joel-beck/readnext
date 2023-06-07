@@ -9,9 +9,7 @@ from readnext.utils import write_df_to_parquet
 
 
 def main() -> None:
-    tfidf_embeddings = pl.scan_parquet(ResultsPaths.language_models.tfidf_embeddings_parquet).head(
-        1000
-    )
+    tfidf_embeddings = pl.scan_parquet(ResultsPaths.language_models.tfidf_embeddings_parquet)
 
     tfidf_cosine_similarities = precompute_cosine_similarities_polars(tfidf_embeddings)
 

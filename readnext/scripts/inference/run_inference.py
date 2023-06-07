@@ -1,5 +1,6 @@
+from readnext import readnext
 from readnext.evaluation.scoring import FeatureWeights
-from readnext.inference import InferenceData, InferenceDataConstructor, LanguageModelChoice
+from readnext.inference import LanguageModelChoice
 from readnext.utils import (
     get_arxiv_id_from_arxiv_url,
     get_semanticscholar_id_from_semanticscholar_url,
@@ -21,13 +22,10 @@ def main() -> None:
     arxiv_id = get_arxiv_id_from_arxiv_url(arxiv_url)
 
     # SUBSECTION: Input is semanticscholar ID
-    inference_data_constructor_seen_semanticscholar_id = InferenceDataConstructor(
+    inference_data_seen_from_semanticscholar_id = readnext(
         semanticscholar_id=semanticscholar_id,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
-    )
-    inference_data_seen_from_semanticscholar_id = InferenceData.from_constructor(
-        inference_data_constructor_seen_semanticscholar_id
     )
 
     print(inference_data_seen_from_semanticscholar_id.document_identifier)
@@ -44,13 +42,10 @@ def main() -> None:
     )
 
     # SUBSECTION: Input is semanticscholar URL
-    inference_data_constructor_seen_semanticscholar_url = InferenceDataConstructor(
+    inference_data_seen_from_semanticscholar_url = readnext(
         semanticscholar_url=semanticscholar_url,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
-    )
-    inference_data_seen_from_semanticscholar_url = InferenceData.from_constructor(
-        inference_data_constructor_seen_semanticscholar_url
     )
 
     print(inference_data_seen_from_semanticscholar_url.document_identifier)
@@ -62,13 +57,10 @@ def main() -> None:
     print(inference_data_seen_from_semanticscholar_url.recommendations.citation_to_language)
 
     # SUBSECTION: Input is arxiv ID
-    inference_data_constructor_seen_arxiv_id = InferenceDataConstructor(
+    inference_data_seen_from_arxiv_id = readnext(
         arxiv_id=arxiv_id,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
-    )
-    inference_data_seen_from_arxiv_id = InferenceData.from_constructor(
-        inference_data_constructor_seen_arxiv_id
     )
 
     print(inference_data_seen_from_arxiv_id.document_identifier)
@@ -80,13 +72,10 @@ def main() -> None:
     print(inference_data_seen_from_arxiv_id.recommendations.citation_to_language)
 
     # SUBSECTION: Input is arxiv URL
-    inference_data_constructor_seen_arxiv_url = InferenceDataConstructor(
+    inference_data_seen_from_arxiv_url = readnext(
         arxiv_url=arxiv_url,
         language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
-    )
-    inference_data_seen_from_arxiv_url = InferenceData.from_constructor(
-        inference_data_constructor_seen_arxiv_url
     )
 
     print(inference_data_seen_from_arxiv_url.document_identifier)
@@ -101,14 +90,10 @@ def main() -> None:
     arxiv_url = "https://arxiv.org/abs/2303.08774"
     arxiv_id = get_arxiv_id_from_arxiv_url(arxiv_url)
 
-    inference_data_constructor_unseen_arxiv_id = InferenceDataConstructor(
-        arxiv_url=arxiv_url,
-        language_model_choice=LanguageModelChoice.longformer,
+    inference_data_unseen_from_arxiv_id = readnext(
+        arxiv_id=arxiv_id,
+        language_model_choice=LanguageModelChoice.tfidf,
         feature_weights=FeatureWeights(),
-    )
-
-    inference_data_unseen_from_arxiv_id = InferenceData.from_constructor(
-        inference_data_constructor_unseen_arxiv_id
     )
 
     print(inference_data_unseen_from_arxiv_id.document_identifier)

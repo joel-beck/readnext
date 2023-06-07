@@ -35,11 +35,11 @@ def status_update(
     def decorator(func: Callable[TParams, TReturn]) -> Callable[TParams, TReturn]:
         @functools.wraps(func)
         def wrapper(*args: TParams.args, **kwargs: TParams.kwargs) -> TReturn:
-            print(f"Started {message}...")
+            print(f"{message}...", end=" ")
 
             result = func(*args, **kwargs)
 
-            print(f"Finished {message} ✅")
+            print("✅")
             return result
 
         return wrapper

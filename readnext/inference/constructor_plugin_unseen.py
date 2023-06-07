@@ -24,11 +24,13 @@ from readnext.modeling import (
 from readnext.modeling.language_models import load_embeddings_from_choice
 from readnext.utils import (
     CandidateScoresFrame,
+    Embedding,
     EmbeddingsFrame,
     get_arxiv_id_from_arxiv_url,
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
+    status_update,
 )
 
 
@@ -198,15 +200,10 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
             }
         )
 
-    def get_cosine_similarities(self) -> CandidateScoresFrame:
-        query_document_data = self.get_query_documents_frame()
-        query_embedding_function = select_query_embedding_function(self.language_model_choice)
-
-        query_embedding = query_embedding_function(query_document_data)
-        candidate_embeddings: EmbeddingsFrame = load_embeddings_from_choice(
-            self.language_model_choice
-        )
-
+    @status_update("Computing cosine similarities")
+    def compute_cosine_similarities(
+        self, query_embedding: Embedding, candidate_embeddings: EmbeddingsFrame
+    ) -> CandidateScoresFrame:
         return (
             candidate_embeddings.pipe(self.select_scoring_input_columns, "embedding")
             .with_columns(query_embedding=query_embedding)
@@ -217,6 +214,17 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
             )
             .pipe(self.select_scoring_output_columns)
         )
+
+    def get_cosine_similarities(self) -> CandidateScoresFrame:
+        query_document_data = self.get_query_documents_frame()
+        query_embedding_function = select_query_embedding_function(self.language_model_choice)
+
+        query_embedding = query_embedding_function(query_document_data)
+        candidate_embeddings: EmbeddingsFrame = load_embeddings_from_choice(
+            self.language_model_choice
+        )
+
+        return self.compute_cosine_similarities(query_embedding, candidate_embeddings)
 
     def get_language_model_data(self) -> LanguageModelData:
         language_model_data_constructor = LanguageModelDataConstructor(

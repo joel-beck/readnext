@@ -6,24 +6,11 @@ import polars as pl
 
 from readnext.config import MagicNumbers
 from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
+from readnext.evaluation.scoring.feature_weights import FeatureWeights
 from readnext.modeling import CitationModelData, LanguageModelData, ModelData
 from readnext.utils import CitationPointsFrame
 
 TModelData = TypeVar("TModelData", bound=ModelData)
-
-
-@dataclass
-class FeatureWeights:
-    """
-    Holds the weights for the citation features and global document features for the
-    non-language model recommender.
-    """
-
-    publication_date: float = 1.0
-    citationcount_document: float = 1.0
-    citationcount_author: float = 1.0
-    co_citation_analysis: float = 1.0
-    bibliographic_coupling: float = 1.0
 
 
 @dataclass
@@ -98,20 +85,27 @@ class CitationModelScorer(ModelScorer):
     ) -> pl.DataFrame:
         """
         Compute the weighted rowsums of a dataframe with one weight for each citation
-        feature column. The output dataframe has two columns named
-        `candidate_d3_document_id` and `weighted_points`.
+        feature column. The weights are normalized such that the weighted points are
+        independent of the weights' absolute magnitude and only the weights' ratio
+        matters.
+
+        The output dataframe has two columns named `candidate_d3_document_id` and
+        `weighted_points`.
         """
+        feature_weight_normalized = feature_weights.normalize()
 
         return points_frame.with_columns(
             weighted_points=(
-                feature_weights.publication_date * points_frame["publication_date_points"]
-                + feature_weights.citationcount_document
+                feature_weight_normalized.publication_date * points_frame["publication_date_points"]
+                + feature_weight_normalized.citationcount_document
                 * points_frame["citationcount_document_points"]
-                + feature_weights.citationcount_author * points_frame["citationcount_author_points"]
-                + feature_weights.co_citation_analysis * points_frame["co_citation_analysis_points"]
-                + feature_weights.bibliographic_coupling
+                + feature_weight_normalized.citationcount_author
+                * points_frame["citationcount_author_points"]
+                + feature_weight_normalized.co_citation_analysis
+                * points_frame["co_citation_analysis_points"]
+                + feature_weight_normalized.bibliographic_coupling
                 * points_frame["bibliographic_coupling_points"]
-            )
+            ).round(decimals=1)
         ).select(["candidate_d3_document_id", "weighted_points"])
 
     def select_top_n(self, feature_weights: FeatureWeights, n: int) -> pl.DataFrame:

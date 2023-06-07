@@ -16,8 +16,8 @@ from readnext.utils import DocumentsFrame, ScoresFrame
 def seen_paper_attribute_getter_from_semanticscholar_id(
     test_documents_frame: DocumentsFrame,
 ) -> SeenInferenceDataConstructorPlugin:
-    # NOTE: Make sure the test document is also seen in the TEST documents data, i.e. within
-    # the e.g. top 100 most cited papers
+    # Make sure the test document is also seen in the TEST documents data, i.e. within
+    # the e.g. top 100 most cited papers!
     semanticscholar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
 
     return SeenInferenceDataConstructorPlugin(

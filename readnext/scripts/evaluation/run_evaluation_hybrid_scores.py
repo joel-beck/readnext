@@ -256,7 +256,6 @@ def compare_hybrid_scores_by_document_id(
 def main() -> None:
     documents_frame: DocumentsFrame = read_df_from_parquet(DataPaths.merged.documents_frame)
     # query_d3_document_id = documents_frame["d3_document_id"][0]
-    # NOTE: Remove to evaluate on full data
     documents_frame = documents_frame.head(1000)
 
     bibliographic_coupling_scores: ScoresFrame = read_df_from_parquet(

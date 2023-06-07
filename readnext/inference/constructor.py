@@ -105,7 +105,6 @@ class InferenceDataConstructor:
         self._language_model_data = self.constructor_plugin.get_language_model_data()
 
     def get_documents_frame(self) -> DocumentsFrame:
-        # NOTE: Remove head() call to use the whole documents frame
         return read_df_from_parquet(DataPaths.merged.documents_frame).head(1000)
 
     def query_document_in_training_data(self) -> bool:

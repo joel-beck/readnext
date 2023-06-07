@@ -24,7 +24,6 @@ def main() -> None:
 
     # SECTION: Get Raw Data
     documents_frame = read_df_from_parquet(DataPaths.merged.documents_frame)
-    # NOTE: Remove to evaluate on full data
     documents_frame = documents_frame.head(1000)
 
     pl.DataFrame(dict(query_d3_document_id=documents_frame["d3_document_id"])).join(

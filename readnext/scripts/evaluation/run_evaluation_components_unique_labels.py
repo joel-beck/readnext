@@ -24,11 +24,6 @@ def main() -> None:
 
     # SECTION: Get Raw Data
     documents_frame = read_df_from_parquet(DataPaths.merged.documents_frame)
-    documents_frame = documents_frame.head(1000)
-
-    pl.DataFrame(dict(query_d3_document_id=documents_frame["d3_document_id"])).join(
-        pl.DataFrame(dict(candidate_d3_document_id=documents_frame["d3_document_id"])), how="cross"
-    )
 
     bibliographic_coupling_scores: ScoresFrame = read_df_from_parquet(
         ResultsPaths.citation_models.bibliographic_coupling_scores_parquet

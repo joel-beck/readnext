@@ -6,7 +6,7 @@ similarity scores.
 import polars as pl
 
 from readnext.config import MagicNumbers
-from readnext.utils import ScoresFrame
+from readnext.utils import rich_progress_bar
 
 
 def construct_combinations_frame(df: pl.LazyFrame, colname: str) -> pl.LazyFrame:
@@ -54,10 +54,15 @@ def select_highest_scores(df: pl.LazyFrame, n: int) -> pl.LazyFrame:
     )
 
 
-def precompute_values_polars(
-    df: pl.LazyFrame, colname: str, n: int = MagicNumbers.scoring_limit
+def precompute_values_slice(
+    documents_frame_slice: pl.LazyFrame, colname: str, n: int
 ) -> pl.DataFrame:
-    combinations_frame = construct_combinations_frame(df, colname).pipe(remove_matching_ids)
+    """
+    Compute scores for a slice of the full dataframe.
+    """
+    combinations_frame = construct_combinations_frame(documents_frame_slice, colname).pipe(
+        remove_matching_ids
+    )
 
     return (
         combinations_frame.pipe(add_concatenated_list_values_column, colname)
@@ -69,16 +74,51 @@ def precompute_values_polars(
     )
 
 
-def precompute_co_citations_polars(
-    df: pl.LazyFrame, n: int = MagicNumbers.scoring_limit
+def precompute_values_polars(
+    documents_frame: pl.LazyFrame, colname: str, n: int, description: str
 ) -> pl.DataFrame:
-    return precompute_values_polars(df, "citations", n)
+    """
+    Compute scores sequentially for slices of the full dataframe and stack the outputs vertically.
+    """
+    slice_size = 100
+    num_rows = documents_frame.collect().height
+    num_slices = num_rows // slice_size
+
+    with rich_progress_bar() as progress_bar:
+        return pl.concat(
+            [
+                precompute_values_slice(documents_frame.slice(next_index, slice_size), colname, n)
+                for next_index in progress_bar.track(
+                    range(0, num_rows, slice_size),
+                    total=num_slices,
+                    description=description,
+                )
+            ]
+        )
+
+
+def precompute_co_citations_polars(
+    documents_frame: pl.LazyFrame, n: int = MagicNumbers.scoring_limit
+) -> pl.DataFrame:
+    """
+    Compute co-citation analysis scores sequentially for slices of the full dataframe
+    and stack the outputs vertically.
+    """
+    return precompute_values_polars(
+        documents_frame, "citations", n, description="Computing Co-Citation Analysis Scores..."
+    )
 
 
 def precompute_co_references_polars(
-    df: pl.LazyFrame, n: int = MagicNumbers.scoring_limit
+    documents_frame: pl.LazyFrame, n: int = MagicNumbers.scoring_limit
 ) -> pl.DataFrame:
-    return precompute_values_polars(df, "references", n)
+    """
+    Compute bibliographic coupling scores sequentially for slices of the full dataframe
+    and stack the outputs vertically.
+    """
+    return precompute_values_polars(
+        documents_frame, "references", n, description="Computing Bibliographic Coupling Scores..."
+    )
 
 
 def explode_embeddings(df: pl.LazyFrame) -> pl.LazyFrame:
@@ -125,11 +165,13 @@ def concatenate_ids_and_scores(
     )
 
 
-def precompute_cosine_similarities_polars(
-    embeddings_frame: pl.LazyFrame,
-    n: int = MagicNumbers.scoring_limit,
-) -> ScoresFrame:
-    combinations_frame = construct_combinations_frame(embeddings_frame, "embedding").pipe(
+def precompute_cosine_similarities_slice(
+    embeddings_frame_slice: pl.LazyFrame, n: int
+) -> pl.LazyFrame:
+    """
+    Compute cosine similarities for a slice of the full dataframe.
+    """
+    combinations_frame = construct_combinations_frame(embeddings_frame_slice, "embedding").pipe(
         remove_matching_ids
     )
 
@@ -139,5 +181,30 @@ def precompute_cosine_similarities_polars(
         concatenate_ids_and_scores(combinations_frame.collect(), scores.collect())
         .lazy()
         .pipe(select_highest_scores, n)
-        .collect()
     )
+
+
+def precompute_cosine_similarities_polars(
+    embeddings_frame: pl.LazyFrame, n: int = MagicNumbers.scoring_limit
+) -> pl.DataFrame:
+    """
+    Compute cosine similarities sequentially for slices of the full dataframe and stack
+    the outputs vertically.
+    """
+    slice_size = 100
+    num_rows = embeddings_frame.collect().height
+    num_slices = num_rows // slice_size
+
+    with rich_progress_bar() as progress_bar:
+        return pl.concat(
+            [
+                precompute_cosine_similarities_slice(
+                    embeddings_frame.slice(next_index, slice_size), n
+                ).collect()
+                for next_index in progress_bar.track(
+                    range(0, num_rows, slice_size),
+                    total=num_slices,
+                    description="Computing Cosine Similarities...",
+                )
+            ]
+        )

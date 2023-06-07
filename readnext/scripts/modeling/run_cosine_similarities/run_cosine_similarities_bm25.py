@@ -1,14 +1,17 @@
 """
 Compute cosine similarities of abstract embeddings for all documents with BM25.
 """
+import polars as pl
+
 from readnext.config import ResultsPaths
-from readnext.evaluation.scoring import precompute_cosine_similarities
-from readnext.utils import read_df_from_parquet, write_df_to_parquet
+from readnext.evaluation.scoring import precompute_cosine_similarities_polars
+from readnext.utils import write_df_to_parquet
 
 
 def main() -> None:
-    bm25_embeddings = read_df_from_parquet(ResultsPaths.language_models.bm25_embeddings_parquet)
-    bm25_cosine_similarities = precompute_cosine_similarities(bm25_embeddings)
+    bm25_embeddings = pl.scan_parquet(ResultsPaths.language_models.bm25_embeddings_parquet)
+
+    bm25_cosine_similarities = precompute_cosine_similarities_polars(bm25_embeddings)
 
     write_df_to_parquet(
         bm25_cosine_similarities,

@@ -1,3 +1,8 @@
+"""
+Precompute co-citation analysis scores, bibliographic coupling scores and cosine
+similarity scores.
+"""
+
 import polars as pl
 from joblib import Parallel, delayed
 
@@ -8,7 +13,7 @@ from readnext.evaluation.metrics import (
     CountCommonReferences,
     PairwiseMetric,
 )
-from readnext.utils import DocumentsFrame, ScoresFrame, rich_progress_bar
+from readnext.utils import DocumentsFrame, EmbeddingsFrame, ScoresFrame, rich_progress_bar
 
 
 def generate_id_combinations_frame(documents_frame: DocumentsFrame) -> pl.DataFrame:
@@ -110,7 +115,7 @@ def precompute_co_references(
 
 
 def precompute_cosine_similarities(
-    documents_frame: DocumentsFrame,
+    embeddings_frame: EmbeddingsFrame,
     n: int = MagicNumbers.scoring_limit,
 ) -> ScoresFrame:
     """
@@ -119,4 +124,4 @@ def precompute_cosine_similarities(
 
     The input dataframe has two columns named `d3_document_id` and `embedding`.
     """
-    return precompute_pairwise_scores(documents_frame, CosineSimilarity(), n)
+    return precompute_pairwise_scores(embeddings_frame, CosineSimilarity(), n)

@@ -5,8 +5,9 @@ from rich import box
 from rich.console import Console
 from rich.panel import Panel
 
+from readnext import FeatureWeights, LanguageModelChoice
 from readnext.config import DataPaths
-from readnext.evaluation.scoring import FeatureWeights, HybridScorer
+from readnext.evaluation.scoring import HybridScorer
 from readnext.inference.constructor_plugin import (
     InferenceDataConstructorPlugin,
 )
@@ -22,7 +23,6 @@ from readnext.modeling import (
     DocumentInfo,
     LanguageModelData,
 )
-from readnext.modeling.language_models import LanguageModelChoice
 from readnext.utils import (
     DocumentsFrame,
     get_arxiv_id_from_arxiv_url,

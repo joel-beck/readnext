@@ -1,6 +1,4 @@
-from readnext import readnext
-from readnext.evaluation.scoring import FeatureWeights
-from readnext.inference import LanguageModelChoice
+from readnext import FeatureWeights, LanguageModelChoice, readnext
 from readnext.utils import (
     get_arxiv_id_from_arxiv_url,
     get_semanticscholar_id_from_semanticscholar_url,

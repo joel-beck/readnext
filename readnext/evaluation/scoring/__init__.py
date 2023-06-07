@@ -1,4 +1,3 @@
-from readnext.evaluation.scoring.feature_weights import FeatureWeights
 from readnext.evaluation.scoring.hybrid_score import HybridScore, compare_hybrid_scores
 from readnext.evaluation.scoring.hybrid_scorer import HybridScorer
 from readnext.evaluation.scoring.model_scorer import CitationModelScorer, LanguageModelScorer
@@ -18,7 +17,6 @@ __all__ = [
     "compare_hybrid_scores",
     "HybridScorer",
     "CitationModelScorer",
-    "FeatureWeights",
     "LanguageModelScorer",
     "precompute_co_citations",
     "precompute_co_references",
@@ -26,5 +24,4 @@ __all__ = [
     "precompute_co_citations_polars",
     "precompute_co_references_polars",
     "precompute_cosine_similarities_polars",
-    "FeatureWeights",
 ]

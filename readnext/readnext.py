@@ -1,5 +1,5 @@
-from readnext.evaluation.scoring import FeatureWeights
-from readnext.inference import InferenceData, InferenceDataConstructor, LanguageModelChoice
+from readnext import FeatureWeights, LanguageModelChoice
+from readnext.inference import InferenceData, InferenceDataConstructor
 from readnext.utils import suppress_transformers_logging
 
 

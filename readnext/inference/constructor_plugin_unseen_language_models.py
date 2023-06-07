@@ -3,12 +3,12 @@ from gensim.models.fasttext import FastText, load_facebook_model
 from gensim.models.keyedvectors import KeyedVectors, load_word2vec_format
 from transformers import BertModel, BertTokenizerFast, LongformerModel, LongformerTokenizerFast
 
+from readnext import LanguageModelChoice
 from readnext.config import ModelPaths, ModelVersions, ResultsPaths
 from readnext.modeling.language_models import (
     BERTEmbedder,
     BERTTokenizer,
     FastTextEmbedder,
-    LanguageModelChoice,
     LongformerEmbedder,
     LongformerTokenizer,
     SpacyTokenizer,

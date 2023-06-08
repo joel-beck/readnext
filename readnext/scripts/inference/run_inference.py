@@ -90,7 +90,7 @@ def main() -> None:
 
     inference_data_unseen_from_arxiv_id = readnext(
         arxiv_id=arxiv_id,
-        language_model_choice=LanguageModelChoice.tfidf,
+        language_model_choice=LanguageModelChoice.bm25,
         feature_weights=FeatureWeights(),
     )
 

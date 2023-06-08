@@ -26,9 +26,11 @@ def remove_matching_ids(df: pl.LazyFrame) -> pl.LazyFrame:
     return df.filter(pl.col("query_d3_document_id") != pl.col("candidate_d3_document_id"))
 
 
-def add_concatenated_list_values_column(df: pl.LazyFrame, colname: str) -> pl.LazyFrame:
+def add_concatenated_list_values_column(
+    df: pl.LazyFrame, query_colname: str, candidate_colname: str
+) -> pl.LazyFrame:
     return df.with_columns(
-        concatenated=pl.col(f"query_{colname}").list.concat(pl.col(f"candidate_{colname}"))
+        concatenated=pl.col(query_colname).list.concat(pl.col(candidate_colname))
     )
 
 
@@ -39,6 +41,16 @@ def add_unique_list_values_column(df: pl.LazyFrame) -> pl.LazyFrame:
 def add_score_column(df: pl.LazyFrame) -> pl.LazyFrame:
     return df.with_columns(
         score=pl.col("concatenated").list.lengths() - pl.col("unique").list.lengths().cast(pl.Int64)
+    )
+
+
+def count_common_values(
+    df: pl.LazyFrame, query_colname: str, candidate_colname: str
+) -> pl.LazyFrame:
+    return (
+        df.pipe(add_concatenated_list_values_column, query_colname, candidate_colname)
+        .pipe(add_unique_list_values_column)
+        .pipe(add_score_column)
     )
 
 
@@ -54,27 +66,28 @@ def select_highest_scores(df: pl.LazyFrame, n: int) -> pl.LazyFrame:
     )
 
 
-def precompute_values_slice(
+def precompute_common_values_slice(
     documents_frame_slice: pl.LazyFrame, colname: str, n: int
 ) -> pl.DataFrame:
     """
     Compute scores for a slice of the full dataframe.
     """
+    query_colname = f"query_{colname}"
+    candidate_colname = f"candidate_{colname}"
+
     combinations_frame = construct_combinations_frame(documents_frame_slice, colname).pipe(
         remove_matching_ids
     )
 
     return (
-        combinations_frame.pipe(add_concatenated_list_values_column, colname)
-        .pipe(add_unique_list_values_column)
-        .pipe(add_score_column)
+        combinations_frame.pipe(count_common_values, query_colname, candidate_colname)
         .pipe(select_output_columns)
         .pipe(select_highest_scores, n)
         .collect()
     )
 
 
-def precompute_values_polars(
+def precompute_common_values_polars(
     documents_frame: pl.LazyFrame, colname: str, n: int, description: str
 ) -> pl.DataFrame:
     """
@@ -87,7 +100,9 @@ def precompute_values_polars(
     with rich_progress_bar() as progress_bar:
         return pl.concat(
             [
-                precompute_values_slice(documents_frame.slice(next_index, slice_size), colname, n)
+                precompute_common_values_slice(
+                    documents_frame.slice(next_index, slice_size), colname, n
+                )
                 for next_index in progress_bar.track(
                     range(0, num_rows, slice_size),
                     total=num_slices,
@@ -104,7 +119,7 @@ def precompute_co_citations_polars(
     Compute co-citation analysis scores sequentially for slices of the full dataframe
     and stack the outputs vertically.
     """
-    return precompute_values_polars(
+    return precompute_common_values_polars(
         documents_frame, "citations", n, description="Computing Co-Citation Analysis Scores..."
     )
 
@@ -116,7 +131,7 @@ def precompute_co_references_polars(
     Compute bibliographic coupling scores sequentially for slices of the full dataframe
     and stack the outputs vertically.
     """
-    return precompute_values_polars(
+    return precompute_common_values_polars(
         documents_frame, "references", n, description="Computing Bibliographic Coupling Scores..."
     )
 
@@ -144,11 +159,7 @@ def cosine_similarity(expression_1: pl.Expr, expression_2: pl.Expr) -> pl.Expr:
 def compute_cosine_similarities(df: pl.LazyFrame) -> pl.LazyFrame:
     return (
         df.groupby("row_nr", maintain_order=True)
-        .agg(
-            cosine_similarity(pl.col("query_embedding"), pl.col("candidate_embedding")).alias(
-                "score"
-            )
-        )
+        .agg(score=cosine_similarity(pl.col("query_embedding"), pl.col("candidate_embedding")))
         .drop("row_nr")
     )
 

@@ -1,13 +1,10 @@
 from dataclasses import dataclass, field
 
+import numpy as np
 import polars as pl
 
 from readnext.data import SemanticscholarRequest, SemanticScholarResponse
-from readnext.evaluation.metrics import (
-    CosineSimilarity,
-    CountCommonCitations,
-    CountCommonReferences,
-)
+from readnext.evaluation.scoring import cosine_similarity, count_common_values
 from readnext.inference.constructor_plugin import InferenceDataConstructorPlugin
 from readnext.inference.constructor_plugin_unseen_language_models import (
     select_query_embedding_function,
@@ -130,7 +127,7 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
         )
 
     @staticmethod
-    def select_scoring_input_columns(df: pl.DataFrame, colname: str) -> pl.DataFrame:
+    def select_scoring_input_columns(df: pl.LazyFrame, colname: str) -> pl.LazyFrame:
         return df.select(["d3_document_id", colname]).rename(
             {
                 "d3_document_id": "candidate_d3_document_id",
@@ -138,35 +135,27 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
         )
 
     @staticmethod
-    def select_scoring_output_columns(df: pl.DataFrame) -> CandidateScoresFrame:
+    def select_scoring_output_columns(df: pl.LazyFrame) -> pl.LazyFrame:
         return df.select("candidate_d3_document_id", "score").sort("score", descending=True)
 
     def get_co_citation_analysis_scores(self) -> CandidateScoresFrame:
         return (
-            self.documents_frame.pipe(self.select_scoring_input_columns, "citations")
+            self.documents_frame.lazy()
+            .pipe(self.select_scoring_input_columns, "citations")
             .with_columns(query_citations=self.get_query_citation_urls())
-            .with_columns(
-                score=pl.struct(["citations", "query_citations"]).apply(
-                    lambda df: CountCommonCitations.count_common_values(
-                        df["citations"], df["query_citations"]  # type: ignore
-                    ),
-                ),
-            )
+            .pipe(count_common_values, "query_citations", "citations")
             .pipe(self.select_scoring_output_columns)
+            .collect()
         )
 
     def get_bibliographic_coupling_scores(self) -> CandidateScoresFrame:
         return (
-            self.documents_frame.pipe(self.select_scoring_input_columns, "references")
+            self.documents_frame.lazy()
+            .pipe(self.select_scoring_input_columns, "references")
             .with_columns(query_references=self.get_query_reference_urls())
-            .with_columns(
-                score=pl.struct(["references", "query_references"]).apply(
-                    lambda df: CountCommonReferences.count_common_values(
-                        df["references"], df["query_references"]  # type: ignore
-                    ),
-                ),
-            )
+            .pipe(count_common_values, "query_references", "references")
             .pipe(self.select_scoring_output_columns)
+            .collect()
         )
 
     def get_citation_model_data(self) -> CitationModelData:
@@ -200,19 +189,28 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
             }
         )
 
+    def align_with_exploded_candidate_embeddings(
+        self, query_embedding: Embedding, candidate_embeddings: EmbeddingsFrame
+    ) -> pl.LazyFrame:
+        explosion_factor = candidate_embeddings.height
+        query_embedding_exploded = pl.Series(np.tile(query_embedding, explosion_factor))
+
+        return (
+            candidate_embeddings.lazy()
+            .pipe(self.select_scoring_input_columns, "embedding")
+            .explode("embedding")
+            .with_columns(query_embedding=query_embedding_exploded)
+        )
+
     @status_update("Computing cosine similarities")
     def compute_cosine_similarities(
         self, query_embedding: Embedding, candidate_embeddings: EmbeddingsFrame
     ) -> CandidateScoresFrame:
         return (
-            candidate_embeddings.pipe(self.select_scoring_input_columns, "embedding")
-            .with_columns(query_embedding=query_embedding)
-            .with_columns(
-                score=pl.struct(["embedding", "query_embedding"]).apply(
-                    lambda df: CosineSimilarity.score(df["embedding"], df["query_embedding"]),  # type: ignore # noqa: E501
-                ),
-            )
-            .pipe(self.select_scoring_output_columns)
+            self.align_with_exploded_candidate_embeddings(query_embedding, candidate_embeddings)
+            .groupby("candidate_d3_document_id", maintain_order=True)
+            .agg(score=cosine_similarity(pl.col("query_embedding"), pl.col("embedding")))
+            .collect()
         )
 
     def get_cosine_similarities(self) -> CandidateScoresFrame:

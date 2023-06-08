@@ -1,6 +1,7 @@
 import functools
 from collections.abc import Callable
 from pathlib import Path
+from time import perf_counter
 from typing import Concatenate, Literal, ParamSpec, TypeVar
 
 import polars as pl
@@ -10,11 +11,11 @@ TReturn = TypeVar("TReturn")
 
 
 def status_update(
-    message: str = "Processing...",
+    message: str = "Processing...", padding_with: int = 40
 ) -> Callable[[Callable[TParams, TReturn]], Callable[TParams, TReturn]]:
     """
-    Decorator factory for functions that print a status message before calling the
-    decorated function.
+    Decorator factory for functions that print a status message and the execution time
+    before calling the decorated function.
 
     This decorator factory generates a decorator intended for functions that perform a
     long-running operation. It prints the status message before calling the decorated
@@ -35,11 +36,16 @@ def status_update(
     def decorator(func: Callable[TParams, TReturn]) -> Callable[TParams, TReturn]:
         @functools.wraps(func)
         def wrapper(*args: TParams.args, **kwargs: TParams.kwargs) -> TReturn:
-            print(f"{message}...", end=" ")
+            message_padded = message.ljust(padding_with, ".")
+            print(message_padded, end=" ")
+
+            start = perf_counter()
 
             result = func(*args, **kwargs)
 
-            print("✅")
+            stop = perf_counter()
+
+            print(f"✅ ({stop - start:.2f} seconds)")
             return result
 
         return wrapper

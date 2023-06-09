@@ -1,5 +1,7 @@
-from dataclasses import dataclass, field
+from typing import Any
 
+from pydantic import Field, HttpUrl, root_validator, validator
+from pydantic.dataclasses import dataclass
 from rich import box
 from rich.console import Console
 from rich.panel import Panel
@@ -32,19 +34,62 @@ from readnext.utils import (
 )
 
 
-@dataclass(kw_only=True)
+class Config:
+    """
+    See docs for pydantic dataclass config at
+    https://docs.pydantic.dev/latest/usage/dataclasses/#dataclass-config
+    """
+
+    arbitrary_types_allowed = True
+
+
+@dataclass(config=Config, kw_only=True)
 class InferenceDataConstructor:
-    semanticscholar_id: str | None = None
-    semanticscholar_url: str | None = None
-    arxiv_id: str | None = None
-    arxiv_url: str | None = None
+    # semanticscholar id is a 40 character hex string
+    # TODO: This is currently not checked when using pydantic dataclasses and not
+    # pydantic BaseModel
+    semanticscholar_id: str | None = Field(default=None, regex=r"^[0-9a-f]{40}$")
+    semanticscholar_url: HttpUrl | str | None = None
+    # arxiv id must start with 4 digits, followed by a dot, followed by 5 digits
+    arxiv_id: str | None = Field(default=None, regex=r"^\d{4}\.\d{5}$")
+    arxiv_url: HttpUrl | str | None = None
     language_model_choice: LanguageModelChoice
     feature_weights: FeatureWeights
 
-    documents_frame: DocumentsFrame = field(init=False)
-    constructor_plugin: InferenceDataConstructorPlugin = field(init=False)
-    citation_model_data: CitationModelData = field(init=False)
-    language_model_data: LanguageModelData = field(init=False)
+    documents_frame: DocumentsFrame = Field(init=False)
+    constructor_plugin: InferenceDataConstructorPlugin = Field(init=False)
+    citation_model_data: CitationModelData = Field(init=False)
+    language_model_data: LanguageModelData = Field(init=False)
+
+    @validator("semanticscholar_url")
+    def validate_semanticscholar_url(cls, semanticscholar_url: str | None) -> str | None:
+        if semanticscholar_url is not None and not semanticscholar_url.startswith(
+            "https://www.semanticscholar.org/paper/"
+        ):
+            raise ValueError("Invalid Semanticscholar URL")
+        return semanticscholar_url
+
+    @validator("arxiv_url")
+    def validate_arxiv_url(cls, arxiv_url: str | None) -> str | None:
+        if arxiv_url is not None and not arxiv_url.startswith("https://arxiv.org/abs/"):
+            raise ValueError("Invalid Arxiv URL")
+        return arxiv_url
+
+    @root_validator(pre=True)
+    def check_valid_id_and_url(cls, values: dict[str, Any]) -> dict[str, Any]:
+        if (
+            values.get("semanticscholar_id") is None
+            and values.get("semanticscholar_url") is None
+            and values.get("arxiv_id") is None
+            and values.get("arxiv_url") is None
+        ):
+            raise ValueError(
+                """
+                At least one of semanticscholar_id, semanticscholar_url, arxiv_id,
+                arxiv_url must be provided.
+                """
+            )
+        return values
 
     def __post_init__(self) -> None:
         """

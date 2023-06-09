@@ -1,3 +1,5 @@
+from pydantic import HttpUrl
+
 from readnext import FeatureWeights, LanguageModelChoice
 from readnext.inference import InferenceData, InferenceDataConstructor
 from readnext.utils import suppress_transformers_logging
@@ -6,9 +8,9 @@ from readnext.utils import suppress_transformers_logging
 def readnext(
     *,
     semanticscholar_id: str | None = None,
-    semanticscholar_url: str | None = None,
+    semanticscholar_url: HttpUrl | str | None = None,
     arxiv_id: str | None = None,
-    arxiv_url: str | None = None,
+    arxiv_url: HttpUrl | str | None = None,
     language_model_choice: LanguageModelChoice,
     feature_weights: FeatureWeights,
 ) -> InferenceData:

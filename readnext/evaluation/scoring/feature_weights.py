@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-
+from pydantic import Field
+from pydantic.dataclasses import dataclass
 from typing_extensions import Self
 
 
@@ -10,11 +10,11 @@ class FeatureWeights:
     non-language model recommender.
     """
 
-    publication_date: float = 1.0
-    citationcount_document: float = 1.0
-    citationcount_author: float = 1.0
-    co_citation_analysis: float = 1.0
-    bibliographic_coupling: float = 1.0
+    publication_date: float = Field(default=1.0, ge=0)
+    citationcount_document: float = Field(default=1.0, ge=0)
+    citationcount_author: float = Field(default=1.0, ge=0)
+    co_citation_analysis: float = Field(default=1.0, ge=0)
+    bibliographic_coupling: float = Field(default=1.0, ge=0)
 
     def normalize(self) -> Self:
         """

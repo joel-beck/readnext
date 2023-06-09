@@ -66,6 +66,9 @@ class ModelScorer(ABC, Generic[TModelData]):
     ) -> float | int:
         ...
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(\n  model_data={self.model_data!r}\n)"
+
     @staticmethod
     def merge_on_candidate_d3_document_id(df: pl.DataFrame, other: pl.DataFrame) -> pl.DataFrame:
         """

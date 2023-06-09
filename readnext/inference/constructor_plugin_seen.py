@@ -16,7 +16,7 @@ from readnext.modeling import (
 from readnext.modeling.language_models import (
     load_cosine_similarities_from_choice,
 )
-from readnext.utils import ScoresFrame, read_df_from_parquet
+from readnext.utils import ScoresFrame, generate_frame_repr, read_df_from_parquet
 
 
 @dataclass(kw_only=True)
@@ -40,6 +40,33 @@ class SeenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
         self.model_data_constructor_plugin = SeenModelDataConstructorPlugin(
             d3_document_id=self.identifier.d3_document_id,
             documents_frame=self.documents_frame,
+        )
+
+    def __repr__(self) -> str:
+        semanticscholar_id_repr = f"semanticscholar_id={self.identifier.semanticscholar_id}"
+        semanticscholar_url_repr = f"semanticscholar_url={self.identifier.semanticscholar_url}"
+        arxiv_id_repr = f"arxiv_id={self.identifier.arxiv_id}"
+        arxiv_url_repr = f"arxiv_url={self.identifier.arxiv_url}"
+        language_model_choice_repr = f"language_model_choice={self.language_model_choice!r}"
+        feature_weights_repr = f"feature_weights={self.feature_weights!r}"
+        documents_frame_repr = f"documents_frame={generate_frame_repr(self.documents_frame)}"
+        identifier_repr = f"identifier={self.identifier!r}"
+        input_converter_repr = f"input_converter={self.input_converter!r}"
+        model_data_constructor_plugin = f"constructor_plugin={self.model_data_constructor_plugin!r}"
+
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"  {semanticscholar_id_repr},\n"
+            f"  {semanticscholar_url_repr},\n"
+            f"  {arxiv_id_repr},\n"
+            f"  {arxiv_url_repr},\n"
+            f"  {language_model_choice_repr},\n"
+            f"  {feature_weights_repr},\n"
+            f"  {documents_frame_repr},\n"
+            f"  {identifier_repr},\n"
+            f"  {input_converter_repr},\n"
+            f"  {model_data_constructor_plugin},\n"
+            ")"
         )
 
     def get_identifier_from_semanticscholar_id(self, semanticscholar_id: str) -> DocumentIdentifier:

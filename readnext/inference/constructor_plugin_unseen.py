@@ -23,6 +23,7 @@ from readnext.utils import (
     CandidateScoresFrame,
     Embedding,
     EmbeddingsFrame,
+    generate_frame_repr,
     get_arxiv_id_from_arxiv_url,
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
@@ -48,6 +49,35 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
             response=self.response,
         )
         super().__post_init__()
+
+    def __repr__(self) -> str:
+        semanticscholar_id_repr = f"semanticscholar_id={self.identifier.semanticscholar_id}"
+        semanticscholar_url_repr = f"semanticscholar_url={self.identifier.semanticscholar_url}"
+        arxiv_id_repr = f"arxiv_id={self.identifier.arxiv_id}"
+        arxiv_url_repr = f"arxiv_url={self.identifier.arxiv_url}"
+        language_model_choice_repr = f"language_model_choice={self.language_model_choice!r}"
+        feature_weights_repr = f"feature_weights={self.feature_weights!r}"
+        documents_frame_repr = f"documents_frame={generate_frame_repr(self.documents_frame)}"
+        identifier_repr = f"identifier={self.identifier!r}"
+        semantic_scholar_request_repr = f"semanticscholar_request={self.semanticscholar_request!r}"
+        response_repr = f"response={self.response!r}"
+        constructor_plugin_repr = f"constructor_plugin={self.model_data_constructor_plugin!r}"
+
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"  {semanticscholar_id_repr},\n"
+            f"  {semanticscholar_url_repr},\n"
+            f"  {arxiv_id_repr},\n"
+            f"  {arxiv_url_repr},\n"
+            f"  {language_model_choice_repr},\n"
+            f"  {feature_weights_repr},\n"
+            f"  {documents_frame_repr},\n"
+            f"  {identifier_repr},\n"
+            f"  {semantic_scholar_request_repr},\n"
+            f"  {response_repr},\n"
+            f"  {constructor_plugin_repr},\n"
+            ")"
+        )
 
     def send_semanticscholar_request(self) -> SemanticScholarResponse:
         if self.semanticscholar_id is not None:

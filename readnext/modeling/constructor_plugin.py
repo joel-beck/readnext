@@ -5,7 +5,7 @@ import polars as pl
 
 from readnext.data import SemanticScholarResponse
 from readnext.modeling.document_info import DocumentInfo
-from readnext.utils import CandidateScoresFrame, DocumentsFrame, ScoresFrame
+from readnext.utils import CandidateScoresFrame, DocumentsFrame, ScoresFrame, generate_frame_repr
 
 
 @dataclass
@@ -34,6 +34,17 @@ class SeenModelDataConstructorPlugin(ModelDataConstructorPlugin):
 
     d3_document_id: int
     documents_frame: DocumentsFrame
+
+    def __repr__(self) -> str:
+        d3_document_id_repr = f"d3_document_id={self.d3_document_id}"
+        documents_frame_repr = f"documents_frame={generate_frame_repr(self.documents_frame)}"
+
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"  {d3_document_id_repr},\n"
+            f"  {documents_frame_repr}\n"
+            ")"
+        )
 
     def collect_query_document(self) -> DocumentInfo:
         """Extract and collect the query document information from the documents data."""

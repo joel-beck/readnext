@@ -10,6 +10,7 @@ from readnext.evaluation.scoring.model_scorer import (
     LanguageModelScorer,
 )
 from readnext.modeling import CitationModelData, LanguageModelData
+from readnext.utils import generate_frame_repr
 
 
 @dataclass(kw_only=True)
@@ -42,6 +43,74 @@ class HybridScorer:
     def __post_init__(self) -> None:
         self.citation_model_scorer_candidates = CitationModelScorer(self.citation_model_data)
         self.language_model_scorer_candidates = LanguageModelScorer(self.language_model_data)
+
+    def __repr__(self) -> str:
+        language_model_name_repr = f"language_model_name={self.language_model_name}"
+        language_model_data_repr = f"language_model_data={self.language_model_data!r}"
+        citation_model_data_repr = f"citation_model_data={self.citation_model_data!r}"
+
+        citation_model_scoring_repr = (
+            f"citation_model_scorer_candidates={self.citation_model_scorer_candidates!r}"
+        )
+        language_model_scorer_repr = (
+            f"language_model_scorer_candidates={self.language_model_scorer_candidates!r}"
+        )
+
+        citation_to_language_candidates_repr = (
+            f"citation_to_language_candidates="
+            f"{generate_frame_repr(self.citation_to_language_candidates)}"
+        )
+        citation_to_language_candidate_ids_repr = (
+            f"citation_to_language_candidate_ids={self.citation_to_language_candidate_ids!r}"
+        )
+        citation_to_language_candidates_score_repr = (
+            f"citation_to_language_candidates_score={self.citation_to_language_candidates_score!r}"
+        )
+        citation_to_language_score_repr = (
+            f"citation_to_language_score={self.citation_to_language_score}"
+        )
+        citation_to_language_recommendations_repr = (
+            f"citation_to_language_recommendations="
+            f"{generate_frame_repr(self.citation_to_language_recommendations)}"
+        )
+
+        language_to_citation_candidates_repr = (
+            f"language_to_citation_candidates="
+            f"{generate_frame_repr(self.language_to_citation_candidates)}"
+        )
+        language_to_citation_candidate_ids_repr = (
+            f"language_to_citation_candidate_ids={self.language_to_citation_candidate_ids!r}"
+        )
+        language_to_citation_candidates_score_repr = (
+            f"language_to_citation_candidates_score={self.language_to_citation_candidates_score!r}"
+        )
+        language_to_citation_score_repr = (
+            f"language_to_citation_score={self.language_to_citation_score}"
+        )
+        language_to_citation_recommendations_repr = (
+            f"language_to_citation_recommendations="
+            f"{generate_frame_repr(self.language_to_citation_recommendations)}"
+        )
+
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"  {language_model_name_repr},\n"
+            f"  {language_model_data_repr},\n"
+            f"  {citation_model_data_repr},\n"
+            f"  {citation_model_scoring_repr},\n"
+            f"  {language_model_scorer_repr},\n"
+            f"  {citation_to_language_candidates_repr},\n"
+            f"  {citation_to_language_candidate_ids_repr},\n"
+            f"  {citation_to_language_candidates_score_repr},\n"
+            f"  {citation_to_language_score_repr},\n"
+            f"  {citation_to_language_recommendations_repr},\n"
+            f"  {language_to_citation_candidates_repr},\n"
+            f"  {language_to_citation_candidate_ids_repr},\n"
+            f"  {language_to_citation_candidates_score_repr},\n"
+            f"  {language_to_citation_score_repr},\n"
+            f"  {language_to_citation_recommendations_repr},\n"
+            ")"
+        )
 
     def get_citation_to_language_candidates(
         self, feature_weights: FeatureWeights, n_candidates: int

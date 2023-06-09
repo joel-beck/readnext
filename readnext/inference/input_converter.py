@@ -5,6 +5,7 @@ import polars as pl
 
 from readnext.utils import (
     DocumentsFrame,
+    generate_frame_repr,
     get_arxiv_id_from_arxiv_url,
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
@@ -17,6 +18,9 @@ class InferenceDataInputConverter:
     """Converts input to `InferenceDataConstructor` from and to D3 document ID."""
 
     documents_frame: DocumentsFrame
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({generate_frame_repr(self.documents_frame)})"
 
     def get_d3_document_id_from_semanticscholar_url(self, semanticscholar_url: str) -> int:
         """Retrieve D3 document id from Semanticscholar url."""

@@ -34,7 +34,7 @@ def inference_data_constructor_seen_from_semanticscholar_id() -> InferenceDataCo
 def inference_data_constructor_seen_documents_frame(
     inference_data_constructor_seen_from_semanticscholar_id: InferenceDataConstructor,
 ) -> pl.DataFrame:
-    return inference_data_constructor_seen_from_semanticscholar_id._documents_frame
+    return inference_data_constructor_seen_from_semanticscholar_id.documents_frame
 
 
 @pytest.fixture(scope="session")
@@ -62,7 +62,7 @@ def inference_data_constructor_seen_cosine_similarities(
 def inference_data_constructor_seen_citation_model_data(
     inference_data_constructor_seen_from_semanticscholar_id: InferenceDataConstructor,
 ) -> CitationModelData:
-    return inference_data_constructor_seen_from_semanticscholar_id._citation_model_data
+    return inference_data_constructor_seen_from_semanticscholar_id.citation_model_data
 
 
 @pytest.fixture(scope="session")
@@ -97,7 +97,7 @@ def inference_data_constructor_seen_citation_model_data_feature_matrix(
 def inference_data_constructor_seen_language_model_data(
     inference_data_constructor_seen_from_semanticscholar_id: InferenceDataConstructor,
 ) -> LanguageModelData:
-    return inference_data_constructor_seen_from_semanticscholar_id._language_model_data
+    return inference_data_constructor_seen_from_semanticscholar_id.language_model_data
 
 
 @pytest.fixture(scope="session")

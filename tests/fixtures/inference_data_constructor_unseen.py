@@ -34,7 +34,7 @@ def inference_data_constructor_unseen_from_arxiv_url() -> InferenceDataConstruct
 def inference_data_constructor_unseen_documents_frame(
     inference_data_constructor_unseen_from_arxiv_url: InferenceDataConstructor,
 ) -> pl.DataFrame:
-    return inference_data_constructor_unseen_from_arxiv_url._documents_frame
+    return inference_data_constructor_unseen_from_arxiv_url.documents_frame
 
 
 @pytest.fixture(scope="session")
@@ -62,7 +62,7 @@ def inference_data_constructor_unseen_cosine_similarities(
 def inference_data_constructor_unseen_citation_model_data(
     inference_data_constructor_unseen_from_arxiv_url: InferenceDataConstructor,
 ) -> CitationModelData:
-    return inference_data_constructor_unseen_from_arxiv_url._citation_model_data
+    return inference_data_constructor_unseen_from_arxiv_url.citation_model_data
 
 
 @pytest.fixture(scope="session")
@@ -97,7 +97,7 @@ def inference_data_constructor_unseen_citation_model_data_feature_matrix(
 def inference_data_constructor_unseen_language_model_data(
     inference_data_constructor_unseen_from_arxiv_url: InferenceDataConstructor,
 ) -> LanguageModelData:
-    return inference_data_constructor_unseen_from_arxiv_url._language_model_data
+    return inference_data_constructor_unseen_from_arxiv_url.language_model_data
 
 
 @pytest.fixture(scope="session")

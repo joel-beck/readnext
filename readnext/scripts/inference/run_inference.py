@@ -1,10 +1,10 @@
 from readnext import FeatureWeights, LanguageModelChoice, readnext
-from readnext.utils.logging import suppress_transformers_logging
 from readnext.utils.convert_id_urls import (
     get_arxiv_id_from_arxiv_url,
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
 )
+from readnext.utils.logging import suppress_transformers_logging
 
 
 def main() -> None:

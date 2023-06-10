@@ -16,8 +16,8 @@ from readnext.modeling import (
     LanguageModelDataConstructor,
     SeenModelDataConstructorPlugin,
 )
-from readnext.utils.io import read_df_from_parquet
 from readnext.utils.aliases import ScoresFrame
+from readnext.utils.io import read_df_from_parquet
 
 
 def main() -> None:
@@ -182,35 +182,65 @@ def main() -> None:
                 "Publication Date",
                 citation_model_scorer.score_top_n(
                     AveragePrecision(),
-                    FeatureWeights(1, 0, 0, 0, 0),
+                    FeatureWeights(
+                        publication_date=1,
+                        citationcount_document=0,
+                        citationcount_author=0,
+                        co_citation_analysis=0,
+                        bibliographic_coupling=0,
+                    ),
                 ),
             ),
             (
                 "Citation Count Document",
                 citation_model_scorer.score_top_n(
                     AveragePrecision(),
-                    FeatureWeights(0, 1, 0, 0, 0),
+                    FeatureWeights(
+                        publication_date=0,
+                        citationcount_document=1,
+                        citationcount_author=0,
+                        co_citation_analysis=0,
+                        bibliographic_coupling=0,
+                    ),
                 ),
             ),
             (
                 "Citation Count Author",
                 citation_model_scorer.score_top_n(
                     AveragePrecision(),
-                    FeatureWeights(0, 0, 1, 0, 0),
+                    FeatureWeights(
+                        publication_date=0,
+                        citationcount_document=0,
+                        citationcount_author=1,
+                        co_citation_analysis=0,
+                        bibliographic_coupling=0,
+                    ),
                 ),
             ),
             (
                 "Co-Citation Analysis",
                 citation_model_scorer.score_top_n(
                     AveragePrecision(),
-                    FeatureWeights(0, 0, 0, 1, 0),
+                    FeatureWeights(
+                        publication_date=0,
+                        citationcount_document=0,
+                        citationcount_author=0,
+                        co_citation_analysis=1,
+                        bibliographic_coupling=0,
+                    ),
                 ),
             ),
             (
                 "Bibliographic Coupling",
                 citation_model_scorer.score_top_n(
                     AveragePrecision(),
-                    FeatureWeights(0, 0, 0, 0, 1),
+                    FeatureWeights(
+                        publication_date=0,
+                        citationcount_document=0,
+                        citationcount_author=0,
+                        co_citation_analysis=0,
+                        bibliographic_coupling=1,
+                    ),
                 ),
             ),
             (

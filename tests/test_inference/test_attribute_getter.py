@@ -128,7 +128,7 @@ def test_kw_only_initialization_seen_paper_attribute_getter() -> None:
             None,
             None,
             None,
-            LanguageModelChoice.tfidf,
+            LanguageModelChoice.TFIDF,
             FeatureWeights(),
             pl.DataFrame(),
         )
@@ -272,7 +272,7 @@ def test_kw_only_initialization_unseen_paper_attribute_getter() -> None:
             None,
             None,
             None,
-            LanguageModelChoice.tfidf,
+            LanguageModelChoice.TFIDF,
             FeatureWeights(),
             pl.DataFrame(),
         )

@@ -6,9 +6,9 @@ import numpy as np
 import polars as pl
 from joblib import Parallel, delayed
 
+from readnext.utils.aliases import Embedding, EmbeddingsFrame, KeywordAlgorithm, Tokens, TokensFrame
 from readnext.utils.progress_bar import rich_progress_bar
 from readnext.utils.protocols import FastTextModelProtocol, Word2VecModelProtocol
-from readnext.utils.aliases import Embedding, EmbeddingsFrame, KeywordAlgorithm, Tokens, TokensFrame
 
 
 class AggregationStrategy(str, Enum):

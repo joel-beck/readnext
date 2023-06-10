@@ -1,5 +1,5 @@
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Callable
 
 import numpy as np
 import polars as pl
@@ -20,6 +20,7 @@ from readnext.modeling import (
     UnseenModelDataConstructorPlugin,
 )
 from readnext.modeling.language_models import load_embeddings_from_choice
+from readnext.utils.aliases import CandidateScoresFrame, Embedding, EmbeddingsFrame
 from readnext.utils.convert_id_urls import (
     get_arxiv_id_from_arxiv_url,
     get_arxiv_url_from_arxiv_id,
@@ -28,7 +29,6 @@ from readnext.utils.convert_id_urls import (
 )
 from readnext.utils.decorators import status_update
 from readnext.utils.repr import generate_frame_repr
-from readnext.utils.aliases import CandidateScoresFrame, Embedding, EmbeddingsFrame
 
 
 @dataclass(kw_only=True)

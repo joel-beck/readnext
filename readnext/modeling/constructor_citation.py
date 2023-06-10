@@ -4,7 +4,6 @@ import polars as pl
 
 from readnext.config import MagicNumbers
 from readnext.modeling.constructor import ModelDataConstructor
-from readnext.utils.repr import generate_frame_repr
 from readnext.utils.aliases import (
     CandidateScoresFrame,
     CitationFeaturesFrame,
@@ -12,6 +11,7 @@ from readnext.utils.aliases import (
     CitationRanksFrame,
     ScoresFrame,
 )
+from readnext.utils.repr import generate_frame_repr
 
 
 @dataclass(kw_only=True)

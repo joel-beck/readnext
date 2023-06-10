@@ -13,8 +13,8 @@ from readnext.evaluation.metrics import (
     CountCommonReferences,
     PairwiseMetric,
 )
-from readnext.utils.progress_bar import rich_progress_bar
 from readnext.utils.aliases import DocumentsFrame, EmbeddingsFrame, ScoresFrame
+from readnext.utils.progress_bar import rich_progress_bar
 
 
 def generate_id_combinations_frame(documents_frame: DocumentsFrame) -> pl.DataFrame:

@@ -1,5 +1,6 @@
 import pytest
 from pydantic import ValidationError
+
 from readnext.evaluation.scoring import FeatureWeights
 
 

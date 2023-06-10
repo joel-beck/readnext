@@ -25,7 +25,7 @@ def unseen_paper_attribute_getter_from_semanticscholar_id(
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.tfidf,
+        language_model_choice=LanguageModelChoice.TFIDF,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -44,7 +44,7 @@ def unseen_paper_attribute_getter_from_semanticscholar_url(
         semanticscholar_url=semanticscholar_url,
         arxiv_id=None,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.tfidf,
+        language_model_choice=LanguageModelChoice.TFIDF,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -61,7 +61,7 @@ def unseen_paper_attribute_getter_from_arxiv_id(
         semanticscholar_url=None,
         arxiv_id=arxiv_id,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.tfidf,
+        language_model_choice=LanguageModelChoice.TFIDF,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -78,7 +78,7 @@ def unseen_paper_attribute_getter_from_arxiv_url(
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=arxiv_url,
-        language_model_choice=LanguageModelChoice.tfidf,
+        language_model_choice=LanguageModelChoice.TFIDF,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -95,7 +95,7 @@ def unseen_paper_attribute_getter_co_citation_analysis(
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.tfidf,
+        language_model_choice=LanguageModelChoice.TFIDF,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -114,7 +114,7 @@ def unseen_paper_attribute_getter_bibliographic_coupling(
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.tfidf,
+        language_model_choice=LanguageModelChoice.TFIDF,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -133,7 +133,7 @@ def unseen_paper_attribute_getter_cosine_similarities_tfidf(
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.tfidf,
+        language_model_choice=LanguageModelChoice.TFIDF,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -152,7 +152,7 @@ def unseen_paper_attribute_getter_cosine_similarities_bm25(
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.bm25,
+        language_model_choice=LanguageModelChoice.BM25,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -171,7 +171,7 @@ def unseen_paper_attribute_getter_cosine_similarities_word2vec(
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.word2vec,
+        language_model_choice=LanguageModelChoice.WORD2VEC,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -190,7 +190,7 @@ def unseen_paper_attribute_getter_cosine_similarities_glove(
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.glove,
+        language_model_choice=LanguageModelChoice.GLOVE,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -209,7 +209,7 @@ def unseen_paper_attribute_getter_cosine_similarities_fasttext(
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.fasttext,
+        language_model_choice=LanguageModelChoice.FASTTEXT,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -228,7 +228,7 @@ def unseen_paper_attribute_getter_cosine_similarities_bert(
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.bert,
+        language_model_choice=LanguageModelChoice.BERT,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -247,7 +247,7 @@ def unseen_paper_attribute_getter_cosine_similarities_scibert(
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.scibert,
+        language_model_choice=LanguageModelChoice.SCIBERT,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -266,7 +266,7 @@ def unseen_paper_attribute_getter_cosine_similarities_longformer(
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.longformer,
+        language_model_choice=LanguageModelChoice.LONGFORMER,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -285,7 +285,7 @@ def unseen_paper_attribute_getter_citation_model_data(
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.tfidf,
+        language_model_choice=LanguageModelChoice.TFIDF,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )
@@ -332,7 +332,7 @@ def unseen_paper_attribute_getter_language_model_data(
         semanticscholar_url=None,
         arxiv_id=None,
         arxiv_url=None,
-        language_model_choice=LanguageModelChoice.tfidf,
+        language_model_choice=LanguageModelChoice.TFIDF,
         feature_weights=FeatureWeights(),
         documents_frame=test_documents_frame,
     )

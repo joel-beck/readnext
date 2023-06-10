@@ -52,18 +52,18 @@ def test_cosine_similarity_long_input() -> None:
     assert CosineSimilarity.score(u, v) == 0.0
 
 
-def test_cosine_similarity_from_df(document_embeddings_df: pl.DataFrame) -> None:
-    assert CosineSimilarity.from_df(document_embeddings_df, 1, 2) == pytest.approx(0.9746318)
-    assert CosineSimilarity.from_df(document_embeddings_df, 1, 1) == pytest.approx(1.0)
-    assert CosineSimilarity.from_df(document_embeddings_df, 3, 4) == pytest.approx(0.0)
+def test_cosine_similarity_from_df(toy_embeddings_frame: pl.DataFrame) -> None:
+    assert CosineSimilarity.from_df(toy_embeddings_frame, 1, 2) == pytest.approx(0.9746318)
+    assert CosineSimilarity.from_df(toy_embeddings_frame, 1, 1) == pytest.approx(1.0)
+    assert CosineSimilarity.from_df(toy_embeddings_frame, 3, 4) == pytest.approx(0.0)
 
 
-def test_cosine_similarity_from_df_non_existent_ids(document_embeddings_df: pl.DataFrame) -> None:
+def test_cosine_similarity_from_df_non_existent_ids(toy_embeddings_frame: pl.DataFrame) -> None:
     with pytest.raises(KeyError):
-        CosineSimilarity.from_df(document_embeddings_df, 1, 5)
+        CosineSimilarity.from_df(toy_embeddings_frame, 1, 5)
 
     with pytest.raises(KeyError):
-        CosineSimilarity.from_df(document_embeddings_df, 6, 2)
+        CosineSimilarity.from_df(toy_embeddings_frame, 6, 2)
 
 
 def test_cosine_similarity_from_df_empty_dataframe() -> None:

@@ -1,14 +1,14 @@
-from typing import Any
 from dataclasses import field
-from pydantic import Field, HttpUrl, root_validator, validator, ConfigDict
+from typing import Any
+
+from pydantic import ConfigDict, Field, HttpUrl, root_validator, validator
 from pydantic.dataclasses import dataclass
 from rich import box
 from rich.console import Console
 from rich.panel import Panel
-from readnext.evaluation.scoring import FeatureWeights
-from readnext.modeling.language_models import LanguageModelChoice
+
 from readnext.config import DataPaths
-from readnext.evaluation.scoring import HybridScorer
+from readnext.evaluation.scoring import FeatureWeights, HybridScorer
 from readnext.inference.constructor_plugin import (
     InferenceDataConstructorPlugin,
 )
@@ -25,19 +25,20 @@ from readnext.modeling import (
     DocumentInfo,
     LanguageModelData,
 )
+from readnext.modeling.language_models import LanguageModelChoice
+from readnext.utils.aliases import DocumentsFrame
 from readnext.utils.convert_id_urls import (
     get_arxiv_id_from_arxiv_url,
     get_semanticscholar_url_from_semanticscholar_id,
 )
-from readnext.utils.aliases import DocumentsFrame
-from readnext.utils.repr import generate_frame_repr
-from readnext.utils.io import read_df_from_parquet
 from readnext.utils.dummy_defaults import (
-    documents_frame_default,
-    seen_inference_data_constructor_plugin_default,
     citation_model_data_default,
+    documents_frame_default,
     language_model_data_default,
+    seen_inference_data_constructor_plugin_default,
 )
+from readnext.utils.io import read_df_from_parquet
+from readnext.utils.repr import generate_frame_repr
 
 
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True, validate_assignment=True), kw_only=True)

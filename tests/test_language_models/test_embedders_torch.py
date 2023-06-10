@@ -10,8 +10,8 @@ from readnext.modeling.language_models import (
     LongformerEmbedder,
     TorchEmbedder,
 )
-from readnext.utils.protocols import BertModelProtocol, LongformerModelProtocol
 from readnext.utils.aliases import TokenIdsFrame
+from readnext.utils.protocols import BertModelProtocol, LongformerModelProtocol
 
 embedders = ["bert_embedder", "longformer_embedder"]
 

@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 
 from readnext.modeling.constructor import ModelDataConstructor
-from readnext.utils.repr import generate_frame_repr
 from readnext.utils.aliases import CandidateScoresFrame, LanguageFeaturesFrame, ScoresFrame
+from readnext.utils.repr import generate_frame_repr
 
 
 @dataclass(kw_only=True)

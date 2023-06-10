@@ -11,21 +11,27 @@ Embedding: TypeAlias = list[float]
 
 
 # tokens_frame.columns = ["d3_document_id", "tokens"]
+# data types: d3_document_id: int, tokens: list[str]
 TokensFrame: TypeAlias = pl.DataFrame
 
 # token_ids_frame.columns = ["d3_document_id", "token_ids"]
+# data types: d3_document_id: int, token_ids: list[int]
 TokenIdsFrame: TypeAlias = pl.DataFrame
 
 # embeddings_frame.columns = ["d3_document_id", "embedding"]
+# data types: d3_document_id: int, embedding: list[float]
 EmbeddingsFrame: TypeAlias = pl.DataFrame
 
 # scores_frame.columns = ["query_d3_document_id", "candidate_d3_document_id", "score"]
+# data types: query_d3_document_id: int, candidate_d3_document_id: int, score: float
 ScoresFrame = pl.DataFrame
 
 # candidate_scores_frame.columns = ["candidate_d3_document_id", "score"]
+# data types: candidate_d3_document_id: int, score: float
 CandidateScoresFrame: TypeAlias = pl.DataFrame
 
 # candidate_ranks_frame.columns = ["candidate_d3_document_id", "rank"]
+# data types: candidate_d3_document_id: int, rank: int
 CandidateRanksFrame: TypeAlias = pl.DataFrame
 
 # contains all columns of the full documents dataset
@@ -36,28 +42,40 @@ DocumentsFrame: TypeAlias = pl.DataFrame
 QueryDocumentsFrame: TypeAlias = pl.DataFrame
 
 # info_frame.columns = ["candidate_d3_document_id", "title", "author", "arxiv_labels"]
+# data types: candidate_d3_document_id: int, title: str, author: str, arxiv_labels: list[str]
 InfoFrame: TypeAlias = pl.DataFrame
 
 # citation_features_frame.columns = ["candidate_d3_document_id","publication_date",
 # "citationcount_document", "citationcount_author", "co_citation_analysis_score",
 # "bibliographic_coupling_score"]
+# data types: candidate_d3_document_id: int, publication_date: str,
+# citationcount_document: int, citationcount_author: int, co_citation_analysis_score:
+# int, bibliographic_coupling_score: int
 CitationFeaturesFrame: TypeAlias = pl.DataFrame
 
 # language_features_frame.columns = ["candidate_d3_document_id", "cosine_similarity"]
+# data types: candidate_d3_document_id: int, cosine_similarity: float
 LanguageFeaturesFrame: TypeAlias = pl.DataFrame
 
 # citation_ranks_frame.columns = ["candidate_d3_document_id", "publication_date_rank",
 # "citationcount_document_rank", "citationcount_author_rank",
 # "co_citation_analysis_rank", "bibliographic_coupling_rank"]
+# data types: candidate_d3_document_id: int, publication_date_rank: int,
+# citationcount_document_rank: int, citationcount_author_rank: int,
+# co_citation_analysis_rank: int, bibliographic_coupling_rank: int
 CitationRanksFrame: TypeAlias = pl.DataFrame
 
 # language_ranks_frame.columns = ["candidate_d3_document_id",
 # "publication_date_points", "citationcount_document_points",
 # "citationcount_author_points", "co_citation_analysis_points",
 # "bibliographic_coupling_points"]
+# data types: candidate_d3_document_id: int, publication_date_points: int,
+# citationcount_document_points: int, citationcount_author_points: int,
+# co_citation_analysis_points: int, bibliographic_coupling_points: int
 CitationPointsFrame: TypeAlias = pl.DataFrame
 
 # integer_labels_frame.columns = ["candidate_d3_document_id", "integer_label"]
+# data types: candidate_d3_document_id: int, integer_label: int
 IntegerLabelsFrame: TypeAlias = pl.DataFrame
 
 

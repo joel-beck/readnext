@@ -9,6 +9,7 @@ from readnext.inference import (
     InferenceData,
     InferenceDataConstructor,
     Labels,
+    Points,
     Ranks,
     Recommendations,
 )
@@ -44,6 +45,11 @@ def inference_data_unseen_features(inference_data_unseen_from_arxiv_url: Inferen
 @pytest.fixture(scope="session")
 def inference_data_unseen_ranks(inference_data_unseen_from_arxiv_url: InferenceData) -> Ranks:
     return inference_data_unseen_from_arxiv_url.ranks
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_points(inference_data_unseen_from_arxiv_url: InferenceData) -> Points:
+    return inference_data_unseen_from_arxiv_url.points
 
 
 @pytest.fixture(scope="session")

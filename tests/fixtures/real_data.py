@@ -1,7 +1,6 @@
 import pytest
 
 from readnext.config import DataPaths, ResultsPaths
-from readnext.utils.io import read_df_from_parquet
 from readnext.utils.aliases import (
     DocumentsFrame,
     EmbeddingsFrame,
@@ -9,6 +8,7 @@ from readnext.utils.aliases import (
     TokenIdsFrame,
     TokensFrame,
 )
+from readnext.utils.io import read_df_from_parquet
 
 
 # SECTION: Local Data

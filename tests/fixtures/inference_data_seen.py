@@ -9,6 +9,7 @@ from readnext.inference import (
     InferenceData,
     InferenceDataConstructor,
     Labels,
+    Points,
     Ranks,
     Recommendations,
 )
@@ -46,6 +47,13 @@ def inference_data_seen_features(
 @pytest.fixture(scope="session")
 def inference_data_seen_ranks(inference_data_seen_from_semanticscholar_id: InferenceData) -> Ranks:
     return inference_data_seen_from_semanticscholar_id.ranks
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_points(
+    inference_data_seen_from_semanticscholar_id: InferenceData,
+) -> Points:
+    return inference_data_seen_from_semanticscholar_id.points
 
 
 @pytest.fixture(scope="session")

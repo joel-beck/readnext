@@ -17,8 +17,6 @@ from readnext.modeling.language_models import (
     bm25,
     tfidf,
 )
-from readnext.utils.io import read_df_from_parquet
-from readnext.utils.decorators import status_update
 from readnext.utils.aliases import (
     DocumentsFrame,
     Embedding,
@@ -28,6 +26,8 @@ from readnext.utils.aliases import (
     Tokens,
     TokensFrame,
 )
+from readnext.utils.decorators import status_update
+from readnext.utils.io import read_df_from_parquet
 
 
 @status_update("Loading training corpus")

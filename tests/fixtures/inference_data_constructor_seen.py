@@ -1,4 +1,3 @@
-import polars as pl
 import pytest
 
 from readnext.evaluation.scoring import FeatureWeights
@@ -7,6 +6,7 @@ from readnext.inference import (
     Features,
     InferenceDataConstructor,
     Labels,
+    Points,
     Ranks,
     Recommendations,
 )
@@ -16,7 +16,15 @@ from readnext.modeling import (
     LanguageModelData,
 )
 from readnext.modeling.language_models import LanguageModelChoice
-from readnext.utils.aliases import ScoresFrame
+from readnext.utils.aliases import (
+    CitationFeaturesFrame,
+    CitationPointsFrame,
+    CitationRanksFrame,
+    DocumentsFrame,
+    InfoFrame,
+    IntegerLabelsFrame,
+    LanguageFeaturesFrame,
+)
 
 
 @pytest.fixture(scope="session")
@@ -24,7 +32,7 @@ def inference_data_constructor_seen_from_semanticscholar_id() -> InferenceDataCo
     semanticscholar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
     return InferenceDataConstructor(
         semanticscholar_id=semanticscholar_id,
-        language_model_choice=LanguageModelChoice.tfidf,
+        language_model_choice=LanguageModelChoice.TFIDF,
         feature_weights=FeatureWeights(),
     )
 
@@ -33,29 +41,8 @@ def inference_data_constructor_seen_from_semanticscholar_id() -> InferenceDataCo
 @pytest.fixture(scope="session")
 def inference_data_constructor_seen_documents_frame(
     inference_data_constructor_seen_from_semanticscholar_id: InferenceDataConstructor,
-) -> pl.DataFrame:
+) -> DocumentsFrame:
     return inference_data_constructor_seen_from_semanticscholar_id.documents_frame
-
-
-@pytest.fixture(scope="session")
-def inference_data_constructor_seen_co_citation_analysis_scores(
-    inference_data_constructor_seen_from_semanticscholar_id: InferenceDataConstructor,
-) -> ScoresFrame:
-    return inference_data_constructor_seen_from_semanticscholar_id._co_citation_analysis_scores
-
-
-@pytest.fixture(scope="session")
-def inference_data_constructor_seen_bibliographic_coupling_scores(
-    inference_data_constructor_seen_from_semanticscholar_id: InferenceDataConstructor,
-) -> ScoresFrame:
-    return inference_data_constructor_seen_from_semanticscholar_id._bibliographic_coupling_scores
-
-
-@pytest.fixture(scope="session")
-def inference_data_constructor_seen_cosine_similarities(
-    inference_data_constructor_seen_from_semanticscholar_id: InferenceDataConstructor,
-) -> ScoresFrame:
-    return inference_data_constructor_seen_from_semanticscholar_id._cosine_similarities
 
 
 @pytest.fixture(scope="session")
@@ -73,24 +60,38 @@ def inference_data_constructor_seen_citation_model_data_query_document(
 
 
 @pytest.fixture(scope="session")
-def inference_data_constructor_seen_citation_model_data_integer_labels(
+def inference_data_constructor_seen_citation_model_data_info_frame(
     inference_data_constructor_seen_citation_model_data: CitationModelData,
-) -> pl.DataFrame:
-    return inference_data_constructor_seen_citation_model_data.integer_labels_frame
-
-
-@pytest.fixture(scope="session")
-def inference_data_constructor_seen_citation_model_data_info_matrix(
-    inference_data_constructor_seen_citation_model_data: CitationModelData,
-) -> pl.DataFrame:
+) -> InfoFrame:
     return inference_data_constructor_seen_citation_model_data.info_frame
 
 
 @pytest.fixture(scope="session")
-def inference_data_constructor_seen_citation_model_data_feature_matrix(
+def inference_data_constructor_seen_citation_model_data_features_frame(
     inference_data_constructor_seen_citation_model_data: CitationModelData,
-) -> pl.DataFrame:
+) -> CitationFeaturesFrame:
     return inference_data_constructor_seen_citation_model_data.features_frame
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_seen_citation_model_data_integer_labels_frame(
+    inference_data_constructor_seen_citation_model_data: CitationModelData,
+) -> IntegerLabelsFrame:
+    return inference_data_constructor_seen_citation_model_data.integer_labels_frame
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_seen_citation_model_data_ranks_frame(
+    inference_data_constructor_seen_citation_model_data: CitationModelData,
+) -> CitationRanksFrame:
+    return inference_data_constructor_seen_citation_model_data.ranks_frame
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_seen_citation_model_data_points_frame(
+    inference_data_constructor_seen_citation_model_data: CitationModelData,
+) -> CitationPointsFrame:
+    return inference_data_constructor_seen_citation_model_data.points_frame
 
 
 @pytest.fixture(scope="session")
@@ -108,24 +109,24 @@ def inference_data_constructor_seen_language_model_data_query_document(
 
 
 @pytest.fixture(scope="session")
-def inference_data_constructor_seen_language_model_data_integer_labels(
+def inference_data_constructor_seen_language_model_data_info_frame(
     inference_data_constructor_seen_language_model_data: LanguageModelData,
-) -> pl.DataFrame:
-    return inference_data_constructor_seen_language_model_data.integer_labels_frame
-
-
-@pytest.fixture(scope="session")
-def inference_data_constructor_seen_language_model_data_info_matrix(
-    inference_data_constructor_seen_language_model_data: LanguageModelData,
-) -> pl.DataFrame:
+) -> InfoFrame:
     return inference_data_constructor_seen_language_model_data.info_frame
 
 
 @pytest.fixture(scope="session")
-def inference_data_constructor_seen_language_model_data_cosine_similarity_ranks(
+def inference_data_constructor_seen_language_model_data_features_frame(
     inference_data_constructor_seen_language_model_data: LanguageModelData,
-) -> pl.DataFrame:
-    return inference_data_constructor_seen_language_model_data.cosine_similarity_ranks
+) -> LanguageFeaturesFrame:
+    return inference_data_constructor_seen_language_model_data.features_frame
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_seen_language_model_data_integer_labels(
+    inference_data_constructor_seen_language_model_data: LanguageModelData,
+) -> IntegerLabelsFrame:
+    return inference_data_constructor_seen_language_model_data.integer_labels_frame
 
 
 # SECTION: Method Fixtures
@@ -155,6 +156,13 @@ def inference_data_constructor_seen_ranks(
     inference_data_constructor_seen_from_semanticscholar_id: InferenceDataConstructor,
 ) -> Ranks:
     return inference_data_constructor_seen_from_semanticscholar_id.collect_ranks()
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_seen_points(
+    inference_data_constructor_seen_from_semanticscholar_id: InferenceDataConstructor,
+) -> Points:
+    return inference_data_constructor_seen_from_semanticscholar_id.collect_points()
 
 
 @pytest.fixture(scope="session")

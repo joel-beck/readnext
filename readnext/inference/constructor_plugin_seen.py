@@ -16,9 +16,9 @@ from readnext.modeling import (
 from readnext.modeling.language_models import (
     load_cosine_similarities_from_choice,
 )
-from readnext.utils.repr import generate_frame_repr
-from readnext.utils.io import read_df_from_parquet
 from readnext.utils.aliases import ScoresFrame
+from readnext.utils.io import read_df_from_parquet
+from readnext.utils.repr import generate_frame_repr
 
 
 @dataclass(kw_only=True)

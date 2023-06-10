@@ -4,18 +4,17 @@ Specifies placeholder default values for quick object initialization.
 
 import polars as pl
 
+from readnext.config import DataPaths
 from readnext.evaluation.scoring import FeatureWeights
-from readnext.modeling.language_models import LanguageModelChoice
 from readnext.inference.constructor_plugin_seen import (
     SeenInferenceDataConstructorPlugin,
 )
-from readnext.config import DataPaths
 from readnext.modeling import (
     CitationModelData,
     DocumentInfo,
     LanguageModelData,
 )
-
+from readnext.modeling.language_models import LanguageModelChoice
 
 documents_frame_default = pl.scan_parquet(DataPaths.merged.documents_frame).head(10).collect()
 

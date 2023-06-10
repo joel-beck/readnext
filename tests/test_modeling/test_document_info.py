@@ -3,12 +3,12 @@ import pytest
 from readnext.modeling import DocumentInfo
 
 
-def test_document_info(sample_document_info: DocumentInfo) -> None:
-    assert sample_document_info.d3_document_id == 1
-    assert sample_document_info.title == "Sample Paper"
-    assert sample_document_info.author == "John Doe"
-    assert sample_document_info.arxiv_labels == ["cs.AI", "cs.CL"]
-    assert sample_document_info.abstract == "This is a sample paper."
+def test_document_info(dummy_document_info: DocumentInfo) -> None:
+    assert dummy_document_info.d3_document_id == 1
+    assert dummy_document_info.title == "Sample Paper"
+    assert dummy_document_info.author == "John Doe"
+    assert dummy_document_info.arxiv_labels == ["cs.AI", "cs.CL"]
+    assert dummy_document_info.abstract == "This is a sample paper."
 
     str_representation = (
         "Document 1\n"
@@ -17,7 +17,7 @@ def test_document_info(sample_document_info: DocumentInfo) -> None:
         "Author: John Doe\n"
         "Arxiv Labels: ['cs.AI', 'cs.CL']"
     )
-    assert str(sample_document_info) == str_representation
+    assert str(dummy_document_info) == str_representation
 
 
 def test_document_info_defaults() -> None:

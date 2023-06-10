@@ -2,7 +2,7 @@ from pydantic import HttpUrl
 
 from readnext import FeatureWeights, LanguageModelChoice
 from readnext.inference import InferenceData, InferenceDataConstructor
-from readnext.utils import suppress_transformers_logging
+from readnext.utils.logging import suppress_transformers_logging
 
 
 def readnext(
@@ -12,7 +12,7 @@ def readnext(
     arxiv_id: str | None = None,
     arxiv_url: HttpUrl | str | None = None,
     language_model_choice: LanguageModelChoice,
-    feature_weights: FeatureWeights,
+    feature_weights: FeatureWeights = FeatureWeights(),
 ) -> InferenceData:
     """
     # TODO: Add docstring

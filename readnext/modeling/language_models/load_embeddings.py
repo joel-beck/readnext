@@ -3,7 +3,9 @@ from readnext.modeling.language_models.model_choice import (
     get_cosine_similarities_path_from_choice,
     get_embeddings_path_from_choice,
 )
-from readnext.utils import EmbeddingsFrame, ScoresFrame, read_df_from_parquet, status_update
+from readnext.utils.decorators import status_update
+from readnext.utils.io import read_df_from_parquet
+from readnext.utils.aliases import EmbeddingsFrame, ScoresFrame
 
 
 def load_cosine_similarities_from_choice(language_model_choice: LanguageModelChoice) -> ScoresFrame:

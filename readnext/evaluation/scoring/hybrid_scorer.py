@@ -10,7 +10,7 @@ from readnext.evaluation.scoring.model_scorer import (
     LanguageModelScorer,
 )
 from readnext.modeling import CitationModelData, LanguageModelData
-from readnext.utils import generate_frame_repr
+from readnext.utils.repr import generate_frame_repr
 
 
 @dataclass(kw_only=True)

@@ -7,10 +7,10 @@ from dotenv import load_dotenv
 from joblib import Parallel, delayed
 from typing_extensions import NotRequired
 
-from readnext.utils import (
+from readnext.utils.progress_bar import rich_progress_bar
+from readnext.utils.convert_id_urls import (
     get_arxiv_id_from_arxiv_url,
     get_semanticscholar_id_from_semanticscholar_url,
-    rich_progress_bar,
 )
 
 

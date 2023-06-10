@@ -1,9 +1,9 @@
 from readnext import FeatureWeights, LanguageModelChoice, readnext
-from readnext.utils import (
+from readnext.utils.logging import suppress_transformers_logging
+from readnext.utils.convert_id_urls import (
     get_arxiv_id_from_arxiv_url,
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
-    suppress_transformers_logging,
 )
 
 
@@ -21,9 +21,7 @@ def main() -> None:
 
     # SUBSECTION: Input is semanticscholar ID
     inference_data_seen_from_semanticscholar_id = readnext(
-        semanticscholar_id=semanticscholar_id,
-        language_model_choice=LanguageModelChoice.tfidf,
-        feature_weights=FeatureWeights(),
+        semanticscholar_id=semanticscholar_id, language_model_choice=LanguageModelChoice.TFIDF
     )
 
     print(inference_data_seen_from_semanticscholar_id.document_identifier)
@@ -41,9 +39,7 @@ def main() -> None:
 
     # SUBSECTION: Input is semanticscholar URL
     inference_data_seen_from_semanticscholar_url = readnext(
-        semanticscholar_url=semanticscholar_url,
-        language_model_choice=LanguageModelChoice.tfidf,
-        feature_weights=FeatureWeights(),
+        semanticscholar_url=semanticscholar_url, language_model_choice=LanguageModelChoice.TFIDF
     )
 
     print(inference_data_seen_from_semanticscholar_url.document_identifier)
@@ -57,7 +53,7 @@ def main() -> None:
     # SUBSECTION: Input is arxiv ID
     inference_data_seen_from_arxiv_id = readnext(
         arxiv_id=arxiv_id,
-        language_model_choice=LanguageModelChoice.tfidf,
+        language_model_choice=LanguageModelChoice.TFIDF,
         feature_weights=FeatureWeights(),
     )
 
@@ -72,7 +68,7 @@ def main() -> None:
     # SUBSECTION: Input is arxiv URL
     inference_data_seen_from_arxiv_url = readnext(
         arxiv_url=arxiv_url,
-        language_model_choice=LanguageModelChoice.tfidf,
+        language_model_choice=LanguageModelChoice.TFIDF,
         feature_weights=FeatureWeights(),
     )
 
@@ -90,7 +86,7 @@ def main() -> None:
 
     inference_data_unseen_from_arxiv_id = readnext(
         arxiv_id=arxiv_id,
-        language_model_choice=LanguageModelChoice.bm25,
+        language_model_choice=LanguageModelChoice.BM25,
         feature_weights=FeatureWeights(),
     )
 

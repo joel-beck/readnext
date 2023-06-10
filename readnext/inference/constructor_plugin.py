@@ -6,7 +6,7 @@ import polars as pl
 from readnext import FeatureWeights, LanguageModelChoice
 from readnext.inference.document_identifier import DocumentIdentifier
 from readnext.modeling import CitationModelData, LanguageModelData
-from readnext.utils import DocumentsFrame
+from readnext.utils.aliases import DocumentsFrame
 
 
 @dataclass(kw_only=True)

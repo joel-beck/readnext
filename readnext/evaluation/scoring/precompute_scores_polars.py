@@ -6,7 +6,7 @@ similarity scores.
 import polars as pl
 
 from readnext.config import MagicNumbers
-from readnext.utils import rich_progress_bar
+from readnext.utils.progress_bar import rich_progress_bar
 
 
 def construct_combinations_frame(df: pl.LazyFrame, colname: str) -> pl.LazyFrame:

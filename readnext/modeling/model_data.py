@@ -9,14 +9,14 @@ from readnext.modeling.constructor import ModelDataConstructor
 from readnext.modeling.constructor_citation import CitationModelDataConstructor
 from readnext.modeling.constructor_language import LanguageModelDataConstructor
 from readnext.modeling.document_info import DocumentInfo
-from readnext.utils import (
+from readnext.utils.repr import generate_frame_repr
+from readnext.utils.aliases import (
     CitationFeaturesFrame,
     CitationPointsFrame,
     CitationRanksFrame,
     InfoFrame,
     IntegerLabelsFrame,
     LanguageFeaturesFrame,
-    generate_frame_repr,
 )
 
 TModelDataConstructor = TypeVar("TModelDataConstructor", bound=ModelDataConstructor)

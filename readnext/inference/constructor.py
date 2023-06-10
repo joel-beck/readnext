@@ -1,12 +1,12 @@
 from typing import Any
-
-from pydantic import Field, HttpUrl, root_validator, validator
+from dataclasses import field
+from pydantic import Field, HttpUrl, root_validator, validator, ConfigDict
 from pydantic.dataclasses import dataclass
 from rich import box
 from rich.console import Console
 from rich.panel import Panel
-
-from readnext import FeatureWeights, LanguageModelChoice
+from readnext.evaluation.scoring import FeatureWeights
+from readnext.modeling.language_models import LanguageModelChoice
 from readnext.config import DataPaths
 from readnext.evaluation.scoring import HybridScorer
 from readnext.inference.constructor_plugin import (
@@ -25,55 +25,40 @@ from readnext.modeling import (
     DocumentInfo,
     LanguageModelData,
 )
-from readnext.utils import (
-    DocumentsFrame,
-    generate_frame_repr,
+from readnext.utils.convert_id_urls import (
     get_arxiv_id_from_arxiv_url,
     get_semanticscholar_url_from_semanticscholar_id,
-    read_df_from_parquet,
+)
+from readnext.utils.aliases import DocumentsFrame
+from readnext.utils.repr import generate_frame_repr
+from readnext.utils.io import read_df_from_parquet
+from readnext.utils.dummy_defaults import (
+    documents_frame_default,
+    seen_inference_data_constructor_plugin_default,
+    citation_model_data_default,
+    language_model_data_default,
 )
 
 
-class Config:
-    """
-    See docs for pydantic dataclass config at
-    https://docs.pydantic.dev/latest/usage/dataclasses/#dataclass-config
-    """
-
-    arbitrary_types_allowed = True
-
-
-@dataclass(config=Config, kw_only=True)
+@dataclass(config=ConfigDict(arbitrary_types_allowed=True, validate_assignment=True), kw_only=True)
 class InferenceDataConstructor:
     # semanticscholar id is a 40 character hex string
-    # TODO: This is currently not checked when using pydantic dataclasses and not
-    # pydantic BaseModel
-    semanticscholar_id: str | None = Field(default=None, regex=r"^[0-9a-f]{40}$")
+    semanticscholar_id: str | None = Field(
+        default=None, min_length=40, max_length=40, regex=r"^[a-fA-F0-9]{40}$"
+    )
     semanticscholar_url: HttpUrl | str | None = None
     # arxiv id must start with 4 digits, followed by a dot, followed by 5 digits
-    arxiv_id: str | None = Field(default=None, regex=r"^\d{4}\.\d{5}$")
+    arxiv_id: str | None = Field(
+        default=None, min_length=10, max_length=10, regex=r"^\d{4}\.\d{5}$"
+    )
     arxiv_url: HttpUrl | str | None = None
     language_model_choice: LanguageModelChoice
     feature_weights: FeatureWeights
 
-    documents_frame: DocumentsFrame = Field(init=False)
-    constructor_plugin: InferenceDataConstructorPlugin = Field(init=False)
-    citation_model_data: CitationModelData = Field(init=False)
-    language_model_data: LanguageModelData = Field(init=False)
-
-    @validator("semanticscholar_url")
-    def validate_semanticscholar_url(cls, semanticscholar_url: str | None) -> str | None:
-        if semanticscholar_url is not None and not semanticscholar_url.startswith(
-            "https://www.semanticscholar.org/paper/"
-        ):
-            raise ValueError("Invalid Semanticscholar URL")
-        return semanticscholar_url
-
-    @validator("arxiv_url")
-    def validate_arxiv_url(cls, arxiv_url: str | None) -> str | None:
-        if arxiv_url is not None and not arxiv_url.startswith("https://arxiv.org/abs/"):
-            raise ValueError("Invalid Arxiv URL")
-        return arxiv_url
+    documents_frame: DocumentsFrame = field(init=False)
+    constructor_plugin: InferenceDataConstructorPlugin = field(init=False)
+    citation_model_data: CitationModelData = field(init=False)
+    language_model_data: LanguageModelData = field(init=False)
 
     @root_validator(pre=True)
     def check_valid_id_and_url(cls, values: dict[str, Any]) -> dict[str, Any]:
@@ -91,9 +76,48 @@ class InferenceDataConstructor:
             )
         return values
 
+    @validator("semanticscholar_url")
+    def validate_semanticscholar_url(cls, semanticscholar_url: str | None) -> str | None:
+        if semanticscholar_url is not None and not semanticscholar_url.startswith(
+            "https://www.semanticscholar.org/paper/"
+        ):
+            raise ValueError(
+                "Semanticscholar URL must start with `https://www.semanticscholar.org/paper/`"
+            )
+        return semanticscholar_url
+
+    @validator("arxiv_url")
+    def validate_arxiv_url(cls, arxiv_url: str | None) -> str | None:
+        if arxiv_url is not None and not arxiv_url.startswith("https://arxiv.org/abs/"):
+            raise ValueError("Arxiv URL must start with `https://arxiv.org/abs/`")
+        return arxiv_url
+
     def __post_init__(self) -> None:
         """
-        Collect all information needed for inference right after initialization.
+        Runs BEFORE pydantic input validation. Sets dummy default values for instance
+        attributes that are overwritten by the `__post_init_post_parse__()` method.
+
+        This is necessary for the following reasons:
+            - Invalid input arguments for e.g. the `arxiv_url` should be caught by
+              pydantic validation
+            - Since `__post_init__` runs before validation, the call of
+              `self.constructor_plugin.get_citation_model_data()` in `__post_init__()`
+              would raise a runtime error for invalid inputs instead of pydantic. Thus
+              setting the real instance attribute values is deferred to the
+              `__post_init_post_parse__()` method.
+            - However, a `__post_init__()` method with a first initialization is still
+              necessary to avoid the `field required (type=value_error.missing)` error
+              during pydantic validation.
+        """
+        self.documents_frame = documents_frame_default
+        self.constructor_plugin = seen_inference_data_constructor_plugin_default
+        self.citation_model_data = citation_model_data_default
+        self.language_model_data = language_model_data_default
+
+    def __post_init_post_parse__(self) -> None:
+        """
+        Runs AFTER pydantic input validation. Overwrites `__post_init__()` instance
+        attribute values.
 
         First, the documents data is loaded to check if the query document is in the
         training data. Based on the result, the model data constructor plugin is set to

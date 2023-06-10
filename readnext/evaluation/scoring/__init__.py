@@ -1,3 +1,4 @@
+from readnext.evaluation.scoring.feature_weights import FeatureWeights
 from readnext.evaluation.scoring.hybrid_score import HybridScore, compare_hybrid_scores
 from readnext.evaluation.scoring.hybrid_scorer import HybridScorer
 from readnext.evaluation.scoring.model_scorer import CitationModelScorer, LanguageModelScorer
@@ -15,6 +16,7 @@ from readnext.evaluation.scoring.precompute_scores_polars import (
 )
 
 __all__ = [
+    "FeatureWeights",
     "HybridScore",
     "compare_hybrid_scores",
     "HybridScorer",

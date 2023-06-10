@@ -5,7 +5,12 @@ from typing import Generic, TypeVar
 import numpy as np
 import polars as pl
 
-from readnext.utils import IntegerLabelList, IntegerLabelLists, StringLabelList, StringLabelLists
+from readnext.utils.aliases import (
+    IntegerLabelList,
+    IntegerLabelLists,
+    StringLabelList,
+    StringLabelLists,
+)
 
 TLabelList = TypeVar("TLabelList", IntegerLabelList, StringLabelList)
 TReturn = TypeVar("TReturn", int, float)

@@ -6,7 +6,8 @@ from spacy.language import Language
 from spacy.tokens.doc import Doc
 from tqdm import tqdm
 
-from readnext.utils import DocumentsFrame, Tokens, TokensFrame, tqdm_progress_bar_wrapper
+from readnext.utils.progress_bar import tqdm_progress_bar_wrapper
+from readnext.utils.aliases import DocumentsFrame, Tokens, TokensFrame
 
 
 @dataclass

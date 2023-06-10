@@ -6,15 +6,9 @@ import torch
 from tqdm import tqdm
 
 from readnext.modeling.language_models.embedder import AggregationStrategy
-from readnext.utils import (
-    BertModelProtocol,
-    Embedding,
-    EmbeddingsFrame,
-    LongformerModelProtocol,
-    TokenIds,
-    TokenIdsFrame,
-    tqdm_progress_bar_wrapper,
-)
+from readnext.utils.progress_bar import tqdm_progress_bar_wrapper
+from readnext.utils.protocols import LongformerModelProtocol, BertModelProtocol
+from readnext.utils.aliases import Embedding, EmbeddingsFrame, TokenIds, TokenIdsFrame
 
 TTorchModel = TypeVar("TTorchModel", bound=BertModelProtocol | LongformerModelProtocol)
 

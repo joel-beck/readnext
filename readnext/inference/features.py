@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import polars as pl
 
 from readnext import FeatureWeights
-from readnext.utils import generate_frame_repr
+from readnext.utils.repr import generate_frame_repr
 
 
 @dataclass(kw_only=True)

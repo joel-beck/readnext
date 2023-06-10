@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Callable
 
 import numpy as np
 import polars as pl
@@ -19,17 +20,15 @@ from readnext.modeling import (
     UnseenModelDataConstructorPlugin,
 )
 from readnext.modeling.language_models import load_embeddings_from_choice
-from readnext.utils import (
-    CandidateScoresFrame,
-    Embedding,
-    EmbeddingsFrame,
-    generate_frame_repr,
+from readnext.utils.convert_id_urls import (
     get_arxiv_id_from_arxiv_url,
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
-    status_update,
 )
+from readnext.utils.decorators import status_update
+from readnext.utils.repr import generate_frame_repr
+from readnext.utils.aliases import CandidateScoresFrame, Embedding, EmbeddingsFrame
 
 
 @dataclass(kw_only=True)
@@ -168,11 +167,29 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
     def select_scoring_output_columns(df: pl.LazyFrame) -> pl.LazyFrame:
         return df.select("candidate_d3_document_id", "score").sort("score", descending=True)
 
+    def add_query_urls(
+        self, df: pl.LazyFrame, colname: str, get_query_urls: Callable[[], list[str]]
+    ) -> pl.LazyFrame:
+        """
+        Add a list of query citation urls or query reference urls in each row as a new
+        column to the dataframe.
+
+        This requires special handling in polars if the list is empty since an empty
+        list is not automatically broadcasted to the length of the dataframe as a non
+        empty list!
+        """
+        # at least one query url is available
+        if query_urls := get_query_urls():
+            return df.with_columns(pl.Series([query_urls]).alias(colname))
+
+        # add column of empty lists in each row, does not work with simple broadcasting!
+        return df.with_columns(pl.Series([[] for _ in range(df.collect().height)]).alias(colname))
+
     def get_co_citation_analysis_scores(self) -> CandidateScoresFrame:
         return (
             self.documents_frame.lazy()
             .pipe(self.select_scoring_input_columns, "citations")
-            .with_columns(query_citations=self.get_query_citation_urls())
+            .pipe(self.add_query_urls, "query_citations", self.get_query_citation_urls)
             .pipe(count_common_values, "query_citations", "citations")
             .pipe(self.select_scoring_output_columns)
             .collect()
@@ -180,9 +197,10 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
 
     def get_bibliographic_coupling_scores(self) -> CandidateScoresFrame:
         return (
+            # self.documents_frame.lazy()
             self.documents_frame.lazy()
             .pipe(self.select_scoring_input_columns, "references")
-            .with_columns(query_references=self.get_query_reference_urls())
+            .pipe(self.add_query_urls, "query_references", self.get_query_reference_urls)
             .pipe(count_common_values, "query_references", "references")
             .pipe(self.select_scoring_output_columns)
             .collect()

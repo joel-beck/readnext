@@ -5,7 +5,7 @@ from typing import Generic, Literal, TypeVar
 import numpy as np
 import polars as pl
 
-from readnext.utils import EmbeddingVector, Vector
+from readnext.utils.aliases import EmbeddingVector, Vector
 
 TReturn = TypeVar("TReturn", int, float)
 

@@ -5,7 +5,7 @@ import polars as pl
 
 from readnext.modeling.constructor_plugin import ModelDataConstructorPlugin
 from readnext.modeling.document_info import DocumentInfo
-from readnext.utils import (
+from readnext.utils.aliases import (
     CitationFeaturesFrame,
     DocumentsFrame,
     InfoFrame,

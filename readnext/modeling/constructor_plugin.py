@@ -5,7 +5,8 @@ import polars as pl
 
 from readnext.data import SemanticScholarResponse
 from readnext.modeling.document_info import DocumentInfo
-from readnext.utils import CandidateScoresFrame, DocumentsFrame, ScoresFrame, generate_frame_repr
+from readnext.utils.repr import generate_frame_repr
+from readnext.utils.aliases import CandidateScoresFrame, DocumentsFrame, ScoresFrame
 
 
 @dataclass

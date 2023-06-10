@@ -3,14 +3,14 @@ from typing import cast
 
 import polars as pl
 
-from readnext.utils import (
-    DocumentsFrame,
-    generate_frame_repr,
+from readnext.utils.convert_id_urls import (
     get_arxiv_id_from_arxiv_url,
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
     get_semanticscholar_url_from_semanticscholar_id,
 )
+from readnext.utils.aliases import DocumentsFrame
+from readnext.utils.repr import generate_frame_repr
 
 
 @dataclass

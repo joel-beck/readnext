@@ -17,7 +17,9 @@ from readnext.modeling.language_models import (
     bm25,
     tfidf,
 )
-from readnext.utils import (
+from readnext.utils.io import read_df_from_parquet
+from readnext.utils.decorators import status_update
+from readnext.utils.aliases import (
     DocumentsFrame,
     Embedding,
     QueryEmbeddingFunction,
@@ -25,8 +27,6 @@ from readnext.utils import (
     TokenIdsFrame,
     Tokens,
     TokensFrame,
-    read_df_from_parquet,
-    status_update,
 )
 
 
@@ -282,21 +282,21 @@ def select_query_embedding_function(
     language_model_choice: LanguageModelChoice,
 ) -> QueryEmbeddingFunction:
     match language_model_choice:
-        case LanguageModelChoice.tfidf:
+        case LanguageModelChoice.TFIDF:
             return tfidf_embed_query
-        case LanguageModelChoice.bm25:
+        case LanguageModelChoice.BM25:
             return bm25_embed_query
-        case LanguageModelChoice.word2vec:
+        case LanguageModelChoice.WORD2VEC:
             return word2vec_embed_query
-        case LanguageModelChoice.glove:
+        case LanguageModelChoice.GLOVE:
             return glove_embed_query
-        case LanguageModelChoice.fasttext:
+        case LanguageModelChoice.FASTTEXT:
             return fasttest_embed_query
-        case LanguageModelChoice.bert:
+        case LanguageModelChoice.BERT:
             return bert_embed_query
-        case LanguageModelChoice.scibert:
+        case LanguageModelChoice.SCIBERT:
             return scibert_embed_query
-        case LanguageModelChoice.longformer:
+        case LanguageModelChoice.LONGFORMER:
             return longformer_embed_query
         case _:
             raise ValueError(f"Language model choice {language_model_choice} not supported")

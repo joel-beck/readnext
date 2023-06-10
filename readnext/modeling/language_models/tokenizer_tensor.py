@@ -6,14 +6,8 @@ import polars as pl
 from tqdm import tqdm
 from transformers import BertTokenizerFast, LongformerTokenizerFast
 
-from readnext.utils import (
-    DocumentsFrame,
-    TokenIds,
-    TokenIdsFrame,
-    Tokens,
-    TokensFrame,
-    tqdm_progress_bar_wrapper,
-)
+from readnext.utils.progress_bar import tqdm_progress_bar_wrapper
+from readnext.utils.aliases import DocumentsFrame, TokenIds, TokenIdsFrame, Tokens, TokensFrame
 
 TTorchTokenizer = TypeVar("TTorchTokenizer", bound=BertTokenizerFast | LongformerTokenizerFast)
 

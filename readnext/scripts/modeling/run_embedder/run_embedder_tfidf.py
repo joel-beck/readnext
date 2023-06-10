@@ -4,7 +4,7 @@ Generate embedding frames of document abstracts with TF-IDF.
 
 from readnext.config import ResultsPaths
 from readnext.modeling.language_models import TFIDFEmbedder, tfidf
-from readnext.utils import read_df_from_parquet, write_df_to_parquet
+from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 
 
 def main() -> None:

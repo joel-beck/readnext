@@ -10,7 +10,8 @@ within the rankings!
 import polars as pl
 
 from readnext.config import DataPaths, MagicNumbers
-from readnext.utils import DocumentsFrame, write_df_to_parquet
+from readnext.utils.aliases import DocumentsFrame
+from readnext.utils.io import write_df_to_parquet
 
 
 def select_most_cited_documents(df: pl.LazyFrame) -> pl.LazyFrame:

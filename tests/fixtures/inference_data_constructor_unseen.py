@@ -16,7 +16,7 @@ from readnext.modeling import (
     LanguageModelData,
 )
 from readnext.modeling.language_models import LanguageModelChoice
-from readnext.utils import ScoresFrame
+from readnext.utils.aliases import ScoresFrame
 
 
 @pytest.fixture(scope="session")
@@ -24,7 +24,7 @@ def inference_data_constructor_unseen_from_arxiv_url() -> InferenceDataConstruct
     arxiv_url = "https://arxiv.org/abs/2303.08774"
     return InferenceDataConstructor(
         arxiv_url=arxiv_url,
-        language_model_choice=LanguageModelChoice.scibert,
+        language_model_choice=LanguageModelChoice.SCIBERT,
         feature_weights=FeatureWeights(),
     )
 
@@ -41,21 +41,21 @@ def inference_data_constructor_unseen_documents_frame(
 def inference_data_constructor_unseen_co_citation_analysis_scores(
     inference_data_constructor_unseen_from_arxiv_url: InferenceDataConstructor,
 ) -> ScoresFrame:
-    return inference_data_constructor_unseen_from_arxiv_url._co_citation_analysis_scores
+    return inference_data_constructor_unseen_from_arxiv_url.co_citation_analysis_scores
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_unseen_bibliographic_coupling_scores(
     inference_data_constructor_unseen_from_arxiv_url: InferenceDataConstructor,
 ) -> ScoresFrame:
-    return inference_data_constructor_unseen_from_arxiv_url._bibliographic_coupling_scores
+    return inference_data_constructor_unseen_from_arxiv_url.bibliographic_coupling_scores
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_unseen_cosine_similarities(
     inference_data_constructor_unseen_from_arxiv_url: InferenceDataConstructor,
 ) -> ScoresFrame:
-    return inference_data_constructor_unseen_from_arxiv_url._cosine_similarities
+    return inference_data_constructor_unseen_from_arxiv_url.cosine_similarities
 
 
 @pytest.fixture(scope="session")

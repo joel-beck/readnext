@@ -7,7 +7,7 @@ from rich.progress import (
     TimeRemainingColumn,
 )
 
-from readnext.utils import rich_progress_bar
+from readnext.utils.progress_bar import rich_progress_bar
 
 
 def test_setup_progress_bar() -> None:

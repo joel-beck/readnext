@@ -16,7 +16,7 @@ from readnext.modeling import (
     LanguageModelData,
 )
 from readnext.modeling.language_models import LanguageModelChoice
-from readnext.utils import ScoresFrame
+from readnext.utils.aliases import ScoresFrame
 
 
 @pytest.fixture(scope="session")

@@ -2,7 +2,7 @@ import polars as pl
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
-from readnext.utils import DocumentsFrame
+from readnext.utils.aliases import DocumentsFrame
 
 documents_frame_fixtures_skip_ci = ["documents_frame"]
 

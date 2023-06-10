@@ -6,7 +6,7 @@ from readnext.modeling import (
     DocumentInfo,
     LanguageModelDataConstructor,
 )
-from readnext.utils import DocumentsFrame, ScoresFrame
+from readnext.utils.aliases import DocumentsFrame, ScoresFrame
 
 
 # SECTION: CitationModelDataConstructor

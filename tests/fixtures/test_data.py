@@ -2,13 +2,13 @@ from pathlib import Path
 
 import pytest
 
-from readnext.utils import (
+from readnext.utils.io import read_df_from_parquet
+from readnext.utils.aliases import (
     DocumentsFrame,
     EmbeddingsFrame,
     ScoresFrame,
     TokenIdsFrame,
     TokensFrame,
-    read_df_from_parquet,
 )
 
 

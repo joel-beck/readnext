@@ -8,12 +8,11 @@ from readnext.modeling.language_models import (
     Word2VecEmbedder,
     tfidf,
 )
-from readnext.utils import (
+from readnext.utils.aliases import TokenIdsFrame, TokensFrame
+from readnext.utils.protocols import (
     BertModelProtocol,
     FastTextModelProtocol,
     LongformerModelProtocol,
-    TokenIdsFrame,
-    TokensFrame,
     Word2VecModelProtocol,
 )
 

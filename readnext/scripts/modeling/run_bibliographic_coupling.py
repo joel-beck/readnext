@@ -7,7 +7,7 @@ import polars as pl
 
 from readnext.config import DataPaths, ResultsPaths
 from readnext.evaluation.scoring import precompute_co_references_polars
-from readnext.utils import write_df_to_parquet
+from readnext.utils.io import write_df_to_parquet
 
 
 def main() -> None:

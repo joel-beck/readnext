@@ -24,6 +24,8 @@ document_info_default = DocumentInfo(
     title="Title",
     author="Author",
     arxiv_labels=["cs.CL"],
+    semanticscholar_url="https://www.semanticscholar.org/paper/204e3073870fae3d05bcbc2f6a8e263d9b72e776",
+    arxiv_url="https://arxiv.org/abs/2106.01572",
     abstract="Abstract",
 )
 

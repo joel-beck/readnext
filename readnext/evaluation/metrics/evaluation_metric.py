@@ -106,7 +106,7 @@ class AveragePrecision(EvaluationMetric):
         Compute the average precision for a list of integer recommendation labels that are
         contained in a dataframe column.
         """
-        return cls.score(df["integer_labels"])
+        return cls.score(df["integer_label"])
 
 
 @dataclass

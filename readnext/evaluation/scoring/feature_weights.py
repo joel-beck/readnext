@@ -3,7 +3,7 @@ from pydantic.dataclasses import dataclass
 from typing_extensions import Self
 
 
-@dataclass
+@dataclass(kw_only=True)
 class FeatureWeights:
     """
     Holds the weights for the citation features and global document features for the

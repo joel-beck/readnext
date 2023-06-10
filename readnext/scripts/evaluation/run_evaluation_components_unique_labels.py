@@ -16,7 +16,8 @@ from readnext.modeling import (
     LanguageModelDataConstructor,
     SeenModelDataConstructorPlugin,
 )
-from readnext.utils import ScoresFrame, read_df_from_parquet
+from readnext.utils.io import read_df_from_parquet
+from readnext.utils.aliases import ScoresFrame
 
 
 def main() -> None:

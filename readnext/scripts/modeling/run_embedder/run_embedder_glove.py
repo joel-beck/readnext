@@ -6,7 +6,7 @@ from gensim.models.keyedvectors import KeyedVectors, load_word2vec_format
 
 from readnext.config import ModelPaths, ResultsPaths
 from readnext.modeling.language_models import Word2VecEmbedder
-from readnext.utils import read_df_from_parquet, write_df_to_parquet
+from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 
 
 def main() -> None:

@@ -2,7 +2,7 @@ import polars as pl
 import pytest
 
 from readnext.inference import InferenceDataInputConverter
-from readnext.utils import DocumentsFrame
+from readnext.utils.aliases import DocumentsFrame
 
 
 @pytest.fixture

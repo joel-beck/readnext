@@ -17,7 +17,7 @@ evaluating the recommender system.
 import polars as pl
 
 from readnext.config import DataPaths
-from readnext.utils import write_df_to_parquet
+from readnext.utils.io import write_df_to_parquet
 
 
 def main() -> None:

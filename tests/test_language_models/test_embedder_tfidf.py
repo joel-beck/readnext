@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from readnext.modeling.language_models import TFIDFEmbedder, tfidf
-from readnext.utils import Tokens
+from readnext.utils.aliases import Tokens
 
 
 def test_compute_embedding_single_document(

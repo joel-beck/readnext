@@ -7,7 +7,7 @@ from readnext.evaluation.scoring import (
     precompute_co_references,
     precompute_cosine_similarities,
 )
-from readnext.utils import DocumentsFrame, EmbeddingsFrame
+from readnext.utils.aliases import DocumentsFrame, EmbeddingsFrame
 
 
 @pytest.fixture

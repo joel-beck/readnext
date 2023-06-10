@@ -15,10 +15,10 @@ from typing import TypedDict
 import polars as pl
 
 from readnext.config import DataPaths, MagicNumbers
-from readnext.utils import (
+from readnext.utils.io import write_df_to_parquet
+from readnext.utils.convert_id_urls import (
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
-    write_df_to_parquet,
 )
 
 

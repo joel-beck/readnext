@@ -4,7 +4,7 @@ from numpy.testing import assert_almost_equal, assert_array_equal
 from pytest_lazyfixture import lazy_fixture
 
 from readnext.modeling.language_models import AggregationStrategy, GensimEmbedder
-from readnext.utils import Tokens
+from readnext.utils.aliases import Tokens
 
 embedders = ["word2vec_embedder", "fasttext_embedder"]
 

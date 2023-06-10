@@ -2,7 +2,7 @@ import polars as pl
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
-from readnext.utils import TokenIdsFrame, TokensFrame
+from readnext.utils.aliases import TokenIdsFrame, TokensFrame
 
 bert_based_tokenized_abstracts = [
     "bert_tokenized_abstracts",

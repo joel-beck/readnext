@@ -31,7 +31,14 @@ class ModelDataConstructor(ABC):
     documents_frame: DocumentsFrame
     constructor_plugin: ModelDataConstructorPlugin
     info_columns: list[str] = field(
-        default_factory=lambda: ["candidate_d3_document_id", "title", "author", "arxiv_labels"]
+        default_factory=lambda: [
+            "candidate_d3_document_id",
+            "title",
+            "author",
+            "arxiv_labels",
+            "semanticscholar_url",
+            "arxiv_url",
+        ]
     )
     feature_columns: list[str]
 
@@ -110,7 +117,7 @@ class ModelDataConstructor(ABC):
             self.get_query_documents_frame()
             .select(["candidate_d3_document_id", "arxiv_labels"])
             .with_columns(
-                integer_labels=pl.col("arxiv_labels")
+                integer_label=pl.col("arxiv_labels")
                 .apply(self.shares_arxiv_label)
                 .apply(self.boolean_to_int)
             )

@@ -539,7 +539,6 @@ def test_kw_only_initialization_inference_data() -> None:
                 citationcount_author=pl.DataFrame(),
                 co_citation_analysis=pl.DataFrame(),
                 bibliographic_coupling=pl.DataFrame(),
-                cosine_similarity=pl.DataFrame(),
             ),
             Labels(
                 arxiv=pl.DataFrame(),

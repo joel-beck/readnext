@@ -7,7 +7,7 @@ from dataclasses import fields, is_dataclass
 from pathlib import Path
 
 from readnext.config import DataPaths, MagicNumbers, ResultsPaths
-from readnext.utils import read_df_from_parquet, write_df_to_parquet
+from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 
 
 def get_all_paths_from_dataclass(dataclass: object, paths: list[Path] | None = None) -> list[Path]:

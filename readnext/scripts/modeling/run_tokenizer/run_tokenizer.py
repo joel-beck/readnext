@@ -8,7 +8,7 @@ from transformers import BertTokenizerFast, LongformerTokenizerFast
 
 from readnext.config import DataPaths, ModelVersions, ResultsPaths
 from readnext.modeling.language_models import BERTTokenizer, LongformerTokenizer, SpacyTokenizer
-from readnext.utils import read_df_from_parquet, write_df_to_parquet
+from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 
 
 def main() -> None:

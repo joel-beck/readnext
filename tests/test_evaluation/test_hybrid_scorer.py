@@ -15,12 +15,14 @@ def test_kw_only_initialization_hybrid_scorer() -> None:
                     d3_document_id=-1,
                     title="Title",
                     author="Author",
+                    semanticscholar_url="",
+                    arxiv_url="",
                     abstract="Abstract",
                     arxiv_labels=[],
                 ),
                 info_frame=pl.DataFrame(),
                 integer_labels_frame=pl.DataFrame(),
-                cosine_similarity_ranks=pl.DataFrame(),
+                features_frame=pl.DataFrame(),
             ),
             CitationModelData(
                 query_document=DocumentInfo(
@@ -33,5 +35,7 @@ def test_kw_only_initialization_hybrid_scorer() -> None:
                 info_frame=pl.DataFrame(),
                 features_frame=pl.DataFrame(),
                 integer_labels_frame=pl.DataFrame(),
+                ranks_frame=pl.DataFrame(),
+                points_frame=pl.DataFrame(),
             ),
         )

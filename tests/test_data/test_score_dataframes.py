@@ -3,7 +3,7 @@ import pytest
 from polars.testing import assert_frame_equal
 from pytest_lazyfixture import lazy_fixture
 
-from readnext.utils import ScoresFrame
+from readnext.utils.aliases import ScoresFrame
 
 seen_integer_score_dataframes = [
     "co_citation_analysis_scores",

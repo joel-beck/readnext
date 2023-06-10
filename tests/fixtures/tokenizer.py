@@ -6,7 +6,7 @@ from transformers import BertTokenizerFast, LongformerTokenizerFast
 
 from readnext.config import ModelVersions
 from readnext.modeling.language_models import BERTTokenizer, LongformerTokenizer, SpacyTokenizer
-from readnext.utils import DocumentsFrame, TokenIdsFrame, Tokens, TokensFrame
+from readnext.utils.aliases import DocumentsFrame, TokenIdsFrame, Tokens, TokensFrame
 
 
 # SUBSECTION: SpaCy

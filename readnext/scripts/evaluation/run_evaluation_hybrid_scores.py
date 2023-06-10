@@ -15,7 +15,8 @@ from readnext.modeling import (
     LanguageModelDataConstructor,
     SeenModelDataConstructorPlugin,
 )
-from readnext.utils import DocumentsFrame, ScoresFrame, read_df_from_parquet
+from readnext.utils.io import read_df_from_parquet
+from readnext.utils.aliases import DocumentsFrame, ScoresFrame
 
 
 def compare_hybrid_scores_by_document_id(

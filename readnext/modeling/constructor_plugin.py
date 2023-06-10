@@ -58,6 +58,8 @@ class SeenModelDataConstructorPlugin(ModelDataConstructorPlugin):
             title=query_document_row.select("title").item(),
             author=query_document_row.select("author").item(),
             arxiv_labels=query_document_row.select("arxiv_labels").item().to_list(),
+            semanticscholar_url=query_document_row.select("semanticscholar_url").item(),
+            arxiv_url=query_document_row.select("arxiv_url").item(),
             abstract=query_document_row.select("abstract").item(),
         )
 

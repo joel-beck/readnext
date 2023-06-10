@@ -15,8 +15,41 @@ def readnext(
     feature_weights: FeatureWeights = FeatureWeights(),
 ) -> InferenceData:
     """
-    # TODO: Add docstring
+    Generates paper recommendations based on a specified query paper.
+
+    The function can handle both a 'seen' query paper (present in the training data)
+    or an 'unseen' query paper (not present in the training data). For 'seen' papers,
+    the function quickly retrieves the recommendation through a simple lookup. However,
+    for 'unseen' papers, the function requires on-the-fly tokenization, embedding, and
+    computation of cosine similarity, which slows down the inference process.
+
+    The function expects three categories of input arguments:
+    - A paper identifier (required): This can be either `semanticscholar_id`,
+      `semanticscholar_url`, `arxiv_id`, or `arxiv_url`.
+    - Language model choice (required): This determines the language model to be used
+      for the Language Recommender.
+    - Feature weights (optional): These weights influence the citation features and
+      global document features for the Citation Recommender.
+
+    The function returns an `InferenceData` object that includes the following attributes:
+    - `document_identifier`: Contains the identifiers of the query paper.
+    - `document_information`: Provides information about the query paper.
+    - `features`: Individual dataframes that include values for `publication_date`,
+      `citationcount_document`, `citationcount_author`, `co_citation_analysis`,
+      `bibliographic_coupling`, `cosine_similarity`, and `feature_weights`.
+    - `ranks`: Individual dataframes that list the ranks of individual features.
+    - `points`: Individual dataframes that specify the points of individual features.
+    - `labels`: Individual dataframes that present the arxiv labels for all candidate
+      papers and binary 0/1 labels related to the query paper. These binary labels are
+      useful for 'seen' query papers where the arxiv labels of the query paper is known.
+      For 'unseen' papers this information is not availabels and all binary labels are
+      set to 0.
+    - `recommendations`: Individual dataframes that offer the top paper recommendations.
+      Recommendations are calculated for both Hybrid-Recommender orders
+      (Citation -> Language and Language -> Citation), and this includes both the
+      intermediate candidate lists and the final hybrid recommendations.
     """
+
     suppress_transformers_logging()
 
     constructor = InferenceDataConstructor(

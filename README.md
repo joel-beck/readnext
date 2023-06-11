@@ -105,33 +105,33 @@ The hybrid recommender integrates these components in a *cascade* fashion, with 
 
 ### Citation Recommender
 
-The **Citation Recommender** extracts five features from each training document from two categories:
+The **Citation Recommender** extracts five features from each training document out of two categories:
 
 1. **Global Document Features**
 
-These features are derived from the document metadata in the D3 dataset.
+    These features are derived from the document metadata in the D3 dataset.
 
-- **Publication Date**:
-    A *novelty* metric. Recent publications score higher, as they build upon earlier papers and compare their findings with existing results.
+    - **Publication Date**:
+        A *novelty* metric. Recent publications score higher, as they build upon earlier papers and compare their findings with existing results.
 
-- **Paper Citation Count**:
-    A *document popularity* metric. Papers with more citations are considered more valuable and relevant.
+    - **Paper Citation Count**:
+        A *document popularity* metric. Papers with more citations are considered more valuable and relevant.
 
-- **Author Citation Count**:
-    An *author popularity* metric. Authors with higher total citations across their publications are deemed more important in the research community.
+    - **Author Citation Count**:
+        An *author popularity* metric. Authors with higher total citations across their publications are deemed more important in the research community.
 
-Note that global document features are identical for each query document.
+    Note that global document features are identical for each query document.
 
 
 2. **Citation-Based Features**
 
-These features are obtained from the citation data retrieved from the Semantic Scholar API and are *pairwise features* computed for each pair of documents in the training corpus.
+    These features are obtained from the citation data retrieved from the Semantic Scholar API and are *pairwise features* computed for each pair of documents in the training corpus.
 
-- **Co-Citation Analysis**:
-    Counts the number of shared *citing* papers, i.e. papers that themselves cite both the query and the candidate paper. Candidate documents with higher co-citation analysis scores are considered more relevant to the query document.
+    - **Co-Citation Analysis**:
+        Counts the number of shared *citing* papers, i.e. papers that themselves cite both the query and the candidate paper. Candidate documents with higher co-citation analysis scores are considered more relevant to the query document.
 
-- **Bibliographic Coupling**:
-    Counts shared *cited* papers, i.e. papers that are cited by both the query and the candidate paper. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
+    - **Bibliographic Coupling**:
+        Counts shared *cited* papers, i.e. papers that are cited by both the query and the candidate paper. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
 
 
 **Feature Weighting**
@@ -266,23 +266,23 @@ To execute all scripts and reproduce project results, the following **local down
 
 1. **D3 Dataset**
 
-The hybrid recommender system's training data originates from multiple sources.
-The [D3 DBLP Discovery Dataset](https://github.com/jpwahle/lrec22-d3-dataset/tree/main) serves as the foundation, offering information about computer science papers and their authors.
-This dataset provides global document features for the text-independent recommender as well as paper abstracts for the content-based recommender.
+    The hybrid recommender system's training data originates from multiple sources.
+    The [D3 DBLP Discovery Dataset](https://github.com/jpwahle/lrec22-d3-dataset/tree/main) serves as the foundation, offering information about computer science papers and their authors.
+    This dataset provides global document features for the text-independent recommender as well as paper abstracts for the content-based recommender.
 
 
 2. **Citation Information**
 
-The D3 dataset only includes total citation and reference counts for each paper.
-To obtain individual citations and references, the [Semantic Scholar API](https://api.semanticscholar.org/api-docs/graph) is employed.
-A [private API key](https://www.semanticscholar.org/product/api#api-key) is recommended for a higher request rate.
+    The D3 dataset only includes total citation and reference counts for each paper.
+    To obtain individual citations and references, the [Semantic Scholar API](https://api.semanticscholar.org/api-docs/graph) is employed.
+    A [private API key](https://www.semanticscholar.org/product/api#api-key) is recommended for a higher request rate.
 
 
 3. **Arxiv Labels**
 
-Arxiv categories act as labels for the recommender system.
-If two papers share at least one arxiv label, the recommendation is considered relevant, and irrelevant otherwise.
-Arxiv labels are extracted from the [arxiv-metadata-oai-snapshot.json](https://www.kaggle.com/datasets/Cornell-University/arxiv) dataset on Kaggle.
+    Arxiv categories act as labels for the recommender system.
+    If two papers share at least one arxiv label, the recommendation is considered relevant, and irrelevant otherwise.
+    Arxiv labels are extracted from the [arxiv-metadata-oai-snapshot.json](https://www.kaggle.com/datasets/Cornell-University/arxiv) dataset on Kaggle.
 
 
 ### Environment Variables
@@ -322,13 +322,13 @@ All scripts are located in the `readnext/scripts` directory.
 
 1. **Dataset Construction**
 
-These scripts are located in the `readnext/scripts/data` directory.
+    These scripts are located in the `readnext/scripts/data` directory.
 
-1. `s1_read_raw_data.py`: Reads documents, authors and arxiv metadata from raw JSON files and write it out into Parquet format.
-1. `s2_merge_arxiv_labels.py`: Merges the arxiv metadata with the D3 dataset via the arxiv id. Adds arxiv labels as new feature to the dataset which are later used as ground-truth labels for the recommender system.
-1. `s3_merge_authors.py`: Adds the author citationcount to the dataset and selects the most popular author for each document.
-1. `s4_add_citations.py`: Sends requests to the semanticscholar API to obtain citation and reference urls for all documents in the dataset and add them as features to the dataframe.
-1. `s5_add_ranks.py`: Adds rank features for global document characteristics (publication date, document citation count and author citation count) to the dataset and selects a subset of the most cited documents for the final dataset.
+    1. `s1_read_raw_data.py`: Reads documents, authors and arxiv metadata from raw JSON files and write it out into Parquet format.
+    1. `s2_merge_arxiv_labels.py`: Merges the arxiv metadata with the D3 dataset via the arxiv id. Adds arxiv labels as new feature to the dataset which are later used as ground-truth labels for the recommender system.
+    1. `s3_merge_authors.py`: Adds the author citationcount to the dataset and selects the most popular author for each document.
+    1. `s4_add_citations.py`: Sends requests to the semanticscholar API to obtain citation and reference urls for all documents in the dataset and add them as features to the dataframe.
+    1. `s5_add_ranks.py`: Adds rank features for global document characteristics (publication date, document citation count and author citation count) to the dataset and selects a subset of the most cited documents for the final dataset.
 
 
 All further script paths are relative to the `readnext/scripts/modeling` directory.
@@ -336,15 +336,15 @@ All further script paths are relative to the `readnext/scripts/modeling` directo
 
 2. **Citation Models**
 
-1. `run_co_citation_analysis.py`: Precomputes co-citation analysis scores for all document pairs in the dataset.
-1. `bibliographic_coupling.py`: Precomputes bibliographic coupling scores for all document pairs in the dataset.
+    1. `run_co_citation_analysis.py`: Precomputes co-citation analysis scores for all document pairs in the dataset.
+    1. `bibliographic_coupling.py`: Precomputes bibliographic coupling scores for all document pairs in the dataset.
 
 
 3. **Language Models**
 
-1. `tokenizer/run_tokenizer.py`: Tokenizes the abstracts of all documents in the dataset by four different tokenizers into the appropriate format for all eight language models.
-1. `embedder/run_embedder_*.py`: These scripts generate sparse or dense numeric embeddings of all document abstracts for each language model. The process is split into separate scripts for each model to allow for easy parallelization.
-1. `cosine_similarities/run_cosine_similarities_*.py`: Precomputes cosine similarity scores for all document pairs in the dataset for each language model. Again, multiple scripts are used for parallelization purposes.
+    1. `tokenizer/run_tokenizer.py`: Tokenizes the abstracts of all documents in the dataset by four different tokenizers into the appropriate format for all eight language models.
+    1. `embedder/run_embedder_*.py`: These scripts generate sparse or dense numeric embeddings of all document abstracts for each language model. The process is split into separate scripts for each model to allow for easy parallelization.
+    1. `cosine_similarities/run_cosine_similarities_*.py`: Precomputes cosine similarity scores for all document pairs in the dataset for each language model. Again, multiple scripts are used for parallelization purposes.
 
 
 ## Usage

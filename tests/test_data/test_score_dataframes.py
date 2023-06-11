@@ -156,7 +156,7 @@ def test_float_score_dataframes(
     score_dataframe: ScoresFrame,
 ) -> None:
     # check dtype of `score` column
-    assert score_dataframe["score"].dtype == pl.Float64
+    assert score_dataframe["score"].dtype == pl.Float32
 
     # check that all cosine similarity scores are between 0 and 1
     assert score_dataframe["score"].is_between(0, 1).all()

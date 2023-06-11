@@ -34,5 +34,5 @@ class DocumentInfo:
             f"Author: {self.author}\n"
             f"Arxiv Labels: {self.arxiv_labels}\n"
             f"Semanticscholar URL: {self.semanticscholar_url}\n"
-            f"Arxiv URL: {self.arxiv_url}\n"
+            f"Arxiv URL: {self.arxiv_url}"
         )

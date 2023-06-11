@@ -40,16 +40,16 @@ def inference_data_constructor_unseen_from_arxiv_url() -> InferenceDataConstruct
 # SECTION: Attribute Fixtures
 @pytest.fixture(scope="session")
 def inference_data_constructor_unseen_documents_frame(
-    inference_data_constructor_unseen_from_semanticscholar_id: InferenceDataConstructor,
+    inference_data_constructor_unseen_from_arxiv_url: InferenceDataConstructor,
 ) -> DocumentsFrame:
-    return inference_data_constructor_unseen_from_semanticscholar_id.documents_frame
+    return inference_data_constructor_unseen_from_arxiv_url.documents_frame
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_unseen_citation_model_data(
-    inference_data_constructor_unseen_from_semanticscholar_id: InferenceDataConstructor,
+    inference_data_constructor_unseen_from_arxiv_url: InferenceDataConstructor,
 ) -> CitationModelData:
-    return inference_data_constructor_unseen_from_semanticscholar_id.citation_model_data
+    return inference_data_constructor_unseen_from_arxiv_url.citation_model_data
 
 
 @pytest.fixture(scope="session")

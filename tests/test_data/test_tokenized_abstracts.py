@@ -22,14 +22,15 @@ all_tokenized_abstracts = [
 
 @pytest.mark.skip_ci
 @pytest.mark.parametrize("tokenized_abstracts", lazy_fixture(all_tokenized_abstracts))
-def test_key_values_tokenized_abstractss(
+def test_tokens_frame(
     tokenized_abstracts: TokensFrame,
 ) -> None:
-    assert isinstance(tokenized_abstracts, dict)
+    assert isinstance(tokenized_abstracts, pl.DataFrame)
 
-    # check that keys are integers and values are lists
-    assert all(isinstance(key, int) for key in tokenized_abstracts)
-    assert all(isinstance(value, list) for value in tokenized_abstracts.values())
+    assert tokenized_abstracts.shape[1] == 2
+    assert tokenized_abstracts.columns == ["d3_document_id", "tokens"]
+    assert tokenized_abstracts.dtypes == [pl.Int64, pl.List]
+    assert all(isinstance(token, str) for token in tokenized_abstracts["tokens"][0])
 
 
 @pytest.mark.skip_ci

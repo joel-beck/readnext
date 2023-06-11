@@ -61,27 +61,16 @@ See the [Usage](#usage) section for more details and examples.
 - [Installation](#installation)
 - [Overview](#overview)
     - [Citation Recommender](#citation-recommender)
-        - [Global Document Features](#global-document-features)
-        - [Citation-Based Features](#citation-based-features)
-        - [Feature Weighting](#feature-weighting)
     - [Language Recommender](#language-recommender)
     - [Hybrid Recommender](#hybrid-recommender)
     - [Evaluation](#evaluation)
 - [Setup](#setup)
     - [Requirements](#requirements)
     - [Data and Models](#data-and-models)
-        - [D3 Dataset](#d3-dataset)
-        - [Citation Information](#citation-information)
-        - [Arxiv Labels](#arxiv-labels)
     - [Environment Variables](#environment-variables)
     - [Setup Scripts](#setup-scripts)
-        - [Dataset Construction](#dataset-construction)
-        - [Citation Models](#citation-models)
-        - [Language Models](#language-models)
 - [Usage](#usage)
     - [Examples](#examples)
-        - [Seen Query Paper](#seen-query-paper)
-        - [Unseen Query Paper](#unseen-query-paper)
     - [Input Validation](#input-validation)
 
 
@@ -93,13 +82,13 @@ Note: The project has recently been migrated from Pandas to Polars for massive p
 Thus, it is currently recommended to install the package from the `polars` branch.
 Once all unit tests have been updated and changes have been merged into the `main` branch, the installation instructions will be updated accordingly.
 
-    ```bash
-    # via HTTPS
-    pip install git+https://github.com/joel-beck/readnext.git@polars#egg=readnext
+```bash
+# via HTTPS
+pip install git+https://github.com/joel-beck/readnext.git@polars#egg=readnext
 
-    # via SSH
-    pip install git+ssh://git@github.com/joel-beck/readnext.git@polars#egg=readnext
-    ```
+# via SSH
+pip install git+ssh://git@github.com/joel-beck/readnext.git@polars#egg=readnext
+```
 
 If you are interested in customizing the `readnext` package to your own needs, learn about some tips for an efficient development workflow in the [documentation](https://joel-beck.github.io/readnext/setup/#development-workflow).
 
@@ -116,9 +105,9 @@ The hybrid recommender integrates these components in a *cascade* fashion, with 
 
 ### Citation Recommender
 
-The **Citation Recommender** extracts five features from each training document.
+The **Citation Recommender** extracts five features from each training document from two categories:
 
-#### Global Document Features
+1. **Global Document Features**
 
 These features are derived from the document metadata in the D3 dataset.
 
@@ -133,7 +122,8 @@ These features are derived from the document metadata in the D3 dataset.
 
 Note that global document features are identical for each query document.
 
-#### Citation-Based Features
+
+2. **Citation-Based Features**
 
 These features are obtained from the citation data retrieved from the Semantic Scholar API and are *pairwise features* computed for each pair of documents in the training corpus.
 
@@ -143,7 +133,8 @@ These features are obtained from the citation data retrieved from the Semantic S
 - **Bibliographic Coupling**:
     Counts shared *cited* papers, i.e. papers that are cited by both the query and the candidate paper. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
 
-#### Feature Weighting
+
+**Feature Weighting**
 
 The five features are weighted in the following manner:
 
@@ -273,19 +264,21 @@ To execute all scripts and reproduce project results, the following **local down
 - Pretrained [English FastText model](https://fasttext.cc/docs/en/crawl-vectors.html#models) from the FastText website
 
 
-#### D3 Dataset
+1. **D3 Dataset**
 
 The hybrid recommender system's training data originates from multiple sources.
 The [D3 DBLP Discovery Dataset](https://github.com/jpwahle/lrec22-d3-dataset/tree/main) serves as the foundation, offering information about computer science papers and their authors.
 This dataset provides global document features for the text-independent recommender as well as paper abstracts for the content-based recommender.
 
-#### Citation Information
+
+2. **Citation Information**
 
 The D3 dataset only includes total citation and reference counts for each paper.
 To obtain individual citations and references, the [Semantic Scholar API](https://api.semanticscholar.org/api-docs/graph) is employed.
 A [private API key](https://www.semanticscholar.org/product/api#api-key) is recommended for a higher request rate.
 
-#### Arxiv Labels
+
+3. **Arxiv Labels**
 
 Arxiv categories act as labels for the recommender system.
 If two papers share at least one arxiv label, the recommendation is considered relevant, and irrelevant otherwise.
@@ -327,7 +320,7 @@ To generate these files locally, run the following setup scripts in the specifie
 All scripts are located in the `readnext/scripts` directory.
 
 
-#### Dataset Construction
+1. **Dataset Construction**
 
 These scripts are located in the `readnext/scripts/data` directory.
 
@@ -340,23 +333,18 @@ These scripts are located in the `readnext/scripts/data` directory.
 
 All further script paths are relative to the `readnext/scripts/modeling` directory.
 
-#### Citation Models
+
+2. **Citation Models**
 
 1. `run_co_citation_analysis.py`: Precomputes co-citation analysis scores for all document pairs in the dataset.
 1. `bibliographic_coupling.py`: Precomputes bibliographic coupling scores for all document pairs in the dataset.
 
 
-#### Language Models
+3. **Language Models**
 
 1. `tokenizer/run_tokenizer.py`: Tokenizes the abstracts of all documents in the dataset by four different tokenizers into the appropriate format for all eight language models.
 1. `embedder/run_embedder_*.py`: These scripts generate sparse or dense numeric embeddings of all document abstracts for each language model. The process is split into separate scripts for each model to allow for easy parallelization.
 1. `cosine_similarities/run_cosine_similarities_*.py`: Precomputes cosine similarity scores for all document pairs in the dataset for each language model. Again, multiple scripts are used for parallelization purposes.
-
-
-
-
-
-
 
 
 ## Usage
@@ -388,7 +376,7 @@ Note that the weights are normalized to sum up to one, so the absolute values ar
 Inference works for both 'seen' and 'unseen' query documents, depending on whether the query document is part of the training corpus or not.
 
 
-#### Seen Query Paper
+1. **Seen Query Paper**
 
 If the query paper is part of the training corpus, all feature values are precomputed and inference is fast.
 
@@ -491,7 +479,7 @@ Hence, we read the paper "Sequence to Sequence Learning with Neural Networks" by
 
 
 
-#### Unseen Query Paper
+2. **Unseen Query Paper**
 
 If the query paper is not part of the training corpus, the inference step takes longer since tokenization, embedding and the computation of co-citation analysis, bibliographic coupling and cosine similarity scores has to be performed from scratch.
 

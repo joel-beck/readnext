@@ -8,6 +8,7 @@ class DocumentInfo:
     d3_document_id: int
     title: str = ""
     author: str = ""
+    publication_date: str = ""
     arxiv_labels: list[str] = field(default_factory=list)
     semanticscholar_url: str = ""
     arxiv_url: str = ""
@@ -19,6 +20,7 @@ class DocumentInfo:
             f"  d3_document_id={self.d3_document_id},\n"
             f"  title={self.title},\n"
             f"  author={self.author},\n"
+            f"  publication_date={self.publication_date},\n"
             f"  arxiv_labels={self.arxiv_labels},\n"
             f"  semanticscholar_url={self.semanticscholar_url}\n"
             f"  arxiv_url={self.arxiv_url}\n"
@@ -32,6 +34,7 @@ class DocumentInfo:
             "---------------------\n"
             f"Title: {self.title}\n"
             f"Author: {self.author}\n"
+            f"Publication Date: {self.publication_date}\n"
             f"Arxiv Labels: {self.arxiv_labels}\n"
             f"Semanticscholar URL: {self.semanticscholar_url}\n"
             f"Arxiv URL: {self.arxiv_url}"

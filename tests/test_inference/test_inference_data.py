@@ -521,6 +521,7 @@ def test_kw_only_initialization_inference_data() -> None:
                 d3_document_id=-1,
                 title="Title",
                 author="Author",
+                publication_date="2000-01-01",
                 abstract="Abstract",
                 arxiv_labels=[],
             ),

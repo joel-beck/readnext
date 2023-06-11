@@ -57,6 +57,7 @@ class SeenModelDataConstructorPlugin(ModelDataConstructorPlugin):
             d3_document_id=self.d3_document_id,
             title=query_document_row.select("title").item(),
             author=query_document_row.select("author").item(),
+            publication_date=query_document_row.select("publication_date").item(),
             arxiv_labels=query_document_row.select("arxiv_labels").item().to_list(),
             semanticscholar_url=query_document_row.select("semanticscholar_url").item(),
             arxiv_url=query_document_row.select("arxiv_url").item(),

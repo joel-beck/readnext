@@ -22,6 +22,7 @@ document_info_default = DocumentInfo(
     d3_document_id=-1,
     title="Title",
     author="Author",
+    publication_date="2000-01-01",
     arxiv_labels=["cs.CL"],
     semanticscholar_url="https://www.semanticscholar.org/paper/204e3073870fae3d05bcbc2f6a8e263d9b72e776",
     arxiv_url="https://arxiv.org/abs/2106.01572",

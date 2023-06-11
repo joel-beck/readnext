@@ -32,6 +32,7 @@ def test_document_info_defaults() -> None:
     assert document_info.d3_document_id == 3
     assert document_info.title == ""
     assert document_info.author == ""
+    assert document_info.publication_date == ""
     assert document_info.arxiv_labels == []
     assert document_info.semanticscholar_url == ""
     assert document_info.arxiv_url == ""
@@ -55,6 +56,7 @@ def test_kw_only_initialization_document_info() -> None:
             -1,  # type: ignore
             "Title",
             "Author",
+            "2000-01-01",
             ["cs.AI", "cs.CL"],
             "https://www.semanticscholar.org/paper/204e3073870fae3d05bcbc2f6a8e263d9b72e776",
             "https://arxiv.org/abs/2106.01572",

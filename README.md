@@ -17,18 +17,58 @@ The project is under active development.
 Below you find the installation instructions and a brief overview of the package.
 Check out the [documentation](https://joel-beck.github.io/readnext/) for background information about the citation-based methods and language models that are used in this project as well as a comprehensive user guide.
 
+## Quick Look
+
+```python
+from readnext import readnext, LanguageModelChoice, FeatureWeights
+
+result = readnext(
+    # `Attention is all you need` query paper
+    arxiv_url="https://arxiv.org/abs/1706.03762",
+    language_model_choice=LanguageModelChoice.FASTTEXT,
+    feature_weights=FeatureWeights(
+        publication_date=1,
+        citationcount_document=2,
+        citationcount_author=0.5,
+        co_citation_analysis=2,
+        bibliographic_coupling=2,
+    ),
+)
+
+print(result.recommendations.language_to_citation)
+```
+
+| candidate_d3_document_id | weighted_points | publication_date_points | citationcount_document_points | citationcount_author_points | co_citation_analysis_points | bibliographic_coupling_points | title                                                                                                           | author                 | arxiv_labels                        | semanticscholar_url                                                            | arxiv_url                        | integer_label | publication_date | citationcount_document | citationcount_author | co_citation_analysis_score | bibliographic_coupling_score |
+| -----------------------: | --------------: | ----------------------: | ----------------------------: | --------------------------: | --------------------------: | ----------------------------: | :-------------------------------------------------------------------------------------------------------------- | :--------------------- | :---------------------------------- | :----------------------------------------------------------------------------- | :------------------------------- | ------------: | :--------------- | ---------------------: | -------------------: | -------------------------: | ---------------------------: |
+|                 11212020 |            76.9 |                       0 |                            88 |                          56 |                          93 |                          93.5 | Neural Machine Translation by Jointly Learning to Align and Translate                                           | Yoshua Bengio          | ['cs.CL' 'cs.LG' 'cs.NE' 'stat.ML'] | https://www.semanticscholar.org/paper/fa72afa9b2cbc8f0d7b05d52548906610ffbb9c5 | https://arxiv.org/abs/1409.0473  |             1 | 2014-09-01       |                  19996 |               372099 |                         45 |                            4 |
+|                  7961699 |            70.8 |                       0 |                            83 |                           0 |                          86 |                          96.5 | Sequence to Sequence Learning with Neural Networks                                                              | Ilya Sutskever         | ['cs.CL' 'cs.LG']                   | https://www.semanticscholar.org/paper/cea967b59209c6be22829699f05b8b1ac4dc092d | https://arxiv.org/abs/1409.3215  |             1 | 2014-09-10       |                  15342 |               234717 |                         25 |                            5 |
+|                  6287870 |            54.8 |                       0 |                            77 |                           0 |                          30 |                          98.5 | TensorFlow: A system for large-scale machine learning                                                           | J. Dean                | ['cs.DC' 'cs.AI']                   | https://www.semanticscholar.org/paper/46200b99c40e8586c8a0f588488ab6414119fb28 | https://arxiv.org/abs/1605.08695 |             0 | 2016-05-27       |                  13266 |               115104 |                          4 |                            7 |
+|                 10716717 |            53.6 |                       0 |                            70 |                           0 |                          70 |                            61 | Feature Pyramid Networks for Object Detection                                                                   | Kaiming He             | ['cs.CV']                           | https://www.semanticscholar.org/paper/b9b4e05faa194e5022edd9eb9dd07e3d675c2b36 | https://arxiv.org/abs/1612.03144 |             0 | 2016-12-09       |                  10198 |               251467 |                         14 |                            1 |
+|                  4555207 |            51.3 |                       0 |                            56 |                           0 |                          59 |                          77.5 | MobileNetV2: Inverted Residuals and Linear Bottlenecks                                                          | Liang-Chieh Chen       | ['cs.CV']                           | https://www.semanticscholar.org/paper/dd9cfe7124c734f5a6fc90227d541d3dbcd72ba4 | https://arxiv.org/abs/1801.04381 |             0 | 2018-01-13       |                   7925 |                39316 |                         10 |                            2 |
+|                225039882 |            51.1 |                       0 |                            16 |                           0 |                          98 |                          77.5 | An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale                                      | Jakob Uszkoreit        | ['cs.CV' 'cs.AI' 'cs.LG']           | https://www.semanticscholar.org/paper/268d347e8a55b5eb82fb5e7d2f800e33c75ab18a | https://arxiv.org/abs/2010.11929 |             1 | 2020-10-22       |                   5519 |                51813 |                        185 |                            2 |
+|                  1114678 |            49.6 |                       0 |                            10 |                           0 |                          89 |                            87 | Neural Machine Translation of Rare Words with Subword Units                                                     | Alexandra Birch        | ['cs.CL']                           | https://www.semanticscholar.org/paper/1af68821518f03568f913ab03fc02080247a27ff | https://arxiv.org/abs/1508.07909 |             1 | 2015-08-31       |                   4963 |                16343 |                         34 |                            3 |
+|                  3429309 |            49.5 |                       0 |                            69 |                           0 |                        55.5 |                            61 | DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs | A. Yuille              | ['cs.CV']                           | https://www.semanticscholar.org/paper/cab372bc3824780cce20d9dd1c22d4df39ed081a | https://arxiv.org/abs/1606.00915 |             0 | 2016-06-02       |                   9963 |                64894 |                          9 |                            1 |
+|                218971783 |            49.5 |                       0 |                            12 |                           0 |                          96 |                          77.5 | Language Models are Few-Shot Learners                                                                           | Ilya Sutskever         | ['cs.CL']                           | https://www.semanticscholar.org/paper/6b85b63579a916f705a8e10a49bd8d849d91b1fc | https://arxiv.org/abs/2005.14165 |             1 | 2020-05-28       |                   5278 |               234717 |                        149 |                            2 |
+|                 13740328 |            48.4 |                       0 |                            76 |                           0 |                        44.5 |                            61 | Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification                     | Kaiming He             | ['cs.CV' 'cs.AI' 'cs.LG']           | https://www.semanticscholar.org/paper/d6f2f611da110b5b5061731be3fc4c7f45d8ee23 | https://arxiv.org/abs/1502.01852 |             1 | 2015-02-06       |                  12933 |               251467 |                          6 |                            1 |
+|                  1998416 |            47.7 |                       0 |                            33 |                           0 |                          59 |                            87 | Effective Approaches to Attention-based Neural Machine Translation                                              | Christopher D. Manning | ['cs.CL']                           | https://www.semanticscholar.org/paper/93499a7c7f699b6630a86fad964536f9423bb6d0 | https://arxiv.org/abs/1508.04025 |             1 | 2015-08-17       |                   6071 |               142015 |                         10 |                            3 |
+|                  3603249 |            46.3 |                       0 |                             7 |                           0 |                        66.5 |                           100 | Google's Neural Machine Translation System: Bridging the Gap between Human and Machine Translation              | J. Dean                | ['cs.CL' 'cs.AI' 'cs.LG']           | https://www.semanticscholar.org/paper/dbde7dfa6cae81df8ac19ef500c42db96c3d1edd | https://arxiv.org/abs/1609.08144 |             1 | 2016-09-26       |                   4847 |               115104 |                         12 |                           10 |
+|                  1629541 |            45.6 |                       0 |                            91 |                           0 |                          80 |                             0 | Fully convolutional networks for semantic segmentation                                                          | Trevor Darrell         | ['cs.CV']                           | https://www.semanticscholar.org/paper/317aee7fc081f2b137a85c4f20129007fd8e717e | https://arxiv.org/abs/1411.4038  |             0 | 2014-11-14       |                  25471 |               142117 |                         20 |                            0 |
+|                206593880 |            44.7 |                       0 |                            85 |                           0 |                        82.5 |                             0 | Rethinking the Inception Architecture for Computer Vision                                                       | Christian Szegedy      | ['cs.CV']                           | https://www.semanticscholar.org/paper/23ffaa0fe06eae05817f527a47ac3291077f9e58 | https://arxiv.org/abs/1512.00567 |             0 | 2015-12-02       |                  16562 |               128072 |                         21 |                            0 |
+|                 16326763 |            43.6 |                       0 |                            47 |                           0 |                        55.5 |                            61 | Continuous control with deep reinforcement learning                                                             | David Silver           | ['cs.LG' 'stat.ML']                 | https://www.semanticscholar.org/paper/024006d4c2a89f7acacc6e4438d156525b60a98f | https://arxiv.org/abs/1509.02971 |             1 | 2015-09-09       |                   7002 |                89450 |                          9 |                            1 |
+|                  6719686 |            38.1 |                       0 |                            23 |                           0 |                          59 |                            61 | Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks                                               | P. Abbeel              | ['cs.LG' 'cs.AI' 'cs.CV' 'cs.NE']   | https://www.semanticscholar.org/paper/c889d6f98e6d79b89c3a6adf8a921f88fa6ba518 | https://arxiv.org/abs/1703.03400 |             1 | 2017-03-09       |                   5757 |                74628 |                         10 |                            1 |
+|                  9672033 |            36.9 |                       0 |                            72 |                           0 |                        66.5 |                             0 | Convolutional Neural Networks for Sentence Classification                                                       | Yoon Kim               | ['cs.CL' 'cs.NE']                   | https://www.semanticscholar.org/paper/1f6ba0782862ec12a5ec6d7fb608523d55b0c6ba | https://arxiv.org/abs/1408.5882  |             1 | 2014-08-25       |                  10420 |                13934 |                         12 |                            0 |
+|                  1687220 |            36.5 |                       0 |                            24 |                           0 |                          52 |                            61 | Improved Techniques for Training GANs                                                                           | Ian J. Goodfellow      | ['cs.LG' 'cs.CV' 'cs.NE']           | https://www.semanticscholar.org/paper/571b0750085ae3d939525e62af510ee2cee9d5ea | https://arxiv.org/abs/1606.03498 |             1 | 2016-06-10       |                   5788 |               133593 |                          8 |                            1 |
+|                  6875312 |            34.9 |                       0 |                            17 |                           0 |                        36.5 |                          77.5 | Asynchronous Methods for Deep Reinforcement Learning                                                            | K. Kavukcuoglu         | ['cs.LG']                           | https://www.semanticscholar.org/paper/69e76e16740ed69f4dc55361a3d319ac2f1293dd | https://arxiv.org/abs/1602.01783 |             1 | 2016-02-04       |                   5556 |               104649 |                          5 |                            2 |
+|                 14955348 |            33.5 |                       0 |                             2 |                           0 |                        36.5 |                            87 | Communication-Efficient Learning of Deep Networks from Decentralized Data                                       | D. Ramage              | ['cs.LG']                           | https://www.semanticscholar.org/paper/d1dbf643447405984eeef098b1b320dee0b3b8a7 | https://arxiv.org/abs/1602.05629 |             1 | 2016-02-17       |                   4789 |                45639 |                          5 |                            3 |
+
+
+See the [Usage](#usage) section for more details and examples.
+
 
 ## Table of Contents <!-- omit from toc -->
 
-- [Setup](#setup)
-    - [Requirements](#requirements)
-    - [Installation](#installation)
-    - [Data and Models](#data-and-models)
-        - [D3 Dataset](#d3-dataset)
-        - [Citation Information](#citation-information)
-        - [Arxiv Labels](#arxiv-labels)
-    - [Environment Variables](#environment-variables)
-    - [Setup Scripts](#setup-scripts)
+- [Quick Look](#quick-look)
+- [Installation](#installation)
 - [Overview](#overview)
     - [Citation Recommender](#citation-recommender)
         - [Global Document Features](#global-document-features)
@@ -37,26 +77,25 @@ Check out the [documentation](https://joel-beck.github.io/readnext/) for backgro
     - [Language Recommender](#language-recommender)
     - [Hybrid Recommender](#hybrid-recommender)
     - [Evaluation](#evaluation)
+- [Setup](#setup)
+    - [Requirements](#requirements)
+    - [Data and Models](#data-and-models)
+        - [D3 Dataset](#d3-dataset)
+        - [Citation Information](#citation-information)
+        - [Arxiv Labels](#arxiv-labels)
+    - [Environment Variables](#environment-variables)
+    - [Setup Scripts](#setup-scripts)
+        - [Dataset Construction](#dataset-construction)
+        - [Citation Models](#citation-models)
+        - [Language Models](#language-models)
 - [Usage](#usage)
     - [Examples](#examples)
         - [Seen Query Paper](#seen-query-paper)
-        - [Continue the Flow](#continue-the-flow)
         - [Unseen Query Paper](#unseen-query-paper)
     - [Input Validation](#input-validation)
 
 
-
-## Setup
-
-### Requirements
-
-This project requires Python 3.10.
-Earlier versions of Python are not supported.
-Future support for higher versions will be available once the `torch` and `transformers` libraries are fully compatible with Python 3.11 and beyond.
-
-
-
-### Installation
+## Installation
 
 Currently, the `readnext` package is not available on PyPI but can be installed directly from GitHub.
 
@@ -74,6 +113,163 @@ Once all unit tests have been updated and changes have been merged into the `mai
 
 If you are interested in customizing the `readnext` package to your own needs, learn about some tips for an efficient development workflow in the [documentation](https://joel-beck.github.io/readnext/setup/#development-workflow).
 
+
+## Overview
+
+The following diagram presents a high-level overview of the hybrid recommender system for papers in the training corpus.
+Check out the [documentation](https://joel-beck.github.io/readnext/overview/#inference-retrieving-recommendations) for more information how the hybrid recommender works during inference for unseen papers.
+
+![Hybrid recommender system schematic](./docs/assets/hybrid-architecture.png)
+
+The primary concept involves a **Citation Recommender** that combines global document features and citation-based features, and a **Language Recommender** that generates embeddings from paper abstracts.
+The hybrid recommender integrates these components in a *cascade* fashion, with one recommender initially producing a candidate list, which is then re-ranked by the second recommender to yield the final recommendations.
+
+### Citation Recommender
+
+The **Citation Recommender** extracts five features from each training document.
+
+#### Global Document Features
+
+These features are derived from the document metadata in the D3 dataset.
+
+- **Publication Date**:
+    A *novelty* metric. Recent publications score higher, as they build upon earlier papers and compare their findings with existing results.
+
+- **Paper Citation Count**:
+    A *document popularity* metric. Papers with more citations are considered more valuable and relevant.
+
+- **Author Citation Count**:
+    An *author popularity* metric. Authors with higher total citations across their publications are deemed more important in the research community.
+
+Note that global document features are identical for each query document.
+
+#### Citation-Based Features
+
+These features are obtained from the citation data retrieved from the Semantic Scholar API and are *pairwise features* computed for each pair of documents in the training corpus.
+
+- **Co-Citation Analysis**:
+    Counts the number of shared *citing* papers, i.e. papers that themselves cite both the query and the candidate paper. Candidate documents with higher co-citation analysis scores are considered more relevant to the query document.
+
+- **Bibliographic Coupling**:
+    Counts shared *cited* papers, i.e. papers that are cited by both the query and the candidate paper. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
+
+#### Feature Weighting
+
+The five features are weighted in the following manner:
+
+- To reduce memory load, only the top-100 of all precomputed scores are stored for each feature and query document. This number is configurable before running the setup scripts through the `readnext/config.py` file.
+
+- All training documents are then ranked by each feature individually in ascending order. The candidate paper with the best score for a given feature is assigned rank 1 for this feature, the candidate paper with the 100th best score is assigned rank 100, all worse-scoring papers are assigned rank 101.
+
+- Thus, the weighting scheme grows linearly with a threshold at rank 100. The absolute magnitude of the original scores is not considered, but only their ranks to diminish the impact of outliers.
+
+- Instead of using the ranks directly for feature weighting, points are computed for better interpretability. They behave like inverse ranks, i.e. the best-scoring paper for a given feature receives 100 points, the 100th best-scoring paper receives 1 point, and all worse-scoring papers receive 0 points.
+
+- The points for each feature are combined linearly with the user-specified feature weights. Papers with the highest weighted points score are recommended.
+
+
+### Language Recommender
+
+Note: The following section assumes basic familiarity with the concept of word embeddings and how language models work.
+For a more detailed introduction, check out the [documentation](https://joel-beck.github.io/readnext/background/#language-models).
+
+The **Language Recommender** encodes paper abstracts into embedding vectors to capture semantic meaning. Papers with embeddings most similar to the query document (measured by cosine similarity) are recommended.
+
+Abstracts are preprocessed and tokenized using the `spaCy` library. **Eight language models across three categories** are considered:
+
+1. **Keyword-based models**
+
+    They produce sparse vector embeddings where the embedding dimension equals the vocabulary size of all document abstracts in the training corpus.
+    For these models, text preprocessing and tokenization is performed by the `spaCy` library using the `en_core_web_sm` model.
+
+    The following keyword-based models are considered:
+    - TF-IDF: Implemented according to the formula:
+
+        $$\text{TF-IDF}(t, d) = \text{TF}(t, d) \cdot \text{IDF}(t)$$
+
+        with:
+
+        $$\text{TF}(t, d) = \frac{\text{count}(t, d)}{\text{len}(d)}$$
+
+        and:
+
+        $$\text{IDF}(t) = \log\left(\frac{1 + N}{1 + \text{DF}(t)} + 1\right)$$
+
+        where:
+        - $t$ is a token,
+        - $d$ is a document,
+        - $\text{TF}(t, d)$ is the term frequency of token $t$ in document $d$ (interpreted as the relative frequency of a term in a document),
+        - $\text{IDF}(t)$ is the inverse document frequency of token $t$ across all documents in the training corpus,
+        - $\text{count}(t, d)$ is the count of token $t$ in document $d$,
+        - $\text{len}(d)$ is the total number of tokens in document $d$,
+        - $\text{DF}(t)$ is the document frequency of token $t$ (the number of documents in the corpus that contain the term $t$),
+        - $N$ is the total number of documents in the corpus.
+
+    - BM25: Implemented in the BM25+ variant as proposed by (Lv & Zhai, 2011) and described in (Trotman et al., 2014).
+
+        The formula is:
+
+        $$\text{BM25+}(t, d) = \text{BM25-TF}(t, d) \cdot \text{BM25-IDF}(t)$$
+
+        with:
+
+        $$\text{BM25-TF}(t, d) = \frac{(k + 1) \cdot \text{TF}(t, d)}{k \cdot (1 - b + b \cdot (\text{len}(d) / \text{avgdl})) + \text{TF}(t, d)} + \delta$$
+
+        and:
+
+        $$\text{BM25-IDF}(t) = \log\left(\frac{N+1}{\text{DF}(t)}\right)$$
+
+        where:
+        - $t$ is a token,
+        - $d$ is a document,
+        - $\text{BM25-TF}(t, d)$ is the BM25+ term frequency of token $t$ in document $d$,
+        - $\text{BM25-IDF}(t)$ is the BM25+ inverse document frequency of token $t$ across all documents in the training corpus,
+        - $\text{TF}(t, d)$ is the term frequency of token $t$ in document $d$ (interpreted as the relative frequency of a term in a document),
+        - $\text{DF}(t)$ is the document frequency of token $t$ (the number of documents in the corpus that contain the term $t$),
+        - $\text{len}(d)$ is the total number of tokens in document $d$,
+        - $\text{avgdl}$ is the average document length across the corpus,
+        - $N$ is the total number of documents in the corpus,
+        - $k$, $b$, and $\delta$ are free parameters.
+
+
+2. **Static embedding models**
+
+    They produce dense vector embeddings where the embedding dimension is fixed (here set to the default of 300) and independent of the vocabulary size.
+    Again, `spaCy` is used for text preprocessing and tokenization.
+    All three static embedding models are pretrained and implemented via their `gensim` interface:
+
+    - Word2Vec: Pretrained on the Google News corpus using the `word2vec-google-news-300` gensim model.
+    - GloVe: Pretrained on the Gigaword corpus and Wikipedia using the `glove.6B.300d` model from the NLP Stanford GloVe project.
+    - FastText: Pretrained on the Common Crawl corpus and Wikipedia using the `cc.en.300.bin` model from the FastText Website.
+
+
+3. **Contextual embedding models**
+
+    TODO
+    BERT, SciBERT, and Longformer (all provided by the `transformers` library).
+
+
+
+### Hybrid Recommender
+
+The hybrid recommender combines the Citation Recommender and the Language Recommender in a *cascade* fashion, i.e. one is used to generate a candidate list which is then re-ranked by the second recommender.
+Both component orders as well as the two candidate lists are evaluated to determine the best component order as well as to investigate if the hybrid approach improves performance over single component recommenders in the first place.
+
+### Evaluation
+TODO: add more details
+**Mean Average Precision (MAP)** is used as the evaluation metric, as it considers the order of recommendations, includes all items on the list, and works with binary labels. The MAP averages Average Precision (AP) scores over all training documents, enabling comparison between different recommender systems.
+
+
+
+
+
+## Setup
+
+### Requirements
+
+This project requires Python 3.10.
+Earlier versions of Python are not supported.
+Future support for higher versions will be available once the `torch` and `transformers` libraries are fully compatible with Python 3.11 and beyond.
 
 
 ### Data and Models
@@ -138,7 +334,12 @@ Explanation of the environment variables:
 
 The inference step of the `readnext` package leverages preprocessed and precomputed data such that all recommender features and abstract embeddings are readily available.
 To generate these files locally, run the following setup scripts in the specified order.
-All scripts are located in the `readnext/scripts/data` directory.
+All scripts are located in the `readnext/scripts` directory.
+
+
+#### Dataset Construction
+
+These scripts are located in the `readnext/scripts/data` directory.
 
 1. `s1_read_raw_data.py`: Reads documents, authors and arxiv metadata from raw JSON files and write it out into Parquet format.
 1. `s2_merge_arxiv_labels.py`: Merges the arxiv metadata with the D3 dataset via the arxiv id. Adds arxiv labels as new feature to the dataset which are later used as ground-truth labels for the recommender system.
@@ -147,86 +348,25 @@ All scripts are located in the `readnext/scripts/data` directory.
 1. `s5_add_ranks.py`: Adds rank features for global document characteristics (publication date, document citation count and author citation count) to the dataset and selects a subset of the most cited documents for the final dataset.
 
 
+All further script paths are relative to the `readnext/scripts/modeling` directory.
 
-## Overview
+#### Citation Models
 
-The following diagram presents a high-level overview of the hybrid recommender system for papers in the training corpus.
-Check out the [documentation](https://joel-beck.github.io/readnext/overview/#inference-retrieving-recommendations) for more information how the hybrid recommender works during inference for unseen papers.
-
-![Hybrid recommender system schematic](./docs/assets/hybrid-architecture.png)
-
-The primary concept involves a **Citation Recommender** that combines global document features and citation-based features, and a **Language Recommender** that generates embeddings from paper abstracts.
-The hybrid recommender integrates these components in a *cascade* fashion, with one recommender initially producing a candidate list, which is then re-ranked by the second recommender to yield the final recommendations.
-
-### Citation Recommender
-
-The **Citation Recommender** extracts five features from each training document.
-
-#### Global Document Features
-
-These features are derived from the document metadata in the D3 dataset.
-
-- **Publication Date**:
-    A *novelty* metric. Recent publications score higher, as they build upon earlier papers and compare their findings with existing results.
-
-- **Paper Citation Count**:
-    A *document popularity* metric. Papers with more citations are considered more valuable and relevant.
-
-- **Author Citation Count**:
-    An *author popularity* metric. Authors with higher total citations across their publications are deemed more important in the research community.
-
-Note that global document features are identical for each query document.
-
-#### Citation-Based Features
-
-These features are obtained from the citation data retrieved from the Semantic Scholar API and are *pairwise features* computed for each pair of documents in the training corpus.
-
-- **Co-Citation Analysis**:
-    Counts the number of shared *citing* papers, i.e. papers that themselves cite both the query and the candidate paper. Candidate documents with higher co-citation analysis scores are considered more relevant to the query document.
-
-- **Bibliographic Coupling**:
-    Counts shared *cited* papers, i.e. papers that are cited by both the query and the candidate paper. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
-
-#### Feature Weighting
-
-The five features are weighted in the following manner:
-
-- To reduce memory load, only the top-100 of all precomputed scores are stored for each feature and query document. This number is configurable before running the setup scripts through the `readnext/config.py` file.
-
-- All training documents are then ranked by each feature individually in ascending order. The candidate paper with the best score for a given feature is assigned rank 1 for this feature, the candidate paper with the 100th best score is assigned rank 100, all worse-scoring papers are assigned rank 101.
-
-- Thus, the weighting scheme grows linearly with a threshold at rank 100. The absolute magnitude of the original scores is not considered, but only their ranks to diminish the impact of outliers.
-
-- Instead of using the ranks directly for feature weighting, points are computed for better interpretability. They behave like inverse ranks, i.e. the best-scoring paper for a given feature receives 100 points, the 100th best-scoring paper receives 1 point, and all worse-scoring papers receive 0 points.
-
-- The points for each feature are combined linearly with the user-specified feature weights. Papers with the highest weighted points score are recommended.
+1. `run_co_citation_analysis.py`: Precomputes co-citation analysis scores for all document pairs in the dataset.
+1. `bibliographic_coupling.py`: Precomputes bibliographic coupling scores for all document pairs in the dataset.
 
 
-### Language Recommender
-TODO: add more details
-The **Language Recommender** encodes paper abstracts into embedding vectors to capture semantic meaning. Papers with embeddings most similar to the query document (measured by cosine similarity) are recommended.
+#### Language Models
 
-Abstracts are preprocessed and tokenized using the `spaCy` library. **Eight language models across three categories** are considered:
+1. `tokenizer/run_tokenizer.py`: Tokenizes the abstracts of all documents in the dataset by four different tokenizers into the appropriate format for all eight language models.
+1. `embedder/run_embedder_*.py`: These scripts generate sparse or dense numeric embeddings of all document abstracts for each language model. The process is split into separate scripts for each model to allow for easy parallelization.
+1. `cosine_similarities/run_cosine_similarities_*.py`: Precomputes cosine similarity scores for all document pairs in the dataset for each language model. Again, multiple scripts are used for parallelization purposes.
 
-1. **Keyword-based models**:
-    TF-IDF and BM25.
 
-2. **Static embedding models**:
-    Word2Vec, GloVe, and fastText (all implemented using their `gensim` interface).
 
-3. **Contextual embedding models**:
-    BERT, SciBERT, and Longformer (all provided by the `transformers` library).
 
-All static and contextual embedding models are pre-trained on extensive text corpora.
 
-### Hybrid Recommender
 
-The hybrid recommender combines the Citation Recommender and the Language Recommender in a *cascade* fashion, i.e. one is used to generate a candidate list which is then re-ranked by the second recommender.
-Both component orders as well as the two candidate lists are evaluated to determine the best component order as well as to investigate if the hybrid approach improves performance over single component recommenders in the first place.
-
-### Evaluation
-TODO: add more details
-**Mean Average Precision (MAP)** is used as the evaluation metric, as it considers the order of recommendations, includes all items on the list, and works with binary labels. The MAP averages Average Precision (AP) scores over all training documents, enabling comparison between different recommender systems.
 
 
 ## Usage
@@ -238,6 +378,12 @@ It relies on the top-level `readnext()` function, which takes two required argum
 This can be the Semanticscholar ID, Semanticscholar URL, Arxiv ID, or Arxiv URL of the paper.
 This argument is required and should be provided as a string.
 
+    **Term Definition**:
+    - The Semanticscholar *ID* is a 40-digit hexadecimal string at the end of the Semanticscholar URL after the last forward slash.
+    For example, the Semanticscholar ID for the URL `https://www.semanticscholar.org/paper/67c4ffa7f9c25e9e0f0b0eac5619070f6a5d143d` is `67c4ffa7f9c25e9e0f0b0eac5619070f6a5d143d`.
+    - The Arxiv *ID* is a 4-digit number followed by a dot followed by a 5-digit number at the end of the Arxiv URL after the last forward slash.
+    For example, the Arxiv ID for the URL `https://arxiv.org/abs/1234.56789` is `1234.56789`.
+
 - The language model choice for the Language Recommender, which is used to tokenize and embed the query paper's abstract.
 This argument is required and should be passed using the `LanguageModelChoice` Enum, which provides autocompletion for all eight available language models.
 
@@ -246,23 +392,47 @@ This argument is optional and is submitted using an instance of the `FeatureWeig
 If not specified, the five features (`publication_date`, `citationcount_document`, `citationcount_author`, `co_citation_analysis`, and `bibliographic_coupling`) are given equal weights of one.
 Note that the weights are normalized to sum up to one, so the absolute values are irrelevant; only the relative ratios matter.
 
+
 ### Examples
 
 Inference works for both 'seen' and 'unseen' query documents, depending on whether the query document is part of the training corpus or not.
 
+
 #### Seen Query Paper
 
-If the query paper is part of the training corpus, all feature values are precomputed and inference is fast. As an example, we can choose the popular "Attention is all you need" paper by Vaswani et al. (2017) using the `FastText` language model and the default feature weights:
+If the query paper is part of the training corpus, all feature values are precomputed and inference is fast.
+
+In the [Quick Look](#quick-look) example at the beginning, we have already obtained recommendations for the query paper "Attention is all you need" by Vaswani et al. (2017) using the `FastText` language model and custom feature weights.
+
+Assuming we have read the top recommendation "Neural Machine Translation by Jointly Learning to Align and Translate" by Yoshua Bengio, we can continue our reading flow by extracting the identifier for the previously recommended paper from the `semantischolar_url` or `arxiv_url` columns of the previous output.
+In this case, we use the `SciBERT` language model and the default feature weights of 1 for each feature:
 
 ```python
 from readnext import readnext, LanguageModelChoice, FeatureWeights
 
 result = readnext(
-    arxiv_url="https://arxiv.org/abs/1706.03762", language_model_choice=LanguageModelChoice.FASTTEXT
+    # `Attention is all you need` query paper
+    arxiv_url="https://arxiv.org/abs/1706.03762",
+    language_model_choice=LanguageModelChoice.FASTTEXT,
+    feature_weights=FeatureWeights(
+        publication_date=1,
+        citationcount_document=2,
+        citationcount_author=0.5,
+        co_citation_analysis=2,
+        bibliographic_coupling=2,
+    ),
+)
+
+# extract one of the paper identifiers from the previous top recommendation
+semanticscholar_url = result.recommendations.citation_to_language[0, "semanticscholar_url"]
+
+result_seen_query = readnext(
+    semanticscholar_url=semanticscholar_url,
+    language_model_choice=LanguageModelChoice.SCIBERT,
 )
 ```
 
-A message is printed to the console to indicate that the query paper is part of the training corpus:
+A message is printed to the console indicating that the query paper is part of the training corpus:
 
 ```console
 > ╭──────────────────────────────────────────────────╮
@@ -291,119 +461,108 @@ For 'unseen' papers this information is not availabels and all binary labels are
 - `recommendations`: Individual dataframes that offer the top paper recommendations.
 Recommendations are calculated for both Hybrid-Recommender orders (Citation -> Language and Language -> Citation), and this includes both the intermediate candidate lists and the final hybrid recommendations.
 
-Let's first take a look at our query paper:
+Let's first take a look at our new query paper:
 
 ```python
-print(result.document_info)
+print(result_seen_query.document_info)
 ```
 
 ```console
-> Document 13756489
+> Document 11212020
 > ---------------------
-> Title: Attention is All you Need
-> Author: Lukasz Kaiser
-> Arxiv Labels: ['cs.CL', 'cs.LG']
-> Semanticscholar URL: https://www.semanticscholar.org/paper/204e3073870fae3d05bcbc2f6a8e263d9b72e776
-> Arxiv URL: https://arxiv.org/abs/1706.03762
+> Title: Neural Machine Translation by Jointly Learning to Align and Translate
+> Author: Yoshua Bengio
+> Publication Date: 2014-09-01
+> Arxiv Labels: ['cs.CL', 'cs.LG', 'cs.NE', 'stat.ML']
+> Semanticscholar URL: https://www.semanticscholar.org/paper/fa72afa9b2cbc8f0d7b05d52548906610ffbb9c5
+> Arxiv URL: https://arxiv.org/abs/1409.0473
 ```
 
 Now we want to get recommendations for which papers we should read next.
 Here, we choose the recommendations for the Citation -> Language Hybrid-Recommender order.
 
 The output is a dataframe where each row represents a recommendation.
-The rows are sorted in descending order by the cosine similarity between the query paper and the candidate paper since the re-ranking step is performed by the Language Recommender:
+The rows are sorted in descending order by the cosine similarity between the query paper and the candidate paper since the re-ranking step is performed by the Language Recommender.
+For compactness we limit the output to the top three recommendations:
 
 
 ```python
-print(result.recommendations.citation_to_language)
+print(result_seen_query.recommendations.citation_to_language.head(3))
 ```
 
-| candidate_d3_document_id | cosine_similarity | title                                                                                         | author               | arxiv_labels                        | semanticscholar_url                                                            | arxiv_url                        | integer_label |
-| -----------------------: | ----------------: | :-------------------------------------------------------------------------------------------- | :------------------- | :---------------------------------- | :----------------------------------------------------------------------------- | :------------------------------- | ------------: |
-|                 11212020 |          0.892914 | Neural Machine Translation by Jointly Learning to Align and Translate                         | Yoshua Bengio        | ['cs.CL' 'cs.LG' 'cs.NE' 'stat.ML'] | https://www.semanticscholar.org/paper/fa72afa9b2cbc8f0d7b05d52548906610ffbb9c5 | https://arxiv.org/abs/1409.0473  |             1 |
-|                  7961699 |          0.891895 | Sequence to Sequence Learning with Neural Networks                                            | Ilya Sutskever       | ['cs.CL' 'cs.LG']                   | https://www.semanticscholar.org/paper/cea967b59209c6be22829699f05b8b1ac4dc092d | https://arxiv.org/abs/1409.3215  |             1 |
-|                 10716717 |          0.877233 | Feature Pyramid Networks for Object Detection                                                 | Kaiming He           | ['cs.CV']                           | https://www.semanticscholar.org/paper/b9b4e05faa194e5022edd9eb9dd07e3d675c2b36 | https://arxiv.org/abs/1612.03144 |             0 |
-|                225039882 |          0.867628 | An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale                    | Jakob Uszkoreit      | ['cs.CV' 'cs.AI' 'cs.LG']           | https://www.semanticscholar.org/paper/268d347e8a55b5eb82fb5e7d2f800e33c75ab18a | https://arxiv.org/abs/2010.11929 |             1 |
-|                  4555207 |          0.860428 | MobileNetV2: Inverted Residuals and Linear Bottlenecks                                        | Liang-Chieh Chen     | ['cs.CV']                           | https://www.semanticscholar.org/paper/dd9cfe7124c734f5a6fc90227d541d3dbcd72ba4 | https://arxiv.org/abs/1801.04381 |             0 |
-|                  6287870 |          0.855834 | TensorFlow: A system for large-scale machine learning                                         | J. Dean              | ['cs.DC' 'cs.AI']                   | https://www.semanticscholar.org/paper/46200b99c40e8586c8a0f588488ab6414119fb28 | https://arxiv.org/abs/1605.08695 |             0 |
-|                  1055111 |          0.854223 | Show, Attend and Tell: Neural Image Caption Generation with Visual Attention                  | Yoshua Bengio        | ['cs.LG' 'cs.CV']                   | https://www.semanticscholar.org/paper/4d8f2d14af5991d4f0d050d22216825cac3157bd | https://arxiv.org/abs/1502.03044 |             1 |
-|                  6628106 |          0.846944 | Adam: A Method for Stochastic Optimization                                                    | Diederik P. Kingma   | ['cs.LG']                           | https://www.semanticscholar.org/paper/a6cb366736791bcccc5c8639de5a8f9636bf87e8 | https://arxiv.org/abs/1412.6980  |             1 |
-|                  3626819 |          0.844104 | Deep Contextualized Word Representations                                                      | Kenton Lee           | ['cs.CL']                           | https://www.semanticscholar.org/paper/3febb2bed8865945e7fddc99efd791887bb7e14f | https://arxiv.org/abs/1802.05365 |             1 |
-|                  5808102 |          0.843033 | Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift  | Christian Szegedy    | ['cs.LG']                           | https://www.semanticscholar.org/paper/4d376d6978dad0374edfa6709c9556b42d3594d3 | https://arxiv.org/abs/1502.03167 |             1 |
-|                 12670695 |          0.836785 | MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications            | Hartwig Adam         | ['cs.CV']                           | https://www.semanticscholar.org/paper/3647d6d0f151dc05626449ee09cc7bce55be497e | https://arxiv.org/abs/1704.04861 |             0 |
-|                  9433631 |          0.820209 | Densely Connected Convolutional Networks                                                      | Kilian Q. Weinberger | ['cs.CV' 'cs.LG']                   | https://www.semanticscholar.org/paper/5694e46284460a648fe29117cbc55f6c9be3fa3c | https://arxiv.org/abs/1608.06993 |             1 |
-|                  5590763 |          0.813149 | Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation | Yoshua Bengio        | ['cs.CL' 'cs.LG' 'cs.NE' 'stat.ML'] | https://www.semanticscholar.org/paper/0b544dfe355a5070b60986319a3f51fb45d1348e | https://arxiv.org/abs/1406.1078  |             1 |
-|                198953378 |          0.802215 | RoBERTa: A Robustly Optimized BERT Pretraining Approach                                       | Luke Zettlemoyer     | ['cs.CL']                           | https://www.semanticscholar.org/paper/077f8329a7b6fa3b7c877a57b81eb6c18b5f87de | https://arxiv.org/abs/1907.11692 |             1 |
-|                 10328909 |          0.799677 | Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks                | Kaiming He           | ['cs.CV']                           | https://www.semanticscholar.org/paper/424561d8585ff8ebce7d5d07de8dbf7aae5e7270 | https://arxiv.org/abs/1506.01497 |             0 |
-|                  6200260 |          0.799408 | Image-to-Image Translation with Conditional Adversarial Networks                              | Alexei A. Efros      | ['cs.CV']                           | https://www.semanticscholar.org/paper/8acbe90d5b852dadea7810345451a99608ee54c7 | https://arxiv.org/abs/1611.07004 |             0 |
-|                206594692 |           0.78717 | Deep Residual Learning for Image Recognition                                                  | Kaiming He           | ['cs.CV']                           | https://www.semanticscholar.org/paper/2c03df8b48bf3fa39054345bafabfeff15bfd11d | https://arxiv.org/abs/1512.03385 |             0 |
-|                  3144218 |          0.785984 | Semi-Supervised Classification with Graph Convolutional Networks                              | M. Welling           | ['cs.LG' 'stat.ML']                 | https://www.semanticscholar.org/paper/36eff562f65125511b5dfab68ce7f7a943c27478 | https://arxiv.org/abs/1609.02907 |             1 |
-|                  5201925 |          0.783595 | Empirical Evaluation of Gated Recurrent Neural Networks on Sequence Modeling                  | Yoshua Bengio        | ['cs.NE' 'cs.LG']                   | https://www.semanticscholar.org/paper/adfcf065e15fd3bc9badf6145034c84dfb08f204 | https://arxiv.org/abs/1412.3555  |             1 |
-|                 52967399 |          0.779854 | BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding              | Kenton Lee           | ['cs.CL']                           | https://www.semanticscholar.org/paper/df2b0e26d0599ce3e70df8a9da02e51594e0e992 | https://arxiv.org/abs/1810.04805 |             1 |
+| candidate_d3_document_id | cosine_similarity | title                                                                                         | author                 | arxiv_labels                        | semanticscholar_url                                                            | arxiv_url                        | integer_label |
+| -----------------------: | ----------------: | :-------------------------------------------------------------------------------------------- | :--------------------- | :---------------------------------- | :----------------------------------------------------------------------------- | :------------------------------- | ------------: |
+|                  7961699 |          0.959016 | Sequence to Sequence Learning with Neural Networks                                            | Ilya Sutskever         | ['cs.CL' 'cs.LG']                   | https://www.semanticscholar.org/paper/cea967b59209c6be22829699f05b8b1ac4dc092d | https://arxiv.org/abs/1409.3215  |             1 |
+|                  5590763 |          0.953746 | Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation | Yoshua Bengio          | ['cs.CL' 'cs.LG' 'cs.NE' 'stat.ML'] | https://www.semanticscholar.org/paper/0b544dfe355a5070b60986319a3f51fb45d1348e | https://arxiv.org/abs/1406.1078  |             1 |
+|                  1998416 |          0.946671 | Effective Approaches to Attention-based Neural Machine Translation                            | Christopher D. Manning | ['cs.CL']                           | https://www.semanticscholar.org/paper/93499a7c7f699b6630a86fad964536f9423bb6d0 | https://arxiv.org/abs/1508.04025 |             1 |
 
 
-Hence, we read the "Neural Machine Translation by Jointly Learning to Align and Translate" paper by Yoshua Bengio next.
+Hence, we read the paper "Sequence to Sequence Learning with Neural Networks" by Ilya Sutskever et al. next.
 
-
-#### Continue the Flow
-
-Since the recommendations dataframe contains identifiers for the candidate papers, we can continue our reading flow by generating recommendations for the next paper.
-
-In this case, we want to use the `SciBERT` language model and assign a higher weight to the `co_citation_analysis` and `bibliographic` coupling features, while disregarding the author popularity by setting the `citationcount_author` weight to 0.
-
-Note that we only need to specify the weights for the features we want to change from the default value of 1:
-
-```python
-# extract one of the paper identifiers from the previous top recommendation
-semanticscholar_url = result.recommendations.citation_to_language[0, "semanticscholar_url"]
-
-next_result = readnext(
-    semanticscholar_url=semanticscholar_url,
-    language_model_choice=LanguageModelChoice.SCIBERT,
-    feature_weights=FeatureWeights(
-        citationcount_author=0, co_citation_analysis=3, bibliographic_coupling=3
-    ),
-)
-```
-
-Now, we generate the recommendations candidate list with the Language Recommender and re-rank the candidates with the Citation Recommender:
-
-```python
-print(next_result.recommendations.language_to_citation)
-```
-
-Since the second recommender of the hybrid structure is the Citation Recommender, the output is sorted by the weighted points score of the individual features:
-
-| candidate_d3_document_id | weighted_points | publication_date_points | citationcount_document_points | citationcount_author_points | co_citation_analysis_points | bibliographic_coupling_points | title                                                                                                           | author                 | arxiv_labels                        | semanticscholar_url                                                            | arxiv_url                        | integer_label | publication_date | citationcount_document | citationcount_author | co_citation_analysis_score | bibliographic_coupling_score |
-| -----------------------: | --------------: | ----------------------: | ----------------------------: | --------------------------: | --------------------------: | ----------------------------: | :-------------------------------------------------------------------------------------------------------------- | :--------------------- | :---------------------------------- | :----------------------------------------------------------------------------- | :------------------------------- | ------------: | :--------------- | ---------------------: | -------------------: | -------------------------: | ---------------------------: |
-|                  7961699 |            85.4 |                       0 |                            83 |                           0 |                         100 |                           100 | Sequence to Sequence Learning with Neural Networks                                                              | Ilya Sutskever         | ['cs.CL' 'cs.LG']                   | https://www.semanticscholar.org/paper/cea967b59209c6be22829699f05b8b1ac4dc092d | https://arxiv.org/abs/1409.3215  |             1 | 2014-09-10       |                  15342 |               234717 |                        191 |                           12 |
-|                  5590763 |            84.8 |                       0 |                            84 |                        56.5 |                          99 |                            99 | Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation                   | Yoshua Bengio          | ['cs.CL' 'cs.LG' 'cs.NE' 'stat.ML'] | https://www.semanticscholar.org/paper/0b544dfe355a5070b60986319a3f51fb45d1348e | https://arxiv.org/abs/1406.1078  |             1 | 2014-06-03       |                  15720 |               372099 |                        149 |                           11 |
-|                 13756489 |            80.8 |                       0 |                            96 |                           0 |                          91 |                          92.5 | Attention is All you Need                                                                                       | Lukasz Kaiser          | ['cs.CL' 'cs.LG']                   | https://www.semanticscholar.org/paper/204e3073870fae3d05bcbc2f6a8e263d9b72e776 | https://arxiv.org/abs/1706.03762 |             1 | 2017-06-12       |                  38868 |                61163 |                         45 |                            4 |
-|                  1998416 |            75.6 |                       0 |                            33 |                           0 |                          98 |                          92.5 | Effective Approaches to Attention-based Neural Machine Translation                                              | Christopher D. Manning | ['cs.CL']                           | https://www.semanticscholar.org/paper/93499a7c7f699b6630a86fad964536f9423bb6d0 | https://arxiv.org/abs/1508.04025 |             1 | 2015-08-17       |                   6071 |               142015 |                        116 |                            4 |
-|                  3626819 |            75.3 |                       0 |                            58 |                           0 |                          92 |                          89.5 | Deep Contextualized Word Representations                                                                        | Kenton Lee             | ['cs.CL']                           | https://www.semanticscholar.org/paper/3febb2bed8865945e7fddc99efd791887bb7e14f | https://arxiv.org/abs/1802.05365 |             1 | 2018-02-15       |                   8314 |                50225 |                         53 |                            3 |
-|                  5959482 |            74.5 |                       0 |                            89 |                           0 |                          94 |                            75 | Efficient Estimation of Word Representations in Vector Space                                                    | J. Dean                | ['cs.CL']                           | https://www.semanticscholar.org/paper/330da625c15427c6e42ccfa3b747fb29e5835bf0 | https://arxiv.org/abs/1301.3781  |             1 | 2013-01-16       |                  22770 |               115104 |                         65 |                            1 |
-|                  9672033 |            74.4 |                       0 |                            72 |                           0 |                          89 |                          85.5 | Convolutional Neural Networks for Sentence Classification                                                       | Yoon Kim               | ['cs.CL' 'cs.NE']                   | https://www.semanticscholar.org/paper/1f6ba0782862ec12a5ec6d7fb608523d55b0c6ba | https://arxiv.org/abs/1408.5882  |             1 | 2014-08-25       |                  10420 |                13934 |                         36 |                            2 |
-|                  1114678 |            71.8 |                       0 |                            10 |                           0 |                          93 |                            95 | Neural Machine Translation of Rare Words with Subword Units                                                     | Alexandra Birch        | ['cs.CL']                           | https://www.semanticscholar.org/paper/1af68821518f03568f913ab03fc02080247a27ff | https://arxiv.org/abs/1508.07909 |             1 | 2015-08-31       |                   4963 |                16343 |                         56 |                            5 |
-|                  3603249 |            70.8 |                       0 |                             7 |                           0 |                          90 |                          96.5 | Google's Neural Machine Translation System: Bridging the Gap between Human and Machine Translation              | J. Dean                | ['cs.CL' 'cs.AI' 'cs.LG']           | https://www.semanticscholar.org/paper/dbde7dfa6cae81df8ac19ef500c42db96c3d1edd | https://arxiv.org/abs/1609.08144 |             1 | 2016-09-26       |                   4847 |               115104 |                         44 |                            7 |
-|                206741496 |            67.7 |                       0 |                            48 |                         3.5 |                          75 |                          89.5 | Speech recognition with deep recurrent neural networks                                                          | Geoffrey E. Hinton     | ['cs.NE' 'cs.CL']                   | https://www.semanticscholar.org/paper/4177ec52d1b80ed57f2e72b0f9a42365f1a8598d | https://arxiv.org/abs/1303.5778  |             1 | 2013-03-22       |                   7072 |               360601 |                         21 |                            3 |
-|                207556454 |            65.2 |                       0 |                            46 |                           0 |                        83.5 |                            75 | Enriching Word Vectors with Subword Information                                                                 | Tomas Mikolov          | ['cs.CL' 'cs.LG']                   | https://www.semanticscholar.org/paper/e2dba792360873aef125572812f3673b1a85d850 | https://arxiv.org/abs/1607.04606 |             1 | 2016-07-15       |                   6876 |                92866 |                         25 |                            1 |
-|                  5808102 |            65.1 |                       0 |                            92 |                           0 |                          68 |                            75 | Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift                    | Christian Szegedy      | ['cs.LG']                           | https://www.semanticscholar.org/paper/4d376d6978dad0374edfa6709c9556b42d3594d3 | https://arxiv.org/abs/1502.03167 |             1 | 2015-02-10       |                  30576 |               128072 |                         17 |                            1 |
-|                  6254678 |            61.8 |                       0 |                             5 |                           0 |                          88 |                            75 | WaveNet: A Generative Model for Raw Audio                                                                       | K. Simonyan            | ['cs.SD' 'cs.LG']                   | https://www.semanticscholar.org/paper/df0402517a7338ae28bc54acaac400de6b456a46 | https://arxiv.org/abs/1609.03499 |             1 | 2016-09-12       |                   4834 |               117421 |                         29 |                            1 |
-|                  2407601 |            61.3 |                       0 |                            51 |                           0 |                        71.5 |                            75 | Distributed Representations of Sentences and Documents                                                          | Quoc V. Le             | ['cs.CL' 'cs.AI' 'cs.LG']           | https://www.semanticscholar.org/paper/f527bcfb09f32e6a4a8afc0b37504941c1ba2cee | https://arxiv.org/abs/1405.4053  |             1 | 2014-05-16       |                   7273 |               107587 |                         18 |                            1 |
-|                   351666 |            57.9 |                       0 |                            45 |                           0 |                        64.5 |                            75 | Natural Language Processing (Almost) from Scratch                                                               | K. Kavukcuoglu         | ['cs.LG' 'cs.CL']                   | https://www.semanticscholar.org/paper/bc1022b031dc6c7019696492e8116598097a8c12 | https://arxiv.org/abs/1103.0398  |             1 | 2011-02-01       |                   6779 |               104649 |                         16 |                            1 |
-|                215827080 |            32.3 |                       0 |                            87 |                           0 |                          57 |                             0 | Rich Feature Hierarchies for Accurate Object Detection and Semantic Segmentation                                | Ross B. Girshick       | ['cs.CV']                           | https://www.semanticscholar.org/paper/2f4df08d9072fc2ac181b7fced6a245315ce05c8 | https://arxiv.org/abs/1311.2524  |             0 | 2013-11-11       |                  18047 |               190081 |                         14 |                            0 |
-|                  3429309 |            27.2 |                       0 |                            69 |                           0 |                        49.5 |                             0 | DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs | A. Yuille              | ['cs.CV']                           | https://www.semanticscholar.org/paper/cab372bc3824780cce20d9dd1c22d4df39ed081a | https://arxiv.org/abs/1606.00915 |             0 | 2016-06-02       |                   9963 |                64894 |                         12 |                            0 |
-|                 17127188 |            22.8 |                       0 |                            20 |                           0 |                          54 |                             0 | Multi-Scale Context Aggregation by Dilated Convolutions                                                         | V. Koltun              | ['cs.CV']                           | https://www.semanticscholar.org/paper/7f5fc84819c0cf94b771fe15141f65b123f7b8ec | https://arxiv.org/abs/1511.07122 |             0 | 2015-11-23       |                   5655 |                37311 |                         13 |                            0 |
-|                 11797475 |            16.8 |                       0 |                            19 |                           0 |                        38.5 |                             0 | Two-Stream Convolutional Networks for Action Recognition in Videos                                              | Andrew Zisserman       | ['cs.CV']                           | https://www.semanticscholar.org/paper/67dccc9a856b60bdc4d058d83657a089b8ad4486 | https://arxiv.org/abs/1406.2199  |             0 | 2014-06-09       |                   5636 |               226816 |                          9 |                            0 |
-|                211096730 |            13.1 |                       0 |                            13 |                         3.5 |                        30.5 |                             0 | A Simple Framework for Contrastive Learning of Visual Representations                                           | Geoffrey E. Hinton     | ['cs.LG' 'cs.CV' 'stat.ML']         | https://www.semanticscholar.org/paper/34733eaf66007516347a40ad5d9bbe1cc9dacb6b | https://arxiv.org/abs/2002.05709 |             1 | 2020-02-13       |                   5312 |               360601 |                          7 |                            0 |
-
-
-Thus, we continue our reading session with the "Sequence to Sequence Learning with Neural Networks" paper by Ilya Sutskever et al.
 
 
 #### Unseen Query Paper
 
-TODO
+If the query paper is not part of the training corpus, the inference step takes longer since tokenization, embedding and the computation of co-citation analysis, bibliographic coupling and cosine similarity scores has to be performed from scratch.
+
+However, apart from a longer waiting time, **the user does not have to care about** if the query paper is part of the training corpus or not since the user interface remains the same!
+
+As an example, we fetch recommendations for the "GPT-4 Technical Report" paper by OpenAI. This paper is too recent to be part of the training corpus.
+
+Due to its recency, it might not have been cited that often, so we lower the weight of the `co_citation_analysis` feature. Further, we increase the `publication_date` weight and decrease the `citationcount_author` weight.
+For the Language Recommender we use the `GloVe` model to embed the paper abstract.
+
+Note that we only need to specify the weights for the features we want to change from the default value of 1
+
+```python
+from readnext import readnext, LanguageModelChoice, FeatureWeights
+
+result_unseen_query = readnext(
+    arxiv_url="https://arxiv.org/abs/2303.08774",
+    language_model_choice=LanguageModelChoice.GLOVE,
+    feature_weights=FeatureWeights(
+        publication_date=4,
+        citationcount_author=0.2,
+        co_citation_analysis=0.2,
+    ),
+)
+```
+
+The console output informs us that the query paper is not part of the training corpus and provides some progress updates for the ongoing computations:
+
+```console
+> ╭──────────────────────────────────────────────────────╮
+> │                                                      │
+> │ Query document is not contained in the training data │
+> │                                                      │
+> ╰──────────────────────────────────────────────────────╯
+
+> Loading training corpus................. ✅ (0.07 seconds)
+> Tokenizing query abstract............... ✅ (0.41 seconds)
+> Loading pretrained Glove model.......... ✅ (26.38 seconds)
+> Embedding query abstract................ ✅ (0.00 seconds)
+> Loading pretrained embeddings........... ✅ (0.19 seconds)
+> Computing cosine similarities........... ✅ (0.05 seconds)
+```
+
+The time distribution differs between the language models. For `GloVe`, loading the large pretrained model into memory allocates by far the most time.
+
+Now, we generate the recommendations candidate list with the Language Recommender and re-rank the candidates with the Citation Recommender.
+Since the second recommender of the hybrid structure is the Citation Recommender, the output is sorted by the weighted points score of the individual features:
+
+```python
+print(result_unseen_query.recommendations.language_to_citation.head(3))
+```
+
+| candidate_d3_document_id | weighted_points | publication_date_points | citationcount_document_points | citationcount_author_points | co_citation_analysis_points | bibliographic_coupling_points | title                                                            | author          | arxiv_labels      | semanticscholar_url                                                            | arxiv_url                        | integer_label | publication_date | citationcount_document | citationcount_author | co_citation_analysis_score | bibliographic_coupling_score |
+| -----------------------: | --------------: | ----------------------: | ----------------------------: | --------------------------: | --------------------------: | ----------------------------: | :--------------------------------------------------------------- | :-------------- | :---------------- | :----------------------------------------------------------------------------- | :------------------------------- | ------------: | :--------------- | ---------------------: | -------------------: | -------------------------: | ---------------------------: |
+|                247951931 |              80 |                      99 |                             0 |                           0 |                          99 |                            96 | PaLM: Scaling Language Modeling with Pathways                    | Noam M. Shazeer | ['cs.CL']         | https://www.semanticscholar.org/paper/094ff971d6a8b8ff870946c9b3ce5aa173617bfb | https://arxiv.org/abs/2204.02311 |             0 | 2022-04-05       |                    145 |                51316 |                         74 |                           77 |
+|                230435736 |            13.9 |                      18 |                             0 |                           0 |                        83.5 |                             0 | The Pile: An 800GB Dataset of Diverse Text for Language Modeling | Jason Phang     | ['cs.CL']         | https://www.semanticscholar.org/paper/db1afe3b3cd4cd90e41fbba65d3075dd5aebb61e | https://arxiv.org/abs/2101.00027 |             0 | 2020-12-31       |                    154 |                 1303 |                         17 |                           48 |
+|                227239228 |            10.9 |                     4.5 |                             0 |                           0 |                           0 |                          51.5 | Pre-Trained Image Processing Transformer                         | W. Gao          | ['cs.CV' 'cs.LG'] | https://www.semanticscholar.org/paper/43cb4886a8056d5005702edbc51be327542b2124 | https://arxiv.org/abs/2012.00364 |             0 | 2020-12-01       |                    379 |                13361 |                          1 |                           52 |
+
+Note that the `integer_label` column is not informative for unseen query papers and only kept for consistency.
+Since no arxiv labels are available for unseen query papers they can not intersect with the arxiv labels of the candidates such that all values of the `integer_label` column are set to 0.
+
 
 
 ### Input Validation

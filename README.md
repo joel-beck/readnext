@@ -58,14 +58,18 @@ Future support for higher versions will be available once the `torch` and `trans
 
 ### Installation
 
-Currently, the `readnext` package is not available on PyPI but can be installed directly from GitHub:
+Currently, the `readnext` package is not available on PyPI but can be installed directly from GitHub.
+
+Note: The project has recently been migrated from Pandas to Polars for massive performance improvements.
+Thus, it is currently recommended to install the package from the `polars` branch.
+Once all unit tests have been updated and changes have been merged into the `main` branch, the installation instructions will be updated accordingly.
 
     ```bash
     # via HTTPS
-    pip install git+https://github.com/joel-beck/readnext.git
+    pip install git+https://github.com/joel-beck/readnext.git@polars#egg=readnext
 
     # via SSH
-    pip install git+ssh://git@github.com/joel-beck/readnext.git
+    pip install git+ssh://git@github.com/joel-beck/readnext.git@polars#egg=readnext
     ```
 
 If you are interested in customizing the `readnext` package to your own needs, learn about some tips for an efficient development workflow in the [documentation](https://joel-beck.github.io/readnext/setup/#development-workflow).
@@ -79,8 +83,8 @@ To execute all scripts and reproduce project results, the following **local down
 - [D3 papers and authors dataset](https://zenodo.org/record/7071698#.ZFZnCi9ByLc)
 - [Arxiv dataset from Kaggle](https://www.kaggle.com/datasets/Cornell-University/arxiv)
 - Pretrained [word2vec-google-news-300 Word2Vec model](https://github.com/RaRe-Technologies/gensim-data) from Gensim
-- Pretrained [glove.6B GloVe model](https://nlp.stanford.edu/projects/glove/) from Stanford NLP website
-- Pretrained [English FastText model](https://fasttext.cc/docs/en/crawl-vectors.html#models) from FastText website
+- Pretrained [glove.6B GloVe model](https://nlp.stanford.edu/projects/glove/) from the Stanford NLP website
+- Pretrained [English FastText model](https://fasttext.cc/docs/en/crawl-vectors.html#models) from the FastText website
 
 
 #### D3 Dataset
@@ -156,7 +160,7 @@ The hybrid recommender integrates these components in a *cascade* fashion, with 
 
 ### Citation Recommender
 
-The **Citation Recommender** extracts five features from each training document:
+The **Citation Recommender** extracts five features from each training document.
 
 #### Global Document Features
 
@@ -178,17 +182,28 @@ Note that global document features are identical for each query document.
 These features are obtained from the citation data retrieved from the Semantic Scholar API and are *pairwise features* computed for each pair of documents in the training corpus.
 
 - **Co-Citation Analysis**:
-    Counts shared *citing* papers. Candidate documents with higher co-citation analysis scores are considered more relevant to the query document.
+    Counts the number of shared *citing* papers, i.e. papers that themselves cite both the query and the candidate paper. Candidate documents with higher co-citation analysis scores are considered more relevant to the query document.
 
 - **Bibliographic Coupling**:
-    Counts shared *cited* papers. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
+    Counts shared *cited* papers, i.e. papers that are cited by both the query and the candidate paper. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
 
 #### Feature Weighting
 
-To combine features linearly, documents are first *ranked* by each feature. Then, a linear combination of these ranks is calculated to produce a weighted ranking, where papers with the lowest weighted rank are recommended. The weight vector yielding the best performance (Mean Average Precision) is selected.
+The five features are weighted in the following manner:
+
+- To reduce memory load, only the top-100 of all precomputed scores are stored for each feature and query document. This number is configurable before running the setup scripts through the `readnext/config.py` file.
+
+- All training documents are then ranked by each feature individually in ascending order. The candidate paper with the best score for a given feature is assigned rank 1 for this feature, the candidate paper with the 100th best score is assigned rank 100, all worse-scoring papers are assigned rank 101.
+
+- Thus, the weighting scheme grows linearly with a threshold at rank 100. The absolute magnitude of the original scores is not considered, but only their ranks to diminish the impact of outliers.
+
+- Instead of using the ranks directly for feature weighting, points are computed for better interpretability. They behave like inverse ranks, i.e. the best-scoring paper for a given feature receives 100 points, the 100th best-scoring paper receives 1 point, and all worse-scoring papers receive 0 points.
+
+- The points for each feature are combined linearly with the user-specified feature weights. Papers with the highest weighted points score are recommended.
+
 
 ### Language Recommender
-
+TODO: add more details
 The **Language Recommender** encodes paper abstracts into embedding vectors to capture semantic meaning. Papers with embeddings most similar to the query document (measured by cosine similarity) are recommended.
 
 Abstracts are preprocessed and tokenized using the `spaCy` library. **Eight language models across three categories** are considered:
@@ -206,11 +221,12 @@ All static and contextual embedding models are pre-trained on extensive text cor
 
 ### Hybrid Recommender
 
-The hybrid recommender combines the citation recommender and the language recommender in a *cascade* fashion. Both component orders are considered, and evaluation scores are computed to determine the best component order and if the cascade approach improves performance.
+The hybrid recommender combines the Citation Recommender and the Language Recommender in a *cascade* fashion, i.e. one is used to generate a candidate list which is then re-ranked by the second recommender.
+Both component orders as well as the two candidate lists are evaluated to determine the best component order as well as to investigate if the hybrid approach improves performance over single component recommenders in the first place.
 
 ### Evaluation
-
-**Mean Average Precision (MAP)** is used as the evaluation metric, as it considers the order of recommendations, includes all items on the list, and works with binary labels. The MAP averages Average Precision (AP) scores across the entire corpus, enabling comparison between different recommender systems.
+TODO: add more details
+**Mean Average Precision (MAP)** is used as the evaluation metric, as it considers the order of recommendations, includes all items on the list, and works with binary labels. The MAP averages Average Precision (AP) scores over all training documents, enabling comparison between different recommender systems.
 
 
 ## Usage
@@ -302,7 +318,6 @@ The rows are sorted in descending order by the cosine similarity between the que
 print(result.recommendations.citation_to_language)
 ```
 
-```console
 | candidate_d3_document_id | cosine_similarity | title                                                                                         | author               | arxiv_labels                        | semanticscholar_url                                                            | arxiv_url                        | integer_label |
 | -----------------------: | ----------------: | :-------------------------------------------------------------------------------------------- | :------------------- | :---------------------------------- | :----------------------------------------------------------------------------- | :------------------------------- | ------------: |
 |                 11212020 |          0.892914 | Neural Machine Translation by Jointly Learning to Align and Translate                         | Yoshua Bengio        | ['cs.CL' 'cs.LG' 'cs.NE' 'stat.ML'] | https://www.semanticscholar.org/paper/fa72afa9b2cbc8f0d7b05d52548906610ffbb9c5 | https://arxiv.org/abs/1409.0473  |             1 |
@@ -325,7 +340,7 @@ print(result.recommendations.citation_to_language)
 |                  3144218 |          0.785984 | Semi-Supervised Classification with Graph Convolutional Networks                              | M. Welling           | ['cs.LG' 'stat.ML']                 | https://www.semanticscholar.org/paper/36eff562f65125511b5dfab68ce7f7a943c27478 | https://arxiv.org/abs/1609.02907 |             1 |
 |                  5201925 |          0.783595 | Empirical Evaluation of Gated Recurrent Neural Networks on Sequence Modeling                  | Yoshua Bengio        | ['cs.NE' 'cs.LG']                   | https://www.semanticscholar.org/paper/adfcf065e15fd3bc9badf6145034c84dfb08f204 | https://arxiv.org/abs/1412.3555  |             1 |
 |                 52967399 |          0.779854 | BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding              | Kenton Lee           | ['cs.CL']                           | https://www.semanticscholar.org/paper/df2b0e26d0599ce3e70df8a9da02e51594e0e992 | https://arxiv.org/abs/1810.04805 |             1 |
-```
+
 
 Hence, we read the "Neural Machine Translation by Jointly Learning to Align and Translate" paper by Yoshua Bengio next.
 
@@ -359,7 +374,6 @@ print(next_result.recommendations.language_to_citation)
 
 Since the second recommender of the hybrid structure is the Citation Recommender, the output is sorted by the weighted points score of the individual features:
 
-```console
 | candidate_d3_document_id | weighted_points | publication_date_points | citationcount_document_points | citationcount_author_points | co_citation_analysis_points | bibliographic_coupling_points | title                                                                                                           | author                 | arxiv_labels                        | semanticscholar_url                                                            | arxiv_url                        | integer_label | publication_date | citationcount_document | citationcount_author | co_citation_analysis_score | bibliographic_coupling_score |
 | -----------------------: | --------------: | ----------------------: | ----------------------------: | --------------------------: | --------------------------: | ----------------------------: | :-------------------------------------------------------------------------------------------------------------- | :--------------------- | :---------------------------------- | :----------------------------------------------------------------------------- | :------------------------------- | ------------: | :--------------- | ---------------------: | -------------------: | -------------------------: | ---------------------------: |
 |                  7961699 |            85.4 |                       0 |                            83 |                           0 |                         100 |                           100 | Sequence to Sequence Learning with Neural Networks                                                              | Ilya Sutskever         | ['cs.CL' 'cs.LG']                   | https://www.semanticscholar.org/paper/cea967b59209c6be22829699f05b8b1ac4dc092d | https://arxiv.org/abs/1409.3215  |             1 | 2014-09-10       |                  15342 |               234717 |                        191 |                           12 |
@@ -382,7 +396,7 @@ Since the second recommender of the hybrid structure is the Citation Recommender
 |                 17127188 |            22.8 |                       0 |                            20 |                           0 |                          54 |                             0 | Multi-Scale Context Aggregation by Dilated Convolutions                                                         | V. Koltun              | ['cs.CV']                           | https://www.semanticscholar.org/paper/7f5fc84819c0cf94b771fe15141f65b123f7b8ec | https://arxiv.org/abs/1511.07122 |             0 | 2015-11-23       |                   5655 |                37311 |                         13 |                            0 |
 |                 11797475 |            16.8 |                       0 |                            19 |                           0 |                        38.5 |                             0 | Two-Stream Convolutional Networks for Action Recognition in Videos                                              | Andrew Zisserman       | ['cs.CV']                           | https://www.semanticscholar.org/paper/67dccc9a856b60bdc4d058d83657a089b8ad4486 | https://arxiv.org/abs/1406.2199  |             0 | 2014-06-09       |                   5636 |               226816 |                          9 |                            0 |
 |                211096730 |            13.1 |                       0 |                            13 |                         3.5 |                        30.5 |                             0 | A Simple Framework for Contrastive Learning of Visual Representations                                           | Geoffrey E. Hinton     | ['cs.LG' 'cs.CV' 'stat.ML']         | https://www.semanticscholar.org/paper/34733eaf66007516347a40ad5d9bbe1cc9dacb6b | https://arxiv.org/abs/2002.05709 |             1 | 2020-02-13       |                   5312 |               360601 |                          7 |                            0 |
-```
+
 
 Thus, we continue our reading session with the "Sequence to Sequence Learning with Neural Networks" paper by Ilya Sutskever et al.
 

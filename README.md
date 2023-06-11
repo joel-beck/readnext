@@ -376,7 +376,7 @@ Note that the weights are normalized to sum up to one, so the absolute values ar
 Inference works for both 'seen' and 'unseen' query documents, depending on whether the query document is part of the training corpus or not.
 
 
-1. **Seen Query Paper**
+**Seen Query Paper**
 
 If the query paper is part of the training corpus, all feature values are precomputed and inference is fast.
 
@@ -479,7 +479,7 @@ Hence, we read the paper "Sequence to Sequence Learning with Neural Networks" by
 
 
 
-2. **Unseen Query Paper**
+**Unseen Query Paper**
 
 If the query paper is not part of the training corpus, the inference step takes longer since tokenization, embedding and the computation of co-citation analysis, bibliographic coupling and cosine similarity scores has to be performed from scratch.
 

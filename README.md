@@ -215,15 +215,20 @@ The hybrid recommender combines the citation recommender and the language recomm
 
 ## Usage
 
-The user interface for inference, i.e. to retrieve recommendations, is kept simple and intuitive:
-The top-level `readnext()` function has two required and one optional keyword arguments:
+The user interface for generating recommendations is designed to be simple and easy to use.
+It relies on the top-level `readnext()` function, which takes two required arguments and one optional keyword argument:
 
-- An identifier for the query paper which the recommendations are based on. This can be either the Semanticscholar ID, the Semantischolar URL, the Arxiv ID, or the Arxiv URL of the query paper.
-This input is required and passed as a string.
+- An identifier for the query paper.
+This can be the Semanticscholar ID, Semanticscholar URL, Arxiv ID, or Arxiv URL of the paper.
+This argument is required and should be provided as a string.
 
-- The language model choice for the Language Recommender, i.e. for tokenizing and embedding the query paper's abstract. This input is required and passed via the `LangaugeModelChoice` Enum providing autocompletion for all eight available language models.
+- The language model choice for the Language Recommender, which is used to tokenize and embed the query paper's abstract.
+This argument is required and should be passed using the `LanguageModelChoice` Enum, which provides autocompletion for all eight available language models.
 
-- The feature weighting for the Citation Recommender. This input is passed via an `FeatureWeights` instance. The argument is optional: By default, all five features (`publication_date`, `citationcount_document`, `citationcount_authot`, `co_citation_analysis` and `bibliographic_coupling`) contribute equally with weights of one. Note that the absolute magnitude of the weights is irrelevant and only their relative proportions matter, as the weights are normalized to sum to one.
+- The feature weighting for the Citation Recommender.
+This argument is optional and is submitted using an instance of the `FeatureWeights` class.
+If not specified, the five features (`publication_date`, `citationcount_document`, `citationcount_author`, `co_citation_analysis`, and `bibliographic_coupling`) are given equal weights of one.
+Note that the weights are normalized to sum up to one, so the absolute values are irrelevant; only the relative ratios matter.
 
 ### Examples
 
@@ -231,8 +236,7 @@ Inference works for both 'seen' and 'unseen' query documents, depending on wheth
 
 #### Seen Query Paper
 
-If the query paper is part of the training corpus, all feature values are precomputed and inference is fast.
-As an example we choose the popular "Attention is all you need" paper by Vaswani et al. (2017) using the "FastText" language model and the default feature weights:
+If the query paper is part of the training corpus, all feature values are precomputed and inference is fast. As an example, we can choose the popular "Attention is all you need" paper by Vaswani et al. (2017) using the `FastText` language model and the default feature weights:
 
 ```python
 from readnext import readnext, LanguageModelChoice, FeatureWeights
@@ -269,7 +273,7 @@ These binary labels are useful for 'seen' query papers where the arxiv labels of
 For 'unseen' papers this information is not availabels and all binary labels are set to 0.
 
 - `recommendations`: Individual dataframes that offer the top paper recommendations.
-Recommendations are calculated for both Hybrid-Recommender orders (Citation -> Language and Language -> Citation), and this includes both the    intermediate candidate lists and the final hybrid recommendations.
+Recommendations are calculated for both Hybrid-Recommender orders (Citation -> Language and Language -> Citation), and this includes both the intermediate candidate lists and the final hybrid recommendations.
 
 Let's first take a look at our query paper:
 
@@ -292,6 +296,7 @@ Here, we choose the recommendations for the Citation -> Language Hybrid-Recommen
 
 The output is a dataframe where each row represents a recommendation.
 The rows are sorted in descending order by the cosine similarity between the query paper and the candidate paper since the re-ranking step is performed by the Language Recommender:
+
 
 ```python
 print(result.recommendations.citation_to_language)
@@ -329,9 +334,9 @@ Hence, we read the "Neural Machine Translation by Jointly Learning to Align and 
 
 Since the recommendations dataframe contains identifiers for the candidate papers, we can continue our reading flow by generating recommendations for the next paper.
 
-In this case, we want to use the `SciBERT` language model, assign a higher weight to the `co_citation_analysis` and `bibliographic coupling` features and disregard the author popularity by setting the `citationcount_author` weight to 0.
+In this case, we want to use the `SciBERT` language model and assign a higher weight to the `co_citation_analysis` and `bibliographic` coupling features, while disregarding the author popularity by setting the `citationcount_author` weight to 0.
 
-Note that we only have to specify the weights for the features we want to change from the default value of 1:
+Note that we only need to specify the weights for the features we want to change from the default value of 1:
 
 ```python
 # extract one of the paper identifiers from the previous top recommendation
@@ -352,7 +357,7 @@ Now, we generate the recommendations candidate list with the Language Recommende
 print(next_result.recommendations.language_to_citation)
 ```
 
-Since the second recommender is the Citation Recommender, the output is sorted by the weighted points score of the individual features:
+Since the second recommender of the hybrid structure is the Citation Recommender, the output is sorted by the weighted points score of the individual features:
 
 ```console
 | candidate_d3_document_id | weighted_points | publication_date_points | citationcount_document_points | citationcount_author_points | co_citation_analysis_points | bibliographic_coupling_points | title                                                                                                           | author                 | arxiv_labels                        | semanticscholar_url                                                            | arxiv_url                        | integer_label | publication_date | citationcount_document | citationcount_author | co_citation_analysis_score | bibliographic_coupling_score |

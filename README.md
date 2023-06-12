@@ -62,8 +62,7 @@ See the [Usage](#usage) section for more details and examples.
 - [Overview](#overview)
     - [Citation Recommender](#citation-recommender)
     - [Language Recommender](#language-recommender)
-    - [Hybrid Recommender](#hybrid-recommender)
-    - [Evaluation](#evaluation)
+    - [Evaluation Metrics](#evaluation-metrics)
 - [Setup](#setup)
     - [Requirements](#requirements)
     - [Data and Models](#data-and-models)
@@ -95,13 +94,20 @@ If you are interested in customizing the `readnext` package to your own needs, l
 
 ## Overview
 
-The following diagram presents a high-level overview of the hybrid recommender system for papers in the training corpus.
-Check out the [documentation](https://joel-beck.github.io/readnext/overview/#inference-retrieving-recommendations) for more information how the hybrid recommender works during inference for unseen papers.
+The following diagram presents a high-level overview of the hybrid recommender system for papers in the training corpus:
 
 ![Hybrid recommender system schematic](./docs/assets/hybrid-architecture.png)
 
-The primary concept involves a **Citation Recommender** that combines global document features and citation-based features, and a **Language Recommender** that generates embeddings from paper abstracts.
-The hybrid recommender integrates these components in a *cascade* fashion, with one recommender initially producing a candidate list, which is then re-ranked by the second recommender to yield the final recommendations.
+The hybrid structure involves a **Citation Recommender** that combines global document features and citation-based features, and a **Language Recommender** that generates embeddings from paper abstracts.
+
+The hybrid recommender combines the Citation Recommender and the Language Recommender in a *cascade* fashion, i.e. one is used to generate a candidate list which is then re-ranked by the second recommender.
+
+Both component orders as well as the two candidate lists are evaluated.The objectives of the evaluation study are
+
+1. To determine the best component order for the cascade strategy, i.e. Citation -> Language or Language -> Citation.
+1. To investigate if the hybrid approach improves performance over single component recommenders in the first place.
+
+
 
 ### Citation Recommender
 
@@ -151,12 +157,13 @@ The five features are weighted in the following manner:
 
 ### Language Recommender
 
-Note: The following section assumes basic familiarity with the concept of word embeddings and how language models work.
-For a more detailed introduction, check out the [documentation](https://joel-beck.github.io/readnext/background/#language-models).
+Note: The following section assumes basic familiarity with embeddings and language models in general.
+For a more thorough introduction, check out the [documentation](https://joel-beck.github.io/readnext/background/#language-models).
 
 The **Language Recommender** encodes paper abstracts into embedding vectors to capture semantic meaning. Papers with embeddings most similar to the query document (measured by cosine similarity) are recommended.
 
-Abstracts are preprocessed and tokenized using the `spaCy` library. **Eight language models across three categories** are considered:
+8 language models across 3 categories are considered:
+
 
 1. **Keyword-based models**
 
@@ -190,7 +197,7 @@ Abstracts are preprocessed and tokenized using the `spaCy` library. **Eight lang
 
         The formula is:
 
-        $$\text{BM25+}(t, d) = \text{BM25-TF}(t, d) \cdot \text{BM25-IDF}(t)$$
+        $$\text{BM25}(t, d) = \text{BM25-TF}(t, d) \cdot \text{BM25-IDF}(t)$$
 
         with:
 
@@ -212,10 +219,13 @@ Abstracts are preprocessed and tokenized using the `spaCy` library. **Eight lang
         - $N$ is the total number of documents in the corpus,
         - $k$, $b$, and $\delta$ are free parameters.
 
+        Default values of $k = 1.5$, $b = 0.75$, and $\delta = 1.0$ are adapted from the [rank_bm25 package](https://github.com/dorianbrown/rank_bm25/blob/990470ebbe6b28c18216fd1a8b18fe7446237dd6/rank_bm25.py#L176).
+
 
 2. **Static embedding models**
 
     They produce dense vector embeddings where the embedding dimension is fixed (here set to the default of 300) and independent of the vocabulary size.
+    Word embeddings are averaged dimension-wise to obtain a single embedding vector for each abstract.
     Again, `spaCy` is used for text preprocessing and tokenization.
     All three static embedding models are pretrained and implemented via their `gensim` interface:
 
@@ -226,21 +236,60 @@ Abstracts are preprocessed and tokenized using the `spaCy` library. **Eight lang
 
 3. **Contextual embedding models**
 
-    TODO
-    BERT, SciBERT, and Longformer (all provided by the `transformers` library).
+    Similar to static embedding models, they produce dense vector embeddings where the embedding dimension is fixed (here set to the default of 768) and independent of the vocabulary size.
+    Instead of string tokens, contextual embedding models take integer token IDs as input which are mapped to words and subwords and learned during pretraining.
+    All three static embedding models are pretrained and implemented via the HuggingFace `transformers` library:
+
+    - BERT: Pretrained on the BooksCorpus and English Wikipedia using the `bert-base-uncased` model.
+    - SciBERT: Pretrained on the Semantic Scholar corpus (i.e. specific to scientific language) using the `allenai/scibert_scivocab_uncased` model.
+    - Longformer: Pretrained on the BooksCorpus and English Wikipedia using the `allenai/longformer-base-4096` model.
+
+    Instead of averaging word embeddings like static embedding models, these Transformer based models cut off the document abstracts at a maximum token length of 512 for BERT and SciBERT and 4096 for the Longformer model.
+    However, only 0.58% of all abstracts in the training corpus exceed the maximum token length of 512 such that the impact of this cutoff is negligible.
 
 
 
-### Hybrid Recommender
+### Evaluation Metrics
 
-The hybrid recommender combines the Citation Recommender and the Language Recommender in a *cascade* fashion, i.e. one is used to generate a candidate list which is then re-ranked by the second recommender.
-Both component orders as well as the two candidate lists are evaluated to determine the best component order as well as to investigate if the hybrid approach improves performance over single component recommenders in the first place.
+The **Mean Average Precision (MAP)** is used as evaluation metric due to the following reasons:
 
-### Evaluation
-TODO: add more details
-**Mean Average Precision (MAP)** is used as the evaluation metric, as it considers the order of recommendations, includes all items on the list, and works with binary labels. The MAP averages Average Precision (AP) scores over all training documents, enabling comparison between different recommender systems.
+1. It takes the order of recommendations into account, i.e. it is not only important to recommend relevant items but also to recommend them early in the list.
+1. All items on the recommendation list are considered, i.e. it is not only important to recommend relevant items but also to avoid irrelevant items.
+1. It works well with binary 0/1 encoded labels as in our case for irrelevant/relevant recommendations.
+
+The **Average Precision (AP)** computes a scalar score for a single recommendation list according to the following definitions:
+
+- Precision:
+
+   $$\text{Precision} = \frac{\# \text{ of relevant items}}{\# \text{ of items}}$$
+
+- Average Precision (AP):
+
+   $$\text{AP} = \frac{1}{r} \sum_{k=1}^{K} P(k) \cdot \text{rel}(k)$$
+
+   where:
+    - $K$ is the total number of items,
+    - $r$ is the total number of relevant items,
+    - $P(k)$ is the precision at $k$,
+    - $\text{rel}(k)$ is 1 if item $k$ is relevant and 0 otherwise.
+
+   If the labels are binary 0/1 encoded as in our case, the formula simplifies to:
+
+    $$\text{AP} = \frac{1}{r} \sum_{k=1}^{K} \frac{\sum_{i=1}^{k} \text{rel}(i)}{k}$$
 
 
+The Mean Average Precision is then computed as the average over the Average Precision scores for the recommendations of all query documents in the training corpus:
+
+- Mean Average Precision (MAP):
+
+    $$\text{MAP} = \frac{1}{Q} \sum_{q=1}^{Q} \text{AP}(q)$$
+
+    where:
+    - $Q$ is the total number of query documents,
+    - $\text{AP}(q)$ is the average precision for query document $q$.
+
+Within this project, the MAP computes a scalar score for a given combination of Language Model Choice and Feature Weights.
+Thus, to determine which Recommender order works best within the Hybrid structure, we could e.g. aggregate the MAP scores for each order over all Language Model Choices and Feature Weights.
 
 
 
@@ -350,13 +399,14 @@ All further script paths are relative to the `readnext/scripts/modeling` directo
 ## Usage
 
 The user interface for generating recommendations is designed to be simple and easy to use.
-It relies on the top-level `readnext()` function, which takes two required arguments and one optional keyword argument:
+It relies on the top-level `readnext()` function, which takes two required and one optional keyword argument:
 
 - An identifier for the query paper.
 This can be the Semanticscholar ID, Semanticscholar URL, Arxiv ID, or Arxiv URL of the paper.
 This argument is required and should be provided as a string.
 
     **Term Definition**:
+
     - The Semanticscholar *ID* is a 40-digit hexadecimal string at the end of the Semanticscholar URL after the last forward slash.
     For example, the Semanticscholar ID for the URL `https://www.semanticscholar.org/paper/67c4ffa7f9c25e9e0f0b0eac5619070f6a5d143d` is `67c4ffa7f9c25e9e0f0b0eac5619070f6a5d143d`.
     - The Arxiv *ID* is a 4-digit number followed by a dot followed by a 5-digit number at the end of the Arxiv URL after the last forward slash.
@@ -437,7 +487,7 @@ These binary labels are useful for 'seen' query papers where the arxiv labels of
 For 'unseen' papers this information is not availabels and all binary labels are set to 0.
 
 - `recommendations`: Individual dataframes that offer the top paper recommendations.
-Recommendations are calculated for both Hybrid-Recommender orders (Citation -> Language and Language -> Citation), and this includes both the intermediate candidate lists and the final hybrid recommendations.
+Recommendations are calculated for both Hybrid-Recommender orders (Citation -> Language and Language -> Citation) and both the intermediate candidate lists and the final hybrid recommendations.
 
 Let's first take a look at our new query paper:
 
@@ -461,7 +511,8 @@ Here, we choose the recommendations for the Citation -> Language Hybrid-Recommen
 
 The output is a dataframe where each row represents a recommendation.
 The rows are sorted in descending order by the cosine similarity between the query paper and the candidate paper since the re-ranking step is performed by the Language Recommender.
-For compactness we limit the output to the top three recommendations:
+
+For brevity we limit the output to the top three recommendations:
 
 
 ```python
@@ -475,7 +526,7 @@ print(result_seen_query.recommendations.citation_to_language.head(3))
 |                  1998416 |          0.946671 | Effective Approaches to Attention-based Neural Machine Translation                            | Christopher D. Manning | ['cs.CL']                           | https://www.semanticscholar.org/paper/93499a7c7f699b6630a86fad964536f9423bb6d0 | https://arxiv.org/abs/1508.04025 |             1 |
 
 
-Hence, we read the paper "Sequence to Sequence Learning with Neural Networks" by Ilya Sutskever et al. next.
+Hence, we might read the paper "Sequence to Sequence Learning with Neural Networks" by Ilya Sutskever et al. next.
 
 
 

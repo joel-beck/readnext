@@ -37,6 +37,7 @@ def main() -> None:
     print(f"Shortest abstract: {min(token_ids_lengths)} tokens")
     print(f"Longest abstract: {max(token_ids_lengths)} tokens")
     print(f"Average abstract length: {np.mean(token_ids_lengths):.2f} tokens")
+    # only 0.58 % of abstracts are longer than 512 tokens
     print(
         "Percentage of abstracts above maximum length of 512 tokens: "
         f"{fraction_abstracts_above_max_length * 100:.2f}%"

@@ -14,7 +14,6 @@ from readnext.inference.document_identifier import DocumentIdentifier
 from readnext.modeling import (
     CitationModelData,
     CitationModelDataConstructor,
-    DocumentInfo,
     LanguageModelData,
     LanguageModelDataConstructor,
     UnseenModelDataConstructorPlugin,
@@ -197,7 +196,6 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
 
     def get_bibliographic_coupling_scores(self) -> CandidateScoresFrame:
         return (
-            # self.documents_frame.lazy()
             self.documents_frame.lazy()
             .pipe(self.select_scoring_input_columns, "references")
             .pipe(self.add_query_urls, "query_references", self.get_query_reference_urls)
@@ -217,23 +215,11 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
 
         return CitationModelData.from_constructor(citation_model_data_constructor)
 
-    def get_query_document_info(self) -> DocumentInfo:
-        assert self.response.title is not None
-        assert self.response.abstract is not None
-
-        return DocumentInfo(
-            d3_document_id=-1,
-            title=self.response.title,
-            abstract=self.response.abstract,
-        )
-
-    def get_query_documents_frame(self) -> pl.DataFrame:
-        query_document_info = self.get_query_document_info()
+    def get_query_document_frame(self) -> pl.DataFrame:
         return pl.DataFrame(
             {
-                "d3_document_id": query_document_info.d3_document_id,
-                "title": query_document_info.title,
-                "abstract": query_document_info.abstract,
+                "d3_document_id": -1,
+                "abstract": self.response.abstract,
             }
         )
 
@@ -262,7 +248,7 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
         )
 
     def get_cosine_similarities(self) -> CandidateScoresFrame:
-        query_document_data = self.get_query_documents_frame()
+        query_document_data = self.get_query_document_frame()
         query_embedding_function = select_query_embedding_function(self.language_model_choice)
 
         query_embedding = query_embedding_function(query_document_data)
@@ -281,3 +267,73 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
         )
 
         return LanguageModelData.from_constructor(language_model_data_constructor)
+
+    # NOTE: Sliced versions do not play well with the current status updates, since
+    # messages are printed to the console for each slice operation instead of once for
+    # the entire dataframe!
+
+    # def combine_common_values_slices(
+    #     self, slice_func: Callable[[pl.LazyFrame], CandidateScoresFrame]
+    # ) -> CandidateScoresFrame:
+    #     slice_size = 100
+    #     num_rows = self.documents_frame.height
+
+    #     return pl.concat(
+    #         [
+    #             slice_func(self.documents_frame.lazy().slice(next_index, slice_size))
+    #             for next_index in range(0, num_rows, slice_size)
+    #         ]
+    #     )
+
+    # def get_co_citation_analysis_scores_slice(
+    #     self, documents_frame_slice: pl.LazyFrame
+    # ) -> CandidateScoresFrame:
+    #     return (
+    #         documents_frame_slice.pipe(self.select_scoring_input_columns, "citations")
+    #         .pipe(self.add_query_urls, "query_citations", self.get_query_citation_urls)
+    #         .pipe(count_common_values, "query_citations", "citations")
+    #         .pipe(self.select_scoring_output_columns)
+    #         .collect()
+    #     )
+
+    # def get_co_citation_analysis_scores(self) -> CandidateScoresFrame:
+    #     return self.combine_common_values_slices(self.get_co_citation_analysis_scores_slice)
+
+    # def get_bibliographic_coupling_scores_slice(
+    #     self, documents_frame_slice: pl.LazyFrame
+    # ) -> CandidateScoresFrame:
+    #     return (
+    #         documents_frame_slice.pipe(self.select_scoring_input_columns, "references")
+    #         .pipe(self.add_query_urls, "query_references", self.get_query_reference_urls)
+    #         .pipe(count_common_values, "query_references", "references")
+    #         .pipe(self.select_scoring_output_columns)
+    #         .collect()
+    #     )
+
+    # def get_bibliographic_coupling_scores(self) -> CandidateScoresFrame:
+    #     return self.combine_common_values_slices(self.get_bibliographic_coupling_scores_slice)
+
+    # def get_cosine_similarities_slice(
+    #     self, candidate_embeddings_slice: EmbeddingsFrame
+    # ) -> CandidateScoresFrame:
+    #     query_document_frame = self.get_query_document_frame()
+    #     query_embedding_function = select_query_embedding_function(self.language_model_choice)
+    #     query_embedding = query_embedding_function(query_document_frame)
+
+    #     return self.compute_cosine_similarities(query_embedding, candidate_embeddings_slice)
+
+    # def get_cosine_similarities(self) -> CandidateScoresFrame:
+    #     candidate_embeddings: EmbeddingsFrame = load_embeddings_from_choice(
+    #         self.language_model_choice
+    #     )
+    #     slice_size = 100
+    #     num_rows = candidate_embeddings.height
+
+    #     return pl.concat(
+    #         [
+    #             self.get_cosine_similarities_slice(
+    #                 candidate_embeddings.slice(next_index, slice_size)
+    #             )
+    #             for next_index in range(0, num_rows, slice_size)
+    #         ]
+    #     )

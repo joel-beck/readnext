@@ -603,8 +603,7 @@ The following checks are performed:
 
 - The Semanticscholar ID must be a 40-character hexadecimal string.
 
-- The Semanticscholar URL must be a valid URL starting with `https://www.
-semanticscholar.org/paper/`.
+- The Semanticscholar URL must be a valid URL starting with `https://www.semanticscholar.org/paper/`.
 
 - The Arxiv ID must start with 4 digits followed by a dot followed by 5 more
 digits (e.g. `1234.56789`).

@@ -1498,7 +1498,7 @@ summary = "Jupyter interactive widgets for Jupyter Notebook"
 lock_version = "4.2"
 cross_platform = true
 groups = ["default", "dev"]
-content_hash = "sha256:5839661c80135b4cf1596bac7e3c3d05e6cb1dac110f189745e9ac2a6775f7ce"
+content_hash = "sha256:87d394edda9b730c985d34000b022af4f5cce71922385a43045cb78566b67fec"
 
 [metadata.files]
 "anyio 3.6.2" = [

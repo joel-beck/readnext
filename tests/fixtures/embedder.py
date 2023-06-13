@@ -48,6 +48,5 @@ def longformer_embedder(
     longformer_tokens_id_frame: TokenIdsFrame, longformer_model: LongformerModelProtocol
 ) -> LongformerEmbedder:
     return LongformerEmbedder(
-        token_ids_frame=longformer_tokens_id_frame,
-        torch_model=longformer_model,
+        token_ids_frame=longformer_tokens_id_frame, torch_model=longformer_model
     )

@@ -1,21 +1,28 @@
-import polars as pl
 import pytest
+from pytest_lazyfixture import lazy_fixture
 
 from readnext.evaluation.scoring import FeatureWeights
-from readnext.inference import SeenInferenceDataConstructorPlugin, InferenceDataConstructorPlugin
-from readnext.inference import UnseenInferenceDataConstructorPlugin
+from readnext.inference import (
+    SeenInferenceDataConstructorPlugin,
+    UnseenInferenceDataConstructorPlugin,
+)
 from readnext.modeling import (
     CitationModelData,
     DocumentInfo,
     LanguageModelData,
 )
 from readnext.modeling.language_models import LanguageModelChoice
-from readnext.utils.aliases import DocumentsFrame, ScoresFrame
+from readnext.utils.aliases import (
+    CitationFeaturesFrame,
+    CitationPointsFrame,
+    CitationRanksFrame,
+    DocumentsFrame,
+    InfoFrame,
+    IntegerLabelsFrame,
+    LanguageFeaturesFrame,
+    ScoresFrame,
+)
 
-semanticscholar_id_plugin_pairs = [
-    ("204e3073870fae3d05bcbc2f6a8e263d9b72e776", SeenInferenceDataConstructorPlugin),
-    ("8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48", UnseenInferenceDataConstructorPlugin),
-]
 
 language_model_choices = [
     LanguageModelChoice.TFIDF,
@@ -28,12 +35,11 @@ language_model_choices = [
     LanguageModelChoice.LONGFORMER,
 ]
 
-
-id_plugin_model_choice_triples = [
-    (id_plugin, model_choice)
-    for id_plugin in semanticscholar_id_plugin_pairs
-    for model_choice in language_model_choices
-]
+# id_plugin_model_choice_triples = [
+#     (id_plugin, model_choice)
+#     for id_plugin in semanticscholar_id_plugin_pairs
+#     for model_choice in language_model_choices
+# ]
 
 
 # SECTION: Constructor Fixtures
@@ -112,7 +118,7 @@ def seen_inference_data_constructor_plugin_from_arxiv_url(
 
 # SUBSECTION: Unseen Constructor Plugin
 @pytest.fixture(scope="session")
-def unseen_paper_attribute_getter_from_semanticscholar_id(
+def unseen_inference_data_constructor_plugin_from_semanticscholar_id(
     test_documents_frame: DocumentsFrame,
 ) -> UnseenInferenceDataConstructorPlugin:
     semanticscholar_id = "8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
@@ -129,7 +135,7 @@ def unseen_paper_attribute_getter_from_semanticscholar_id(
 
 
 @pytest.fixture(scope="session")
-def unseen_paper_attribute_getter_from_semanticscholar_url(
+def unseen_inference_data_constructor_plugin_from_semanticscholar_url(
     test_documents_frame: DocumentsFrame,
 ) -> UnseenInferenceDataConstructorPlugin:
     semanticscholar_url = (
@@ -148,7 +154,7 @@ def unseen_paper_attribute_getter_from_semanticscholar_url(
 
 
 @pytest.fixture(scope="session")
-def unseen_paper_attribute_getter_from_arxiv_id(
+def unseen_inference_data_constructor_plugin_from_arxiv_id(
     test_documents_frame: DocumentsFrame,
 ) -> UnseenInferenceDataConstructorPlugin:
     arxiv_id = "2303.08774"
@@ -165,7 +171,7 @@ def unseen_paper_attribute_getter_from_arxiv_id(
 
 
 @pytest.fixture(scope="session")
-def unseen_paper_attribute_getter_from_arxiv_url(
+def unseen_inference_data_constructor_plugin_from_arxiv_url(
     test_documents_frame: DocumentsFrame,
 ) -> UnseenInferenceDataConstructorPlugin:
     arxiv_url = "https://arxiv.org/abs/2303.08774"
@@ -182,42 +188,33 @@ def unseen_paper_attribute_getter_from_arxiv_url(
 
 
 # SECTION: Constructor Plugin Methods
-@pytest.fixture(scope="session", params=semanticscholar_id_plugin_pairs)
-def inference_data_constructor_plugin(
-    request: pytest.FixtureRequest,
-    test_documents_frame: DocumentsFrame,
-) -> InferenceDataConstructorPlugin:
-    """
-    Base `InfereceDataConstructorPlugin` fixture for seen and unseen papers. Considers
-    only a single language model and a single set of feature weights.
-    """
-    semantischolar_id, PluginClass = request.param
-
-    return PluginClass(
-        semanticscholar_id=semantischolar_id,
-        semanticscholar_url=None,
-        arxiv_id=None,
-        arxiv_url=None,
-        language_model_choice=LanguageModelChoice.TFIDF,
-        feature_weights=FeatureWeights(),
-        documents_frame=test_documents_frame,
-    )
-
-
-@pytest.fixture(scope="session")
+@pytest.fixture(
+    scope="session",
+    params=[
+        lazy_fixture("seen_inference_data_constructor_plugin_from_arxiv_url"),
+        lazy_fixture("unseen_inference_data_constructor_plugin_from_arxiv_url"),
+    ],
+)
 def inference_data_constructor_plugin_co_citation_analysis(
-    inference_data_constructor_plugin: InferenceDataConstructorPlugin,
+    request: pytest.FixtureRequest,
 ) -> ScoresFrame:
-    return inference_data_constructor_plugin.get_co_citation_analysis_scores()
+    return request.param.get_co_citation_analysis_scores()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(
+    scope="session",
+    params=[
+        lazy_fixture("seen_inference_data_constructor_plugin_from_arxiv_url"),
+        lazy_fixture("unseen_inference_data_constructor_plugin_from_arxiv_url"),
+    ],
+)
 def inference_data_constructor_plugin_bibliographic_coupling(
-    inference_data_constructor_plugin: InferenceDataConstructorPlugin,
+    request: pytest.FixtureRequest,
 ) -> ScoresFrame:
-    return inference_data_constructor_plugin.get_bibliographic_coupling_scores()
+    return request.param.get_bibliographic_coupling_scores()
 
 
+# TODO:
 @pytest.fixture(scope="session", params=id_plugin_model_choice_triples)
 def inference_data_constructor_plugin_cosine_similarities(
     request: pytest.FixtureRequest,
@@ -241,71 +238,89 @@ def inference_data_constructor_plugin_cosine_similarities(
     return inference_data_constructor_plugin.get_cosine_similarities()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(
+    scope="session",
+    params=[
+        lazy_fixture("seen_inference_data_constructor_plugin_from_arxiv_url"),
+        lazy_fixture("unseen_inference_data_constructor_plugin_from_arxiv_url"),
+    ],
+)
 def inference_data_constructor_plugin_citation_model_data(
-    inference_data_constructor_plugin: InferenceDataConstructorPlugin,
+    request: pytest.FixtureRequest,
 ) -> CitationModelData:
-    return inference_data_constructor_plugin.get_citation_model_data()
-
-
-@pytest.fixture(scope="session")
-def inference_data_constructor_plugin_citation_model_data_query_document(
-    inference_data_constructor_plugin_citation_model_data: CitationModelData,
-) -> DocumentInfo:
-    return inference_data_constructor_plugin_citation_model_data.query_document
-
-
-@pytest.fixture(scope="session")
-def inference_data_constructor_plugin_citation_model_data_integer_labels(
-    inference_data_constructor_plugin_citation_model_data: CitationModelData,
-) -> pl.DataFrame:
-    return inference_data_constructor_plugin_citation_model_data.integer_labels_frame
-
-
-@pytest.fixture(scope="session")
-def inference_data_constructor_plugin_citation_model_data_info_matrix(
-    inference_data_constructor_plugin_citation_model_data: CitationModelData,
-) -> pl.DataFrame:
-    return inference_data_constructor_plugin_citation_model_data.info_frame
-
-
-@pytest.fixture(scope="session")
-def inference_data_constructor_plugin_citation_model_data_feature_matrix(
-    inference_data_constructor_plugin_citation_model_data: CitationModelData,
-) -> pl.DataFrame:
-    return inference_data_constructor_plugin_citation_model_data.features_frame
+    return request.param.get_citation_model_data()
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_plugin_language_model_data(
-    inference_data_constructor_plugin: InferenceDataConstructorPlugin,
+    request: pytest.FixtureRequest,
 ) -> LanguageModelData:
-    return inference_data_constructor_plugin.get_language_model_data()
+    return request.param.get_language_model_data()
 
 
-@pytest.fixture(scope="session")
-def inference_data_constructor_plugin_language_model_data_query_document(
-    inference_data_constructor_plugin_language_model_data: LanguageModelData,
+# SECTION: Model Data Attributes
+@pytest.fixture(
+    scope="session",
+    params=[
+        lazy_fixture("inference_data_constructor_plugin_citation_model_data"),
+        lazy_fixture("inference_data_constructor_plugin_language_model_data"),
+    ],
+)
+def inference_data_constructor_plugin_model_data_query_document(
+    request: pytest.FixtureRequest,
 ) -> DocumentInfo:
-    return inference_data_constructor_plugin_language_model_data.query_document
+    return request.param.query_document
+
+
+@pytest.fixture(
+    scope="session",
+    params=[
+        lazy_fixture("inference_data_constructor_plugin_citation_model_data"),
+        lazy_fixture("inference_data_constructor_plugin_language_model_data"),
+    ],
+)
+def inference_data_constructor_plugin_model_data_info_frame(
+    request: pytest.FixtureRequest,
+) -> InfoFrame:
+    return request.param.info_frame
+
+
+@pytest.fixture(
+    scope="session",
+    params=[
+        lazy_fixture("inference_data_constructor_plugin_citation_model_data"),
+        lazy_fixture("inference_data_constructor_plugin_language_model_data"),
+    ],
+)
+def inference_data_constructor_plugin_model_data_integer_labels(
+    request: pytest.FixtureRequest,
+) -> IntegerLabelsFrame:
+    return request.param.integer_labels_frame
 
 
 @pytest.fixture(scope="session")
-def inference_data_constructor_plugin_language_model_data_integer_labels(
-    inference_data_constructor_plugin_language_model_data: LanguageModelData,
-) -> pl.DataFrame:
-    return inference_data_constructor_plugin_language_model_data.integer_labels_frame
-
-
-@pytest.fixture(scope="session")
-def inference_data_constructor_plugin_language_model_data_info_matrix(
-    inference_data_constructor_plugin_language_model_data: LanguageModelData,
-) -> pl.DataFrame:
-    return inference_data_constructor_plugin_language_model_data.info_frame
+def inference_data_constructor_plugin_citation_model_data_features_frame(
+    inference_data_constructor_plugin_citation_model_data: CitationModelData,
+) -> CitationFeaturesFrame:
+    return inference_data_constructor_plugin_citation_model_data.features_frame
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_plugin_language_model_data_features_frame(
     inference_data_constructor_plugin_language_model_data: LanguageModelData,
-) -> pl.DataFrame:
+) -> LanguageFeaturesFrame:
     return inference_data_constructor_plugin_language_model_data.features_frame
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_plugin_citation_model_data_ranks_frame(
+    inference_data_constructor_plugin_citation_model_data: CitationModelData,
+) -> CitationRanksFrame:
+    return inference_data_constructor_plugin_citation_model_data.ranks_frame
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_plugin_citation_model_data_points_frame(
+    inference_data_constructor_plugin_citation_model_data: CitationModelData,
+) -> CitationPointsFrame:
+    return inference_data_constructor_plugin_citation_model_data.points_frame

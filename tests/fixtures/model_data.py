@@ -46,26 +46,23 @@ def language_model_data(
     raise ValueError(f"Invalid parameter value: {request.param}")
 
 
-@pytest.fixture(
-    scope="session",
-    params=[lazy_fixture("citation_model_data"), lazy_fixture("language_model_data")],
-)
+citation_language_model_data_pair = [
+    lazy_fixture("citation_model_data"),
+    lazy_fixture("language_model_data"),
+]
+
+
+@pytest.fixture(scope="session", params=citation_language_model_data_pair)
 def model_data_query_document(request: pytest.FixtureRequest) -> DocumentInfo:
     return request.param.query_document
 
 
-@pytest.fixture(
-    scope="session",
-    params=[lazy_fixture("citation_model_data"), lazy_fixture("language_model_data")],
-)
+@pytest.fixture(scope="session", params=citation_language_model_data_pair)
 def model_data_info_frame(request: pytest.FixtureRequest) -> InfoFrame:
     return request.param.info_frame
 
 
-@pytest.fixture(
-    scope="session",
-    params=[lazy_fixture("citation_model_data"), lazy_fixture("language_model_data")],
-)
+@pytest.fixture(scope="session", params=citation_language_model_data_pair)
 def model_data_integer_labels(request: pytest.FixtureRequest) -> IntegerLabelsFrame:
     return request.param.integer_labels_frame
 

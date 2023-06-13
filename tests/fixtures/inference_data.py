@@ -1,5 +1,6 @@
 import polars as pl
 import pytest
+from pytest_lazyfixture import lazy_fixture
 
 # These imports must not come from `readnext.inference`, otherwise they are really
 # imported twice with different session scopes and `isinstance()` checks fail.
@@ -13,16 +14,14 @@ from readnext.inference import (
     Recommendations,
 )
 from readnext.modeling import DocumentInfo
-from pytest_lazyfixture import lazy_fixture
+
+constructor_seen_unseen_pair = [
+    lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
+    lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
+]
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
-        lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
-    ],
-)
+@pytest.fixture(scope="session", params=constructor_seen_unseen_pair)
 def inference_data(request: pytest.FixtureRequest) -> InferenceData:
     return InferenceData.from_constructor(request.param)
 

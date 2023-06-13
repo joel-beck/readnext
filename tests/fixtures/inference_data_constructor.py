@@ -1,5 +1,6 @@
 import pytest
 from pytest_lazyfixture import lazy_fixture
+
 from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference import (
     DocumentIdentifier,
@@ -48,65 +49,47 @@ def inference_data_constructor_unseen_from_arxiv_url() -> InferenceDataConstruct
 
 
 # SECTION: Attribute Fixtures
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
-        lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
-    ],
-)
+constructor_seen_unseen_pair = [
+    lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
+    lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
+]
+
+
+@pytest.fixture(scope="session", params=constructor_seen_unseen_pair)
 def inference_data_constructor_seen_documents_frame(
     request: pytest.FixtureRequest,
 ) -> DocumentsFrame:
     return request.param.documents_frame
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
-        lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
-    ],
-)
+@pytest.fixture(scope="session", params=constructor_seen_unseen_pair)
 def inference_data_constructor_citation_model_data(
     request: pytest.FixtureRequest,
 ) -> CitationModelData:
     return request.param.citation_model_data
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
-        lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
-    ],
-)
+@pytest.fixture(scope="session", params=constructor_seen_unseen_pair)
 def inference_data_constructor_language_model_data(
     request: pytest.FixtureRequest,
 ) -> LanguageModelData:
     return request.param.language_model_data
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("inference_data_constructor_citation_model_data"),
-        lazy_fixture("inference_data_constructor_language_model_data"),
-    ],
-)
+model_data_pair = [
+    lazy_fixture("inference_data_constructor_citation_model_data"),
+    lazy_fixture("inference_data_constructor_language_model_data"),
+]
+
+
+@pytest.fixture(scope="session", params=model_data_pair)
 def inference_data_constructor_model_data_query_document(
     request: pytest.FixtureRequest,
 ) -> DocumentInfo:
     return request.param.query_document
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("inference_data_constructor_citation_model_data"),
-        lazy_fixture("inference_data_constructor_language_model_data"),
-    ],
-)
+@pytest.fixture(scope="session", params=model_data_pair)
 def inference_data_constructor_model_data_info_frame(
     request: pytest.FixtureRequest,
 ) -> InfoFrame:
@@ -149,86 +132,38 @@ def inference_data_constructor_citation_model_data_points_frame(
 
 
 # SECTION: Method Fixtures
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
-        lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
-    ],
-)
+@pytest.fixture(scope="session", params=constructor_seen_unseen_pair)
 def inference_data_constructor_document_identifier(
     request: pytest.FixtureRequest,
 ) -> DocumentIdentifier:
     return request.param.collect_document_identifier()
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
-        lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
-    ],
-)
+@pytest.fixture(scope="session", params=constructor_seen_unseen_pair)
 def inference_data_constructor_document_info(request: pytest.FixtureRequest) -> DocumentInfo:
     return request.param.collect_document_info()
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
-        lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
-    ],
-)
-def inference_data_constructor_labels(
-    request: pytest.FixtureRequest,
-) -> Labels:
+@pytest.fixture(scope="session", params=constructor_seen_unseen_pair)
+def inference_data_constructor_labels(request: pytest.FixtureRequest) -> Labels:
     return request.param.collect_labels()
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
-        lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
-    ],
-)
+@pytest.fixture(scope="session", params=constructor_seen_unseen_pair)
 def inference_data_constructor_features(request: pytest.FixtureRequest) -> Features:
     return request.param.collect_features()
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
-        lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
-    ],
-)
+@pytest.fixture(scope="session", params=constructor_seen_unseen_pair)
 def inference_data_constructor_ranks(request: pytest.FixtureRequest) -> Ranks:
     return request.param.collect_ranks()
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
-        lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
-    ],
-)
-def inference_data_constructor_points(
-    request: pytest.FixtureRequest,
-) -> Points:
+@pytest.fixture(scope="session", params=constructor_seen_unseen_pair)
+def inference_data_constructor_points(request: pytest.FixtureRequest) -> Points:
     return request.param.collect_points()
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
-        lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
-    ],
-)
-def inference_data_constructor_recommendations(
-    request: pytest.FixtureRequest,
-) -> Recommendations:
+@pytest.fixture(scope="session", params=constructor_seen_unseen_pair)
+def inference_data_constructor_recommendations(request: pytest.FixtureRequest) -> Recommendations:
     return request.param.collect_recommendations()

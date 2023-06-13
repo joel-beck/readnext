@@ -84,110 +84,76 @@ def language_model_data_constructor_unseen(
 
 
 # SECTION: Model Data Constructor Attributes and Methods
+citation_language_constructor_pair = [
+    lazy_fixture("citation_model_data_constructor_seen"),
+    lazy_fixture("language_model_data_constructor_seen"),
+]
+
+citation_seen_unseen_constructor_pair = [
+    lazy_fixture("citation_model_data_constructor_seen"),
+    lazy_fixture("citation_model_data_constructor_unseen"),
+]
+
+language_seen_unseen_constructor_pair = [
+    lazy_fixture("language_model_data_constructor_seen"),
+    lazy_fixture("language_model_data_constructor_unseen"),
+]
+
+all_constructor_fixtures = (
+    citation_seen_unseen_constructor_pair + language_seen_unseen_constructor_pair
+)
+
+
 # query document id differs for seen and unseen papers, need two different fixtures for
 # separate tests
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("citation_model_data_constructor_seen"),
-        lazy_fixture("language_model_data_constructor_seen"),
-    ],
-)
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", params=citation_language_constructor_pair)
 def model_data_constructor_query_document_seen(
     request: pytest.FixtureRequest,
 ) -> DocumentInfo:
     return request.param.query_document
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("citation_model_data_constructor_unseen"),
-        lazy_fixture("language_model_data_constructor_unseen"),
-    ],
-)
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", params=citation_language_constructor_pair)
 def model_data_constructor_query_document_unseen(
     request: pytest.FixtureRequest,
 ) -> DocumentInfo:
     return request.param.query_document
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("citation_model_data_constructor_seen"),
-        lazy_fixture("citation_model_data_constructor_unseen"),
-        lazy_fixture("language_model_data_constructor_seen"),
-        lazy_fixture("language_model_data_constructor_unseen"),
-    ],
-)
+@pytest.fixture(scope="session", params=all_constructor_fixtures)
 def model_data_constructor_info_frame(request: pytest.FixtureRequest) -> InfoFrame:
     return request.param.get_info_frame()
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("citation_model_data_constructor_seen"),
-        lazy_fixture("citation_model_data_constructor_unseen"),
-        lazy_fixture("language_model_data_constructor_seen"),
-        lazy_fixture("language_model_data_constructor_unseen"),
-    ],
-)
+@pytest.fixture(scope="session", params=all_constructor_fixtures)
 def model_data_constructor_integer_labels_frame(
     request: pytest.FixtureRequest,
 ) -> IntegerLabelsFrame:
     return request.param.get_integer_labels_frame()
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("citation_model_data_constructor_seen"),
-        lazy_fixture("citation_model_data_constructor_unseen"),
-    ],
-)
+@pytest.fixture(scope="session", params=citation_seen_unseen_constructor_pair)
 def citation_model_data_constructor_features_frame(
     request: pytest.FixtureRequest,
 ) -> CitationFeaturesFrame:
     return request.param.get_features_frame()
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("language_model_data_constructor_seen"),
-        lazy_fixture("language_model_data_constructor_unseen"),
-    ],
-)
+@pytest.fixture(scope="session", params=language_seen_unseen_constructor_pair)
 def language_model_data_constructor_features_frame(
     request: pytest.FixtureRequest,
 ) -> LanguageFeaturesFrame:
     return request.param.get_features_frame()
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("citation_model_data_constructor_seen"),
-        lazy_fixture("citation_model_data_constructor_unseen"),
-    ],
-)
+@pytest.fixture(scope="session", params=citation_seen_unseen_constructor_pair)
 def citation_model_data_constructor_ranks_frame(
     request: pytest.FixtureRequest,
 ) -> CitationRanksFrame:
     return request.param.get_ranks_frame()
 
 
-@pytest.fixture(
-    scope="session",
-    params=[
-        lazy_fixture("citation_model_data_constructor_seen"),
-        lazy_fixture("citation_model_data_constructor_unseen"),
-    ],
-)
+@pytest.fixture(scope="session", params=citation_seen_unseen_constructor_pair)
 def citation_model_data_constructor_points_frame(
     request: pytest.FixtureRequest,
 ) -> CitationPointsFrame:

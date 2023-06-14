@@ -1,6 +1,8 @@
 from readnext.modeling.language_models import LanguageModelChoice
+import pytest
 
 
+@pytest.mark.updated
 def test_names_and_values() -> None:
     assert LanguageModelChoice.TFIDF.name == "TFIDF"
     assert LanguageModelChoice.TFIDF.value == "TFIDF"
@@ -20,6 +22,7 @@ def test_names_and_values() -> None:
     assert LanguageModelChoice.LONGFORMER.value == "LONGFORMER"
 
 
+@pytest.mark.updated
 def test_str_representation() -> None:
     assert str(LanguageModelChoice.TFIDF) == "TFIDF"
     assert str(LanguageModelChoice.BM25) == "BM25"

@@ -14,7 +14,7 @@ def main() -> None:
     suppress_transformers_logging()
 
     longformer_token_ids_frame = read_df_from_parquet(
-        ResultsPaths.language_models.longformer_tokenized_abstracts_parquet
+        ResultsPaths.language_models.longformer_tokens_frame_parquet
     )
 
     longformer_model = LongformerModel.from_pretrained(ModelVersions.longformer)  # type: ignore
@@ -26,7 +26,7 @@ def main() -> None:
 
     write_df_to_parquet(
         longformer_embeddings_frame,
-        ResultsPaths.language_models.longformer_embeddings_parquet,
+        ResultsPaths.language_models.longformer_embeddings_frame_parquet,
     )
 
 

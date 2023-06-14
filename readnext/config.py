@@ -129,43 +129,41 @@ class CitationModelsResultsPaths:
 class LanguageModelsResultsPaths:
     """Sets file paths for language model results."""
 
-    spacy_tokenized_abstracts_parquet: Path = results_dirpath / "spacy_tokenized_abstracts.parquet"
+    spacy_tokens_frame_parquet: Path = results_dirpath / "spacy_tokens_frame.parquet"
 
-    tfidf_embeddings_parquet: Path = results_dirpath / "tfidf_embeddings.parquet"
+    tfidf_embeddings_frame_parquet: Path = results_dirpath / "tfidf_embeddings_frame.parquet"
     tfidf_cosine_similarities_parquet: Path = results_dirpath / "tfidf_cosine_similarities.parquet"
 
-    bm25_embeddings_parquet: Path = results_dirpath / "bm25_embeddings.parquet"
+    bm25_embeddings_frame_parquet: Path = results_dirpath / "bm25_embeddings_frame.parquet"
     bm25_cosine_similarities_parquet: Path = results_dirpath / "bm25_cosine_similarities.parquet"
 
-    word2vec_embeddings_parquet: Path = results_dirpath / "word2vec_embeddings.parquet"
+    word2vec_embeddings_frame_parquet: Path = results_dirpath / "word2vec_embeddings_frame.parquet"
     word2vec_cosine_similarities_parquet: Path = (
         results_dirpath / "word2vec_cosine_similarities.parquet"
     )
 
-    glove_embeddings_parquet: Path = results_dirpath / "glove_embeddings.parquet"
+    glove_embeddings_frame_parquet: Path = results_dirpath / "glove_embeddings_frame.parquet"
     glove_cosine_similarities_parquet: Path = results_dirpath / "glove_cosine_similarities.parquet"
 
-    fasttext_embeddings_parquet: Path = results_dirpath / "fasttext_embeddings.parquet"
+    fasttext_embeddings_frame_parquet: Path = results_dirpath / "fasttext_embeddings_frame.parquet"
     fasttext_cosine_similarities_parquet: Path = (
         results_dirpath / "fasttext_cosine_similarities.parquet"
     )
 
-    bert_tokenized_abstracts_parquet: Path = results_dirpath / "bert_tokenized_abstracts.parquet"
-    bert_embeddings_parquet: Path = results_dirpath / "bert_embeddings.parquet"
+    bert_tokens_frame_parquet: Path = results_dirpath / "bert_tokens_frame.parquet"
+    bert_embeddings_frame_parquet: Path = results_dirpath / "bert_embeddings_frame.parquet"
     bert_cosine_similarities_parquet: Path = results_dirpath / "bert_cosine_similarities.parquet"
 
-    scibert_tokenized_abstracts_parquet: Path = (
-        results_dirpath / "scibert_tokenized_abstracts.parquet"
-    )
-    scibert_embeddings_parquet: Path = results_dirpath / "scibert_embeddings.parquet"
+    scibert_tokens_frame_parquet: Path = results_dirpath / "scibert_tokens_frame.parquet"
+    scibert_embeddings_frame_parquet: Path = results_dirpath / "scibert_embeddings_frame.parquet"
     scibert_cosine_similarities_parquet: Path = (
         results_dirpath / "scibert_cosine_similarities.parquet"
     )
 
-    longformer_tokenized_abstracts_parquet: Path = (
-        results_dirpath / "longformer_tokenized_abstracts.parquet"
+    longformer_tokens_frame_parquet: Path = results_dirpath / "longformer_tokens_frame.parquet"
+    longformer_embeddings_frame_parquet: Path = (
+        results_dirpath / "longformer_embeddings_frame.parquet"
     )
-    longformer_embeddings_parquet: Path = results_dirpath / "longformer_embeddings.parquet"
     longformer_cosine_similarities_parquet: Path = (
         results_dirpath / "longformer_cosine_similarities.parquet"
     )

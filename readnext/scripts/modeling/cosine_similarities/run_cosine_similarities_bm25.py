@@ -9,7 +9,7 @@ from readnext.utils.io import write_df_to_parquet
 
 
 def main() -> None:
-    bm25_embeddings = pl.scan_parquet(ResultsPaths.language_models.bm25_embeddings_parquet)
+    bm25_embeddings = pl.scan_parquet(ResultsPaths.language_models.bm25_embeddings_frame_parquet)
 
     bm25_cosine_similarities = precompute_cosine_similarities_polars(bm25_embeddings)
 

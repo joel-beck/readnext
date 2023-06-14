@@ -30,7 +30,7 @@ def get_all_paths_from_dataclass(dataclass: object, paths: list[Path] | None = N
 
 
 def main() -> None:
-    test_data_dirpath = Path(__file__).parent / "data"
+    testing_data_dirpath = Path(__file__).parent / "testing_data"
 
     documents_frame_path = DataPaths.merged.documents_frame
     results_paths = get_all_paths_from_dataclass(ResultsPaths)
@@ -38,7 +38,7 @@ def main() -> None:
     all_paths = [documents_frame_path, *results_paths]
 
     for path in all_paths:
-        destination_path = test_data_dirpath / f"test_{path.name}"
+        destination_path = testing_data_dirpath / f"test_{path.name}"
 
         if destination_path.suffix != ".parquet":
             continue

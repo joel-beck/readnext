@@ -11,7 +11,7 @@ from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 
 def main() -> None:
     spacy_tokens_frame = read_df_from_parquet(
-        ResultsPaths.language_models.spacy_tokenized_abstracts_parquet
+        ResultsPaths.language_models.spacy_tokens_frame_parquet
     )
 
     # requires pre-downloaded model from gensim data repository:
@@ -31,7 +31,7 @@ def main() -> None:
 
     write_df_to_parquet(
         word2vec_embeddings_frame,
-        ResultsPaths.language_models.word2vec_embeddings_parquet,
+        ResultsPaths.language_models.word2vec_embeddings_frame_parquet,
     )
 
 

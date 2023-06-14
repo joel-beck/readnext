@@ -9,7 +9,7 @@ from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 
 def main() -> None:
     spacy_tokens_frame = read_df_from_parquet(
-        ResultsPaths.language_models.spacy_tokenized_abstracts_parquet
+        ResultsPaths.language_models.spacy_tokens_frame_parquet
     )
 
     # interface of tfidf and bm25 is identical, thus the same embedder can be used
@@ -18,7 +18,7 @@ def main() -> None:
 
     write_df_to_parquet(
         bm25_embeddings_frame,
-        ResultsPaths.language_models.bm25_embeddings_parquet,
+        ResultsPaths.language_models.bm25_embeddings_frame_parquet,
     )
 
 

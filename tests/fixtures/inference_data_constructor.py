@@ -56,7 +56,7 @@ constructor_seen_unseen_pair = [
 
 
 @pytest.fixture(scope="session", params=constructor_seen_unseen_pair)
-def inference_data_constructor_seen_documents_frame(
+def inference_data_constructor_documents_frame(
     request: pytest.FixtureRequest,
 ) -> DocumentsFrame:
     return request.param.documents_frame

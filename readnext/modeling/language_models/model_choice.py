@@ -31,42 +31,42 @@ def get_language_model_choice_paths(
     match language_model_choice:
         case LanguageModelChoice.TFIDF:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.tfidf_embeddings_parquet,
+                embeddings=ResultsPaths.language_models.tfidf_embeddings_frame_parquet,
                 cosine_similarities=ResultsPaths.language_models.tfidf_cosine_similarities_parquet,
             )
         case LanguageModelChoice.BM25:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.bm25_embeddings_parquet,
+                embeddings=ResultsPaths.language_models.bm25_embeddings_frame_parquet,
                 cosine_similarities=ResultsPaths.language_models.bm25_cosine_similarities_parquet,
             )
         case LanguageModelChoice.WORD2VEC:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.word2vec_embeddings_parquet,
+                embeddings=ResultsPaths.language_models.word2vec_embeddings_frame_parquet,
                 cosine_similarities=ResultsPaths.language_models.word2vec_cosine_similarities_parquet,
             )
         case LanguageModelChoice.GLOVE:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.glove_embeddings_parquet,
+                embeddings=ResultsPaths.language_models.glove_embeddings_frame_parquet,
                 cosine_similarities=ResultsPaths.language_models.glove_cosine_similarities_parquet,
             )
         case LanguageModelChoice.FASTTEXT:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.fasttext_embeddings_parquet,
+                embeddings=ResultsPaths.language_models.fasttext_embeddings_frame_parquet,
                 cosine_similarities=ResultsPaths.language_models.fasttext_cosine_similarities_parquet,
             )
         case LanguageModelChoice.BERT:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.bert_embeddings_parquet,
+                embeddings=ResultsPaths.language_models.bert_embeddings_frame_parquet,
                 cosine_similarities=ResultsPaths.language_models.bert_cosine_similarities_parquet,
             )
         case LanguageModelChoice.SCIBERT:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.scibert_embeddings_parquet,
+                embeddings=ResultsPaths.language_models.scibert_embeddings_frame_parquet,
                 cosine_similarities=ResultsPaths.language_models.scibert_cosine_similarities_parquet,
             )
         case LanguageModelChoice.LONGFORMER:
             return LanguageModelChoicePaths(
-                embeddings=ResultsPaths.language_models.longformer_embeddings_parquet,
+                embeddings=ResultsPaths.language_models.longformer_embeddings_frame_parquet,
                 cosine_similarities=ResultsPaths.language_models.longformer_cosine_similarities_parquet,
             )
         case _:

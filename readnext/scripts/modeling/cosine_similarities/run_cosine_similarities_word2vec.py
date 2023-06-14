@@ -9,7 +9,9 @@ from readnext.utils.io import write_df_to_parquet
 
 
 def main() -> None:
-    word2vec_embeddings = pl.scan_parquet(ResultsPaths.language_models.word2vec_embeddings_parquet)
+    word2vec_embeddings = pl.scan_parquet(
+        ResultsPaths.language_models.word2vec_embeddings_frame_parquet
+    )
 
     word2vec_cosine_similarities = precompute_cosine_similarities_polars(word2vec_embeddings)
 

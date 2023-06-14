@@ -9,7 +9,9 @@ from readnext.utils.io import write_df_to_parquet
 
 
 def main() -> None:
-    fasttext_embeddings = pl.scan_parquet(ResultsPaths.language_models.fasttext_embeddings_parquet)
+    fasttext_embeddings = pl.scan_parquet(
+        ResultsPaths.language_models.fasttext_embeddings_frame_parquet
+    )
 
     fasttext_cosine_similarities = precompute_cosine_similarities_polars(fasttext_embeddings)
 

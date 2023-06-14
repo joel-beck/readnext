@@ -8,8 +8,10 @@ from rich.progress import (
 )
 
 from readnext.utils.progress_bar import rich_progress_bar
+import pytest
 
 
+@pytest.mark.updated
 def test_setup_progress_bar() -> None:
     progress_bar = rich_progress_bar()
 

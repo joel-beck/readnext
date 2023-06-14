@@ -10,7 +10,7 @@ from readnext.utils.io import write_df_to_parquet
 
 def main() -> None:
     longformer_embeddings = pl.scan_parquet(
-        ResultsPaths.language_models.longformer_embeddings_parquet
+        ResultsPaths.language_models.longformer_embeddings_frame_parquet
     )
 
     longformer_cosine_similarities = precompute_cosine_similarities_polars(longformer_embeddings)

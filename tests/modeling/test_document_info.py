@@ -6,6 +6,7 @@ from readnext.inference import InferenceData
 from readnext.modeling import DocumentInfo
 
 
+@pytest.mark.updated
 def test_from_dummy(dummy_document_info: DocumentInfo) -> None:
     assert dummy_document_info.d3_document_id == 1
     assert dummy_document_info.title == "Sample Paper"
@@ -31,6 +32,9 @@ def test_from_dummy(dummy_document_info: DocumentInfo) -> None:
     assert str(dummy_document_info) == str_representation
 
 
+@pytest.mark.updated
+@pytest.mark.slow
+@pytest.mark.skip_ci
 def test_from_inference_data(inference_data: InferenceData) -> None:
     assert isinstance(inference_data.document_info, DocumentInfo)
     assert list(dataclasses.asdict(inference_data.document_info)) == [
@@ -45,6 +49,8 @@ def test_from_inference_data(inference_data: InferenceData) -> None:
     ]
 
 
+@pytest.mark.updated
+@pytest.mark.skip_ci
 def test_from_inference_data_seen(inference_data_seen: InferenceData) -> None:
     assert inference_data_seen.document_info.d3_document_id == 13756489
     assert inference_data_seen.document_info.title == "Attention Is All You Need"
@@ -59,6 +65,9 @@ def test_from_inference_data_seen(inference_data_seen: InferenceData) -> None:
     assert len(inference_data_seen.document_info.abstract) > 0
 
 
+@pytest.mark.updated
+@pytest.mark.slow
+@pytest.mark.skip_ci
 def test_from_inference_data_unseen(inference_data_unseen: InferenceData) -> None:
     assert inference_data_unseen.document_info.d3_document_id == -1
     assert inference_data_unseen.document_info.title == "GPT-4 Technical Report"
@@ -68,14 +77,13 @@ def test_from_inference_data_unseen(inference_data_unseen: InferenceData) -> Non
     assert inference_data_unseen.document_info.publication_date == ""
     # no arxiv labels for unseen papers
     assert inference_data_unseen.document_info.arxiv_labels == []
-    assert (
-        inference_data_unseen.document_info.semanticscholar_url
-        == "https://www.semanticscholar.org/paper/8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
-    )
+    # semanticscholar url is not set since input identifier is arxiv url
+    assert inference_data_unseen.document_info.semanticscholar_url == ""
     assert inference_data_unseen.document_info.arxiv_url == "https://arxiv.org/abs/2303.08774"
     assert len(inference_data_unseen.document_info.abstract) > 0
 
 
+@pytest.mark.updated
 def test_document_info_defaults() -> None:
     document_info = DocumentInfo(d3_document_id=3)
 
@@ -100,6 +108,7 @@ def test_document_info_defaults() -> None:
     assert str(document_info) == str_representation
 
 
+@pytest.mark.updated
 def test_kw_only_initialization_document_info() -> None:
     with pytest.raises(TypeError):
         DocumentInfo(

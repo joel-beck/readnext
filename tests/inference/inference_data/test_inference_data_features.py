@@ -14,6 +14,9 @@ feature_fixtures = [
 ]
 
 
+@pytest.mark.updated
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("features", feature_fixtures)
 def test_feature_attributes(features: Features) -> None:
     assert isinstance(features, Features)
@@ -28,6 +31,9 @@ def test_feature_attributes(features: Features) -> None:
     ]
 
 
+@pytest.mark.updated
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("features", feature_fixtures)
 def test_publication_date(features: Features) -> None:
     assert isinstance(features.publication_date, pl.DataFrame)
@@ -48,6 +54,9 @@ def test_publication_date(features: Features) -> None:
     )
 
 
+@pytest.mark.updated
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("features", feature_fixtures)
 def test_citationcount_document(features: Features) -> None:
     assert isinstance(features.citationcount_document, pl.DataFrame)
@@ -68,6 +77,9 @@ def test_citationcount_document(features: Features) -> None:
     )
 
 
+@pytest.mark.updated
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("features", feature_fixtures)
 def test_citationcount_author(features: Features) -> None:
     assert isinstance(features.citationcount_author, pl.DataFrame)
@@ -88,6 +100,9 @@ def test_citationcount_author(features: Features) -> None:
     )
 
 
+@pytest.mark.updated
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("features", feature_fixtures)
 def test_co_citation_analysis(features: Features) -> None:
     assert isinstance(features.co_citation_analysis, pl.DataFrame)
@@ -105,6 +120,9 @@ def test_co_citation_analysis(features: Features) -> None:
     assert all(score >= 0 for score in features.co_citation_analysis["co_citation_analysis_score"])
 
 
+@pytest.mark.updated
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("features", feature_fixtures)
 def test_bibliographic_coupling(features: Features) -> None:
     assert isinstance(features.bibliographic_coupling, pl.DataFrame)
@@ -124,6 +142,9 @@ def test_bibliographic_coupling(features: Features) -> None:
     )
 
 
+@pytest.mark.updated
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("features", feature_fixtures)
 def test_cosine_similarity(features: Features) -> None:
     assert isinstance(features.cosine_similarity, pl.DataFrame)
@@ -143,6 +164,9 @@ def test_cosine_similarity(features: Features) -> None:
     )
 
 
+@pytest.mark.updated
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("features", feature_fixtures)
 def test_no_missing_values(features: Features) -> None:
     assert features.publication_date.null_count().sum(axis=1).item() == 0
@@ -153,6 +177,7 @@ def test_no_missing_values(features: Features) -> None:
     assert features.cosine_similarity.null_count().sum(axis=1).item() == 0
 
 
+@pytest.mark.updated
 def test_kw_only_initialization_features() -> None:
     with pytest.raises(TypeError):
         Features(

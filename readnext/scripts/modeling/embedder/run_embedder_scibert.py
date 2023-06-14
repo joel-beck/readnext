@@ -14,7 +14,7 @@ def main() -> None:
     suppress_transformers_logging()
 
     scibert_token_ids_frame = read_df_from_parquet(
-        ResultsPaths.language_models.scibert_tokenized_abstracts_parquet
+        ResultsPaths.language_models.scibert_tokens_frame_parquet
     )
 
     scibert_model = BertModel.from_pretrained(ModelVersions.scibert)  # type: ignore
@@ -26,7 +26,7 @@ def main() -> None:
 
     write_df_to_parquet(
         scibert_embeddings_frame,
-        ResultsPaths.language_models.scibert_embeddings_parquet,
+        ResultsPaths.language_models.scibert_embeddings_frame_parquet,
     )
 
 

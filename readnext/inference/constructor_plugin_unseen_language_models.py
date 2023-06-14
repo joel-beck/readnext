@@ -32,7 +32,7 @@ from readnext.utils.io import read_df_from_parquet
 
 @status_update("Loading training corpus")
 def spacy_load_training_tokens_frame() -> TokensFrame:
-    return read_df_from_parquet(ResultsPaths.language_models.spacy_tokenized_abstracts_parquet)
+    return read_df_from_parquet(ResultsPaths.language_models.spacy_tokens_frame_parquet)
 
 
 @status_update("Tokenizing query abstract")
@@ -157,7 +157,7 @@ status_update("Loading training corpus")
 
 
 def bert_load_training_tokens_frame() -> TokenIdsFrame:
-    return read_df_from_parquet(ResultsPaths.language_models.bert_tokenized_abstracts_parquet)
+    return read_df_from_parquet(ResultsPaths.language_models.bert_tokens_frame_parquet)
 
 
 @status_update("Tokenizing query abstract")
@@ -197,7 +197,7 @@ def bert_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
 
 @status_update("Loading training corpus")
 def scibert_load_training_tokens_frame() -> TokenIdsFrame:
-    return read_df_from_parquet(ResultsPaths.language_models.scibert_tokenized_abstracts_parquet)
+    return read_df_from_parquet(ResultsPaths.language_models.scibert_tokens_frame_parquet)
 
 
 @status_update("Tokenizing query abstract")
@@ -237,7 +237,7 @@ def scibert_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
 
 @status_update("Loading training corpus")
 def longformer_load_training_tokens_frame() -> TokenIdsFrame:
-    return read_df_from_parquet(ResultsPaths.language_models.longformer_tokenized_abstracts_parquet)
+    return read_df_from_parquet(ResultsPaths.language_models.longformer_tokens_frame_parquet)
 
 
 @status_update("Tokenizing query abstract")

@@ -2,17 +2,23 @@ import polars as pl
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
-keyword_algorithm_embeddings = ["tfidf_embeddings", "bm25_embeddings"]
-
-gensim_embeddings = ["word2vec_embeddings", "glove_embeddings", "fasttext_embeddings"]
-
-torch_embeddings = ["bert_embeddings", "scibert_embeddings", "longformer_embeddings"]
+keyword_algorithm_embeddings = [lazy_fixture("tfidf_embeddings"), lazy_fixture("bm25_embeddings")]
+gensim_embeddings = [
+    lazy_fixture("word2vec_embeddings"),
+    lazy_fixture("glove_embeddings"),
+    lazy_fixture("fasttext_embeddings"),
+]
+torch_embeddings = [
+    lazy_fixture("bert_embeddings"),
+    lazy_fixture("scibert_embeddings"),
+    lazy_fixture("longformer_embeddings"),
+]
 
 all_embeddings = keyword_algorithm_embeddings + gensim_embeddings + torch_embeddings
 
 
 @pytest.mark.skip_ci
-@pytest.mark.parametrize("embeddings", lazy_fixture(all_embeddings))
+@pytest.mark.parametrize("embeddings", all_embeddings)
 def test_embeddings_dataframe_structure(embeddings: pl.DataFrame) -> None:
     assert isinstance(embeddings, pl.DataFrame)
 
@@ -27,19 +33,19 @@ def test_embeddings_dataframe_structure(embeddings: pl.DataFrame) -> None:
 
 
 @pytest.mark.skip_ci
-@pytest.mark.parametrize("embeddings", lazy_fixture(keyword_algorithm_embeddings))
+@pytest.mark.parametrize("embeddings", keyword_algorithm_embeddings)
 def test_keyword_algorithm_embeddings_dimension(embeddings: pl.DataFrame) -> None:
     # embedding dimension corresponds to size of corpus vocabulary
     assert all(len(embedding) == 6578 for embedding in embeddings["embedding"])
 
 
 @pytest.mark.skip_ci
-@pytest.mark.parametrize("embeddings", lazy_fixture(gensim_embeddings))
+@pytest.mark.parametrize("embeddings", gensim_embeddings)
 def test_gensim_embeddings_dimension(embeddings: pl.DataFrame) -> None:
     assert all(len(embedding) == 300 for embedding in embeddings["embedding"])
 
 
 @pytest.mark.skip_ci
-@pytest.mark.parametrize("embeddings", lazy_fixture(torch_embeddings))
+@pytest.mark.parametrize("embeddings", torch_embeddings)
 def test_torch_embeddings_dimension(embeddings: pl.DataFrame) -> None:
     assert all(len(embedding) == 768 for embedding in embeddings["embedding"])

@@ -11,6 +11,9 @@ document_identifier_fixtures = [
 ]
 
 
+@pytest.mark.updated
+@pytest.mark.slow
+@pytest.mark.skip_ci
 @pytest.mark.parametrize("document_identifier", document_identifier_fixtures)
 def test_inference_data_document_identifier(
     document_identifier: DocumentIdentifier,
@@ -25,6 +28,8 @@ def test_inference_data_document_identifier(
     ]
 
 
+@pytest.mark.updated
+@pytest.mark.skip_ci
 def test_inference_data_document_identifier_seen(
     inference_data_document_identifier_seen: DocumentIdentifier,
 ) -> None:
@@ -41,6 +46,9 @@ def test_inference_data_document_identifier_seen(
     assert inference_data_document_identifier_seen.arxiv_url == "https://arxiv.org/abs/1706.03762"
 
 
+@pytest.mark.updated
+@pytest.mark.slow
+@pytest.mark.skip_ci
 def test_inference_data_document_identifier_unseen(
     inference_data_document_identifier_unseen: DocumentIdentifier,
 ) -> None:
@@ -57,6 +65,7 @@ def test_inference_data_document_identifier_unseen(
     assert inference_data_document_identifier_unseen.arxiv_url == "https://arxiv.org/abs/2303.08774"
 
 
+@pytest.mark.updated
 def test_kw_only_initialization_document_identifier() -> None:
     with pytest.raises(TypeError):
         DocumentIdentifier(

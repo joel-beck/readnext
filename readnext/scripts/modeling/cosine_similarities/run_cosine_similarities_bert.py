@@ -9,7 +9,7 @@ from readnext.utils.io import write_df_to_parquet
 
 
 def main() -> None:
-    bert_embeddings = pl.scan_parquet(ResultsPaths.language_models.bert_embeddings_parquet)
+    bert_embeddings = pl.scan_parquet(ResultsPaths.language_models.bert_embeddings_frame_parquet)
 
     bert_cosine_similarities = precompute_cosine_similarities_polars(bert_embeddings)
 

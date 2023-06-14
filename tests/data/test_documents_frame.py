@@ -4,20 +4,16 @@ from pytest_lazyfixture import lazy_fixture
 
 from readnext.utils.aliases import DocumentsFrame
 
-documents_frame_fixtures = ["test_documents_frame"]
-
-documents_frame_fixtures_slow_skip_ci = [
-    "inference_data_constructor_seen_documents_frame",
-    "inference_data_constructor_unseen_documents_frame",
-]
+documents_frame_fixtures = [lazy_fixture("test_documents_frame")]
+documents_frame_fixtures_slow_skip_ci = [lazy_fixture("inference_data_constructor_documents_frame")]
 
 
 @pytest.mark.parametrize(
     "documents_frame",
     [
-        *[pytest.param(lazy_fixture(fixture)) for fixture in documents_frame_fixtures],
+        *[pytest.param(fixture) for fixture in documents_frame_fixtures],
         *[
-            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
             for fixture in documents_frame_fixtures_slow_skip_ci
         ],
     ],
@@ -51,9 +47,9 @@ def test_column_names(documents_frame: DocumentsFrame) -> None:
 @pytest.mark.parametrize(
     "documents_frame",
     [
-        *[pytest.param(lazy_fixture(fixture)) for fixture in documents_frame_fixtures],
+        *[pytest.param(fixture) for fixture in documents_frame_fixtures],
         *[
-            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
             for fixture in documents_frame_fixtures_slow_skip_ci
         ],
     ],
@@ -83,9 +79,9 @@ def test_dtypes(documents_frame: DocumentsFrame) -> None:
 @pytest.mark.parametrize(
     "documents_frame",
     [
-        *[pytest.param(lazy_fixture(fixture)) for fixture in documents_frame_fixtures],
+        *[pytest.param(fixture) for fixture in documents_frame_fixtures],
         *[
-            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
             for fixture in documents_frame_fixtures_slow_skip_ci
         ],
     ],
@@ -107,9 +103,9 @@ def test_arxiv_labels(documents_frame: DocumentsFrame) -> None:
 @pytest.mark.parametrize(
     "documents_frame",
     [
-        *[pytest.param(lazy_fixture(fixture)) for fixture in documents_frame_fixtures],
+        *[pytest.param(fixture) for fixture in documents_frame_fixtures],
         *[
-            pytest.param(lazy_fixture(fixture), marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
             for fixture in documents_frame_fixtures_slow_skip_ci
         ],
     ],

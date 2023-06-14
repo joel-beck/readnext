@@ -14,7 +14,7 @@ def main() -> None:
     suppress_transformers_logging()
 
     bert_token_ids_frame = read_df_from_parquet(
-        ResultsPaths.language_models.bert_tokenized_abstracts_parquet
+        ResultsPaths.language_models.bert_tokens_frame_parquet
     )
 
     bert_model = BertModel.from_pretrained(ModelVersions.bert)  # type: ignore
@@ -26,7 +26,7 @@ def main() -> None:
 
     write_df_to_parquet(
         bert_embeddings_frame,
-        ResultsPaths.language_models.bert_embeddings_parquet,
+        ResultsPaths.language_models.bert_embeddings_frame_parquet,
     )
 
 

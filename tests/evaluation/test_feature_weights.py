@@ -1,3 +1,5 @@
+import dataclasses
+
 import pytest
 from pydantic import ValidationError
 
@@ -7,7 +9,7 @@ from readnext.inference.features import Features
 
 def test_from_inference_data(inference_data_features: Features) -> None:
     assert isinstance(inference_data_features.feature_weights, FeatureWeights)
-    assert list(inference_data_features.feature_weights.__dict__.keys()) == {
+    assert list(dataclasses.asdict(inference_data_features.feature_weights)) == {
         "publication_date",
         "citationcount_document",
         "citationcount_author",

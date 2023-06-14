@@ -29,7 +29,7 @@ from readnext.utils.aliases import (
 
 
 @pytest.fixture(scope="session")
-def inference_data_constructor_seen_from_semanticscholar_id() -> InferenceDataConstructor:
+def inference_data_constructor_seen() -> InferenceDataConstructor:
     semanticscholar_id = "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
     return InferenceDataConstructor(
         semanticscholar_id=semanticscholar_id,
@@ -39,7 +39,7 @@ def inference_data_constructor_seen_from_semanticscholar_id() -> InferenceDataCo
 
 
 @pytest.fixture(scope="session")
-def inference_data_constructor_unseen_from_arxiv_url() -> InferenceDataConstructor:
+def inference_data_constructor_unseen() -> InferenceDataConstructor:
     arxiv_url = "https://arxiv.org/abs/2303.08774"
     return InferenceDataConstructor(
         arxiv_url=arxiv_url,
@@ -50,8 +50,8 @@ def inference_data_constructor_unseen_from_arxiv_url() -> InferenceDataConstruct
 
 # SECTION: Attribute Fixtures
 constructor_seen_unseen_pair = [
-    lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
-    lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
+    lazy_fixture("inference_data_constructor_seen"),
+    lazy_fixture("inference_data_constructor_unseen"),
 ]
 
 

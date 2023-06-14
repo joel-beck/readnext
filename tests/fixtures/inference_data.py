@@ -8,6 +8,7 @@ from readnext.inference import (
     DocumentIdentifier,
     Features,
     InferenceData,
+    InferenceDataConstructor,
     Labels,
     Points,
     Ranks,
@@ -15,20 +16,59 @@ from readnext.inference import (
 )
 from readnext.modeling import DocumentInfo
 
-constructor_seen_unseen_pair = [
-    lazy_fixture("inference_data_constructor_seen_from_semanticscholar_id"),
-    lazy_fixture("inference_data_constructor_unseen_from_arxiv_url"),
+
+@pytest.fixture(scope="session")
+def inference_data_seen(
+    inference_data_constructor_seen: InferenceDataConstructor,
+) -> InferenceData:
+    return InferenceData.from_constructor(inference_data_constructor_seen)
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen(
+    inference_data_constructor_unseen: InferenceDataConstructor,
+) -> InferenceData:
+    return InferenceData.from_constructor(inference_data_constructor_unseen)
+
+
+inference_data_seen_unseen_pair = [
+    lazy_fixture("inference_data_seen"),
+    lazy_fixture("inference_data_unseen"),
 ]
 
 
-@pytest.fixture(scope="session", params=constructor_seen_unseen_pair)
+@pytest.fixture(scope="session", params=inference_data_seen_unseen_pair)
 def inference_data(request: pytest.FixtureRequest) -> InferenceData:
-    return InferenceData.from_constructor(request.param)
+    return request.param
+
+
+@pytest.fixture(scope="session")
+def inference_data_document_identifier_seen(
+    inference_data_seen: InferenceData,
+) -> DocumentIdentifier:
+    return inference_data_seen.document_identifier
+
+
+@pytest.fixture(scope="session")
+def inference_data_document_identifier_unseen(
+    inference_data_unseen: InferenceData,
+) -> DocumentIdentifier:
+    return inference_data_unseen.document_identifier
 
 
 @pytest.fixture(scope="session")
 def inference_data_document_identifier(inference_data: InferenceData) -> DocumentIdentifier:
     return inference_data.document_identifier
+
+
+@pytest.fixture(scope="session")
+def inference_data_document_info_seen(inference_data_seen: InferenceData) -> DocumentInfo:
+    return inference_data_seen.document_info
+
+
+@pytest.fixture(scope="session")
+def inference_data_document_info_unseen(inference_data_unseen: InferenceData) -> DocumentInfo:
+    return inference_data_unseen.document_info
 
 
 @pytest.fixture(scope="session")

@@ -1,5 +1,6 @@
-from readnext.utils.utils import slice_mapping
 import pytest
+
+from readnext.utils.utils import slice_mapping
 
 
 @pytest.mark.updated

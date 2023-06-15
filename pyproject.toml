@@ -71,6 +71,7 @@ test-cov = "pytest --cov=readnext"
 test-slow = "pytest -m 'slow'" # run all tests marked with `@pytest.mark.slow`
 test-fast = "pytest -m 'not slow'" # run all tests except those marked with `@pytest.mark.slow`
 test-updated = "pytest -m 'updated'" # run all tests marked with `@pytest.mark.updated`
+test-updated-fast = "pytest -m 'updated and not slow'"
 # run all tests except those marked with `@pytest.mark.skip_ci` and create coverage report
 test-ci = "pytest -m 'not skip_ci' --cov=readnext --cov-report=xml"
 pre = "pre-commit run --all-files"

@@ -14,7 +14,7 @@ def main() -> None:
     suppress_transformers_logging()
 
     longformer_token_ids_frame = read_df_from_parquet(
-        ResultsPaths.language_models.longformer_tokens_frame_parquet
+        ResultsPaths.language_models.longformer_token_ids_frame_parquet
     )
 
     longformer_model = LongformerModel.from_pretrained(ModelVersions.longformer)  # type: ignore

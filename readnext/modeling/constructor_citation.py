@@ -137,10 +137,14 @@ class CitationModelDataConstructor(ModelDataConstructor):
     @staticmethod
     def get_ranks_from_scores_column(expression: pl.Expr) -> pl.Expr:
         """
-        Computes ranks from a given scores column. Returns an expression that can be
+        Computes ranks from a given scores column. In case of ties the minimum rank is
+        used.
+        Example: scores = [1, 2, 2, 3] -> ranks = [4, 2, 2, 1]
+
+        Returns an expression that can be
         used to create a new column in a dataframe.
         """
-        return expression.rank(descending=True)
+        return expression.rank(descending=True, method="min").cast(pl.Float32)
 
     @staticmethod
     def threshold_rank_column(expression: pl.Expr) -> pl.Expr:
@@ -192,7 +196,7 @@ class CitationModelDataConstructor(ModelDataConstructor):
         rank of the scoring limit obtains 1 point, and all ranks above the scoring limit
         obtain 0 points.
         """
-        return (MagicNumbers.scoring_limit + 1) - expression
+        return ((MagicNumbers.scoring_limit + 1) - expression).cast(pl.Float32)
 
     def get_points_frame(self, ranks_frame: CitationRanksFrame) -> CitationPointsFrame:
         """

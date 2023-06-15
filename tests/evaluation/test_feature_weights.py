@@ -2,15 +2,39 @@ import dataclasses
 
 import pytest
 from pydantic import ValidationError
+from pytest_lazyfixture import lazy_fixture
 
 from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference.features import Features
 
+feature_fixtures_skip_ci = [
+    lazy_fixture("inference_data_seen_features"),
+    lazy_fixture("inference_data_constructor_seen_features"),
+]
+
+feature_fixtures_slow_skip_ci = [
+    lazy_fixture("inference_data_unseen_features"),
+    lazy_fixture("inference_data_constructor_unseen_features"),
+]
+
 
 @pytest.mark.updated
-def test_from_inference_data(inference_data_features: Features) -> None:
-    assert isinstance(inference_data_features.feature_weights, FeatureWeights)
-    assert list(dataclasses.asdict(inference_data_features.feature_weights)) == [
+@pytest.mark.parametrize(
+    "features",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
+def test_from_inference_data(features: Features) -> None:
+    assert isinstance(features.feature_weights, FeatureWeights)
+    assert list(dataclasses.asdict(features.feature_weights)) == [
         "publication_date",
         "citationcount_document",
         "citationcount_author",
@@ -18,11 +42,11 @@ def test_from_inference_data(inference_data_features: Features) -> None:
         "bibliographic_coupling",
     ]
 
-    assert isinstance(inference_data_features.feature_weights.publication_date, float)
-    assert isinstance(inference_data_features.feature_weights.citationcount_document, float)
-    assert isinstance(inference_data_features.feature_weights.citationcount_author, float)
-    assert isinstance(inference_data_features.feature_weights.co_citation_analysis, float)
-    assert isinstance(inference_data_features.feature_weights.bibliographic_coupling, float)
+    assert isinstance(features.feature_weights.publication_date, float)
+    assert isinstance(features.feature_weights.citationcount_document, float)
+    assert isinstance(features.feature_weights.citationcount_author, float)
+    assert isinstance(features.feature_weights.co_citation_analysis, float)
+    assert isinstance(features.feature_weights.bibliographic_coupling, float)
 
 
 @pytest.mark.updated
@@ -85,7 +109,7 @@ def test_feature_weights_normalization() -> None:
     )
 
     fw = FeatureWeights(
-        publication_date=-1.0,
+        publication_date=1.0,
         citationcount_document=2.0,
         citationcount_author=3.0,
         co_citation_analysis=4.0,

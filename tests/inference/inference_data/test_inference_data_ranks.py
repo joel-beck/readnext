@@ -6,16 +6,31 @@ from pytest_lazyfixture import lazy_fixture
 
 from readnext.inference.features import Ranks
 
-rank_fixtures = [
-    lazy_fixture("inference_data_ranks"),
-    lazy_fixture("inference_data_constructor_ranks"),
+feature_fixtures_skip_ci = [
+    lazy_fixture("inference_data_seen_ranks"),
+    lazy_fixture("inference_data_constructor_seen_ranks"),
+]
+
+feature_fixtures_slow_skip_ci = [
+    lazy_fixture("inference_data_unseen_ranks"),
+    lazy_fixture("inference_data_constructor_unseen_ranks"),
 ]
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("ranks", rank_fixtures)
+@pytest.mark.parametrize(
+    "ranks",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_rank_attributes(ranks: Ranks) -> None:
     assert isinstance(ranks, Ranks)
     assert list(dataclasses.asdict(ranks)) == [
@@ -28,9 +43,19 @@ def test_rank_attributes(ranks: Ranks) -> None:
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("ranks", rank_fixtures)
+@pytest.mark.parametrize(
+    "ranks",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_publication_date_rank(ranks: Ranks) -> None:
     assert isinstance(ranks.publication_date, pl.DataFrame)
 
@@ -43,16 +68,25 @@ def test_publication_date_rank(ranks: Ranks) -> None:
     assert ranks.publication_date["candidate_d3_document_id"].dtype == pl.Int64
     assert ranks.publication_date["publication_date_rank"].dtype == pl.Float32
 
-    # check that min and max rank are correct
+    # check that best rank of 1 is assigned
     assert ranks.publication_date["publication_date_rank"].min() == 1
-    assert ranks.publication_date["publication_date_rank"].max() == 101
     assert ranks.publication_date["publication_date_rank"].is_between(1, 101).all()
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("ranks", rank_fixtures)
+@pytest.mark.parametrize(
+    "ranks",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_citationcount_document_rank(ranks: Ranks) -> None:
     assert isinstance(ranks.citationcount_document, pl.DataFrame)
 
@@ -65,16 +99,25 @@ def test_citationcount_document_rank(ranks: Ranks) -> None:
         "citationcount_document_rank",
     ]
 
-    # check that min and max rank are correct
+    # check that best rank of 1 is assigned
     assert ranks.citationcount_document["citationcount_document_rank"].min() == 1
-    assert ranks.citationcount_document["citationcount_document_rank"].max() == 101
     assert ranks.citationcount_document["citationcount_document_rank"].is_between(1, 101).all()
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("ranks", rank_fixtures)
+@pytest.mark.parametrize(
+    "ranks",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_citationcount_author_rank(ranks: Ranks) -> None:
     assert isinstance(ranks.citationcount_author, pl.DataFrame)
 
@@ -87,16 +130,25 @@ def test_citationcount_author_rank(ranks: Ranks) -> None:
         "citationcount_author_rank",
     ]
 
-    # check that min and max rank are correct
+    # check that best rank of 1 is assigned
     assert ranks.citationcount_author["citationcount_author_rank"].min() == 1
-    assert ranks.citationcount_author["citationcount_author_rank"].max() == 101
     assert ranks.citationcount_author["citationcount_author_rank"].is_between(1, 101).all()
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("ranks", rank_fixtures)
+@pytest.mark.parametrize(
+    "ranks",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_co_citation_analysis_rank(ranks: Ranks) -> None:
     assert isinstance(ranks.co_citation_analysis, pl.DataFrame)
 
@@ -109,16 +161,25 @@ def test_co_citation_analysis_rank(ranks: Ranks) -> None:
         "co_citation_analysis_rank",
     ]
 
-    # check that min and max rank are correct
+    # check that best rank of 1 is assigned
     assert ranks.co_citation_analysis["co_citation_analysis_rank"].min() == 1
-    assert ranks.co_citation_analysis["co_citation_analysis_rank"].max() == 101
     assert ranks.co_citation_analysis["co_citation_analysis_rank"].is_between(1, 101).all()
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("ranks", rank_fixtures)
+@pytest.mark.parametrize(
+    "ranks",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_bibliographic_coupling_rank(ranks: Ranks) -> None:
     assert isinstance(ranks.bibliographic_coupling, pl.DataFrame)
 
@@ -131,16 +192,25 @@ def test_bibliographic_coupling_rank(ranks: Ranks) -> None:
         "bibliographic_coupling_rank",
     ]
 
-    # check that min and max rank are correct
+    # check that best rank of 1 is assigned
     assert ranks.bibliographic_coupling["bibliographic_coupling_rank"].min() == 1
-    assert ranks.bibliographic_coupling["bibliographic_coupling_rank"].max() == 101
     assert ranks.bibliographic_coupling["bibliographic_coupling_rank"].is_between(1, 101).all()
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("ranks", rank_fixtures)
+@pytest.mark.parametrize(
+    "ranks",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_no_missing_values_ranks(ranks: Ranks) -> None:
     assert ranks.publication_date.null_count().sum(axis=1).item() == 0
     assert ranks.citationcount_document.null_count().sum(axis=1).item() == 0

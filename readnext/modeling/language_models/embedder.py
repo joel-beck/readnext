@@ -63,21 +63,7 @@ class Embedder(ABC):
                 )
             )
 
-        return self.tokens_frame.with_columns(embedding=pl.Series(embeddings))
-
-        # with tqdm(total=len(self.tokens_frame)) as progress_bar:
-        #     embeddings_frame = self.tokens_frame.with_columns(
-        #         embedding=self.tokens_frame["tokens"].apply(
-        #             tqdm_progress_bar_wrapper(
-        #                 progress_bar,
-        #                 # each row is implicitly converted to a polars Series from a
-        #                 # Python list during `apply()`
-        #                 lambda row: self.compute_embedding_single_document(row.to_list()),
-        #             )
-        #         )
-        #     )
-
-        # return embeddings_frame.drop("tokens")
+        return self.tokens_frame.with_columns(embedding=pl.Series(embeddings)).drop("tokens")
 
     @staticmethod
     def word_embeddings_to_document_embedding(

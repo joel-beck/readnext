@@ -29,7 +29,7 @@ def main() -> None:
     bert_tokens_frame = bert_tokenizer.tokenize()
     write_df_to_parquet(
         bert_tokens_frame,
-        ResultsPaths.language_models.bert_tokens_frame_parquet,
+        ResultsPaths.language_models.bert_token_ids_frame_parquet,
     )
 
     scibert_tokenizer_transformers = BertTokenizerFast.from_pretrained(
@@ -39,7 +39,7 @@ def main() -> None:
     scibert_tokens_frame = scibert_tokenizer.tokenize()
     write_df_to_parquet(
         scibert_tokens_frame,
-        ResultsPaths.language_models.scibert_tokens_frame_parquet,
+        ResultsPaths.language_models.scibert_token_ids_frame_parquet,
     )
 
     longformer_tokenizer_transformers = LongformerTokenizerFast.from_pretrained(
@@ -49,7 +49,7 @@ def main() -> None:
     longformer_tokens_frame = longformer_tokenizer.tokenize()
     write_df_to_parquet(
         longformer_tokens_frame,
-        ResultsPaths.language_models.longformer_tokens_frame_parquet,
+        ResultsPaths.language_models.longformer_token_ids_frame_parquet,
     )
 
 

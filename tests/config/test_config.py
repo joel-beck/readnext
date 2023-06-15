@@ -80,10 +80,10 @@ def test_language_models_results_paths() -> None:
     assert isinstance(language_models_results_paths.glove_cosine_similarities_parquet, Path)
     assert isinstance(language_models_results_paths.fasttext_embeddings_frame_parquet, Path)
     assert isinstance(language_models_results_paths.fasttext_cosine_similarities_parquet, Path)
-    assert isinstance(language_models_results_paths.bert_tokens_frame_parquet, Path)
+    assert isinstance(language_models_results_paths.bert_token_ids_frame_parquet, Path)
     assert isinstance(language_models_results_paths.bert_embeddings_frame_parquet, Path)
     assert isinstance(language_models_results_paths.bert_cosine_similarities_parquet, Path)
-    assert isinstance(language_models_results_paths.scibert_tokens_frame_parquet, Path)
+    assert isinstance(language_models_results_paths.scibert_token_ids_frame_parquet, Path)
     assert isinstance(language_models_results_paths.scibert_embeddings_frame_parquet, Path)
     assert isinstance(language_models_results_paths.scibert_cosine_similarities_parquet, Path)
 

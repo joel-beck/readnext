@@ -18,62 +18,62 @@ def documents_frame() -> DocumentsFrame:
 
 
 @pytest.fixture(scope="session")
-def spacy_tokenized_abstracts() -> TokensFrame:
+def spacy_tokens_frame() -> TokensFrame:
     return read_df_from_parquet(ResultsPaths.language_models.spacy_tokens_frame_parquet)
 
 
 @pytest.fixture(scope="session")
-def bert_tokenized_abstracts() -> TokenIdsFrame:
-    return read_df_from_parquet(ResultsPaths.language_models.bert_tokens_frame_parquet)
+def bert_token_ids_frame() -> TokenIdsFrame:
+    return read_df_from_parquet(ResultsPaths.language_models.bert_token_ids_frame_parquet)
 
 
 @pytest.fixture(scope="session")
-def scibert_tokenized_abstracts() -> TokenIdsFrame:
-    return read_df_from_parquet(ResultsPaths.language_models.scibert_tokens_frame_parquet)
+def scibert_token_ids_frame() -> TokenIdsFrame:
+    return read_df_from_parquet(ResultsPaths.language_models.scibert_token_ids_frame_parquet)
 
 
 @pytest.fixture(scope="session")
-def longformer_tokenized_abstracts() -> TokenIdsFrame:
-    return read_df_from_parquet(ResultsPaths.language_models.longformer_tokens_frame_parquet)
+def longformer_token_ids_frame() -> TokenIdsFrame:
+    return read_df_from_parquet(ResultsPaths.language_models.longformer_token_ids_frame_parquet)
 
 
 @pytest.fixture(scope="session")
-def tfidf_embeddings() -> EmbeddingsFrame:
+def tfidf_embeddings_frame() -> EmbeddingsFrame:
     return read_df_from_parquet(ResultsPaths.language_models.tfidf_embeddings_frame_parquet)
 
 
 @pytest.fixture(scope="session")
-def bm25_embeddings() -> EmbeddingsFrame:
+def bm25_embeddings_frame() -> EmbeddingsFrame:
     return read_df_from_parquet(ResultsPaths.language_models.bm25_embeddings_frame_parquet)
 
 
 @pytest.fixture(scope="session")
-def word2vec_embeddings() -> EmbeddingsFrame:
+def word2vec_embeddings_frame() -> EmbeddingsFrame:
     return read_df_from_parquet(ResultsPaths.language_models.word2vec_embeddings_frame_parquet)
 
 
 @pytest.fixture(scope="session")
-def glove_embeddings() -> EmbeddingsFrame:
+def glove_embeddings_frame() -> EmbeddingsFrame:
     return read_df_from_parquet(ResultsPaths.language_models.glove_embeddings_frame_parquet)
 
 
 @pytest.fixture(scope="session")
-def fasttext_embeddings() -> EmbeddingsFrame:
+def fasttext_embeddings_frame() -> EmbeddingsFrame:
     return read_df_from_parquet(ResultsPaths.language_models.fasttext_embeddings_frame_parquet)
 
 
 @pytest.fixture(scope="session")
-def bert_embeddings() -> EmbeddingsFrame:
+def bert_embeddings_frame() -> EmbeddingsFrame:
     return read_df_from_parquet(ResultsPaths.language_models.bert_embeddings_frame_parquet)
 
 
 @pytest.fixture(scope="session")
-def scibert_embeddings() -> EmbeddingsFrame:
+def scibert_embeddings_frame() -> EmbeddingsFrame:
     return read_df_from_parquet(ResultsPaths.language_models.scibert_embeddings_frame_parquet)
 
 
 @pytest.fixture(scope="session")
-def longformer_embeddings() -> EmbeddingsFrame:
+def longformer_embeddings_frame() -> EmbeddingsFrame:
     return read_df_from_parquet(ResultsPaths.language_models.longformer_embeddings_frame_parquet)
 
 

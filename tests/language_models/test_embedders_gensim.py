@@ -30,11 +30,9 @@ def test_word_embeddings_to_document_embedding(embedder: GensimEmbedder) -> None
 
 @pytest.mark.parametrize("embedder", lazy_fixture(embedders))
 def test_compute_embedding_single_document(
-    embedder: GensimEmbedder, spacy_tokenized_abstracts: list[Tokens]
+    embedder: GensimEmbedder, spacy_tokens_frame: list[Tokens]
 ) -> None:
-    embeddings_single_document = embedder.compute_embedding_single_document(
-        spacy_tokenized_abstracts[0]
-    )
+    embeddings_single_document = embedder.compute_embedding_single_document(spacy_tokens_frame[0])
     assert isinstance(embeddings_single_document, np.ndarray)
     assert embeddings_single_document.dtype == np.float64
     assert embeddings_single_document.shape == (300,)
@@ -42,7 +40,7 @@ def test_compute_embedding_single_document(
 
 @pytest.mark.parametrize("embedder", lazy_fixture(embedders))
 def test_compute_embeddings_frame(
-    embedder: GensimEmbedder, spacy_tokenized_abstracts: list[Tokens]
+    embedder: GensimEmbedder, spacy_tokens_frame: list[Tokens]
 ) -> None:
     embeddings_frame = embedder.compute_embeddings_frame()
 
@@ -50,5 +48,5 @@ def test_compute_embeddings_frame(
     assert all(isinstance(key, int) for key in embeddings_frame)
     assert all(isinstance(value, np.ndarray) for value in embeddings_frame.values())
 
-    assert len(embeddings_frame) == len(spacy_tokenized_abstracts)
+    assert len(embeddings_frame) == len(spacy_tokens_frame)
     assert all(len(value) == 300 for value in embeddings_frame.values())

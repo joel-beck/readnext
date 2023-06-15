@@ -8,16 +8,31 @@ from pytest_lazyfixture import lazy_fixture
 from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference.features import Features
 
-feature_fixtures = [
-    lazy_fixture("inference_data_features"),
-    lazy_fixture("inference_data_constructor_features"),
+feature_fixtures_skip_ci = [
+    lazy_fixture("inference_data_seen_features"),
+    lazy_fixture("inference_data_constructor_seen_features"),
+]
+
+feature_fixtures_slow_skip_ci = [
+    lazy_fixture("inference_data_unseen_features"),
+    lazy_fixture("inference_data_constructor_unseen_features"),
 ]
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("features", feature_fixtures)
+@pytest.mark.parametrize(
+    "features",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_feature_attributes(features: Features) -> None:
     assert isinstance(features, Features)
     assert list(dataclasses.asdict(features)) == [
@@ -32,9 +47,19 @@ def test_feature_attributes(features: Features) -> None:
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("features", feature_fixtures)
+@pytest.mark.parametrize(
+    "features",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_publication_date(features: Features) -> None:
     assert isinstance(features.publication_date, pl.DataFrame)
 
@@ -55,9 +80,19 @@ def test_publication_date(features: Features) -> None:
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("features", feature_fixtures)
+@pytest.mark.parametrize(
+    "features",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_citationcount_document(features: Features) -> None:
     assert isinstance(features.citationcount_document, pl.DataFrame)
 
@@ -78,9 +113,19 @@ def test_citationcount_document(features: Features) -> None:
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("features", feature_fixtures)
+@pytest.mark.parametrize(
+    "features",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_citationcount_author(features: Features) -> None:
     assert isinstance(features.citationcount_author, pl.DataFrame)
 
@@ -101,9 +146,19 @@ def test_citationcount_author(features: Features) -> None:
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("features", feature_fixtures)
+@pytest.mark.parametrize(
+    "features",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_co_citation_analysis(features: Features) -> None:
     assert isinstance(features.co_citation_analysis, pl.DataFrame)
 
@@ -121,9 +176,19 @@ def test_co_citation_analysis(features: Features) -> None:
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("features", feature_fixtures)
+@pytest.mark.parametrize(
+    "features",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_bibliographic_coupling(features: Features) -> None:
     assert isinstance(features.bibliographic_coupling, pl.DataFrame)
 
@@ -143,9 +208,19 @@ def test_bibliographic_coupling(features: Features) -> None:
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("features", feature_fixtures)
+@pytest.mark.parametrize(
+    "features",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_cosine_similarity(features: Features) -> None:
     assert isinstance(features.cosine_similarity, pl.DataFrame)
 
@@ -165,9 +240,19 @@ def test_cosine_similarity(features: Features) -> None:
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-@pytest.mark.parametrize("features", feature_fixtures)
+@pytest.mark.parametrize(
+    "features",
+    [
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in feature_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in feature_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_no_missing_values(features: Features) -> None:
     assert features.publication_date.null_count().sum(axis=1).item() == 0
     assert features.citationcount_document.null_count().sum(axis=1).item() == 0

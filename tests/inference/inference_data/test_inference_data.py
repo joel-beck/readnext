@@ -8,15 +8,23 @@ from readnext.inference.features import Features, Labels, Points, Ranks, Recomme
 from readnext.inference.inference_data import InferenceData
 from readnext.modeling import DocumentInfo
 
-inference_data_fixtures_slow_skip_ci = [
-    lazy_fixture("inference_data"),
-    lazy_fixture("inference_data_constructor"),
-]
+inference_data_fixtures_skip_ci = [lazy_fixture("inference_data_seen")]
+
+inference_data_fixtures_slow_skip_ci = [lazy_fixture("inference_data_unseen")]
 
 
 @pytest.mark.updated
-@pytest.mark.slow
 @pytest.mark.skip_ci
+@pytest.mark.parametrize(
+    "inference_data",
+    [
+        *[pytest.param(fixture) for fixture in inference_data_fixtures_skip_ci],
+        *[
+            pytest.param(fixture, marks=pytest.mark.slow)
+            for fixture in inference_data_fixtures_slow_skip_ci
+        ],
+    ],
+)
 def test_inference_data_attributes(inference_data: InferenceData) -> None:
     assert isinstance(inference_data, InferenceData)
 

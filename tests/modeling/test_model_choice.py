@@ -1,5 +1,6 @@
-from readnext.modeling.language_models import LanguageModelChoice
 import pytest
+
+from readnext.modeling.language_models import LanguageModelChoice
 
 
 @pytest.mark.updated

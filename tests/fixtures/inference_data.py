@@ -1,6 +1,5 @@
 import polars as pl
 import pytest
-from pytest_lazyfixture import lazy_fixture
 
 # These imports must not come from `readnext.inference`, otherwise they are really
 # imported twice with different session scopes and `isinstance()` checks fail.
@@ -31,99 +30,131 @@ def inference_data_unseen(
     return InferenceData.from_constructor(inference_data_constructor_unseen)
 
 
-inference_data_seen_unseen_pair = [
-    lazy_fixture("inference_data_seen"),
-    lazy_fixture("inference_data_unseen"),
-]
-
-
-@pytest.fixture(scope="session", params=inference_data_seen_unseen_pair)
-def inference_data(request: pytest.FixtureRequest) -> InferenceData:
-    return request.param
-
-
 @pytest.fixture(scope="session")
-def inference_data_document_identifier_seen(
+def inference_data_seen_document_identifier(
     inference_data_seen: InferenceData,
 ) -> DocumentIdentifier:
     return inference_data_seen.document_identifier
 
 
 @pytest.fixture(scope="session")
-def inference_data_document_identifier_unseen(
+def inference_data_unseen_document_identifier(
     inference_data_unseen: InferenceData,
 ) -> DocumentIdentifier:
     return inference_data_unseen.document_identifier
 
 
 @pytest.fixture(scope="session")
-def inference_data_document_identifier(inference_data: InferenceData) -> DocumentIdentifier:
-    return inference_data.document_identifier
-
-
-@pytest.fixture(scope="session")
-def inference_data_document_info_seen(inference_data_seen: InferenceData) -> DocumentInfo:
+def inference_data_seen_document_info(inference_data_seen: InferenceData) -> DocumentInfo:
     return inference_data_seen.document_info
 
 
 @pytest.fixture(scope="session")
-def inference_data_document_info_unseen(inference_data_unseen: InferenceData) -> DocumentInfo:
+def inference_data_unseen_document_info(inference_data_unseen: InferenceData) -> DocumentInfo:
     return inference_data_unseen.document_info
 
 
 @pytest.fixture(scope="session")
-def inference_data_document_info(inference_data: InferenceData) -> DocumentInfo:
-    return inference_data.document_info
+def inference_data_seen_features(inference_data_seen: InferenceData) -> Features:
+    return inference_data_seen.features
 
 
 @pytest.fixture(scope="session")
-def inference_data_features(inference_data: InferenceData) -> Features:
-    return inference_data.features
+def inference_data_unseen_features(inference_data_unseen: InferenceData) -> Features:
+    return inference_data_unseen.features
 
 
 @pytest.fixture(scope="session")
-def inference_data_ranks(inference_data: InferenceData) -> Ranks:
-    return inference_data.ranks
+def inference_data_seen_ranks(inference_data_seen: InferenceData) -> Ranks:
+    return inference_data_seen.ranks
 
 
 @pytest.fixture(scope="session")
-def inference_data_points(inference_data: InferenceData) -> Points:
-    return inference_data.points
+def inference_data_unseen_ranks(inference_data_unseen: InferenceData) -> Ranks:
+    return inference_data_unseen.ranks
 
 
 @pytest.fixture(scope="session")
-def inference_data_labels(inference_data: InferenceData) -> Labels:
-    return inference_data.labels
+def inference_data_seen_points(inference_data_seen: InferenceData) -> Points:
+    return inference_data_seen.points
 
 
 @pytest.fixture(scope="session")
-def inference_data_recommendations(inference_data: InferenceData) -> Recommendations:
-    return inference_data.recommendations
+def inference_data_unseen_points(inference_data_unseen: InferenceData) -> Points:
+    return inference_data_unseen.points
 
 
 @pytest.fixture(scope="session")
-def inference_data_recommendations_citation_to_language(
-    inference_data_recommendations: Recommendations,
+def inference_data_seen_labels(inference_data_seen: InferenceData) -> Labels:
+    return inference_data_seen.labels
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_labels(inference_data_unseen: InferenceData) -> Labels:
+    return inference_data_unseen.labels
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_recommendations(inference_data_seen: InferenceData) -> Recommendations:
+    return inference_data_seen.recommendations
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_recommendations(inference_data_unseen: InferenceData) -> Recommendations:
+    return inference_data_unseen.recommendations
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_recommendations_citation_to_language(
+    inference_data_seen_recommendations: Recommendations,
 ) -> pl.DataFrame:
-    return inference_data_recommendations.citation_to_language
+    return inference_data_seen_recommendations.citation_to_language
 
 
 @pytest.fixture(scope="session")
-def inference_data_recommendations_citation_to_language_candidates(
-    inference_data_recommendations: Recommendations,
+def inference_data_unseen_recommendations_citation_to_language(
+    inference_data_unseen_recommendations: Recommendations,
 ) -> pl.DataFrame:
-    return inference_data_recommendations.citation_to_language_candidates
+    return inference_data_unseen_recommendations.citation_to_language
 
 
 @pytest.fixture(scope="session")
-def inference_data_recommendations_language_to_citation(
-    inference_data_recommendations: Recommendations,
+def inference_data_seen_recommendations_citation_to_language_candidates(
+    inference_data_seen_recommendations: Recommendations,
 ) -> pl.DataFrame:
-    return inference_data_recommendations.language_to_citation
+    return inference_data_seen_recommendations.citation_to_language_candidates
 
 
 @pytest.fixture(scope="session")
-def inference_data_recommendations_language_to_citation_candidates(
-    inference_data_recommendations: Recommendations,
+def inference_data_unseen_recommendations_citation_to_language_candidates(
+    inference_data_unseen_recommendations: Recommendations,
 ) -> pl.DataFrame:
-    return inference_data_recommendations.language_to_citation_candidates
+    return inference_data_unseen_recommendations.citation_to_language_candidates
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_recommendations_language_to_citation(
+    inference_data_seen_recommendations: Recommendations,
+) -> pl.DataFrame:
+    return inference_data_seen_recommendations.language_to_citation
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_recommendations_language_to_citation(
+    inference_data_unseen_recommendations: Recommendations,
+) -> pl.DataFrame:
+    return inference_data_unseen_recommendations.language_to_citation
+
+
+@pytest.fixture(scope="session")
+def inference_data_seen_recommendations_language_to_citation_candidates(
+    inference_data_seen_recommendations: Recommendations,
+) -> pl.DataFrame:
+    return inference_data_seen_recommendations.language_to_citation_candidates
+
+
+@pytest.fixture(scope="session")
+def inference_data_unseen_recommendations_language_to_citation_candidates(
+    inference_data_unseen_recommendations: Recommendations,
+) -> pl.DataFrame:
+    return inference_data_unseen_recommendations.language_to_citation_candidates

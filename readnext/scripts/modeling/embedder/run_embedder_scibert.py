@@ -14,7 +14,7 @@ def main() -> None:
     suppress_transformers_logging()
 
     scibert_token_ids_frame = read_df_from_parquet(
-        ResultsPaths.language_models.scibert_tokens_frame_parquet
+        ResultsPaths.language_models.scibert_token_ids_frame_parquet
     )
 
     scibert_model = BertModel.from_pretrained(ModelVersions.scibert)  # type: ignore

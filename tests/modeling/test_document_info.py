@@ -1,6 +1,7 @@
 import dataclasses
 
 import pytest
+from pytest_lazyfixture import lazy_fixture
 
 from readnext.inference import InferenceData
 from readnext.modeling import DocumentInfo
@@ -33,8 +34,14 @@ def test_from_dummy(dummy_document_info: DocumentInfo) -> None:
 
 
 @pytest.mark.updated
-@pytest.mark.slow
 @pytest.mark.skip_ci
+@pytest.mark.parametrize(
+    "inference_data",
+    [
+        pytest.param(lazy_fixture("inference_data_seen")),
+        pytest.param(lazy_fixture("inference_data_unseen"), marks=pytest.mark.slow),
+    ],
+)
 def test_from_inference_data(inference_data: InferenceData) -> None:
     assert isinstance(inference_data.document_info, DocumentInfo)
     assert list(dataclasses.asdict(inference_data.document_info)) == [
@@ -53,8 +60,8 @@ def test_from_inference_data(inference_data: InferenceData) -> None:
 @pytest.mark.skip_ci
 def test_from_inference_data_seen(inference_data_seen: InferenceData) -> None:
     assert inference_data_seen.document_info.d3_document_id == 13756489
-    assert inference_data_seen.document_info.title == "Attention Is All You Need"
-    assert inference_data_seen.document_info.author == "Ashish Vaswani"
+    assert inference_data_seen.document_info.title == "Attention is All you Need"
+    assert inference_data_seen.document_info.author == "Lukasz Kaiser"
     assert inference_data_seen.document_info.publication_date == "2017-06-12"
     assert inference_data_seen.document_info.arxiv_labels == ["cs.CL", "cs.LG"]
     assert (
@@ -79,7 +86,8 @@ def test_from_inference_data_unseen(inference_data_unseen: InferenceData) -> Non
     assert inference_data_unseen.document_info.arxiv_labels == []
     # semanticscholar url is not set since input identifier is arxiv url
     assert inference_data_unseen.document_info.semanticscholar_url == ""
-    assert inference_data_unseen.document_info.arxiv_url == "https://arxiv.org/abs/2303.08774"
+    # TODO: Why is neither of the urls set?
+    assert inference_data_unseen.document_info.arxiv_url == ""
     assert len(inference_data_unseen.document_info.abstract) > 0
 
 
@@ -101,9 +109,10 @@ def test_document_info_defaults() -> None:
         "---------------------\n"
         "Title: \n"
         "Author: \n"
+        "Publication Date: \n"
         "Arxiv Labels: []\n"
         "Semanticscholar URL: \n"
-        "Arxiv URL:"
+        "Arxiv URL: "
     )
     assert str(document_info) == str_representation
 

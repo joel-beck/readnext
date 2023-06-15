@@ -150,17 +150,19 @@ class LanguageModelsResultsPaths:
         results_dirpath / "fasttext_cosine_similarities.parquet"
     )
 
-    bert_tokens_frame_parquet: Path = results_dirpath / "bert_tokens_frame.parquet"
+    bert_token_ids_frame_parquet: Path = results_dirpath / "bert_token_ids_frame.parquet"
     bert_embeddings_frame_parquet: Path = results_dirpath / "bert_embeddings_frame.parquet"
     bert_cosine_similarities_parquet: Path = results_dirpath / "bert_cosine_similarities.parquet"
 
-    scibert_tokens_frame_parquet: Path = results_dirpath / "scibert_tokens_frame.parquet"
+    scibert_token_ids_frame_parquet: Path = results_dirpath / "scibert_token_ids_frame.parquet"
     scibert_embeddings_frame_parquet: Path = results_dirpath / "scibert_embeddings_frame.parquet"
     scibert_cosine_similarities_parquet: Path = (
         results_dirpath / "scibert_cosine_similarities.parquet"
     )
 
-    longformer_tokens_frame_parquet: Path = results_dirpath / "longformer_tokens_frame.parquet"
+    longformer_token_ids_frame_parquet: Path = (
+        results_dirpath / "longformer_token_ids_frame.parquet"
+    )
     longformer_embeddings_frame_parquet: Path = (
         results_dirpath / "longformer_embeddings_frame.parquet"
     )

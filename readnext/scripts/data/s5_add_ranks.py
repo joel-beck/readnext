@@ -10,7 +10,8 @@ within the rankings!
 import polars as pl
 
 from readnext.config import DataPaths, MagicNumbers
-from readnext.utils import write_df_to_parquet
+from readnext.utils.aliases import DocumentsFrame
+from readnext.utils.io import write_df_to_parquet
 
 
 def select_most_cited_documents(df: pl.LazyFrame) -> pl.LazyFrame:
@@ -18,7 +19,7 @@ def select_most_cited_documents(df: pl.LazyFrame) -> pl.LazyFrame:
     Select a subset of the most cited documents from the full documents data set.
     """
     return df.sort(["citationcount_document"], descending=True).head(
-        MagicNumbers.documents_data_final_size
+        MagicNumbers.documents_frame_final_size
     )
 
 
@@ -61,7 +62,7 @@ def main() -> None:
         "arxiv_labels",
     ]
 
-    documents_data = (
+    documents_frame: DocumentsFrame = (
         pl.scan_parquet(DataPaths.merged.documents_authors_labels_citations)
         .pipe(select_most_cited_documents)
         .pipe(add_citation_feature_rank_columns)
@@ -69,7 +70,7 @@ def main() -> None:
         .collect()
     )
 
-    write_df_to_parquet(documents_data, DataPaths.merged.documents_data)
+    write_df_to_parquet(documents_frame, DataPaths.merged.documents_frame)
 
 
 if __name__ == "__main__":

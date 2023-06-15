@@ -65,7 +65,7 @@ class MergedDataPaths:
     documents_authors_labels_citations: Path = (
         data_dirpath / "documents_authors_labels_citations.parquet"
     )
-    documents_data: Path = data_dirpath / "documents_data.parquet"
+    documents_frame: Path = data_dirpath / "documents_frame.parquet"
 
 
 @dataclass(frozen=True)
@@ -83,9 +83,10 @@ class MagicNumbers:
     recommendation list.
     """
 
-    documents_data_intermediate_cutoff: int = 1_000_000
-    documents_data_final_size: int = 10_000
-    scoring_limit: int | None = None  # possibly change to 100
+    documents_frame_intermediate_cutoff: int = 1_000_000
+    documents_frame_final_size: int = 10_000
+    documents_frame_test_size: int = 100
+    scoring_limit: int = 100
     n_candidates: int = 20
     n_recommendations: int = 20
 
@@ -128,43 +129,43 @@ class CitationModelsResultsPaths:
 class LanguageModelsResultsPaths:
     """Sets file paths for language model results."""
 
-    spacy_tokenized_abstracts_parquet: Path = results_dirpath / "spacy_tokenized_abstracts.parquet"
+    spacy_tokens_frame_parquet: Path = results_dirpath / "spacy_tokens_frame.parquet"
 
-    tfidf_embeddings_parquet: Path = results_dirpath / "tfidf_embeddings.parquet"
+    tfidf_embeddings_frame_parquet: Path = results_dirpath / "tfidf_embeddings_frame.parquet"
     tfidf_cosine_similarities_parquet: Path = results_dirpath / "tfidf_cosine_similarities.parquet"
 
-    bm25_embeddings_parquet: Path = results_dirpath / "bm25_embeddings.parquet"
+    bm25_embeddings_frame_parquet: Path = results_dirpath / "bm25_embeddings_frame.parquet"
     bm25_cosine_similarities_parquet: Path = results_dirpath / "bm25_cosine_similarities.parquet"
 
-    word2vec_embeddings_parquet: Path = results_dirpath / "word2vec_embeddings.parquet"
+    word2vec_embeddings_frame_parquet: Path = results_dirpath / "word2vec_embeddings_frame.parquet"
     word2vec_cosine_similarities_parquet: Path = (
         results_dirpath / "word2vec_cosine_similarities.parquet"
     )
 
-    glove_embeddings_parquet: Path = results_dirpath / "glove_embeddings.parquet"
+    glove_embeddings_frame_parquet: Path = results_dirpath / "glove_embeddings_frame.parquet"
     glove_cosine_similarities_parquet: Path = results_dirpath / "glove_cosine_similarities.parquet"
 
-    fasttext_embeddings_parquet: Path = results_dirpath / "fasttext_embeddings.parquet"
+    fasttext_embeddings_frame_parquet: Path = results_dirpath / "fasttext_embeddings_frame.parquet"
     fasttext_cosine_similarities_parquet: Path = (
         results_dirpath / "fasttext_cosine_similarities.parquet"
     )
 
-    bert_tokenized_abstracts_parquet: Path = results_dirpath / "bert_tokenized_abstracts.parquet"
-    bert_embeddings_parquet: Path = results_dirpath / "bert_embeddings.parquet"
+    bert_token_ids_frame_parquet: Path = results_dirpath / "bert_token_ids_frame.parquet"
+    bert_embeddings_frame_parquet: Path = results_dirpath / "bert_embeddings_frame.parquet"
     bert_cosine_similarities_parquet: Path = results_dirpath / "bert_cosine_similarities.parquet"
 
-    scibert_tokenized_abstracts_parquet: Path = (
-        results_dirpath / "scibert_tokenized_abstracts.parquet"
-    )
-    scibert_embeddings_parquet: Path = results_dirpath / "scibert_embeddings.parquet"
+    scibert_token_ids_frame_parquet: Path = results_dirpath / "scibert_token_ids_frame.parquet"
+    scibert_embeddings_frame_parquet: Path = results_dirpath / "scibert_embeddings_frame.parquet"
     scibert_cosine_similarities_parquet: Path = (
         results_dirpath / "scibert_cosine_similarities.parquet"
     )
 
-    longformer_tokenized_abstracts_parquet: Path = (
-        results_dirpath / "longformer_tokenized_abstracts.parquet"
+    longformer_token_ids_frame_parquet: Path = (
+        results_dirpath / "longformer_token_ids_frame.parquet"
     )
-    longformer_embeddings_parquet: Path = results_dirpath / "longformer_embeddings.parquet"
+    longformer_embeddings_frame_parquet: Path = (
+        results_dirpath / "longformer_embeddings_frame.parquet"
+    )
     longformer_cosine_similarities_parquet: Path = (
         results_dirpath / "longformer_cosine_similarities.parquet"
     )

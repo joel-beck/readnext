@@ -10,11 +10,8 @@ import polars as pl
 
 from readnext.config import DataPaths
 from readnext.data import SemanticscholarRequest, SemanticScholarResponse
-from readnext.utils import (
-    get_semanticscholar_url_from_semanticscholar_id,
-    read_df_from_parquet,
-    write_df_to_parquet,
-)
+from readnext.utils.convert_id_urls import get_semanticscholar_url_from_semanticscholar_id
+from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 
 
 def get_citation_urls_from_response(semanticscholar_response: SemanticScholarResponse) -> list[str]:

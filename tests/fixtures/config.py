@@ -2,6 +2,8 @@ from pathlib import Path
 
 import pytest
 
+from readnext.config import MagicNumbers
+
 
 @pytest.fixture(scope="session")
 def root_path() -> Path:
@@ -11,4 +13,4 @@ def root_path() -> Path:
 
 @pytest.fixture(scope="session")
 def test_data_size() -> int:
-    return 100
+    return MagicNumbers.documents_frame_test_size

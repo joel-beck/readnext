@@ -2,11 +2,11 @@ import numpy as np
 import torch
 from numpy.typing import NDArray
 
-from readnext.utils import (
+from readnext.utils.aliases import Tokens
+from readnext.utils.protocols import (
     BertModelProtocol,
     FastTextModelProtocol,
     LongformerModelProtocol,
-    Tokens,
     TorchModelOutputProtocol,
     Word2VecModelProtocol,
     WordVectorsProtocol,

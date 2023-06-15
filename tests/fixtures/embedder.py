@@ -8,12 +8,11 @@ from readnext.modeling.language_models import (
     Word2VecEmbedder,
     tfidf,
 )
-from readnext.utils import (
+from readnext.utils.aliases import TokenIdsFrame, TokensFrame
+from readnext.utils.protocols import (
     BertModelProtocol,
     FastTextModelProtocol,
     LongformerModelProtocol,
-    TokenIdsFrame,
-    TokensFrame,
     Word2VecModelProtocol,
 )
 
@@ -49,6 +48,5 @@ def longformer_embedder(
     longformer_tokens_id_frame: TokenIdsFrame, longformer_model: LongformerModelProtocol
 ) -> LongformerEmbedder:
     return LongformerEmbedder(
-        token_ids_frame=longformer_tokens_id_frame,
-        torch_model=longformer_model,
+        token_ids_frame=longformer_tokens_id_frame, torch_model=longformer_model
     )

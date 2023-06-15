@@ -11,12 +11,16 @@ from readnext.modeling.language_models.embedder_torch import (
     LongformerEmbedder,
     TorchEmbedder,
 )
-from readnext.modeling.language_models.model_choice import (
-    LanguageModelChoice,
-    get_cosine_similarities_path_from_choice,
-    get_embeddings_path_from_choice,
+from readnext.modeling.language_models.load_embeddings import (
     load_cosine_similarities_from_choice,
     load_embeddings_from_choice,
+)
+from readnext.modeling.language_models.model_choice import (
+    LanguageModelChoice,
+    LanguageModelChoicePaths,
+    get_cosine_similarities_path_from_choice,
+    get_embeddings_path_from_choice,
+    get_language_model_choice_paths,
 )
 from readnext.modeling.language_models.tfidf import (
     df,
@@ -53,7 +57,9 @@ __all__ = [
     "AggregationStrategy",
     "get_cosine_similarities_path_from_choice",
     "get_embeddings_path_from_choice",
+    "get_language_model_choice_paths",
     "LanguageModelChoice",
+    "LanguageModelChoicePaths",
     "load_cosine_similarities_from_choice",
     "load_embeddings_from_choice",
     "df",

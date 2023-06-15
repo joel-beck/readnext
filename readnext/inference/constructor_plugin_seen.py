@@ -16,7 +16,9 @@ from readnext.modeling import (
 from readnext.modeling.language_models import (
     load_cosine_similarities_from_choice,
 )
-from readnext.utils import ScoresFrame, read_df_from_parquet
+from readnext.utils.aliases import ScoresFrame
+from readnext.utils.io import read_df_from_parquet
+from readnext.utils.repr import generate_frame_repr
 
 
 @dataclass(kw_only=True)
@@ -31,15 +33,42 @@ class SeenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
     def __post_init__(self) -> None:
         # must be called *before* `super().__post_init__()` since
         # `super().__post_init__()` already used the input converter
-        self.input_converter = InferenceDataInputConverter(documents_data=self.documents_data)
+        self.input_converter = InferenceDataInputConverter(documents_frame=self.documents_frame)
 
         super().__post_init__()
 
         # must be called *after* `super().__post_init__()` since it requires the
-        # `identifier` and `documents_data` attributes from the parent class
+        # `identifier` and `documents_frame` attributes from the parent class
         self.model_data_constructor_plugin = SeenModelDataConstructorPlugin(
             d3_document_id=self.identifier.d3_document_id,
-            documents_data=self.documents_data,
+            documents_frame=self.documents_frame,
+        )
+
+    def __repr__(self) -> str:
+        semanticscholar_id_repr = f"semanticscholar_id={self.identifier.semanticscholar_id}"
+        semanticscholar_url_repr = f"semanticscholar_url={self.identifier.semanticscholar_url}"
+        arxiv_id_repr = f"arxiv_id={self.identifier.arxiv_id}"
+        arxiv_url_repr = f"arxiv_url={self.identifier.arxiv_url}"
+        language_model_choice_repr = f"language_model_choice={self.language_model_choice!r}"
+        feature_weights_repr = f"feature_weights={self.feature_weights!r}"
+        documents_frame_repr = f"documents_frame={generate_frame_repr(self.documents_frame)}"
+        identifier_repr = f"identifier={self.identifier!r}"
+        input_converter_repr = f"input_converter={self.input_converter!r}"
+        model_data_constructor_plugin = f"constructor_plugin={self.model_data_constructor_plugin!r}"
+
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"  {semanticscholar_id_repr},\n"
+            f"  {semanticscholar_url_repr},\n"
+            f"  {arxiv_id_repr},\n"
+            f"  {arxiv_url_repr},\n"
+            f"  {language_model_choice_repr},\n"
+            f"  {feature_weights_repr},\n"
+            f"  {documents_frame_repr},\n"
+            f"  {identifier_repr},\n"
+            f"  {input_converter_repr},\n"
+            f"  {model_data_constructor_plugin},\n"
+            ")"
         )
 
     def get_identifier_from_semanticscholar_id(self, semanticscholar_id: str) -> DocumentIdentifier:
@@ -119,10 +148,10 @@ class SeenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
 
         citation_model_data_constructor = CitationModelDataConstructor(
             d3_document_id=self.identifier.d3_document_id,
-            documents_data=self.documents_data,
-            co_citation_analysis_scores=self.get_co_citation_analysis_scores(),
-            bibliographic_coupling_scores=self.get_bibliographic_coupling_scores(),
+            documents_frame=self.documents_frame,
             constructor_plugin=self.model_data_constructor_plugin,
+            co_citation_analysis_scores_frame=self.get_co_citation_analysis_scores(),
+            bibliographic_coupling_scores_frame=self.get_bibliographic_coupling_scores(),
         )
         return CitationModelData.from_constructor(citation_model_data_constructor)
 
@@ -134,8 +163,8 @@ class SeenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
 
         language_model_data_constructor = LanguageModelDataConstructor(
             d3_document_id=self.identifier.d3_document_id,
-            documents_data=self.documents_data,
-            cosine_similarities=self.get_cosine_similarities(),
+            documents_frame=self.documents_frame,
             constructor_plugin=self.model_data_constructor_plugin,
+            cosine_similarity_scores_frame=self.get_cosine_similarities(),
         )
         return LanguageModelData.from_constructor(language_model_data_constructor)

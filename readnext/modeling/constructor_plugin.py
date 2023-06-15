@@ -5,7 +5,8 @@ import polars as pl
 
 from readnext.data import SemanticScholarResponse
 from readnext.modeling.document_info import DocumentInfo
-from readnext.utils import CandidateScoresFrame, ScoresFrame
+from readnext.utils.aliases import CandidateScoresFrame, DocumentsFrame, ScoresFrame
+from readnext.utils.repr import generate_frame_repr
 
 
 @dataclass
@@ -33,11 +34,22 @@ class SeenModelDataConstructorPlugin(ModelDataConstructorPlugin):
     """
 
     d3_document_id: int
-    documents_data: pl.DataFrame
+    documents_frame: DocumentsFrame
+
+    def __repr__(self) -> str:
+        d3_document_id_repr = f"d3_document_id={self.d3_document_id}"
+        documents_frame_repr = f"documents_frame={generate_frame_repr(self.documents_frame)}"
+
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"  {d3_document_id_repr},\n"
+            f"  {documents_frame_repr}\n"
+            ")"
+        )
 
     def collect_query_document(self) -> DocumentInfo:
         """Extract and collect the query document information from the documents data."""
-        query_document_row = self.documents_data.filter(
+        query_document_row = self.documents_frame.filter(
             pl.col("d3_document_id") == self.d3_document_id
         )
 
@@ -45,7 +57,10 @@ class SeenModelDataConstructorPlugin(ModelDataConstructorPlugin):
             d3_document_id=self.d3_document_id,
             title=query_document_row.select("title").item(),
             author=query_document_row.select("author").item(),
+            publication_date=query_document_row.select("publication_date").item(),
             arxiv_labels=query_document_row.select("arxiv_labels").item().to_list(),
+            semanticscholar_url=query_document_row.select("semanticscholar_url").item(),
+            arxiv_url=query_document_row.select("arxiv_url").item(),
             abstract=query_document_row.select("abstract").item(),
         )
 

@@ -10,7 +10,7 @@ def semanticscholar_request() -> SemanticscholarRequest:
 
 
 @pytest.fixture
-def json_response() -> SemanticScholarJson:
+def semanticscholar_json() -> SemanticScholarJson:
     return {
         "paperId": "TestID",
         "title": "TestTitle",

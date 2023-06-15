@@ -5,9 +5,10 @@ model or a single Language Model for a single query document.
 
 import polars as pl
 
+from readnext import FeatureWeights
 from readnext.config import DataPaths, ResultsPaths
 from readnext.evaluation.metrics import AveragePrecision
-from readnext.evaluation.scoring import CitationModelScorer, FeatureWeights, LanguageModelScorer
+from readnext.evaluation.scoring import CitationModelScorer, LanguageModelScorer
 from readnext.modeling import (
     CitationModelData,
     CitationModelDataConstructor,
@@ -15,7 +16,8 @@ from readnext.modeling import (
     LanguageModelDataConstructor,
     SeenModelDataConstructorPlugin,
 )
-from readnext.utils import read_df_from_parquet, ScoresFrame
+from readnext.utils.aliases import ScoresFrame
+from readnext.utils.io import read_df_from_parquet
 
 
 def main() -> None:
@@ -23,9 +25,7 @@ def main() -> None:
     query_d3_document_id = 13756489
 
     # SECTION: Get Raw Data
-    documents_data = read_df_from_parquet(DataPaths.merged.documents_data)
-    # NOTE: Remove to evaluate on full data
-    documents_data = documents_data.head(1000)
+    documents_frame = read_df_from_parquet(DataPaths.merged.documents_frame)
 
     bibliographic_coupling_scores: ScoresFrame = read_df_from_parquet(
         ResultsPaths.citation_models.bibliographic_coupling_scores_parquet
@@ -36,207 +36,248 @@ def main() -> None:
     )
 
     model_data_constructor_plugin = SeenModelDataConstructorPlugin(
-        query_d3_document_id, documents_data
+        query_d3_document_id, documents_frame
     )
 
     # SECTION: Get Model Data
     # SUBSECTION: Citation Models
     citation_model_data_constructor = CitationModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        co_citation_analysis_scores=co_citation_analysis_scores,
-        bibliographic_coupling_scores=bibliographic_coupling_scores,
+        documents_frame=documents_frame,
+        co_citation_analysis_scores_frame=co_citation_analysis_scores,
+        bibliographic_coupling_scores_frame=bibliographic_coupling_scores,
         constructor_plugin=model_data_constructor_plugin,
     )
     citation_model_data = CitationModelData.from_constructor(citation_model_data_constructor)
+    citation_model_scorer = CitationModelScorer(citation_model_data)
 
     print(citation_model_data.query_document)
 
+    citation_model_scorer.display_top_n()
+
     # SUBSECTION: TF-IDF
-    tfidf_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    tfidf_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.tfidf_cosine_similarities_parquet
     )
     tfidf_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=tfidf_cosine_similarities,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=tfidf_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
-    LanguageModelScorer.display_top_n(tfidf_data, n=20)
+    tfidf_language_model_scorer = LanguageModelScorer(tfidf_data)
+
+    tfidf_language_model_scorer.display_top_n()
 
     # SUBSECTION: BM25
-    bm25_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    bm25_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.bm25_cosine_similarities_parquet
     )
     bm25_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=bm25_cosine_similarities,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=bm25_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     bm25_data = LanguageModelData.from_constructor(bm25_data_constructor)
-    LanguageModelScorer.display_top_n(bm25_data, n=20)
+    bm25_language_model_scorer = LanguageModelScorer(bm25_data)
+
+    bm25_language_model_scorer.display_top_n()
 
     # SUBSECTION: Word2Vec
-    word2vec_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    word2vec_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.word2vec_cosine_similarities_parquet
     )
     word2vec_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=word2vec_cosine_similarities,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=word2vec_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     word2vec_data = LanguageModelData.from_constructor(word2vec_data_constructor)
-    LanguageModelScorer.display_top_n(word2vec_data, n=20)
+    word2vec_language_model_scorer = LanguageModelScorer(word2vec_data)
+
+    word2vec_language_model_scorer.display_top_n()
 
     # SUBSECTION: GloVe
-    glove_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    glove_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.glove_cosine_similarities_parquet
     )
     glove_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=glove_cosine_similarities,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=glove_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     glove_data = LanguageModelData.from_constructor(glove_data_constructor)
-    LanguageModelScorer.display_top_n(glove_data, n=20)
+    glove_language_model_scorer = LanguageModelScorer(glove_data)
+
+    glove_language_model_scorer.display_top_n()
 
     # SUBSECTION: FastText
-    fasttext_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    fasttext_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.fasttext_cosine_similarities_parquet
     )
     fasttext_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=fasttext_cosine_similarities,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=fasttext_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     fasttext_data = LanguageModelData.from_constructor(fasttext_data_constructor)
-    LanguageModelScorer.display_top_n(fasttext_data, n=20)
+    fasttext_language_model_scorer = LanguageModelScorer(fasttext_data)
+
+    fasttext_language_model_scorer.display_top_n()
 
     # SUBSECTION: BERT
-    bert_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    bert_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.bert_cosine_similarities_parquet
     )
     bert_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=bert_cosine_similarities,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=bert_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     bert_data = LanguageModelData.from_constructor(bert_data_constructor)
-    LanguageModelScorer.display_top_n(bert_data, n=20)
+    bert_language_model_scorer = LanguageModelScorer(bert_data)
+
+    bert_language_model_scorer.display_top_n()
 
     # SUBSECTION: SciBERT
-    scibert_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    scibert_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.scibert_cosine_similarities_parquet
     )
     scibert_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=scibert_cosine_similarities,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=scibert_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     scibert_data = LanguageModelData.from_constructor(scibert_data_constructor)
-    LanguageModelScorer.display_top_n(scibert_data, n=20)
+    scibert_language_model_scorer = LanguageModelScorer(scibert_data)
+
+    scibert_language_model_scorer.display_top_n()
 
     # SUBSECTION: Longformer
-    longformer_cosine_similarities: pl.DataFrame = read_df_from_parquet(
+    longformer_cosine_similarities: ScoresFrame = read_df_from_parquet(
         ResultsPaths.language_models.longformer_cosine_similarities_parquet
     )
     longformer_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=longformer_cosine_similarities,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=longformer_cosine_similarities,
         constructor_plugin=model_data_constructor_plugin,
     )
     longformer_data = LanguageModelData.from_constructor(longformer_data_constructor)
-    LanguageModelScorer.display_top_n(longformer_data, n=20)
+    longformer_language_model_scorer = LanguageModelScorer(longformer_data)
+
+    longformer_language_model_scorer.display_top_n()
 
     # SECTION: Evaluate Scores
     average_precision_scores = pl.from_records(
         [
             (
                 "Publication Date",
-                CitationModelScorer.score_top_n(
-                    citation_model_data,
+                citation_model_scorer.score_top_n(
                     AveragePrecision(),
-                    FeatureWeights(1, 0, 0, 0, 0),
-                    n=20,
+                    FeatureWeights(
+                        publication_date=1,
+                        citationcount_document=0,
+                        citationcount_author=0,
+                        co_citation_analysis=0,
+                        bibliographic_coupling=0,
+                    ),
                 ),
             ),
             (
                 "Citation Count Document",
-                CitationModelScorer.score_top_n(
-                    citation_model_data,
+                citation_model_scorer.score_top_n(
                     AveragePrecision(),
-                    FeatureWeights(0, 1, 0, 0, 0),
-                    n=20,
+                    FeatureWeights(
+                        publication_date=0,
+                        citationcount_document=1,
+                        citationcount_author=0,
+                        co_citation_analysis=0,
+                        bibliographic_coupling=0,
+                    ),
                 ),
             ),
             (
                 "Citation Count Author",
-                CitationModelScorer.score_top_n(
-                    citation_model_data,
+                citation_model_scorer.score_top_n(
                     AveragePrecision(),
-                    FeatureWeights(0, 0, 1, 0, 0),
-                    n=20,
+                    FeatureWeights(
+                        publication_date=0,
+                        citationcount_document=0,
+                        citationcount_author=1,
+                        co_citation_analysis=0,
+                        bibliographic_coupling=0,
+                    ),
                 ),
             ),
             (
                 "Co-Citation Analysis",
-                CitationModelScorer.score_top_n(
-                    citation_model_data,
+                citation_model_scorer.score_top_n(
                     AveragePrecision(),
-                    FeatureWeights(0, 0, 0, 1, 0),
-                    n=20,
+                    FeatureWeights(
+                        publication_date=0,
+                        citationcount_document=0,
+                        citationcount_author=0,
+                        co_citation_analysis=1,
+                        bibliographic_coupling=0,
+                    ),
                 ),
             ),
             (
                 "Bibliographic Coupling",
-                CitationModelScorer.score_top_n(
-                    citation_model_data,
+                citation_model_scorer.score_top_n(
                     AveragePrecision(),
-                    FeatureWeights(0, 0, 0, 0, 1),
-                    n=20,
+                    FeatureWeights(
+                        publication_date=0,
+                        citationcount_document=0,
+                        citationcount_author=0,
+                        co_citation_analysis=0,
+                        bibliographic_coupling=1,
+                    ),
                 ),
             ),
             (
                 "Weighted",
-                CitationModelScorer.score_top_n(
-                    citation_model_data, AveragePrecision(), FeatureWeights(), n=20
-                ),
+                citation_model_scorer.score_top_n(AveragePrecision()),
             ),
             (
                 "TF-IDF",
-                LanguageModelScorer.score_top_n(tfidf_data, AveragePrecision(), n=20),
+                tfidf_language_model_scorer.score_top_n(AveragePrecision()),
             ),
             (
                 "BM25",
-                LanguageModelScorer.score_top_n(bm25_data, AveragePrecision(), n=20),
+                bm25_language_model_scorer.score_top_n(AveragePrecision()),
             ),
             (
                 "Word2Vec",
-                LanguageModelScorer.score_top_n(word2vec_data, AveragePrecision(), n=20),
+                word2vec_language_model_scorer.score_top_n(AveragePrecision()),
             ),
             (
                 "GloVe",
-                LanguageModelScorer.score_top_n(glove_data, AveragePrecision(), n=20),
+                glove_language_model_scorer.score_top_n(AveragePrecision()),
             ),
             (
                 "FastText",
-                LanguageModelScorer.score_top_n(fasttext_data, AveragePrecision(), n=20),
+                fasttext_language_model_scorer.score_top_n(AveragePrecision()),
             ),
             (
                 "BERT",
-                LanguageModelScorer.score_top_n(bert_data, AveragePrecision(), n=20),
+                bert_language_model_scorer.score_top_n(AveragePrecision()),
             ),
             (
                 "SciBERT",
-                LanguageModelScorer.score_top_n(scibert_data, AveragePrecision(), n=20),
+                scibert_language_model_scorer.score_top_n(AveragePrecision()),
+            ),
+            (
+                "Longformer",
+                longformer_language_model_scorer.score_top_n(AveragePrecision()),
             ),
         ],
         schema=["Feature", "Average Precision"],

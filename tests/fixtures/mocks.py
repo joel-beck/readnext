@@ -1,6 +1,6 @@
 import pytest
 
-from readnext.utils import (
+from readnext.utils.protocols import (
     BertModelProtocol,
     FastTextModelProtocol,
     LongformerModelProtocol,

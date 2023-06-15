@@ -5,7 +5,12 @@ from typing import Generic, TypeVar
 import numpy as np
 import polars as pl
 
-from readnext.utils import IntegerLabelList, IntegerLabelLists, StringLabelList, StringLabelLists
+from readnext.utils.aliases import (
+    IntegerLabelList,
+    IntegerLabelLists,
+    StringLabelList,
+    StringLabelLists,
+)
 
 TLabelList = TypeVar("TLabelList", IntegerLabelList, StringLabelList)
 TReturn = TypeVar("TReturn", int, float)
@@ -101,7 +106,7 @@ class AveragePrecision(EvaluationMetric):
         Compute the average precision for a list of integer recommendation labels that are
         contained in a dataframe column.
         """
-        return cls.score(df["integer_labels"])
+        return cls.score(df["integer_label"])
 
 
 @dataclass

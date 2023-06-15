@@ -6,7 +6,7 @@ from transformers import BertTokenizerFast, LongformerTokenizerFast
 
 from readnext.config import ModelVersions
 from readnext.modeling.language_models import BERTTokenizer, LongformerTokenizer, SpacyTokenizer
-from readnext.utils import TokenIdsFrame, Tokens, TokensFrame
+from readnext.utils.aliases import DocumentsFrame, Tokens, TokensFrame
 
 
 # SUBSECTION: SpaCy
@@ -17,12 +17,12 @@ def spacy_model() -> Language:
 
 
 @pytest.fixture(scope="session")
-def spacy_tokenizer(test_documents_data: pl.DataFrame, spacy_model: Language) -> SpacyTokenizer:
-    return SpacyTokenizer(test_documents_data, spacy_model)
+def spacy_tokenizer(test_documents_frame: DocumentsFrame, spacy_model: Language) -> SpacyTokenizer:
+    return SpacyTokenizer(test_documents_frame, spacy_model)
 
 
 @pytest.fixture(scope="session")
-def spacy_tokenized_abstracts() -> list[Tokens]:
+def dummy_spacy_tokens() -> list[Tokens]:
     return [
         [
             "abstract",
@@ -55,17 +55,15 @@ def spacy_tokenized_abstracts() -> list[Tokens]:
 
 
 @pytest.fixture(scope="session")
-def num_unique_corpus_tokens(spacy_tokenized_abstracts: list[Tokens]) -> int:
+def num_unique_corpus_tokens(dummy_spacy_tokens: list[Tokens]) -> int:
     # vocabulary has 18 unique tokens
-    unique_corpus_tokens = {token for tokens in spacy_tokenized_abstracts for token in tokens}
+    unique_corpus_tokens = {token for tokens in dummy_spacy_tokens for token in tokens}
     return len(unique_corpus_tokens)
 
 
 @pytest.fixture(scope="session")
-def spacy_tokens_frame(spacy_tokenized_abstracts: list[Tokens]) -> TokensFrame:
-    return pl.from_records(
-        list(enumerate(spacy_tokenized_abstracts)), schema=["d3_document_id", "tokens"]
-    )
+def dummy_spacy_tokens_frame(dummy_spacy_tokens: list[Tokens]) -> TokensFrame:
+    return pl.from_records(list(enumerate(dummy_spacy_tokens)), schema=["d3_document_id", "tokens"])
 
 
 # SUBSECTION: BERT
@@ -78,14 +76,9 @@ def bert_tokenizer_transformers() -> BertTokenizerFast:
 
 @pytest.fixture(scope="session")
 def bert_tokenizer(
-    test_documents_data: pl.DataFrame, bert_tokenizer_transformers: BertTokenizerFast
+    test_documents_frame: DocumentsFrame, bert_tokenizer_transformers: BertTokenizerFast
 ) -> BERTTokenizer:
-    return BERTTokenizer(test_documents_data, bert_tokenizer_transformers)
-
-
-@pytest.fixture(scope="session")
-def bert_token_ids_frame(bert_tokenizer: BERTTokenizer) -> TokenIdsFrame:
-    return bert_tokenizer.tokenize()
+    return BERTTokenizer(test_documents_frame, bert_tokenizer_transformers)
 
 
 @pytest.fixture(scope="session")
@@ -144,14 +137,9 @@ def longformer_tokenizer_transformers() -> LongformerTokenizerFast:
 
 @pytest.fixture(scope="session")
 def longformer_tokenizer(
-    test_documents_data: pl.DataFrame, longformer_tokenizer_transformers: LongformerTokenizerFast
+    test_documents_frame: DocumentsFrame, longformer_tokenizer_transformers: LongformerTokenizerFast
 ) -> LongformerTokenizer:
-    return LongformerTokenizer(test_documents_data, longformer_tokenizer_transformers)
-
-
-@pytest.fixture(scope="session")
-def longformer_token_ids_frame(longformer_tokenizer: LongformerTokenizer) -> TokenIdsFrame:
-    return longformer_tokenizer.tokenize()
+    return LongformerTokenizer(test_documents_frame, longformer_tokenizer_transformers)
 
 
 @pytest.fixture(scope="session")

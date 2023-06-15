@@ -15,11 +15,11 @@ from typing import TypedDict
 import polars as pl
 
 from readnext.config import DataPaths, MagicNumbers
-from readnext.utils import (
+from readnext.utils.convert_id_urls import (
     get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
-    write_df_to_parquet,
 )
+from readnext.utils.io import write_df_to_parquet
 
 
 class SemanticScholarTag(TypedDict):
@@ -81,7 +81,7 @@ def select_most_cited_documents(df: pl.LazyFrame) -> pl.LazyFrame:
     Select the top milltion most cited documents from the full documents data set.
     """
     return df.sort(["citationcount_document"], descending=True).head(
-        MagicNumbers.documents_data_intermediate_cutoff
+        MagicNumbers.documents_frame_intermediate_cutoff
     )
 
 
@@ -159,8 +159,8 @@ def add_non_missing_arxiv_ids(df: pl.LazyFrame) -> pl.LazyFrame:
 
 def merge_arxiv_data(documents_data: pl.DataFrame, arxiv_data: pl.DataFrame) -> pl.DataFrame:
     """
-    Merge arxiv labels with the document dataframe. Note that merging operations require
-    DataFrames instead of LazyFrames!
+    Merge arxiv labels with the documents dataframe. Note that merging operations
+    require DataFrames instead of LazyFrames!
     """
     return documents_data.join(arxiv_data, on="arxiv_id", how="left")
 

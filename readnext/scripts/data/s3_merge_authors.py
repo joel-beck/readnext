@@ -9,7 +9,7 @@ document.
 import polars as pl
 
 from readnext.config import DataPaths
-from readnext.utils import read_df_from_parquet, write_df_to_parquet
+from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 
 
 def rename_authors_columns(df: pl.LazyFrame) -> pl.LazyFrame:

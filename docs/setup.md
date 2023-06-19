@@ -1,47 +1,5 @@
 # Setup
 
-!!! warning "Requirements"
-    -   This project utilizes [pdm](https://pdm.fming.dev/) for package and dependency management.
-        To install `pdm`, follow the [installation instructions](https://pdm.fming.dev/latest/#installation) on the pdm website.
-    -   This project requires Python 3.10.
-        Earlier versions of Python are not supported.
-        Future support for higher versions will be available once the `torch` and `transformers` libraries are fully compatible with Python 3.11 and beyond.
-
-
-
-## Installation
-
-1. Clone the repository from GitHub:
-
-    === "HTTPS"
-
-        ```bash
-        git clone https://github.com/joel-beck/readnext.git
-        ```
-
-    === "SSH"
-
-        ```bash
-        git clone ssh://git@github.com:joel-beck/readnext.git
-        ```
-
-    === "GitHub CLI"
-
-        ```bash
-        gh repo clone joel-beck/readnext
-        ```
-
-2. Navigate into the project directory, build the package locally and install all dependencies:
-
-    ```bash
-    cd readnext
-    pdm install
-    ```
-
-That's it! 🎉
-
-
-
 ## Data and Models
 
 !!! note
@@ -51,8 +9,8 @@ That's it! 🎉
     - [D3 papers and authors dataset](https://zenodo.org/record/7071698#.ZFZnCi9ByLc)
     - [Arxiv dataset from Kaggle](https://www.kaggle.com/datasets/Cornell-University/arxiv)
     - Pretrained [word2vec-google-news-300 Word2Vec model](https://github.com/RaRe-Technologies/gensim-data) from Gensim
-    - Pretrained [glove.6B GloVe model](https://nlp.stanford.edu/projects/glove/) from Stanford NLP website
-    - Pretrained [English FastText model](https://fasttext.cc/docs/en/crawl-vectors.html#models) from FastText website
+    - Pretrained [glove.6B GloVe model](https://nlp.stanford.edu/projects/glove/) from the Stanford NLP website
+    - Pretrained [English FastText model](https://fasttext.cc/docs/en/crawl-vectors.html#models) from the FastText website
 
 
 
@@ -65,12 +23,14 @@ This dataset provides global document features for the text-independent recommen
 ### Citation Information
 
 The D3 dataset only includes total citation and reference counts for each paper.
-To obtain individual citations and references, the [Semantic Scholar API](https://api.semanticscholar.org/api-docs/graph) is employed. A private API key is recommended for a higher request rate.
+To obtain individual citations and references, the [Semantic Scholar API](https://api.semanticscholar.org/api-docs/graph) is employed.
+A [private API key](https://www.semanticscholar.org/product/api#api-key) is recommended for a higher request rate.
 
 
 ### Arxiv Labels
 
-Arxiv categories act as labels for the recommender system. If two papers share at least one arxiv label, the recommendation is considered relevant, and irrelevant otherwise.
+Arxiv categories act as labels for the recommender system.
+If two papers share at least one arxiv label, the recommendation is considered relevant, and irrelevant otherwise.
 Arxiv labels are extracted from the [arxiv-metadata-oai-snapshot.json](https://www.kaggle.com/datasets/Cornell-University/arxiv) dataset on Kaggle.
 
 ## Environment Variables
@@ -80,27 +40,65 @@ User-specific information is provided through environment variables.
 The `.env_template` file in the project root directory contains a template for the expected environment variables with default values (except for the Semantic Scholar API key):
 
 ```bash title=".env_template"
-DOCUMENTS_METADATA_FILENAME="2022-11-30-papers.jsonl"
-AUTHORS_METADATA_FILENAME="2022-11-30-authors.jsonl"
+DOCUMENTS_METADATA_FILENAME="2022-11-30_papers.jsonl"
+AUTHORS_METADATA_FILENAME="2022-11-30_authors.jsonl"
+ARXIV_METADATA_FILENAME="arxiv_metadata.json"
 
 SEMANTICSCHOLAR_API_KEY="ABC123"
 
 DATA_DIRPATH="data"
 MODELS_DIRPATH="models"
-RESULTS_DIRPATH = "results"
+RESULTS_DIRPATH="results"
 ```
 
 Explanation of the environment variables:
 
--  `DOCUMENTS_METADATA_FILENAME` and `AUTHORS_METADATA_FILENAME` correspond to the downloaded D3 dataset files.
+-  `DOCUMENTS_METADATA_FILENAME` and `AUTHORS_METADATA_FILENAME` correspond to the downloaded D3 dataset files, `ARXIV_METADATA_FILENAME` to the downloaded arxiv dataset file.
 -  `SEMANTICSCHOLAR_API_KEY` represents the API key for the Semantic Scholar API.
 -  `DATA_DIRPATH` is the directory path for all local data files, including downloaded and generated data files.
 -  `MODELS_DIRPATH` is the directory path for all pretrained model files.
 -  `RESULTS_DIRPATH` is the directory path for all stored result files, such as tokenized abstracts, numeric embeddings of abstracts, and precomputed co-citation analysis, bibliographic coupling, and cosine similarity scores.
 
 
+## Setup Scripts
+
+The inference step of the `readnext` package leverages preprocessed and precomputed data such that all recommender features and abstract embeddings are readily available.
+To generate these files locally, run the following setup scripts in the specified order.
+All scripts are located in the `readnext/scripts` directory.
+
+
+1. **Dataset Construction**
+
+    These scripts are located in the `readnext/scripts/data` directory.
+
+    1. `s1_read_raw_data.py`: Reads documents, authors and arxiv metadata from raw JSON files and write it out into Parquet format.
+    1. `s2_merge_arxiv_labels.py`: Merges the arxiv metadata with the D3 dataset via the arxiv id. Adds arxiv labels as new feature to the dataset which are later used as ground-truth labels for the recommender system.
+    1. `s3_merge_authors.py`: Adds the author citationcount to the dataset and selects the most popular author for each document.
+    1. `s4_add_citations.py`: Sends requests to the semanticscholar API to obtain citation and reference urls for all documents in the dataset and add them as features to the dataframe.
+    1. `s5_add_ranks.py`: Adds rank features for global document characteristics (publication date, document citation count and author citation count) to the dataset and selects a subset of the most cited documents for the final dataset.
+
+
+All further script paths are relative to the `readnext/scripts/modeling` directory.
+
+
+2. **Citation Models**
+
+    1. `run_co_citation_analysis.py`: Precomputes co-citation analysis scores for all document pairs in the dataset.
+    1. `bibliographic_coupling.py`: Precomputes bibliographic coupling scores for all document pairs in the dataset.
+
+
+3. **Language Models**
+
+    1. `tokenizer/run_tokenizer.py`: Tokenizes the abstracts of all documents in the dataset by four different tokenizers into the appropriate format for all eight language models.
+    1. `embedder/run_embedder_*.py`: These scripts generate sparse or dense numeric embeddings of all document abstracts for each language model. The process is split into separate scripts for each model to allow for easy parallelization.
+    1. `cosine_similarities/run_cosine_similarities_*.py`: Precomputes cosine similarity scores for all document pairs in the dataset for each language model. Again, multiple scripts are used for parallelization purposes.
+
+
 
 ## Development Workflow
+
+This project utilizes [pdm](https://pdm.fming.dev/) for package and dependency management.
+To install `pdm`, follow the [installation instructions](https://pdm.fming.dev/latest/#installation) on the pdm website.
 
 Pdm provides the option to define [user scripts](https://pdm.fming.dev/latest/usage/scripts/) that can be run from the command line.
 These scripts are specified in the `pyproject.toml` file in the `[tool.pdm.scripts]` section.
@@ -118,7 +116,15 @@ The following built-in and custom user scripts are useful for the development wo
     The ruff configuration is specified in the `[tool.ruff.*]` sections of the `pyproject.toml` file.
 -  `pdm check`: Static type checking with [mypy](https://github.com/python/mypy).
     The mypy configuration is specified in the `[tool.mypy]` section of the `pyproject.toml` file.
--  `pdm test`: Run all unit tests with [pytest](https://github.com/pytest-dev/pytest).
+-  `pdm test*`: Collection of commands to run unit tests with [pytest](https://github.com/pytest-dev/pytest).
     The pytest configuration is specified in the `[tool.pytest.ini_options]` section of the `pyproject.toml` file.
+    The individual commands are:
+    -  `pdm test`: Run all unit tests.
+    -  `pdm test-cov`: Run all unit tests and generate a test coverage report.
+    -  `pdm test-fast`: Run only tests without extensive computations. Useful for a quick feedback loop during development.
+    -  `pdm test-slow`: Opposite of the `pdm test-fast` command. Runs only tests that require significant computation time.
+    -  `pdm test-ci`: Run only tests that are executed in the continuous integration pipeline. This excludes all tests that depend on precomputed local data files not available in the CI environment.
 -  `pdm pre`: Run [pre-commit](https://github.com/pre-commit/pre-commit) on all files.
     All pre-commit hooks are specified in the `.pre-commit-config.yaml` file in the project root directory.
+-  `pdm serve`: Preview the project documentation locally.
+-  `pdm deploy`: Deploy the project documentation to GitHub pages.

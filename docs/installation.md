@@ -24,4 +24,3 @@ Future support for higher versions will be available once the `torch` and `trans
     ```bash
     pip install git+ssh://git@github.com/joel-beck/readnext.git@polars#egg=readnext
     ```
-

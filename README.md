@@ -15,7 +15,7 @@ It is part of my master's thesis at the University of Göttingen supervised by [
 
 The project is under active development.
 Below you find the installation instructions and a brief overview of the package.
-Check out the [documentation](https://joel-beck.github.io/readnext/) for background information about the citation-based methods and language models that are used in this project as well as a comprehensive user guide.
+Check out the [documentation](https://joel-beck.github.io/readnext/) for background information about the citation-based methods and language models that are used in this project as well as details how to reproduce all results and customize the package to your individual needs.
 
 ## Quick Look
 
@@ -64,7 +64,6 @@ See the [Usage](#usage) section for more details and examples.
     - [Language Recommender](#language-recommender)
     - [Evaluation Metrics](#evaluation-metrics)
 - [Setup](#setup)
-    - [Requirements](#requirements)
     - [Data and Models](#data-and-models)
     - [Environment Variables](#environment-variables)
     - [Setup Scripts](#setup-scripts)
@@ -76,6 +75,10 @@ See the [Usage](#usage) section for more details and examples.
 ## Installation
 
 Currently, the `readnext` package is not available on PyPI but can be installed directly from GitHub.
+
+This project requires Python 3.10.
+Earlier versions of Python are not supported.
+Future support for higher versions will be available once the `torch` and `transformers` libraries are fully compatible with Python 3.11 and beyond.
 
 Note: The project has recently been migrated from Pandas to Polars for massive performance improvements.
 Thus, it is currently recommended to install the package from the `polars` branch.
@@ -111,33 +114,33 @@ Both component orders as well as the two candidate lists are evaluated.The objec
 
 ### Citation Recommender
 
-The **Citation Recommender** extracts five features from each training document out of two categories:
+The **Citation Recommender** extracts five features from each training document out of two categories: global document features and citation-based features.
 
-1. **Global Document Features**
+**Global Document Features**
 
-    These features are derived from the document metadata in the D3 dataset.
+These features are derived from the document metadata in the D3 dataset.
 
-    - **Publication Date**:
-        A *novelty* metric. Recent publications score higher, as they build upon earlier papers and compare their findings with existing results.
+- **Publication Date**:
+    A *novelty* metric. Recent publications score higher, as they build upon earlier papers and compare their findings with existing results.
 
-    - **Paper Citation Count**:
-        A *document popularity* metric. Papers with more citations are considered more valuable and relevant.
+- **Paper Citation Count**:
+    A *document popularity* metric. Papers with more citations are considered more valuable and relevant.
 
-    - **Author Citation Count**:
-        An *author popularity* metric. Authors with higher total citations across their publications are deemed more important in the research community.
+- **Author Citation Count**:
+    An *author popularity* metric. Authors with higher total citations across their publications are deemed more important in the research community.
 
-    Note that global document features are identical for each query document.
+Note that global document features are identical for each query document.
 
 
-2. **Citation-Based Features**
+**Citation-Based Features**
 
-    These features are obtained from the citation data retrieved from the Semantic Scholar API and are *pairwise features* computed for each pair of documents in the training corpus.
+These features are obtained from the citation data retrieved from the Semantic Scholar API and are *pairwise features* computed for each pair of documents in the training corpus.
 
-    - **Co-Citation Analysis**:
-        Counts the number of shared *citing* papers, i.e. papers that themselves cite both the query and the candidate paper. Candidate documents with higher co-citation analysis scores are considered more relevant to the query document.
+- **Co-Citation Analysis**:
+    Counts the number of shared *citing* papers, i.e. papers that themselves cite both the query and the candidate paper. Candidate documents with higher co-citation analysis scores are considered more relevant to the query document.
 
-    - **Bibliographic Coupling**:
-        Counts shared *cited* papers, i.e. papers that are cited by both the query and the candidate paper. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
+- **Bibliographic Coupling**:
+    Counts shared *cited* papers, i.e. papers that are cited by both the query and the candidate paper. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
 
 
 **Feature Weighting**
@@ -162,90 +165,93 @@ For a more thorough introduction, check out the [documentation](https://joel-bec
 
 The **Language Recommender** encodes paper abstracts into embedding vectors to capture semantic meaning. Papers with embeddings most similar to the query document (measured by cosine similarity) are recommended.
 
-8 language models across 3 categories are considered:
+8 language models across 3 categories are considered: keyword-based models, static embedding models, and contextual embedding models.
 
 
-1. **Keyword-based models**
+**Keyword-based models**
 
-    They produce sparse vector embeddings where the embedding dimension equals the vocabulary size of all document abstracts in the training corpus.
-    For these models, text preprocessing and tokenization is performed by the `spaCy` library using the `en_core_web_sm` model.
+They produce sparse vector embeddings where the embedding dimension equals the vocabulary size of all document abstracts in the training corpus.
+For these models, text preprocessing and tokenization is performed by the `spaCy` library using the `en_core_web_sm` model.
 
-    The following keyword-based models are considered:
-    - TF-IDF: Implemented according to the formula:
+The following keyword-based models are considered:
 
-        $$\text{TF-IDF}(t, d) = \text{TF}(t, d) \cdot \text{IDF}(t)$$
+- TF-IDF: Implemented according to the formula:
 
-        with:
+    $$\text{TF-IDF}(t, d) = \text{TF}(t, d) \cdot \text{IDF}(t)$$
 
-        $$\text{TF}(t, d) = \frac{\text{count}(t, d)}{\text{len}(d)}$$
+    with:
 
-        and:
+    $$\text{TF}(t, d) = \frac{\text{count}(t, d)}{\text{len}(d)}$$
 
-        $$\text{IDF}(t) = \log\left(\frac{1 + N}{1 + \text{DF}(t)} + 1\right)$$
+    and:
 
-        where:
-        - $t$ is a token,
-        - $d$ is a document,
-        - $\text{TF}(t, d)$ is the term frequency of token $t$ in document $d$ (interpreted as the relative frequency of a term in a document),
-        - $\text{IDF}(t)$ is the inverse document frequency of token $t$ across all documents in the training corpus,
-        - $\text{count}(t, d)$ is the count of token $t$ in document $d$,
-        - $\text{len}(d)$ is the total number of tokens in document $d$,
-        - $\text{DF}(t)$ is the document frequency of token $t$ (the number of documents in the corpus that contain the term $t$),
-        - $N$ is the total number of documents in the corpus.
+    $$\text{IDF}(t) = \log\left(\frac{1 + N}{1 + \text{DF}(t)} + 1\right)$$
 
-    - BM25: Implemented in the BM25+ variant as proposed by (Lv & Zhai, 2011) and described in (Trotman et al., 2014).
+    where:
 
-        The formula is:
+    - $t$ is a token,
+    - $d$ is a document,
+    - $\text{TF}(t, d)$ is the term frequency of token $t$ in document $d$ (interpreted as the relative frequency of a term in a document),
+    - $\text{IDF}(t)$ is the inverse document frequency of token $t$ across all documents in the training corpus,
+    - $\text{count}(t, d)$ is the count of token $t$ in document $d$,
+    - $\text{len}(d)$ is the total number of tokens in document $d$,
+    - $\text{DF}(t)$ is the document frequency of token $t$ (the number of documents in the corpus that contain the term $t$),
+    - $N$ is the total number of documents in the corpus.
 
-        $$\text{BM25}(t, d) = \text{BM25-TF}(t, d) \cdot \text{BM25-IDF}(t)$$
+- BM25: Implemented in the BM25+ variant as proposed by (Lv & Zhai, 2011) and described in (Trotman et al., 2014).
 
-        with:
+    The formula is:
 
-        $$\text{BM25-TF}(t, d) = \frac{(k + 1) \cdot \text{TF}(t, d)}{k \cdot (1 - b + b \cdot (\text{len}(d) / \text{avgdl})) + \text{TF}(t, d)} + \delta$$
+    $$\text{BM25}(t, d) = \text{BM25-TF}(t, d) \cdot \text{BM25-IDF}(t)$$
 
-        and:
+    with:
 
-        $$\text{BM25-IDF}(t) = \log\left(\frac{N+1}{\text{DF}(t)}\right)$$
+    $$\text{BM25-TF}(t, d) = \frac{(k + 1) \cdot \text{TF}(t, d)}{k \cdot (1 - b + b \cdot (\text{len}(d) / \text{avgdl})) + \text{TF}(t, d)} + \delta$$
 
-        where:
-        - $t$ is a token,
-        - $d$ is a document,
-        - $\text{BM25-TF}(t, d)$ is the BM25+ term frequency of token $t$ in document $d$,
-        - $\text{BM25-IDF}(t)$ is the BM25+ inverse document frequency of token $t$ across all documents in the training corpus,
-        - $\text{TF}(t, d)$ is the term frequency of token $t$ in document $d$ (interpreted as the relative frequency of a term in a document),
-        - $\text{DF}(t)$ is the document frequency of token $t$ (the number of documents in the corpus that contain the term $t$),
-        - $\text{len}(d)$ is the total number of tokens in document $d$,
-        - $\text{avgdl}$ is the average document length across the corpus,
-        - $N$ is the total number of documents in the corpus,
-        - $k$, $b$, and $\delta$ are free parameters.
+    and:
 
-        Default values of $k = 1.5$, $b = 0.75$, and $\delta = 1.0$ are adapted from the [rank_bm25 package](https://github.com/dorianbrown/rank_bm25/blob/990470ebbe6b28c18216fd1a8b18fe7446237dd6/rank_bm25.py#L176).
+    $$\text{BM25-IDF}(t) = \log\left(\frac{N+1}{\text{DF}(t)}\right)$$
 
+    where:
 
-2. **Static embedding models**
+    - $t$ is a token,
+    - $d$ is a document,
+    - $\text{BM25-TF}(t, d)$ is the BM25+ term frequency of token $t$ in document $d$,
+    - $\text{BM25-IDF}(t)$ is the BM25+ inverse document frequency of token $t$ across all documents in the training corpus,
+    - $\text{TF}(t, d)$ is the term frequency of token $t$ in document $d$ (interpreted as the relative frequency of a term in a document),
+    - $\text{DF}(t)$ is the document frequency of token $t$ (the number of documents in the corpus that contain the term $t$),
+    - $\text{len}(d)$ is the total number of tokens in document $d$,
+    - $\text{avgdl}$ is the average document length across the corpus,
+    - $N$ is the total number of documents in the corpus,
+    - $k$, $b$, and $\delta$ are free parameters.
 
-    They produce dense vector embeddings where the embedding dimension is fixed (here set to the default of 300) and independent of the vocabulary size.
-    Word embeddings are averaged dimension-wise to obtain a single embedding vector for each abstract.
-    Again, `spaCy` is used for text preprocessing and tokenization.
-    All three static embedding models are pretrained and implemented via their `gensim` interface:
-
-    - Word2Vec: Pretrained on the Google News corpus using the `word2vec-google-news-300` gensim model.
-    - GloVe: Pretrained on the Gigaword corpus and Wikipedia using the `glove.6B.300d` model from the NLP Stanford GloVe project.
-    - FastText: Pretrained on the Common Crawl corpus and Wikipedia using the `cc.en.300.bin` model from the FastText Website.
+    Default values of $k = 1.5$, $b = 0.75$, and $\delta = 1.0$ are adapted from the [rank_bm25 package](https://github.com/dorianbrown/rank_bm25/blob/990470ebbe6b28c18216fd1a8b18fe7446237dd6/rank_bm25.py#L176).
 
 
-3. **Contextual embedding models**
+**Static embedding models**
 
-    Similar to static embedding models, they produce dense vector embeddings where the embedding dimension is fixed (here set to the default of 768) and independent of the vocabulary size.
-    Instead of string tokens, contextual embedding models take integer token IDs as input which are mapped to words and subwords and learned during pretraining.
-    All three static embedding models are pretrained and implemented via the HuggingFace `transformers` library:
+They produce dense vector embeddings where the embedding dimension is fixed (here set to the default of 300) and independent of the vocabulary size.
+Word embeddings are averaged dimension-wise to obtain a single embedding vector for each abstract.
+Again, `spaCy` is used for text preprocessing and tokenization.
+All three static embedding models are pretrained and implemented via their `gensim` interface:
 
-    - BERT: Pretrained on the BooksCorpus and English Wikipedia using the `bert-base-uncased` model.
-    - SciBERT: Pretrained on the Semantic Scholar corpus (i.e. specific to scientific language) using the `allenai/scibert_scivocab_uncased` model.
-    - Longformer: Pretrained on the BooksCorpus and English Wikipedia using the `allenai/longformer-base-4096` model.
+- Word2Vec: Pretrained on the Google News corpus using the `word2vec-google-news-300` gensim model.
+- GloVe: Pretrained on the Gigaword corpus and Wikipedia using the `glove.6B.300d` model from the NLP Stanford GloVe project.
+- FastText: Pretrained on the Common Crawl corpus and Wikipedia using the `cc.en.300.bin` model from the FastText Website.
 
-    Instead of averaging word embeddings like static embedding models, these Transformer based models cut off the document abstracts at a maximum token length of 512 for BERT and SciBERT and 4096 for the Longformer model.
-    However, only 0.58% of all abstracts in the training corpus exceed the maximum token length of 512 such that the impact of this cutoff is negligible.
+
+**Contextual embedding models**
+
+Similar to static embedding models, they produce dense vector embeddings where the embedding dimension is fixed (here set to the default of 768) and independent of the vocabulary size.
+Instead of string tokens, contextual embedding models take integer token IDs as input which are mapped to words and subwords and learned during pretraining.
+All three static embedding models are pretrained and implemented via the HuggingFace `transformers` library:
+
+- BERT: Pretrained on the BooksCorpus and English Wikipedia using the `bert-base-uncased` model.
+- SciBERT: Pretrained on the Semantic Scholar corpus (i.e. specific to scientific language) using the `allenai/scibert_scivocab_uncased` model.
+- Longformer: Pretrained on the BooksCorpus and English Wikipedia using the `allenai/longformer-base-4096` model.
+
+Instead of averaging word embeddings like static embedding models, these Transformer based models cut off the document abstracts at a maximum token length of 512 for BERT and SciBERT and 4096 for the Longformer model.
+However, only 0.58% of all abstracts in the training corpus exceed the maximum token length of 512 such that the impact of this cutoff is negligible.
 
 
 
@@ -259,48 +265,44 @@ The **Mean Average Precision (MAP)** is used as evaluation metric due to the fol
 
 The **Average Precision (AP)** computes a scalar score for a single recommendation list according to the following definitions:
 
-- Precision:
+**Precision**
 
-   $$\text{Precision} = \frac{\# \text{ of relevant items}}{\# \text{ of items}}$$
+$$\text{Precision} = \frac{\# \text{ of relevant items}}{\# \text{ of items}}$$
 
-- Average Precision (AP):
+**Average Precision (AP)**
 
-   $$\text{AP} = \frac{1}{r} \sum_{k=1}^{K} P(k) \cdot \text{rel}(k)$$
+$$\text{AP} = \frac{1}{r} \sum_{k=1}^{K} P(k) \cdot \text{rel}(k)$$
 
-   where:
-    - $K$ is the total number of items,
-    - $r$ is the total number of relevant items,
-    - $P(k)$ is the precision at $k$,
-    - $\text{rel}(k)$ is 1 if item $k$ is relevant and 0 otherwise.
+where:
 
-   If the labels are binary 0/1 encoded as in our case, the formula simplifies to:
+- $K$ is the total number of items,
+- $r$ is the total number of relevant items,
+- $P(k)$ is the precision at $k$,
+- $\text{rel}(k)$ is 1 if item $k$ is relevant and 0 otherwise.
 
-    $$\text{AP} = \frac{1}{r} \sum_{k=1}^{K} \frac{\sum_{i=1}^{k} \text{rel}(i)}{k}$$
+If the labels are binary 0/1 encoded as in our case, the formula simplifies to:
+
+$$\text{AP} = \frac{1}{r} \sum_{k=1}^{K} \frac{\sum_{i=1}^{k} \text{rel}(i)}{k}$$
 
 
-The Mean Average Precision is then computed as the average over the Average Precision scores for the recommendations of all query documents in the training corpus:
+The Mean Average Precision is then computed as the average over the Average Precision scores for the recommendations of all query documents in the training corpus.
 
-- Mean Average Precision (MAP):
+**Mean Average Precision (MAP)**
 
-    $$\text{MAP} = \frac{1}{Q} \sum_{q=1}^{Q} \text{AP}(q)$$
+$$\text{MAP} = \frac{1}{Q} \sum_{q=1}^{Q} \text{AP}(q)$$
 
-    where:
-    - $Q$ is the total number of query documents,
-    - $\text{AP}(q)$ is the average precision for query document $q$.
+where:
+
+- $Q$ is the total number of query documents,
+- $\text{AP}(q)$ is the average precision for query document $q$.
 
 Within this project, the MAP computes a scalar score for a given combination of Language Model Choice and Feature Weights.
 Thus, to determine which Recommender order works best within the Hybrid structure, we could e.g. aggregate the MAP scores for each order over all Language Model Choices and Feature Weights.
 
 
 
+
 ## Setup
-
-### Requirements
-
-This project requires Python 3.10.
-Earlier versions of Python are not supported.
-Future support for higher versions will be available once the `torch` and `transformers` libraries are fully compatible with Python 3.11 and beyond.
-
 
 ### Data and Models
 
@@ -407,9 +409,9 @@ This argument is required and should be provided as a string.
 
     **Term Definition**:
 
-    - The Semanticscholar *ID* is a 40-digit hexadecimal string at the end of the Semanticscholar URL after the last forward slash.
+    - The *Semanticscholar ID* is a 40-digit hexadecimal string at the end of the Semanticscholar URL after the last forward slash.
     For example, the Semanticscholar ID for the URL `https://www.semanticscholar.org/paper/67c4ffa7f9c25e9e0f0b0eac5619070f6a5d143d` is `67c4ffa7f9c25e9e0f0b0eac5619070f6a5d143d`.
-    - The Arxiv *ID* is a 4-digit number followed by a dot followed by a 5-digit number at the end of the Arxiv URL after the last forward slash.
+    - The *Arxiv ID* is a 4-digit number followed by a dot followed by a 5-digit number at the end of the Arxiv URL after the last forward slash.
     For example, the Arxiv ID for the URL `https://arxiv.org/abs/1234.56789` is `1234.56789`.
 
 - The language model choice for the Language Recommender, which is used to tokenize and embed the query paper's abstract.
@@ -510,7 +512,7 @@ Now we want to get recommendations for which papers we should read next.
 Here, we choose the recommendations for the Citation -> Language Hybrid-Recommender order.
 
 The output is a dataframe where each row represents a recommendation.
-The rows are sorted in descending order by the cosine similarity between the query paper and the candidate paper since the re-ranking step is performed by the Language Recommender.
+The rows are sorted in descending order by the cosine similarity between the query paper and the candidate papers since the re-ranking step is performed by the Language Recommender.
 
 For brevity we limit the output to the top three recommendations:
 

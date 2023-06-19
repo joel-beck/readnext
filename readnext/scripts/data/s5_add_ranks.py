@@ -9,7 +9,7 @@ within the rankings!
 
 import polars as pl
 
-from readnext.config import DataPaths, MagicNumbers
+from readnext.config import ColumnOrder, DataPaths, MagicNumbers
 from readnext.utils.aliases import DocumentsFrame
 from readnext.utils.io import write_df_to_parquet
 
@@ -40,27 +40,7 @@ def add_citation_feature_rank_columns(df: pl.LazyFrame) -> pl.LazyFrame:
 
 
 def main() -> None:
-    output_columns = [
-        "d3_document_id",
-        "d3_author_id",
-        "title",
-        "author",
-        "publication_date",
-        "publication_date_rank",
-        "citationcount_document",
-        "citationcount_document_rank",
-        "citationcount_author",
-        "citationcount_author_rank",
-        "citations",
-        "references",
-        "abstract",
-        "semanticscholar_id",
-        "semanticscholar_url",
-        "semanticscholar_tags",
-        "arxiv_id",
-        "arxiv_url",
-        "arxiv_labels",
-    ]
+    output_columns = ColumnOrder().documents_frame
 
     documents_frame: DocumentsFrame = (
         pl.scan_parquet(DataPaths.merged.documents_authors_labels_citations)

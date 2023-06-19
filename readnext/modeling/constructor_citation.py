@@ -23,6 +23,16 @@ class CitationModelDataConstructor(ModelDataConstructor):
 
     co_citation_analysis_scores_frame: ScoresFrame | CandidateScoresFrame
     bibliographic_coupling_scores_frame: ScoresFrame | CandidateScoresFrame
+    info_columns: list[str] = field(
+        default_factory=lambda: [
+            "candidate_d3_document_id",
+            "title",
+            "author",
+            "arxiv_labels",
+            "semanticscholar_url",
+            "arxiv_url",
+        ]
+    )
     feature_columns: list[str] = field(
         default_factory=lambda: [
             "candidate_d3_document_id",

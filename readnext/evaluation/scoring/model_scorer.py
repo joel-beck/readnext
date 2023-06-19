@@ -4,7 +4,7 @@ from typing import Generic, TypeVar, overload
 
 import polars as pl
 
-from readnext.config import MagicNumbers
+from readnext.config import ColumnOrder, MagicNumbers
 from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
 from readnext.evaluation.scoring.feature_weights import FeatureWeights
 from readnext.modeling import CitationModelData, LanguageModelData, ModelData
@@ -27,6 +27,10 @@ class ModelScorer(ABC, Generic[TModelData]):
 
     @abstractmethod
     def select_top_n(self, feature_weights: FeatureWeights, n: int) -> pl.DataFrame:
+        ...
+
+    @abstractmethod
+    def reorder_recommendation_columns(self, df: pl.DataFrame) -> pl.DataFrame:
         ...
 
     @abstractmethod
@@ -108,7 +112,7 @@ class CitationModelScorer(ModelScorer):
                 * points_frame["co_citation_analysis_points"]
                 + feature_weight_normalized.bibliographic_coupling
                 * points_frame["bibliographic_coupling_points"]
-            ).round(decimals=1)
+            )
         ).select(["candidate_d3_document_id", "weighted_points"])
 
     def select_top_n(self, feature_weights: FeatureWeights, n: int) -> pl.DataFrame:
@@ -124,6 +128,18 @@ class CitationModelScorer(ModelScorer):
             self.compute_weighted_points(self.model_data.points_frame, feature_weights)
             .sort("weighted_points", descending=True)
             .head(n)
+        )
+
+    def reorder_recommendation_columns(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Determine the recommendation output column order for the Hybrid Recommender
+        Order Language -> Citation
+        """
+        return df.select(ColumnOrder().recommendations_citation)
+
+    def sort_by_weighted_points(self, df: pl.DataFrame) -> pl.DataFrame:
+        return df.sort("weighted_points", descending=True).with_columns(
+            pl.col("weighted_points").round(decimals=1)
         )
 
     def display_top_n(
@@ -157,7 +173,8 @@ class CitationModelScorer(ModelScorer):
                 self.merge_on_candidate_d3_document_id,
                 self.model_data.features_frame,
             )
-            .sort("weighted_points", descending=True)
+            .pipe(self.reorder_recommendation_columns)
+            .pipe(self.sort_by_weighted_points)
         )
 
     @overload
@@ -218,6 +235,18 @@ class LanguageModelScorer(ModelScorer):
         """
         return self.model_data.features_frame.sort("cosine_similarity", descending=True).head(n)
 
+    def reorder_recommendation_columns(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Determine the recommendation output column order for the Hybrid Recommender
+        Order Citation -> Language.
+        """
+        return df.select(ColumnOrder().recommendations_language)
+
+    def sort_by_cosine_similarity(self, df: pl.DataFrame) -> pl.DataFrame:
+        return df.sort("cosine_similarity", descending=True).with_columns(
+            pl.col("cosine_similarity").round(decimals=4)
+        )
+
     def display_top_n(
         self,
         feature_weights: FeatureWeights | None = None,
@@ -241,7 +270,8 @@ class LanguageModelScorer(ModelScorer):
                 self.model_data.info_frame,
             )
             .pipe(self.merge_on_candidate_d3_document_id, self.model_data.integer_labels_frame)
-            .sort("cosine_similarity", descending=True)
+            .pipe(self.reorder_recommendation_columns)
+            .pipe(self.sort_by_cosine_similarity)
         )
 
     @overload

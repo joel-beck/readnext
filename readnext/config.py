@@ -20,7 +20,7 @@ containing the downloaded D3 authors in jsonl format
 """
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -74,21 +74,6 @@ class DataPaths:
 
     raw: RawDataPaths = RawDataPaths()  # noqa: RUF009
     merged: MergedDataPaths = MergedDataPaths()  # noqa: RUF009
-
-
-@dataclass
-class MagicNumbers:
-    """
-    Sets numeric values for dataset sizes, scoring and the candidate and final
-    recommendation list.
-    """
-
-    documents_frame_intermediate_cutoff: int = 1_000_000
-    documents_frame_final_size: int = 10_000
-    documents_frame_test_size: int = 100
-    scoring_limit: int = 100
-    n_candidates: int = 20
-    n_recommendations: int = 20
 
 
 @dataclass(frozen=True)
@@ -177,3 +162,84 @@ class ResultsPaths:
 
     citation_models: CitationModelsResultsPaths = CitationModelsResultsPaths()  # noqa: RUF009
     language_models: LanguageModelsResultsPaths = LanguageModelsResultsPaths()  # noqa: RUF009
+
+
+@dataclass
+class MagicNumbers:
+    """
+    Sets numeric values for dataset sizes, scoring and the candidate and final
+    recommendation list.
+    """
+
+    documents_frame_intermediate_cutoff: int = 1_000_000
+    documents_frame_final_size: int = 10_000
+    documents_frame_test_size: int = 100
+    scoring_limit: int = 100
+    n_candidates: int = 20
+    n_recommendations: int = 20
+
+
+@dataclass(frozen=True)
+class ColumnOrder:
+    """
+    Sets the column order of dataframe outputs.
+    """
+
+    documents_frame: list[str] = field(
+        default_factory=lambda: [
+            "d3_document_id",
+            "d3_author_id",
+            "title",
+            "author",
+            "publication_date",
+            "publication_date_rank",
+            "citationcount_document",
+            "citationcount_document_rank",
+            "citationcount_author",
+            "citationcount_author_rank",
+            "citations",
+            "references",
+            "abstract",
+            "semanticscholar_id",
+            "semanticscholar_url",
+            "semanticscholar_tags",
+            "arxiv_id",
+            "arxiv_url",
+            "arxiv_labels",
+        ]
+    )
+    recommendations_citation: list[str] = field(
+        default_factory=lambda: [
+            "candidate_d3_document_id",
+            "weighted_points",
+            "title",
+            "author",
+            "arxiv_labels",
+            "integer_label",
+            "semanticscholar_url",
+            "arxiv_url",
+            "publication_date",
+            "publication_date_points",
+            "citationcount_document",
+            "citationcount_document_points",
+            "citationcount_author",
+            "citationcount_author_points",
+            "co_citation_analysis_score",
+            "co_citation_analysis_points",
+            "bibliographic_coupling_score",
+            "bibliographic_coupling_points",
+        ]
+    )
+    recommendations_language: list[str] = field(
+        default_factory=lambda: [
+            "candidate_d3_document_id",
+            "cosine_similarity",
+            "title",
+            "author",
+            "publication_date",
+            "arxiv_labels",
+            "integer_label",
+            "semanticscholar_url",
+            "arxiv_url",
+        ]
+    )

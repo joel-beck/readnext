@@ -30,16 +30,7 @@ class ModelDataConstructor(ABC):
     d3_document_id: int
     documents_frame: DocumentsFrame
     constructor_plugin: ModelDataConstructorPlugin
-    info_columns: list[str] = field(
-        default_factory=lambda: [
-            "candidate_d3_document_id",
-            "title",
-            "author",
-            "arxiv_labels",
-            "semanticscholar_url",
-            "arxiv_url",
-        ]
-    )
+    info_columns: list[str]
     feature_columns: list[str]
 
     query_document: DocumentInfo = field(init=False)

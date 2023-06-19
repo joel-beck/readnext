@@ -14,6 +14,20 @@ class LanguageModelDataConstructor(ModelDataConstructor):
     """
 
     cosine_similarity_scores_frame: ScoresFrame | CandidateScoresFrame
+    info_columns: list[str] = field(
+        default_factory=lambda: [
+            "candidate_d3_document_id",
+            "title",
+            "author",
+            # add publication date as additional info column to inference output if
+            # second recommender is language recommender, publication date is a feature
+            # column for the citation recommender
+            "publication_date",
+            "arxiv_labels",
+            "semanticscholar_url",
+            "arxiv_url",
+        ]
+    )
     feature_columns: list[str] = field(
         default_factory=lambda: ["candidate_d3_document_id", "cosine_similarity"]
     )

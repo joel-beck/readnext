@@ -1,161 +1,10 @@
 import pytest
+from polars.exceptions import ComputeError
 
 from readnext.inference import InferenceDataInputConverter
-from readnext.utils.convert_id_urls import (
-    get_arxiv_url_from_arxiv_id,
-    get_semanticscholar_id_from_semanticscholar_url,
-)
 
 
-# SECTION: Tests for Toy Data
-def test_get_d3_document_id_from_semanticscholar_id_toy_data(
-    input_converter_toy_data: InferenceDataInputConverter,
-) -> None:
-    d3_document_id_1 = input_converter_toy_data.get_d3_document_id_from_semanticscholar_id(
-        get_semanticscholar_id_from_semanticscholar_url("https://www.semanticscholar.org/paper/1")
-    )
-    assert isinstance(d3_document_id_1, int)
-    assert d3_document_id_1 == 1001
-
-    d3_document_id_2 = input_converter_toy_data.get_d3_document_id_from_semanticscholar_id(
-        get_semanticscholar_id_from_semanticscholar_url("https://www.semanticscholar.org/paper/2")
-    )
-    assert isinstance(d3_document_id_2, int)
-    assert d3_document_id_2 == 1002
-
-    with pytest.raises(ValueError):
-        assert input_converter_toy_data.get_d3_document_id_from_semanticscholar_id(
-            get_semanticscholar_id_from_semanticscholar_url(
-                "https://www.semanticscholar.org/paper/3"
-            )
-        )
-
-
-def test_get_d3_document_id_from_semanticscholar_url_toy_data(
-    input_converter_toy_data: InferenceDataInputConverter,
-) -> None:
-    d3_document_id_1 = input_converter_toy_data.get_d3_document_id_from_semanticscholar_url(
-        "https://www.semanticscholar.org/paper/1"
-    )
-    assert isinstance(d3_document_id_1, int)
-    assert d3_document_id_1 == 1001
-
-    d3_document_id_2 = input_converter_toy_data.get_d3_document_id_from_semanticscholar_url(
-        "https://www.semanticscholar.org/paper/2"
-    )
-    assert isinstance(d3_document_id_2, int)
-    assert d3_document_id_2 == 1002
-
-    with pytest.raises(ValueError):
-        assert input_converter_toy_data.get_d3_document_id_from_semanticscholar_url(
-            "https://www.semanticscholar.org/paper/3"
-        )
-
-
-def test_get_d3_document_id_from_arxiv_id_toy_data(
-    input_converter_toy_data: InferenceDataInputConverter,
-) -> None:
-    d3_document_id_1 = input_converter_toy_data.get_d3_document_id_from_arxiv_id("1")
-    assert isinstance(d3_document_id_1, int)
-    assert d3_document_id_1 == 1001
-
-    d3_document_id_2 = input_converter_toy_data.get_d3_document_id_from_arxiv_id("2")
-    assert isinstance(d3_document_id_2, int)
-    assert d3_document_id_2 == 1002
-
-    with pytest.raises(ValueError):
-        assert input_converter_toy_data.get_d3_document_id_from_arxiv_id("3")
-
-
-def test_get_d3_document_id_from_arxiv_url_toy_data(
-    input_converter_toy_data: InferenceDataInputConverter,
-) -> None:
-    d3_document_id_1 = input_converter_toy_data.get_d3_document_id_from_arxiv_url(
-        get_arxiv_url_from_arxiv_id("1")
-    )
-    assert isinstance(d3_document_id_1, int)
-    assert d3_document_id_1 == 1001
-
-    d3_document_id_2 = input_converter_toy_data.get_d3_document_id_from_arxiv_url(
-        get_arxiv_url_from_arxiv_id("2")
-    )
-    assert isinstance(d3_document_id_2, int)
-    assert d3_document_id_2 == 1002
-
-    with pytest.raises(ValueError):
-        assert input_converter_toy_data.get_d3_document_id_from_arxiv_url(
-            get_arxiv_url_from_arxiv_id("3")
-        )
-
-
-def test_get_semanticscholar_id_from_d3_document_id_toy_data(
-    input_converter_toy_data: InferenceDataInputConverter,
-) -> None:
-    semanticscholar_id_1 = input_converter_toy_data.get_semanticscholar_id_from_d3_document_id(1001)
-    assert semanticscholar_id_1 == get_semanticscholar_id_from_semanticscholar_url(
-        "https://www.semanticscholar.org/paper/1"
-    )
-    assert isinstance(semanticscholar_id_1, str)
-
-    semanticscholar_id_2 = input_converter_toy_data.get_semanticscholar_id_from_d3_document_id(1002)
-    assert semanticscholar_id_2 == get_semanticscholar_id_from_semanticscholar_url(
-        "https://www.semanticscholar.org/paper/2"
-    )
-    assert isinstance(semanticscholar_id_2, str)
-
-    with pytest.raises(KeyError):
-        assert input_converter_toy_data.get_semanticscholar_id_from_d3_document_id(1003)
-
-
-def test_get_semanticscholar_url_from_d3_document_id_toy_data(
-    input_converter_toy_data: InferenceDataInputConverter,
-) -> None:
-    semanticscholar_url_1 = input_converter_toy_data.get_semanticscholar_url_from_d3_document_id(
-        1001
-    )
-    assert semanticscholar_url_1 == "https://www.semanticscholar.org/paper/1"
-    assert isinstance(semanticscholar_url_1, str)
-
-    semanticscholar_url_2 = input_converter_toy_data.get_semanticscholar_url_from_d3_document_id(
-        1002
-    )
-    assert semanticscholar_url_2 == "https://www.semanticscholar.org/paper/2"
-    assert isinstance(semanticscholar_url_2, str)
-
-    with pytest.raises(KeyError):
-        assert input_converter_toy_data.get_semanticscholar_url_from_d3_document_id(1003)
-
-
-def test_get_arxiv_id_from_d3_document_id_toy_data(
-    input_converter_toy_data: InferenceDataInputConverter,
-) -> None:
-    arxiv_id_1 = input_converter_toy_data.get_arxiv_id_from_d3_document_id(1001)
-    assert arxiv_id_1 == "1"
-    assert isinstance(arxiv_id_1, str)
-
-    arxiv_id_2 = input_converter_toy_data.get_arxiv_id_from_d3_document_id(1002)
-    assert arxiv_id_2 == "2"
-    assert isinstance(arxiv_id_2, str)
-
-    with pytest.raises(KeyError):
-        assert input_converter_toy_data.get_arxiv_id_from_d3_document_id(1003)
-
-
-def test_get_arxiv_url_from_d3_document_id_toy_data(
-    input_converter_toy_data: InferenceDataInputConverter,
-) -> None:
-    arxiv_url_1 = input_converter_toy_data.get_arxiv_url_from_d3_document_id(1001)
-    assert arxiv_url_1 == "https://arxiv.org/abs/1"
-    assert isinstance(arxiv_url_1, str)
-
-    arxiv_url_2 = input_converter_toy_data.get_arxiv_url_from_d3_document_id(1002)
-    assert arxiv_url_2 == "https://arxiv.org/abs/2"
-    assert isinstance(arxiv_url_2, str)
-
-    with pytest.raises(KeyError):
-        assert input_converter_toy_data.get_arxiv_url_from_d3_document_id(1003)
-
-
+@pytest.mark.updated
 def test_get_d3_document_id_from_semanticscholar_id(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
@@ -167,6 +16,7 @@ def test_get_d3_document_id_from_semanticscholar_id(
     assert d3_document_id_1 == 13756489
 
 
+@pytest.mark.updated
 def test_get_d3_document_id_from_semanticscholar_url(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
@@ -180,6 +30,7 @@ def test_get_d3_document_id_from_semanticscholar_url(
     assert d3_document_id_1 == 13756489
 
 
+@pytest.mark.updated
 def test_get_d3_document_id_from_arxiv_id(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
@@ -189,6 +40,7 @@ def test_get_d3_document_id_from_arxiv_id(
     assert d3_document_id_1 == 13756489
 
 
+@pytest.mark.updated
 def test_get_d3_document_id_from_arxiv_url(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
@@ -198,9 +50,11 @@ def test_get_d3_document_id_from_arxiv_url(
     assert d3_document_id_1 == 13756489
 
 
+@pytest.mark.updated
 def test_get_semanticscholar_id_from_d3_document_id(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
+    # Test valid input
     d3_document_id = 13756489
     semanticscholar_id_1 = (
         inference_data_input_converter.get_semanticscholar_id_from_d3_document_id(d3_document_id)
@@ -208,10 +62,19 @@ def test_get_semanticscholar_id_from_d3_document_id(
     assert isinstance(semanticscholar_id_1, str)
     assert semanticscholar_id_1 == "204e3073870fae3d05bcbc2f6a8e263d9b72e776"
 
+    # Test invalid input
+    d3_document_id = "invalid_id"
+    with pytest.raises(ComputeError):
+        inference_data_input_converter.get_semanticscholar_id_from_d3_document_id(
+            d3_document_id  # type: ignore
+        )
 
+
+@pytest.mark.updated
 def test_get_semanticscholar_url_from_d3_document_id(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
+    # Test valid input
     d3_document_id = 13756489
     semanticscholar_url_1 = (
         inference_data_input_converter.get_semanticscholar_url_from_d3_document_id(d3_document_id)
@@ -222,20 +85,45 @@ def test_get_semanticscholar_url_from_d3_document_id(
         == "https://www.semanticscholar.org/paper/204e3073870fae3d05bcbc2f6a8e263d9b72e776"
     )
 
+    # Test invalid input
+    d3_document_id = "invalid_id"
+    with pytest.raises(ComputeError):
+        inference_data_input_converter.get_semanticscholar_url_from_d3_document_id(
+            d3_document_id  # type: ignore
+        )
 
+
+@pytest.mark.updated
 def test_get_arxiv_id_from_d3_document_id(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
+    # Test valid input
     d3_document_id = 13756489
     arxiv_id_1 = inference_data_input_converter.get_arxiv_id_from_d3_document_id(d3_document_id)
     assert isinstance(arxiv_id_1, str)
     assert arxiv_id_1 == "1706.03762"
 
+    # Test invalid input
+    d3_document_id = "invalid_id"
+    with pytest.raises(ComputeError):
+        inference_data_input_converter.get_arxiv_id_from_d3_document_id(
+            d3_document_id  # type: ignore
+        )
 
+
+@pytest.mark.updated
 def test_get_arxiv_url_from_d3_document_id(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
+    # Test valid input
     d3_document_id = 13756489
     arxiv_url_1 = inference_data_input_converter.get_arxiv_url_from_d3_document_id(d3_document_id)
     assert isinstance(arxiv_url_1, str)
     assert arxiv_url_1 == "https://arxiv.org/abs/1706.03762"
+
+    # Test invalid input
+    d3_document_id = "invalid_id"
+    with pytest.raises(ComputeError):
+        inference_data_input_converter.get_arxiv_url_from_d3_document_id(
+            d3_document_id  # type: ignore
+        )

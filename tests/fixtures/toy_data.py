@@ -28,7 +28,32 @@ def toy_document_corpus() -> list[Tokens]:
     ]
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
+def toy_abstract() -> str:
+    return """
+    This is a DUMMY abstract. It contains a number of special characters like
+    punctuation (brackets, curly braces).
+    """
+
+
+@pytest.fixture(scope="session")
+def spacy_expected_tokens() -> Tokens:
+    return [
+        "dummy",
+        "abstract",
+        "contains",
+        "number",
+        "special",
+        "characters",
+        "like",
+        "punctuation",
+        "brackets",
+        "curly",
+        "braces",
+    ]
+
+
+@pytest.fixture(scope="session")
 def toy_embeddings_frame() -> EmbeddingsFrame:
     return pl.DataFrame(
         {

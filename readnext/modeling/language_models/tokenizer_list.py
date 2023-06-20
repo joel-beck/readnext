@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-
+from collections.abc import Container
 import polars as pl
 from spacy.language import Language
 from spacy.tokens.doc import Doc
@@ -68,11 +68,17 @@ class SpacyTokenizer(ListTokenizer):
     def clean_spacy_doc(
         self,
         spacy_doc: Doc,
+        stopwords: Container | None = None,
     ) -> Tokens:
         """
         Cleans a single spacy document by removing stopwords, punctuation, and
         non-alphanumeric tokens.
+
+        Accepts a custom set or list of stopwords to be removed. If no stopwords are
+        passed, the default stopword list of the spacy model is used.
         """
+        stopwords = self.spacy_model.Defaults.stop_words if stopwords is None else stopwords
+
         clean_tokens = []
         # use for loop instead of list comprehension to allow disabling of individual filters
         for token in spacy_doc:
@@ -95,7 +101,8 @@ class SpacyTokenizer(ListTokenizer):
             if self.text_processing_steps.remove_whitespace and token.is_space:
                 continue
 
-            if self.text_processing_steps.remove_stopwords and token.is_stop:
+            # TODO: Fix that stopwords are not removed!
+            if self.text_processing_steps.remove_stopwords and token in stopwords:
                 continue
 
             if self.text_processing_steps.lemmatize:

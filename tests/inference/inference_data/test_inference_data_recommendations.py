@@ -1,8 +1,10 @@
+import dataclasses
+
 import polars as pl
 import pytest
-import dataclasses
-from readnext.inference.features import Recommendations
 from pytest_lazyfixture import lazy_fixture
+
+from readnext.inference.features import Recommendations
 
 feature_fixtures_skip_ci = [
     lazy_fixture("inference_data_seen_recommendations"),

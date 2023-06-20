@@ -3,8 +3,17 @@ import dataclasses
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
-from readnext.inference import InferenceData
 from readnext.modeling import DocumentInfo
+
+document_info_fixtures_skip_ci = [
+    lazy_fixture("inference_data_seen_document_info"),
+    lazy_fixture("inference_data_constructor_seen_document_info"),
+]
+
+document_info_fixtures_slow_skip_ci = [
+    lazy_fixture("inference_data_unseen_document_info"),
+    lazy_fixture("inference_data_constructor_unseen_document_info"),
+]
 
 
 @pytest.mark.updated
@@ -34,17 +43,22 @@ def test_from_dummy(dummy_document_info: DocumentInfo) -> None:
 
 
 @pytest.mark.updated
-@pytest.mark.skip_ci
 @pytest.mark.parametrize(
-    "inference_data",
+    "document_info",
     [
-        pytest.param(lazy_fixture("inference_data_seen")),
-        pytest.param(lazy_fixture("inference_data_unseen"), marks=pytest.mark.slow),
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in document_info_fixtures_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in document_info_fixtures_slow_skip_ci
+        ],
     ],
 )
-def test_from_inference_data(inference_data: InferenceData) -> None:
-    assert isinstance(inference_data.document_info, DocumentInfo)
-    assert list(dataclasses.asdict(inference_data.document_info)) == [
+def test_from_inference_data(document_info: DocumentInfo) -> None:
+    assert isinstance(document_info, DocumentInfo)
+    assert list(dataclasses.asdict(document_info)) == [
         "d3_document_id",
         "title",
         "author",
@@ -57,38 +71,49 @@ def test_from_inference_data(inference_data: InferenceData) -> None:
 
 
 @pytest.mark.updated
-@pytest.mark.skip_ci
-def test_from_inference_data_seen(inference_data_seen: InferenceData) -> None:
-    assert inference_data_seen.document_info.d3_document_id == 13756489
-    assert inference_data_seen.document_info.title == "Attention is All you Need"
-    assert inference_data_seen.document_info.author == "Lukasz Kaiser"
-    assert inference_data_seen.document_info.publication_date == "2017-06-12"
-    assert inference_data_seen.document_info.arxiv_labels == ["cs.CL", "cs.LG"]
+@pytest.mark.parametrize(
+    "document_info",
+    [
+        pytest.param(fixture, marks=(pytest.mark.skip_ci))
+        for fixture in document_info_fixtures_skip_ci
+    ],
+)
+def test_from_inference_data_seen(document_info: DocumentInfo) -> None:
+    assert document_info.d3_document_id == 13756489
+    assert document_info.title == "Attention is All you Need"
+    assert document_info.author == "Lukasz Kaiser"
+    assert document_info.publication_date == "2017-06-12"
+    assert document_info.arxiv_labels == ["cs.CL", "cs.LG"]
     assert (
-        inference_data_seen.document_info.semanticscholar_url
+        document_info.semanticscholar_url
         == "https://www.semanticscholar.org/paper/204e3073870fae3d05bcbc2f6a8e263d9b72e776"
     )
-    assert inference_data_seen.document_info.arxiv_url == "https://arxiv.org/abs/1706.03762"
-    assert len(inference_data_seen.document_info.abstract) > 0
+    assert document_info.arxiv_url == "https://arxiv.org/abs/1706.03762"
+    assert len(document_info.abstract) > 0
 
 
 @pytest.mark.updated
-@pytest.mark.slow
-@pytest.mark.skip_ci
-def test_from_inference_data_unseen(inference_data_unseen: InferenceData) -> None:
-    assert inference_data_unseen.document_info.d3_document_id == -1
-    assert inference_data_unseen.document_info.title == "GPT-4 Technical Report"
+@pytest.mark.parametrize(
+    "document_info",
+    [
+        pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+        for fixture in document_info_fixtures_slow_skip_ci
+    ],
+)
+def test_from_inference_data_unseen(document_info: DocumentInfo) -> None:
+    assert document_info.d3_document_id == -1
+    assert document_info.title == "GPT-4 Technical Report"
     # author is not set for unseen papers
-    assert inference_data_unseen.document_info.author == ""
+    assert document_info.author == ""
     # publication date is not set for unseen papers
-    assert inference_data_unseen.document_info.publication_date == ""
+    assert document_info.publication_date == ""
     # no arxiv labels for unseen papers
-    assert inference_data_unseen.document_info.arxiv_labels == []
+    assert document_info.arxiv_labels == []
     # semanticscholar url is not set since input identifier is arxiv url
-    assert inference_data_unseen.document_info.semanticscholar_url == ""
+    assert document_info.semanticscholar_url == ""
     # TODO: Why is neither of the urls set?
-    assert inference_data_unseen.document_info.arxiv_url == ""
-    assert len(inference_data_unseen.document_info.abstract) > 0
+    assert document_info.arxiv_url == ""
+    assert len(document_info.abstract) > 0
 
 
 @pytest.mark.updated

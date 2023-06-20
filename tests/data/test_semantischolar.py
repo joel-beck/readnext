@@ -3,6 +3,7 @@ import pytest
 from readnext.data import SemanticscholarRequest, SemanticScholarResponse
 
 
+@pytest.mark.updated
 def test_post_init(semanticscholar_request: SemanticscholarRequest) -> None:
     assert isinstance(semanticscholar_request, SemanticscholarRequest)
     assert isinstance(semanticscholar_request.semanticscholar_api_key, str)
@@ -14,6 +15,7 @@ def test_post_init(semanticscholar_request: SemanticscholarRequest) -> None:
     )
 
 
+@pytest.mark.updated
 def test_get_response_from_request_url(
     semanticscholar_request: SemanticscholarRequest,
     semanticscholar_response: SemanticScholarResponse,
@@ -25,6 +27,7 @@ def test_get_response_from_request_url(
     assert response == semanticscholar_response
 
 
+@pytest.mark.updated
 def test_from_semanticscholar_id(
     semanticscholar_request: SemanticscholarRequest,
     semanticscholar_response: SemanticScholarResponse,
@@ -36,6 +39,7 @@ def test_from_semanticscholar_id(
     assert response == semanticscholar_response
 
 
+@pytest.mark.updated
 def test_from_arxiv_id(
     semanticscholar_request: SemanticscholarRequest,
     semanticscholar_response: SemanticScholarResponse,
@@ -47,6 +51,7 @@ def test_from_arxiv_id(
     assert response == semanticscholar_response
 
 
+@pytest.mark.updated
 def test_from_arxiv_url(
     semanticscholar_request: SemanticscholarRequest,
     semanticscholar_response: SemanticScholarResponse,
@@ -58,6 +63,7 @@ def test_from_arxiv_url(
     assert response == semanticscholar_response
 
 
+@pytest.mark.updated
 def test_kw_only_initialization_semanticscholar() -> None:
     with pytest.raises(TypeError):
         SemanticScholarResponse(

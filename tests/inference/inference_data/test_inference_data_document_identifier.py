@@ -5,12 +5,12 @@ from pytest_lazyfixture import lazy_fixture
 
 from readnext.inference import DocumentIdentifier
 
-feature_fixtures_skip_ci = [
+document_identifier_fixtures_skip_ci = [
     lazy_fixture("inference_data_seen_document_identifier"),
     lazy_fixture("inference_data_constructor_seen_document_identifier"),
 ]
 
-feature_fixtures_slow_skip_ci = [
+document_identifier_fixtures_slow_skip_ci = [
     lazy_fixture("inference_data_unseen_document_identifier"),
     lazy_fixture("inference_data_constructor_unseen_document_identifier"),
 ]
@@ -22,11 +22,11 @@ feature_fixtures_slow_skip_ci = [
     [
         *[
             pytest.param(fixture, marks=(pytest.mark.skip_ci))
-            for fixture in feature_fixtures_skip_ci
+            for fixture in document_identifier_fixtures_skip_ci
         ],
         *[
             pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
-            for fixture in feature_fixtures_slow_skip_ci
+            for fixture in document_identifier_fixtures_slow_skip_ci
         ],
     ],
 )
@@ -46,7 +46,10 @@ def test_inference_data_document_identifier(
 @pytest.mark.updated
 @pytest.mark.parametrize(
     "document_identifier",
-    [pytest.param(fixture, marks=(pytest.mark.skip_ci)) for fixture in feature_fixtures_skip_ci],
+    [
+        pytest.param(fixture, marks=(pytest.mark.skip_ci))
+        for fixture in document_identifier_fixtures_skip_ci
+    ],
 )
 def test_inference_data_seen_document_identifier(
     document_identifier: DocumentIdentifier,
@@ -66,7 +69,7 @@ def test_inference_data_seen_document_identifier(
     "document_identifier",
     [
         pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
-        for fixture in feature_fixtures_slow_skip_ci
+        for fixture in document_identifier_fixtures_slow_skip_ci
     ],
 )
 def test_inference_data_unseen_document_identifier(

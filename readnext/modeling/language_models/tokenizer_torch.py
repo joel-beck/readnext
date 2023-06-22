@@ -13,22 +13,21 @@ TTorchTokenizer = TypeVar("TTorchTokenizer", bound=BertTokenizerFast | Longforme
 
 
 @dataclass
-class TensorTokenizer(ABC, Generic[TTorchTokenizer]):
+class TorchTokenizer(ABC, Generic[TTorchTokenizer]):
     """Base class to tokenize document abstracts into a tensor of token ids."""
 
-    documents_frame: DocumentsFrame
-    tensor_tokenizer: TTorchTokenizer
+    torch_tokenizer: TTorchTokenizer
 
     @abstractmethod
     def tokenize_into_ids(self, document: str) -> TokenIds:
         """Tokenizes one or multiple document abstracts into token ids."""
 
-    def tokenize(self) -> TokenIdsFrame:
+    def tokenize(self, documents_frame: DocumentsFrame) -> TokenIdsFrame:
         """
         Tokenizes multiple document abstracts into token ids. Generates a polars
         dataframe with two columns named `d3_document_id` and `token_ids`.
         """
-        abstracts_frame = self.documents_frame.select(["d3_document_id", "abstract"])
+        abstracts_frame = documents_frame.select(["d3_document_id", "abstract"])
 
         with tqdm(total=len(abstracts_frame)) as progress_bar:
             token_ids_frame = abstracts_frame.with_columns(
@@ -41,7 +40,7 @@ class TensorTokenizer(ABC, Generic[TTorchTokenizer]):
 
     def tokens_to_token_ids(self, tokens: Tokens) -> TokenIds:
         """Converts a list of tokens into a list of token ids."""
-        return cast(list[int], self.tensor_tokenizer.convert_tokens_to_ids(tokens))
+        return cast(list[int], self.torch_tokenizer.convert_tokens_to_ids(tokens))
 
     def tokens_frame_to_token_ids_frame(self, tokens_frame: TokensFrame) -> TokenIdsFrame:
         """
@@ -54,7 +53,7 @@ class TensorTokenizer(ABC, Generic[TTorchTokenizer]):
 
     def token_ids_to_tokens(self, token_ids: TokenIds) -> Tokens:
         """Converts a list of token ids into a list of tokens."""
-        return cast(list[str], self.tensor_tokenizer.convert_ids_to_tokens(token_ids))
+        return cast(list[str], self.torch_tokenizer.convert_ids_to_tokens(token_ids))
 
     def token_ids_frame_to_tokens_frame(self, token_ids_frame: TokenIdsFrame) -> TokensFrame:
         """
@@ -67,13 +66,13 @@ class TensorTokenizer(ABC, Generic[TTorchTokenizer]):
 
 
 @dataclass
-class BERTTokenizer(TensorTokenizer):
+class BERTTokenizer(TorchTokenizer):
     """Tokenize abstracts using BERT into a tensor of token ids."""
 
-    tensor_tokenizer: BertTokenizerFast
+    torch_tokenizer: BertTokenizerFast
 
     def tokenize_into_ids(self, document: str | list[str]) -> TokenIds:
-        return self.tensor_tokenizer(
+        return self.torch_tokenizer(
             document,
             # BERT takes 512 dimensional tensors as input
             max_length=512,
@@ -87,13 +86,13 @@ class BERTTokenizer(TensorTokenizer):
 
 
 @dataclass
-class LongformerTokenizer(TensorTokenizer):
+class LongformerTokenizer(TorchTokenizer):
     """Tokenize abstracts using Longformer into a tensor of token ids."""
 
-    tensor_tokenizer: LongformerTokenizerFast
+    torch_tokenizer: LongformerTokenizerFast
 
     def tokenize_into_ids(self, document: str | list[str]) -> TokenIds:
-        return self.tensor_tokenizer(
+        return self.torch_tokenizer(
             document,
             # Longformer can handle up to 4096 tokens
             max_length=4096,

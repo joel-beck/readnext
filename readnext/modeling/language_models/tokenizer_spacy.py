@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from collections.abc import Container
+from dataclasses import dataclass
+
 import polars as pl
 from spacy.language import Language
 from spacy.tokens.doc import Doc
@@ -30,19 +31,17 @@ class TextProcessingSteps:
 class ListTokenizer(ABC):
     """Base class to tokenize abstracts into a list of string tokens."""
 
-    documents_frame: DocumentsFrame
-
     @abstractmethod
     def tokenize_single_document(self, document: str) -> Tokens:
         ...
 
-    def tokenize(self) -> TokensFrame:
+    def tokenize(self, documents_frame: DocumentsFrame) -> TokensFrame:
         """
         Tokenizes and cleans multiple abstracts. Generates a polars data frame with two
         columns named `d3_document_id` and `tokens`.
         """
 
-        abstracts_frame = self.documents_frame.select(["d3_document_id", "abstract"])
+        abstracts_frame = documents_frame.select(["d3_document_id", "abstract"])
 
         with tqdm(total=len(abstracts_frame)) as progress_bar:
             tokens_frame = abstracts_frame.with_columns(

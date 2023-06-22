@@ -30,16 +30,16 @@ from readnext.modeling.language_models.tfidf import (
     tfidf,
     tfidf_single_term,
 )
-from readnext.modeling.language_models.tokenizer_list import (
+from readnext.modeling.language_models.tokenizer_spacy import (
     SpacyTokenizer,
     TextProcessingSteps,
     Tokens,
 )
-from readnext.modeling.language_models.tokenizer_tensor import (
+from readnext.modeling.language_models.tokenizer_torch import (
     BERTTokenizer,
     LongformerTokenizer,
-    TensorTokenizer,
     TokenIds,
+    TorchTokenizer,
 )
 
 __all__ = [
@@ -70,7 +70,7 @@ __all__ = [
     "tfidf_single_term",
     "BERTTokenizer",
     "LongformerTokenizer",
-    "TensorTokenizer",
+    "TorchTokenizer",
     "SpacyTokenizer",
     "TextProcessingSteps",
     "TokenIds",

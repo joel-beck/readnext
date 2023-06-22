@@ -54,6 +54,85 @@ def spacy_expected_tokens() -> Tokens:
 
 
 @pytest.fixture(scope="session")
+def bert_expected_tokens() -> Tokens:
+    return [
+        "[CLS]",
+        "this",
+        "is",
+        "a",
+        "dummy",
+        "abstract",
+        ".",
+        "it",
+        "contains",
+        "a",
+        "number",
+        "of",
+        "special",
+        "characters",
+        "like",
+        "pun",
+        "##ct",
+        "##uation",
+        "(",
+        "brackets",
+        ",",
+        "curly",
+        "brace",
+        "##s",
+        ")",
+        ".",
+        "[SEP]",
+    ]
+
+
+@pytest.fixture(scope="session")
+def longformer_expected_tokens() -> Tokens:
+    return [
+        "<s>",
+        "Ċ",
+        "Ġ",
+        "Ġ",
+        "Ġ",
+        "ĠThis",
+        "Ġis",
+        "Ġa",
+        "ĠD",
+        "UM",
+        "MY",
+        "Ġabstract",
+        ".",
+        "ĠIt",
+        "Ġcontains",
+        "Ġa",
+        "Ġnumber",
+        "Ġof",
+        "Ġspecial",
+        "Ġcharacters",
+        "Ġlike",
+        "Ċ",
+        "Ġ",
+        "Ġ",
+        "Ġ",
+        "Ġpunct",
+        "uation",
+        "Ġ(",
+        "br",
+        "ackets",
+        ",",
+        "Ġcurly",
+        "Ġbraces",
+        ").",
+        "Ċ",
+        "Ġ",
+        "Ġ",
+        "Ġ",
+        "Ġ",
+        "</s>",
+    ]
+
+
+@pytest.fixture(scope="session")
 def toy_embeddings_frame() -> EmbeddingsFrame:
     return pl.DataFrame(
         {

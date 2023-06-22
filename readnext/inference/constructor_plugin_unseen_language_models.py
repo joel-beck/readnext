@@ -38,7 +38,7 @@ def spacy_load_training_tokens_frame() -> TokensFrame:
 @status_update("Tokenizing query abstract")
 def spacy_tokenize_query(query_documents_frame: DocumentsFrame) -> Tokens:
     spacy_model = spacy.load(ModelVersions.spacy)
-    spacy_tokenizer = SpacyTokenizer(query_documents_frame, spacy_model)
+    spacy_tokenizer = SpacyTokenizer(spacy_model)
 
     return spacy_tokenizer.tokenize_single_document(query_documents_frame["abstract"][0])
 
@@ -165,7 +165,7 @@ def bert_tokenize_query(query_documents_frame: DocumentsFrame) -> TokenIds:
     bert_tokenizer_transformers = BertTokenizerFast.from_pretrained(
         ModelVersions.bert, do_lower_case=True, clean_text=True
     )
-    bert_tokenizer = BERTTokenizer(query_documents_frame, bert_tokenizer_transformers)
+    bert_tokenizer = BERTTokenizer(bert_tokenizer_transformers)
 
     return bert_tokenizer.tokenize_into_ids(query_documents_frame["abstract"][0])
 
@@ -205,7 +205,7 @@ def scibert_tokenize_query(query_documents_frame: DocumentsFrame) -> TokenIds:
     scibert_tokenizer_transformers = BertTokenizerFast.from_pretrained(
         ModelVersions.scibert, do_lower_case=True, clean_text=True
     )
-    scibert_tokenizer = BERTTokenizer(query_documents_frame, scibert_tokenizer_transformers)
+    scibert_tokenizer = BERTTokenizer(scibert_tokenizer_transformers)
 
     return scibert_tokenizer.tokenize_into_ids(query_documents_frame["abstract"][0])
 
@@ -245,9 +245,7 @@ def longformer_tokenize_query(query_documents_frame: DocumentsFrame) -> TokenIds
     longformer_tokenizer_transformers = LongformerTokenizerFast.from_pretrained(
         ModelVersions.longformer
     )
-    longformer_tokenizer = LongformerTokenizer(
-        query_documents_frame, longformer_tokenizer_transformers
-    )
+    longformer_tokenizer = LongformerTokenizer(longformer_tokenizer_transformers)
 
     return longformer_tokenizer.tokenize_into_ids(query_documents_frame["abstract"][0])
 

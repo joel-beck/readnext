@@ -1,14 +1,25 @@
 import polars as pl
-from spacy.language import Language
-from transformers import BertTokenizerFast, LongformerTokenizerFast
-
 
 from readnext.modeling.language_models import SpacyTokenizer
-from readnext.utils.aliases import Tokens
+from readnext.utils.aliases import DocumentsFrame, Tokens
 
 
-def test_tokenize_documents_frame(spacy_tokenizer: SpacyTokenizer) -> None:
-    tokens_frame = spacy_tokenizer.tokenize()
+def test_tokenize_single_document(
+    spacy_tokenizer: SpacyTokenizer, toy_abstract: str, spacy_expected_tokens: Tokens
+) -> None:
+    tokens = spacy_tokenizer.tokenize_single_document(toy_abstract)
+
+    assert isinstance(tokens, list)
+    assert all(isinstance(token, str) for token in tokens)
+
+    assert tokens == spacy_expected_tokens
+
+
+def test_tokenize(
+    spacy_tokenizer: SpacyTokenizer,
+    test_documents_frame: DocumentsFrame,
+) -> None:
+    tokens_frame = spacy_tokenizer.tokenize(test_documents_frame)
 
     assert isinstance(tokens_frame, pl.DataFrame)
 
@@ -41,17 +52,7 @@ def test_tokenize_documents_frame(spacy_tokenizer: SpacyTokenizer) -> None:
     )
 
 
-def test_tokenize_toy_abstract(
-    spacy_tokenizer: SpacyTokenizer, toy_abstract: str, spacy_expected_tokens: Tokens
-) -> None:
-    tokens = spacy_tokenizer.tokenize_single_document(toy_abstract)
-
-    assert isinstance(tokens, list)
-    assert all(isinstance(token, str) for token in tokens)
-
-    assert tokens == spacy_expected_tokens
-
-
 def test_tokenize_empty_abstract(spacy_tokenizer: SpacyTokenizer) -> None:
-    tokens = spacy_tokenizer.tokenize_single_document("")
+    abstract = ""
+    tokens = spacy_tokenizer.tokenize_single_document(abstract)
     assert tokens == []

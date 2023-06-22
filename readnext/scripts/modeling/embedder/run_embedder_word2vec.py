@@ -1,10 +1,11 @@
 """
 Generate embedding frames of document abstracts with Word2Vec.
 """
-import polars as pl
 from collections.abc import Collection
-from gensim.models.keyedvectors import KeyedVectors, load_word2vec_format
+
+import polars as pl
 import spacy
+from gensim.models.keyedvectors import KeyedVectors, load_word2vec_format
 
 from readnext.config import ModelPaths, ModelVersions, ResultsPaths
 from readnext.modeling.language_models import Word2VecEmbedder

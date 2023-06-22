@@ -1,13 +1,9 @@
 """
 Generate embedding frames of document abstracts with Word2Vec.
 """
-from collections.abc import Collection
-
-import polars as pl
-import spacy
 from gensim.models.keyedvectors import KeyedVectors, load_word2vec_format
 
-from readnext.config import ModelPaths, ModelVersions, ResultsPaths
+from readnext.config import ModelPaths, ResultsPaths
 from readnext.modeling.language_models import Word2VecEmbedder
 from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 
@@ -28,30 +24,30 @@ def main() -> None:
     word2vec_model: KeyedVectors = load_word2vec_format(ModelPaths.word2vec, binary=True)
 
     # TODO: Use logic in GensimEmbedder
-    word2vec_vocab = word2vec_model.key_to_index.keys()
+    # word2vec_vocab = word2vec_model.key_to_index.keys()
 
-    def explode_tokens(df: pl.LazyFrame) -> pl.LazyFrame:
-        return df.explode("tokens")
+    # def explode_tokens(df: pl.LazyFrame) -> pl.LazyFrame:
+    #     return df.explode("tokens")
 
-    def filter_tokens(df: pl.LazyFrame, vocab: Collection) -> pl.LazyFrame:
-        return df.filter(pl.col("tokens").is_in(vocab))
+    # def filter_tokens(df: pl.LazyFrame, vocab: Collection) -> pl.LazyFrame:
+    #     return df.filter(pl.col("tokens").is_in(vocab))
 
-    def add_word_embeddings(df: pl.LazyFrame, word2vec_model: KeyedVectors) -> pl.LazyFrame:
-        return df.with_columns(
-            word_embedding=pl.col("tokens").apply(lambda token: word2vec_model[token].tolist())
-        )
+    # def add_word_embeddings(df: pl.LazyFrame, word2vec_model: KeyedVectors) -> pl.LazyFrame:
+    #     return df.with_columns(
+    #         word_embedding=pl.col("tokens").apply(lambda token: word2vec_model[token].tolist())
+    #     )
 
-    def average_word_embeddings(df: pl.LazyFrame) -> pl.LazyFrame:
-        return df.groupby("d3_document_id").agg(embedding=pl.col("word_embedding").list.mean())
+    # def average_word_embeddings(df: pl.LazyFrame) -> pl.LazyFrame:
+    #     return df.groupby("d3_document_id").agg(embedding=pl.col("word_embedding").list.mean())
 
-    filtered_frame = (
-        spacy_tokens_frame.lazy()
-        .pipe(explode_tokens)
-        .pipe(filter_tokens, vocab=word2vec_vocab)
-        .pipe(add_word_embeddings, word2vec_model=word2vec_model)
-        .pipe(average_word_embeddings)
-        .collect()
-    )
+    # filtered_frame = (
+    #     spacy_tokens_frame.lazy()
+    #     .pipe(explode_tokens)
+    #     .pipe(filter_tokens, vocab=word2vec_vocab)
+    #     .pipe(add_word_embeddings, word2vec_model=word2vec_model)
+    #     .pipe(average_word_embeddings)
+    #     .collect()
+    # )
 
     word2vec_embedder = Word2VecEmbedder(
         tokens_frame=spacy_tokens_frame,

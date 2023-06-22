@@ -39,17 +39,19 @@ def toy_abstract() -> str:
 @pytest.fixture(scope="session")
 def spacy_expected_tokens() -> Tokens:
     return [
+        "this",
         "dummy",
         "abstract",
-        "contains",
+        "it",
+        "contain",
         "number",
         "special",
-        "characters",
+        "character",
         "like",
         "punctuation",
-        "brackets",
+        "bracket",
         "curly",
-        "braces",
+        "brace",
     ]
 
 

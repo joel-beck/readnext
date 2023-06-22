@@ -6,6 +6,7 @@ from readnext.modeling.document_info import DocumentInfo
 from readnext.modeling.model_data import CitationModelData, LanguageModelData
 
 
+@pytest.mark.updated
 def test_kw_only_initialization_hybrid_scorer() -> None:
     with pytest.raises(TypeError):
         HybridScorer(

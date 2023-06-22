@@ -101,7 +101,7 @@ class SpacyTokenizer(ListTokenizer):
                 continue
 
             # TODO: Fix that stopwords are not removed!
-            if self.text_processing_steps.remove_stopwords and token in stopwords:
+            if self.text_processing_steps.remove_stopwords and token_text in stopwords:
                 continue
 
             if self.text_processing_steps.lemmatize:

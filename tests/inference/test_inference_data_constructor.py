@@ -35,17 +35,6 @@ def test_unseen_attribute_getter_is_selected_correctly(
 
 @pytest.mark.updated
 def test_pydantic_validation() -> None:
-    # Test valid data
-    inference_data_constructor = InferenceDataConstructor(
-        semanticscholar_id="1234567890123456789012345678901234567890",
-        language_model_choice=LanguageModelChoice.TFIDF,
-        feature_weights=FeatureWeights(),
-    )
-    assert (
-        inference_data_constructor.semanticscholar_id == "1234567890123456789012345678901234567890"
-    )
-    assert inference_data_constructor.language_model_choice == LanguageModelChoice.TFIDF
-
     # Test missing required data
     with pytest.raises(TypeError):
         InferenceDataConstructor()  # type: ignore

@@ -5,14 +5,14 @@ from pytest_lazyfixture import lazy_fixture
 
 from readnext.utils.aliases import ScoresFrame
 
-# TODO: Add score frames from model data constructor plugin
 seen_integer_score_frames = [
     lazy_fixture("test_co_citation_analysis_scores"),
     lazy_fixture("test_bibliographic_coupling_scores"),
-    # lazy_fixture("seen_paper_attribute_getter_co_citation_analysis"),
-    # lazy_fixture("seen_paper_attribute_getter_bibliographic_coupling"),
 ]
-
+seen_integer_score_frames_skip_ci = [
+    lazy_fixture("inference_data_constructor_plugin_seen_co_citation_analysis"),
+    lazy_fixture("inference_data_constructor_plugin_seen_bibliographic_coupling"),
+]
 
 seen_float_score_frames = [
     lazy_fixture("test_tfidf_cosine_similarities"),
@@ -23,42 +23,41 @@ seen_float_score_frames = [
     lazy_fixture("test_bert_cosine_similarities"),
     lazy_fixture("test_scibert_cosine_similarities"),
     lazy_fixture("test_longformer_cosine_similarities"),
-    # lazy_fixture("seen_paper_attribute_getter_cosine_similarities_tfidf"),
-    # lazy_fixture("seen_paper_attribute_getter_cosine_similarities_bm25"),
-    # lazy_fixture("seen_paper_attribute_getter_cosine_similarities_word2vec"),
-    # lazy_fixture("seen_paper_attribute_getter_cosine_similarities_glove"),
-    # lazy_fixture("seen_paper_attribute_getter_cosine_similarities_fasttext"),
-    # lazy_fixture("seen_paper_attribute_getter_cosine_similarities_bert"),
-    # lazy_fixture("seen_paper_attribute_getter_cosine_similarities_scibert"),
-    # lazy_fixture("seen_paper_attribute_getter_cosine_similarities_longformer"),
+]
+seen_float_score_frames_skip_ci = [
+    lazy_fixture("inference_data_constructor_plugin_seen_cosine_similarities")
 ]
 
+unseen_integer_score_frames_slow_skip_ci = [
+    lazy_fixture("inference_data_constructor_plugin_unseen_co_citation_analysis"),
+    lazy_fixture("inference_data_constructor_plugin_unseen_bibliographic_coupling"),
+]
 
-# unseen_integer_score_frames = [
-# lazy_fixture("unseen_paper_attribute_getter_co_citation_analysis"),
-# lazy_fixture("unseen_paper_attribute_getter_bibliographic_coupling"),
-# ]
+unseen_float_score_frames_slow_skip_ci = [
+    lazy_fixture("inference_data_constructor_plugin_unseen_cosine_similarities"),
+]
 
-# unseen_float_score_frames = [
-# lazy_fixture("unseen_paper_attribute_getter_cosine_similarities_tfidf"),
-# lazy_fixture("unseen_paper_attribute_getter_cosine_similarities_bm25"),
-# lazy_fixture("unseen_paper_attribute_getter_cosine_similarities_word2vec"),
-# lazy_fixture("unseen_paper_attribute_getter_cosine_similarities_glove"),
-# lazy_fixture("unseen_paper_attribute_getter_cosine_similarities_fasttext"),
-# lazy_fixture("unseen_paper_attribute_getter_cosine_similarities_bert"),
-# lazy_fixture("unseen_paper_attribute_getter_cosine_similarities_scibert"),
-# lazy_fixture("unseen_paper_attribute_getter_cosine_similarities_longformer"),
-# ]
+seen_score_frames = seen_integer_score_frames + seen_float_score_frames
 
-score_frames_fixtures = seen_integer_score_frames + seen_float_score_frames
+seen_score_frames_skip_ci = seen_integer_score_frames_skip_ci + seen_float_score_frames_skip_ci
+
+unseen_score_frames_slow_skip_ci = (
+    unseen_integer_score_frames_slow_skip_ci + unseen_float_score_frames_slow_skip_ci
+)
 
 
 @pytest.mark.updated
 @pytest.mark.parametrize(
     "scores_frame",
-    [pytest.param(fixture) for fixture in score_frames_fixtures],
+    [
+        *[pytest.param(fixture) for fixture in seen_score_frames],
+        *[
+            pytest.param(fixture, marks=pytest.mark.skip_ci)
+            for fixture in seen_score_frames_skip_ci
+        ],
+    ],
 )
-def test_score_frames(
+def test_seen_score_frames(
     scores_frame: ScoresFrame,
 ) -> None:
     assert isinstance(scores_frame, pl.DataFrame)
@@ -79,53 +78,44 @@ def test_score_frames(
     assert_frame_equal(first_document_scores_sorted, query_scores_frame)
 
 
-# @pytest.mark.updated
-# @pytest.mark.parametrize(
-#     "scores_frame",
-#     # test does not work for testing data since not all query and candidate documents
-#     # are contained in the dataset
-#     [
-#         pytest.param(fixture, marks=(pytest.mark.skip_ci))
-#         for fixture in score_frames_fixtures_skip_ci
-#     ],
-# )
-# def test_seen_score_frames(
-#     scores_frame: ScoresFrame,
-# ) -> None:
-#     # check that scores for all documents in training corpus are present except for the
-#     # query document
-#     num_query_documents = scores_frame["query_d3_document_id"].n_unique()
+@pytest.mark.updated
+@pytest.mark.parametrize(
+    "scores_frame",
+    [
+        *[
+            pytest.param(fixture, marks=[pytest.mark.slow, pytest.mark.skip_ci])
+            for fixture in unseen_score_frames_slow_skip_ci
+        ],
+    ],
+)
+def test_unseen_score_frames(
+    scores_frame: ScoresFrame,
+) -> None:
+    assert isinstance(scores_frame, pl.DataFrame)
 
-#     num_candidate_documents_per_query = (
-#         scores_frame.groupby("query_d3_document_id")
-#         .agg(pl.n_unique("candidate_d3_document_id"))
-#         .n_unique()
-#     )
+    assert scores_frame.shape[1] == 2
+    assert scores_frame.columns == ["candidate_d3_document_id", "score"]
 
-#     assert num_candidate_documents_per_query == num_query_documents - 1
+    assert scores_frame["candidate_d3_document_id"].dtype == pl.Int64
 
-
-# @pytest.mark.updated
-# @pytest.mark.parametrize(
-#     "scores_frame",
-#     [
-#         pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
-#         for fixture in score_frames_fixtures_slow_skip_ci
-#     ],
-# )
-# def test_unseen_score_frames(
-#     scores_frame: ScoresFrame,
-# ) -> None:
-#     # check that scores dataframe contains only rows with query document id -1 for the
-#     # unseen query document
-#     assert scores_frame["query_d3_document_id"].n_unique() == 1
-#     assert scores_frame["query_d3_document_id"].unique().to_list() == [-1]
+    # check that document scores are ordered by their score in descending order
+    assert scores_frame["candidate_d3_document_id"].is_sorted(descending=True)
 
 
 @pytest.mark.updated
 @pytest.mark.parametrize(
     "scores_frame",
-    [pytest.param(fixture) for fixture in seen_integer_score_frames],
+    [
+        *[pytest.param(fixture) for fixture in seen_integer_score_frames],
+        *[
+            pytest.param(fixture, marks=pytest.mark.skip_ci)
+            for fixture in seen_integer_score_frames_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=[pytest.mark.slow, pytest.mark.skip_ci])
+            for fixture in unseen_integer_score_frames_slow_skip_ci
+        ],
+    ],
 )
 def test_integer_score_frames(
     scores_frame: ScoresFrame,
@@ -137,7 +127,17 @@ def test_integer_score_frames(
 @pytest.mark.updated
 @pytest.mark.parametrize(
     "scores_frame",
-    [pytest.param(fixture) for fixture in seen_float_score_frames],
+    [
+        *[pytest.param(fixture) for fixture in seen_float_score_frames],
+        *[
+            pytest.param(fixture, marks=pytest.mark.skip_ci)
+            for fixture in seen_float_score_frames_skip_ci
+        ],
+        *[
+            pytest.param(fixture, marks=[pytest.mark.slow, pytest.mark.skip_ci])
+            for fixture in unseen_float_score_frames_slow_skip_ci
+        ],
+    ],
 )
 def test_float_score_frames(
     scores_frame: ScoresFrame,

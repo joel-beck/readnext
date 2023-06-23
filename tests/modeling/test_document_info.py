@@ -6,13 +6,15 @@ from pytest_lazyfixture import lazy_fixture
 from readnext.modeling import DocumentInfo
 
 document_info_fixtures_skip_ci = [
-    lazy_fixture("inference_data_seen_document_info"),
+    lazy_fixture("inference_data_constructor_plugin_seen_model_data_query_document"),
     lazy_fixture("inference_data_constructor_seen_document_info"),
+    lazy_fixture("inference_data_seen_document_info"),
 ]
 
 document_info_fixtures_slow_skip_ci = [
-    lazy_fixture("inference_data_unseen_document_info"),
+    lazy_fixture("inference_data_constructor_plugin_unseen_model_data_query_document"),
     lazy_fixture("inference_data_constructor_unseen_document_info"),
+    lazy_fixture("inference_data_unseen_document_info"),
 ]
 
 

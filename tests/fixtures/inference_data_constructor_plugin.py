@@ -6,6 +6,7 @@ from readnext.inference import (
     SeenInferenceDataConstructorPlugin,
     UnseenInferenceDataConstructorPlugin,
 )
+from readnext.inference.document_identifier import DocumentIdentifier
 from readnext.modeling import (
     CitationModelData,
     DocumentInfo,
@@ -169,13 +170,76 @@ def inference_data_constructor_plugin_unseen_from_arxiv_url(
     )
 
 
+# SECTION: Document Identifier Fixtures
+@pytest.fixture(scope="session")
+def inference_data_constructor_plugin_seen_document_identifier_from_semanticscholar_id(
+    inference_data_constructor_plugin_seen: SeenInferenceDataConstructorPlugin,
+) -> DocumentIdentifier:
+    return inference_data_constructor_plugin_seen.identifier
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_plugin_seen_document_identifier_from_semanticscholar_url(
+    inference_data_constructor_plugin_seen: SeenInferenceDataConstructorPlugin,
+) -> DocumentIdentifier:
+    return inference_data_constructor_plugin_seen.identifier
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_plugin_seen_document_identifier_from_arxiv_id(
+    inference_data_constructor_plugin_seen: SeenInferenceDataConstructorPlugin,
+) -> DocumentIdentifier:
+    return inference_data_constructor_plugin_seen.identifier
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_plugin_seen_document_identifier_from_arxiv_url(
+    inference_data_constructor_plugin_seen: SeenInferenceDataConstructorPlugin,
+) -> DocumentIdentifier:
+    return inference_data_constructor_plugin_seen.identifier
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_plugin_unseen_document_identifier_from_semanticscholar_id(
+    inference_data_constructor_plugin_unseen: UnseenInferenceDataConstructorPlugin,
+) -> DocumentIdentifier:
+    return inference_data_constructor_plugin_unseen.identifier
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_plugin_unseen_document_identifier_from_semanticscholar_url(
+    inference_data_constructor_plugin_unseen: UnseenInferenceDataConstructorPlugin,
+) -> DocumentIdentifier:
+    return inference_data_constructor_plugin_unseen.identifier
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_plugin_unseen_document_identifier_from_arxiv_id(
+    inference_data_constructor_plugin_unseen: UnseenInferenceDataConstructorPlugin,
+) -> DocumentIdentifier:
+    return inference_data_constructor_plugin_unseen.identifier
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_plugin_unseen_document_identifier_from_arxiv_url(
+    inference_data_constructor_plugin_unseen: UnseenInferenceDataConstructorPlugin,
+) -> DocumentIdentifier:
+    return inference_data_constructor_plugin_unseen.identifier
+
+
 # SECTION: Constructor Plugin Methods
-inference_data_constructor_plugin_seen = lazy_fixture(
-    "inference_data_constructor_plugin_seen_from_arxiv_url"
-)
-inference_data_constructor_plugin_unseen = lazy_fixture(
-    "inference_data_constructor_plugin_unseen_from_arxiv_url"
-)
+@pytest.fixture(scope="session")
+def inference_data_constructor_plugin_seen(
+    inference_data_constructor_plugin_seen_from_arxiv_url: SeenInferenceDataConstructorPlugin,
+) -> SeenInferenceDataConstructorPlugin:
+    return inference_data_constructor_plugin_seen_from_arxiv_url
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_plugin_unseen(
+    inference_data_constructor_plugin_unseen_from_arxiv_url: SeenInferenceDataConstructorPlugin,
+) -> SeenInferenceDataConstructorPlugin:
+    return inference_data_constructor_plugin_unseen_from_arxiv_url
 
 
 language_model_choices = [
@@ -251,30 +315,30 @@ def inference_data_constructor_plugin_unseen_cosine_similarities(
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_plugin_seen_citation_model_data(
-    infernce_data_constructor_plugin_seen: SeenInferenceDataConstructorPlugin,
+    inference_data_constructor_plugin_seen: SeenInferenceDataConstructorPlugin,
 ) -> CitationModelData:
-    return infernce_data_constructor_plugin_seen.get_citation_model_data()
+    return inference_data_constructor_plugin_seen.get_citation_model_data()
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_plugin_unseen_citation_model_data(
-    infernce_data_constructor_plugin_unseen: UnseenInferenceDataConstructorPlugin,
+    inference_data_constructor_plugin_unseen: UnseenInferenceDataConstructorPlugin,
 ) -> CitationModelData:
-    return infernce_data_constructor_plugin_unseen.get_citation_model_data()
+    return inference_data_constructor_plugin_unseen.get_citation_model_data()
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_plugin_seen_language_model_data(
-    infernce_data_constructor_plugin_seen: SeenInferenceDataConstructorPlugin,
+    inference_data_constructor_plugin_seen: SeenInferenceDataConstructorPlugin,
 ) -> LanguageModelData:
-    return infernce_data_constructor_plugin_seen.get_language_model_data()
+    return inference_data_constructor_plugin_seen.get_language_model_data()
 
 
 @pytest.fixture(scope="session")
 def inference_data_constructor_plugin_unseen_language_model_data(
-    infernce_data_constructor_plugin_unseen: UnseenInferenceDataConstructorPlugin,
+    inference_data_constructor_plugin_unseen: UnseenInferenceDataConstructorPlugin,
 ) -> LanguageModelData:
-    return infernce_data_constructor_plugin_unseen.get_language_model_data()
+    return inference_data_constructor_plugin_unseen.get_language_model_data()
 
 
 # SECTION: Model Data Attributes

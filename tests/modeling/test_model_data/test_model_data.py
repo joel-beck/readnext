@@ -6,6 +6,7 @@ from pytest_lazyfixture import lazy_fixture
 from readnext.modeling import DocumentInfo
 
 # SUBSECTION: Test Query Document
+# TODO: Add fixtures from inference data constructor plugin!
 query_document_fixtures_seen = [
     "citation_model_data_query_document",
     "language_model_data_query_document",

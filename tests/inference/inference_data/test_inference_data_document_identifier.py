@@ -5,6 +5,29 @@ from pytest_lazyfixture import lazy_fixture
 
 from readnext.inference import DocumentIdentifier
 
+
+constructor_plugins_seen_document_identifiers = [
+    lazy_fixture(
+        "inference_data_constructor_plugin_seen_document_identifier_from_semanticscholar_id"
+    ),
+    lazy_fixture(
+        "inference_data_constructor_plugin_seen_document_identifier_from_semanticscholar_id"
+    ),
+    lazy_fixture("inference_data_constructor_plugin_seen_document_identifier_from_arxiv_id"),
+    lazy_fixture("inference_data_constructor_plugin_seen_document_identifier_from_arxiv_url"),
+]
+
+constructor_plugins_unseen_document_identifiers = [
+    lazy_fixture(
+        "inference_data_constructor_plugin_unseen_document_identifier_from_semanticscholar_id"
+    ),
+    lazy_fixture(
+        "inference_data_constructor_plugin_unseen_document_identifier_from_semanticscholar_id"
+    ),
+    lazy_fixture("inference_data_constructor_plugin_unseen_document_identifier_from_arxiv_id"),
+    lazy_fixture("inference_data_constructor_plugin_unseen_document_identifier_from_arxiv_url"),
+]
+
 document_identifier_fixtures_skip_ci = [
     lazy_fixture("inference_data_seen_document_identifier"),
     lazy_fixture("inference_data_constructor_seen_document_identifier"),
@@ -20,6 +43,8 @@ document_identifier_fixtures_slow_skip_ci = [
 @pytest.mark.parametrize(
     "document_identifier",
     [
+        *constructor_plugins_seen_document_identifiers,
+        *constructor_plugins_unseen_document_identifiers,
         *[
             pytest.param(fixture, marks=(pytest.mark.skip_ci))
             for fixture in document_identifier_fixtures_skip_ci
@@ -30,9 +55,7 @@ document_identifier_fixtures_slow_skip_ci = [
         ],
     ],
 )
-def test_inference_data_document_identifier(
-    document_identifier: DocumentIdentifier,
-) -> None:
+def test_inference_data_document_identifier(document_identifier: DocumentIdentifier) -> None:
     assert isinstance(document_identifier, DocumentIdentifier)
     assert list(dataclasses.asdict(document_identifier)) == [
         "d3_document_id",
@@ -47,8 +70,11 @@ def test_inference_data_document_identifier(
 @pytest.mark.parametrize(
     "document_identifier",
     [
-        pytest.param(fixture, marks=(pytest.mark.skip_ci))
-        for fixture in document_identifier_fixtures_skip_ci
+        *constructor_plugins_seen_document_identifiers,
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in document_identifier_fixtures_skip_ci
+        ],
     ],
 )
 def test_inference_data_seen_document_identifier(
@@ -68,8 +94,11 @@ def test_inference_data_seen_document_identifier(
 @pytest.mark.parametrize(
     "document_identifier",
     [
-        pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
-        for fixture in document_identifier_fixtures_slow_skip_ci
+        *constructor_plugins_unseen_document_identifiers,
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in document_identifier_fixtures_slow_skip_ci
+        ],
     ],
 )
 def test_inference_data_unseen_document_identifier(

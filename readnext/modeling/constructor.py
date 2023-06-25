@@ -8,7 +8,8 @@ from readnext.modeling.document_info import DocumentInfo
 from readnext.utils.aliases import (
     CitationFeaturesFrame,
     DocumentsFrame,
-    InfoFrame,
+    CitationInfoFrame,
+    LanguageInfoFrame,
     IntegerLabelsFrame,
     LanguageFeaturesFrame,
     QueryDocumentsFrame,
@@ -76,7 +77,7 @@ class ModelDataConstructor(ABC):
         """
         return self.exclude_query_document().pipe(self.rename_to_candidate_id)
 
-    def get_info_frame(self) -> InfoFrame:
+    def get_info_frame(self) -> CitationInfoFrame | LanguageInfoFrame:
         """
         Exclude the query document from the documents data and select only the feature
         columns with information about the candidate documents.

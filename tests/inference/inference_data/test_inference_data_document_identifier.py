@@ -5,7 +5,6 @@ from pytest_lazyfixture import lazy_fixture
 
 from readnext.inference import DocumentIdentifier
 
-
 constructor_plugins_seen_document_identifiers = [
     lazy_fixture(
         "inference_data_constructor_plugin_seen_document_identifier_from_semanticscholar_id"

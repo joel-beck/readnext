@@ -1,7 +1,12 @@
 from dataclasses import dataclass, field
 
 from readnext.modeling.constructor import ModelDataConstructor
-from readnext.utils.aliases import CandidateScoresFrame, LanguageFeaturesFrame, ScoresFrame
+from readnext.utils.aliases import (
+    CandidateScoresFrame,
+    LanguageFeaturesFrame,
+    LanguageInfoFrame,
+    ScoresFrame,
+)
 from readnext.utils.repr import generate_frame_repr
 
 
@@ -55,6 +60,9 @@ class LanguageModelDataConstructor(ModelDataConstructor):
             f"  {feature_columns_repr},\n"
             ")"
         )
+
+    def get_info_frame(self) -> LanguageInfoFrame:
+        return super().get_info_frame()
 
     def get_cosine_similarity_candidate_scores_frame(self) -> CandidateScoresFrame:
         """

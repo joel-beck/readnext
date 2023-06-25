@@ -11,11 +11,12 @@ from readnext.modeling.constructor_language import LanguageModelDataConstructor
 from readnext.modeling.document_info import DocumentInfo
 from readnext.utils.aliases import (
     CitationFeaturesFrame,
+    CitationInfoFrame,
     CitationPointsFrame,
     CitationRanksFrame,
-    InfoFrame,
     IntegerLabelsFrame,
     LanguageFeaturesFrame,
+    LanguageInfoFrame,
 )
 from readnext.utils.repr import generate_frame_repr
 
@@ -31,7 +32,7 @@ class ModelData(ABC, Generic[TModelDataConstructor]):
     """
 
     query_document: DocumentInfo
-    info_frame: InfoFrame
+    info_frame: CitationInfoFrame | LanguageInfoFrame
     features_frame: CitationFeaturesFrame | LanguageFeaturesFrame
     integer_labels_frame: IntegerLabelsFrame
 
@@ -55,6 +56,7 @@ class CitationModelData(ModelData):
     Holds the required data for the citation recommender model.
     """
 
+    info_frame: CitationInfoFrame
     features_frame: CitationFeaturesFrame
     ranks_frame: CitationRanksFrame
     points_frame: CitationPointsFrame
@@ -119,6 +121,7 @@ class LanguageModelData(ModelData):
     similarity ranks of all candidate documents with respect to the query document.
     """
 
+    info_frame: LanguageInfoFrame
     features_frame: LanguageFeaturesFrame
 
     @classmethod

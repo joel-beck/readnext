@@ -5,6 +5,18 @@ from pytest_lazyfixture import lazy_fixture
 
 from readnext.modeling import DocumentInfo
 
+document_info_fixtures_seen = [
+    lazy_fixture("model_data_seen_query_document"),
+    lazy_fixture("model_data_constructor_plugin_seen_query_document"),
+]
+
+document_info_fixtures_unseen = [
+    lazy_fixture("model_data_unseen_query_document"),
+    lazy_fixture("model_data_constructor_plugin_unseen_query_document"),
+]
+
+document_info_fixtures = document_info_fixtures_seen + document_info_fixtures_unseen
+
 document_info_fixtures_skip_ci = [
     lazy_fixture("inference_data_constructor_plugin_seen_model_data_query_document"),
     lazy_fixture("inference_data_constructor_seen_document_info"),
@@ -48,6 +60,7 @@ def test_from_dummy(dummy_document_info: DocumentInfo) -> None:
 @pytest.mark.parametrize(
     "document_info",
     [
+        *[pytest.param(fixture) for fixture in document_info_fixtures],
         *[
             pytest.param(fixture, marks=(pytest.mark.skip_ci))
             for fixture in document_info_fixtures_skip_ci
@@ -58,7 +71,7 @@ def test_from_dummy(dummy_document_info: DocumentInfo) -> None:
         ],
     ],
 )
-def test_from_inference_data(document_info: DocumentInfo) -> None:
+def test_from_data(document_info: DocumentInfo) -> None:
     assert isinstance(document_info, DocumentInfo)
     assert list(dataclasses.asdict(document_info)) == [
         "d3_document_id",
@@ -76,11 +89,14 @@ def test_from_inference_data(document_info: DocumentInfo) -> None:
 @pytest.mark.parametrize(
     "document_info",
     [
-        pytest.param(fixture, marks=(pytest.mark.skip_ci))
-        for fixture in document_info_fixtures_skip_ci
+        *[pytest.param(fixture) for fixture in document_info_fixtures_seen],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.skip_ci))
+            for fixture in document_info_fixtures_skip_ci
+        ],
     ],
 )
-def test_from_inference_data_seen(document_info: DocumentInfo) -> None:
+def test_from_data_seen(document_info: DocumentInfo) -> None:
     assert document_info.d3_document_id == 13756489
     assert document_info.title == "Attention is All you Need"
     assert document_info.author == "Lukasz Kaiser"
@@ -95,11 +111,27 @@ def test_from_inference_data_seen(document_info: DocumentInfo) -> None:
 
 
 @pytest.mark.updated
+@pytest.mark.parametrize("document_info", document_info_fixtures_unseen)
+def test_from_model_data_constructor_plugin_unseen(document_info: DocumentInfo) -> None:
+    assert document_info.d3_document_id == -1
+    assert document_info.title == "TestTitle"
+    assert document_info.abstract == "TestAbstract"
+    assert document_info.author == ""
+    assert document_info.publication_date == ""
+    assert document_info.arxiv_labels == []
+    assert document_info.semanticscholar_url == ""
+    assert document_info.arxiv_url == ""
+
+
+@pytest.mark.updated
 @pytest.mark.parametrize(
     "document_info",
     [
-        pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
-        for fixture in document_info_fixtures_slow_skip_ci
+        *[pytest.param(fixture) for fixture in document_info_fixtures_unseen],
+        *[
+            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+            for fixture in document_info_fixtures_slow_skip_ci
+        ],
     ],
 )
 def test_from_inference_data_unseen(document_info: DocumentInfo) -> None:

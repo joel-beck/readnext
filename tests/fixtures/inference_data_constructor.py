@@ -22,7 +22,8 @@ from readnext.utils.aliases import (
     CitationPointsFrame,
     CitationRanksFrame,
     DocumentsFrame,
-    InfoFrame,
+    CitationInfoFrame,
+    LanguageInfoFrame,
     IntegerLabelsFrame,
     LanguageFeaturesFrame,
 )
@@ -117,20 +118,6 @@ def inference_data_constructor_unseen_model_data_query_document(
 
 
 @pytest.fixture(scope="session", params=model_data_pair_seen)
-def inference_data_constructor_seen_model_data_info_frame(
-    request: pytest.FixtureRequest,
-) -> InfoFrame:
-    return request.param.info_frame
-
-
-@pytest.fixture(scope="session", params=model_data_pair_unseen)
-def inference_data_constructor_unseen_model_data_info_frame(
-    request: pytest.FixtureRequest,
-) -> InfoFrame:
-    return request.param.info_frame
-
-
-@pytest.fixture(scope="session", params=model_data_pair_seen)
 def inference_data_constructor_seen_model_data_integer_labels_frame(
     request: pytest.FixtureRequest,
 ) -> IntegerLabelsFrame:
@@ -142,6 +129,34 @@ def inference_data_constructor_unseen_model_data_integer_labels_frame(
     request: pytest.FixtureRequest,
 ) -> IntegerLabelsFrame:
     return request.param.integer_labels_frame
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_seen_citation_model_data_info_frame(
+    inference_data_constructor_seen_citation_model_data: CitationModelData,
+) -> CitationInfoFrame:
+    return inference_data_constructor_seen_citation_model_data.info_frame
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_unseen_citation_model_data_info_frame(
+    inference_data_constructor_unseen_citation_model_data: CitationModelData,
+) -> CitationInfoFrame:
+    return inference_data_constructor_unseen_citation_model_data.info_frame
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_seen_language_model_data_info_frame(
+    inference_data_constructor_seen_language_model_data: LanguageModelData,
+) -> LanguageInfoFrame:
+    return inference_data_constructor_seen_language_model_data.info_frame
+
+
+@pytest.fixture(scope="session")
+def inference_data_constructor_unseen_language_model_data_info_frame(
+    inference_data_constructor_unseen_language_model_data: LanguageModelData,
+) -> LanguageInfoFrame:
+    return inference_data_constructor_unseen_language_model_data.info_frame
 
 
 @pytest.fixture(scope="session")

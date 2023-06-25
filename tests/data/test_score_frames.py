@@ -3,7 +3,12 @@ import pytest
 from polars.testing import assert_frame_equal
 from pytest_lazyfixture import lazy_fixture
 
-from readnext.utils.aliases import ScoresFrame
+from readnext.utils.aliases import CandidateScoresFrame, ScoresFrame
+
+candidate_score_frames = [
+    lazy_fixture("citation_model_data_constructor_co_citation_analysis_scores"),
+    lazy_fixture("citation_model_data_constructor_bibliographic_coupling_scores"),
+]
 
 seen_integer_score_frames = [
     lazy_fixture("test_co_citation_analysis_scores"),
@@ -44,6 +49,21 @@ seen_score_frames_skip_ci = seen_integer_score_frames_skip_ci + seen_float_score
 unseen_score_frames_slow_skip_ci = (
     unseen_integer_score_frames_slow_skip_ci + unseen_float_score_frames_slow_skip_ci
 )
+
+
+@pytest.mark.updated
+@pytest.mark.parametrize("candidate_scores_frame", candidate_score_frames)
+def test_candidate_score_frames(candidate_scores_frame: CandidateScoresFrame) -> None:
+    assert isinstance(candidate_scores_frame, pl.DataFrame)
+
+    assert candidate_scores_frame.shape[1] == 2
+    assert candidate_scores_frame.columns == ["candidate_d3_document_id", "score"]
+
+    assert candidate_scores_frame["candidate_d3_document_id"].dtype == pl.Int64
+    assert candidate_scores_frame["score"].dtype == pl.Int64
+
+    # check that scores are sorted in descending order
+    assert candidate_scores_frame["score"].is_sorted(descending=True)
 
 
 @pytest.mark.updated

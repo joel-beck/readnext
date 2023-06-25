@@ -13,8 +13,6 @@ from readnext.modeling.constructor_plugin import (
     UnseenModelDataConstructorPlugin,
 )
 from readnext.modeling.language_models import LanguageModelChoice
-from pytest_lazyfixture import lazy_fixture
-
 
 inference_data_constructor_plugins_seen = [
     lazy_fixture("inference_data_constructor_plugin_seen_from_semanticscholar_id"),
@@ -48,7 +46,7 @@ def test_attributes_are_created_correctly(
 
 # SECTION: SeenInferenceDataConstructorPlugin
 def test_passing_inputs_to_input_converter_works_for_semanticscholar_id(
-    inference_data_constructor_plugin_seen_from_semanticscholar_id: SeenInferenceDataConstructorPlugin,
+    inference_data_constructor_plugin_seen_from_semanticscholar_id: SeenInferenceDataConstructorPlugin,  # noqa: E501
 ) -> None:
     assert (
         inference_data_constructor_plugin_seen_from_semanticscholar_id.semanticscholar_id
@@ -65,7 +63,7 @@ def test_passing_inputs_to_input_converter_works_for_semanticscholar_id(
 
 
 def test_passing_inputs_to_input_converter_works_for_semanticscholar_url(
-    inference_data_constructor_plugin_seen_from_semanticscholar_url: SeenInferenceDataConstructorPlugin,
+    inference_data_constructor_plugin_seen_from_semanticscholar_url: SeenInferenceDataConstructorPlugin,  # noqa: E501
 ) -> None:
     assert (
         inference_data_constructor_plugin_seen_from_semanticscholar_url.semanticscholar_id is None

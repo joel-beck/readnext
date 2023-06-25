@@ -7,6 +7,7 @@ from readnext.modeling.constructor import ModelDataConstructor
 from readnext.utils.aliases import (
     CandidateScoresFrame,
     CitationFeaturesFrame,
+    CitationInfoFrame,
     CitationPointsFrame,
     CitationRanksFrame,
     ScoresFrame,
@@ -96,6 +97,9 @@ class CitationModelDataConstructor(ModelDataConstructor):
             f"  {points_columns_repr}\n"
             ")"
         )
+
+    def get_info_frame(self) -> CitationInfoFrame:
+        return super().get_info_frame()
 
     def get_co_citation_analysis_scores(self) -> CandidateScoresFrame:
         """

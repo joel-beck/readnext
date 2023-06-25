@@ -41,9 +41,21 @@ DocumentsFrame: TypeAlias = pl.DataFrame
 # `candidate_d3_document_id` instead of `d3_document_id`
 QueryDocumentsFrame: TypeAlias = pl.DataFrame
 
-# info_frame.columns = ["candidate_d3_document_id", "title", "author", "arxiv_labels"]
-# data types: candidate_d3_document_id: int, title: str, author: str, arxiv_labels: list[str]
-InfoFrame: TypeAlias = pl.DataFrame
+# integer_labels_frame.columns = ["candidate_d3_document_id", "integer_label"]
+# data types: candidate_d3_document_id: int, integer_label: int
+IntegerLabelsFrame: TypeAlias = pl.DataFrame
+
+# citation_info_frame.columns = ["candidate_d3_document_id", "title", "author", "arxiv_labels",
+# "semanticscholar_url", "arxiv_url"]
+# data types: candidate_d3_document_id: int, title: str, author: str, arxiv_labels:
+# list[str], semanticscholar_url: str, arxiv_url: str
+CitationInfoFrame: TypeAlias = pl.DataFrame
+
+# language_info_frame.columns = ["candidate_d3_document_id", "title", "author",
+# "publication_date", "arxiv_labels", "semanticscholar_url", "arxiv_url"]
+# data types: candidate_d3_document_id: int, title: str, author: str, publication_date:
+# str, arxiv_labels: list[str], semanticscholar_url: str, arxiv_url: str
+LanguageInfoFrame: TypeAlias = pl.DataFrame
 
 # citation_features_frame.columns = ["candidate_d3_document_id","publication_date",
 # "citationcount_document", "citationcount_author", "co_citation_analysis_score",
@@ -73,11 +85,6 @@ CitationRanksFrame: TypeAlias = pl.DataFrame
 # citationcount_document_points: int, citationcount_author_points: int,
 # co_citation_analysis_points: int, bibliographic_coupling_points: int
 CitationPointsFrame: TypeAlias = pl.DataFrame
-
-# integer_labels_frame.columns = ["candidate_d3_document_id", "integer_label"]
-# data types: candidate_d3_document_id: int, integer_label: int
-IntegerLabelsFrame: TypeAlias = pl.DataFrame
-
 
 # tfidf and bm25
 KeywordAlgorithm: TypeAlias = Callable[[Tokens, Sequence[Tokens]], np.ndarray]

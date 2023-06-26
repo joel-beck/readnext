@@ -172,12 +172,14 @@ def language_model_data_constructor_features_frame(
 @pytest.fixture(scope="session", params=citation_constructor_pair)
 def citation_model_data_constructor_ranks_frame(
     request: pytest.FixtureRequest,
+    citation_model_data_constructor_features_frame: CitationFeaturesFrame,
 ) -> CitationRanksFrame:
-    return request.param.get_ranks_frame()
+    return request.param.get_ranks_frame(citation_model_data_constructor_features_frame)
 
 
 @pytest.fixture(scope="session", params=citation_constructor_pair)
 def citation_model_data_constructor_points_frame(
     request: pytest.FixtureRequest,
+    citation_model_data_constructor_ranks_frame: CitationRanksFrame,
 ) -> CitationPointsFrame:
-    return request.param.get_points_frame()
+    return request.param.get_points_frame(citation_model_data_constructor_ranks_frame)

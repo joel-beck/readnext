@@ -67,8 +67,8 @@ def test_citation_model_data_features_frame(citation_features_frame: CitationFea
     assert citation_features_frame["publication_date"].dtype == pl.Utf8
     assert citation_features_frame["citationcount_document"].dtype == pl.Int64
     assert citation_features_frame["citationcount_author"].dtype == pl.Int64
-    assert citation_features_frame["co_citation_analysis_score"].dtype == pl.Float64
-    assert citation_features_frame["bibliographic_coupling_score"].dtype == pl.Float64
+    assert citation_features_frame["co_citation_analysis_score"].dtype == pl.Int64
+    assert citation_features_frame["bibliographic_coupling_score"].dtype == pl.Int64
 
 
 @pytest.mark.updated

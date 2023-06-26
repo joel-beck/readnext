@@ -12,13 +12,18 @@ from readnext.modeling import (
 from readnext.modeling.constructor_plugin import SeenModelDataConstructorPlugin
 
 citation_model_data_constructor_fixtures = [
-    "citation_model_data_constructor_seen",
-    "citation_model_data_constructor_unseen",
+    lazy_fixture("citation_model_data_constructor_seen"),
+    lazy_fixture("citation_model_data_constructor_unseen"),
 ]
 
 language_model_data_constructor_fixtures = [
-    "language_model_data_constructor_seen",
-    "language_model_data_constructor_unseen",
+    lazy_fixture("language_model_data_constructor_seen"),
+    lazy_fixture("language_model_data_constructor_unseen"),
+]
+
+model_data_constructor_seen_fixtures = [
+    lazy_fixture("citation_model_data_constructor_seen"),
+    lazy_fixture("language_model_data_constructor_seen"),
 ]
 
 model_data_constructor_fixtures = (
@@ -27,10 +32,7 @@ model_data_constructor_fixtures = (
 
 
 @pytest.mark.updated
-@pytest.mark.parametrize(
-    "model_data_constructor",
-    lazy_fixture(model_data_constructor_fixtures),
-)
+@pytest.mark.parametrize("model_data_constructor", model_data_constructor_fixtures)
 def test_initialization(model_data_constructor: ModelDataConstructor) -> None:
     assert isinstance(model_data_constructor, ModelDataConstructor)
 
@@ -48,10 +50,7 @@ def test_initialization(model_data_constructor: ModelDataConstructor) -> None:
 
 
 @pytest.mark.updated
-@pytest.mark.parametrize(
-    "model_data_constructor",
-    lazy_fixture(model_data_constructor_fixtures),
-)
+@pytest.mark.parametrize("model_data_constructor", model_data_constructor_fixtures)
 def test_get_query_documents_frame(
     model_data_constructor: ModelDataConstructor,
 ) -> None:
@@ -64,14 +63,14 @@ def test_get_query_documents_frame(
     assert "candidate_d3_document_id" in query_documents_frame.columns
 
     # check that query id is filtered out
-    assert model_data_constructor.d3_document_id not in query_documents_frame["d3_document_id"]
+    assert (
+        model_data_constructor.d3_document_id
+        not in query_documents_frame["candidate_d3_document_id"]
+    )
 
 
 @pytest.mark.updated
-@pytest.mark.parametrize(
-    "model_data_constructor",
-    lazy_fixture(model_data_constructor_fixtures),
-)
+@pytest.mark.parametrize("model_data_constructor", model_data_constructor_seen_fixtures)
 def test_shares_arxiv_label(model_data_constructor: ModelDataConstructor) -> None:
     candidate_document_labels = ["cs.CL", "stat.ML"]
     result = model_data_constructor.shares_arxiv_label(candidate_document_labels)
@@ -87,10 +86,7 @@ def test_shares_arxiv_label(model_data_constructor: ModelDataConstructor) -> Non
 
 
 @pytest.mark.updated
-@pytest.mark.parametrize(
-    "model_data_constructor",
-    lazy_fixture(model_data_constructor_fixtures),
-)
+@pytest.mark.parametrize("model_data_constructor", model_data_constructor_fixtures)
 def test_boolean_to_int(model_data_constructor: ModelDataConstructor) -> None:
     result = model_data_constructor.boolean_to_int(True)
 

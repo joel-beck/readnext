@@ -93,7 +93,7 @@ def test_language_model_data_info_frame(
 ) -> None:
     assert isinstance(language_info_frame, pl.DataFrame)
 
-    assert language_info_frame.shape[1] == 6
+    assert language_info_frame.shape[1] == 7
     assert language_info_frame.columns == [
         "candidate_d3_document_id",
         "title",

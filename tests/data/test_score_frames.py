@@ -119,7 +119,7 @@ def test_unseen_score_frames(
     assert scores_frame["candidate_d3_document_id"].dtype == pl.Int64
 
     # check that document scores are ordered by their score in descending order
-    assert scores_frame["candidate_d3_document_id"].is_sorted(descending=True)
+    assert scores_frame["score"].is_sorted(descending=True)
 
 
 @pytest.mark.updated

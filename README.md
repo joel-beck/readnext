@@ -398,6 +398,10 @@ All further script paths are relative to the `readnext/scripts/modeling` directo
     1. `embedder/run_embedder_*.py`: These scripts generate sparse or dense numeric embeddings of all document abstracts for each language model. The process is split into separate scripts for each model to allow for easy parallelization.
     1. `cosine_similarities/run_cosine_similarities_*.py`: Precomputes cosine similarity scores for all document pairs in the dataset for each language model. Again, multiple scripts are used for parallelization purposes.
 
+    Note that the `run_embedder_*.py` and `run_cosine_similarities_*.py` scripts are independent between different language models!
+    That means that you can run a subset of scripts only for those language models that you want to use for the recommender system.
+    For example, if you are only interested in the Longformer language model, it is sufficient to run the scripts `run_embedder_longformer.py` and `run_cosine_similarities_longformer.py` in steps ii. and iii., respectively.
+
 
 ## Usage
 

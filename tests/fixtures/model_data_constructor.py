@@ -1,6 +1,6 @@
+import polars as pl
 import pytest
 from pytest_lazyfixture import lazy_fixture
-import polars as pl
 
 from readnext.modeling import (
     CitationModelDataConstructor,

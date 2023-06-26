@@ -40,7 +40,7 @@ def test_embeddings_frame_structure(embeddings_frame: EmbeddingsFrame) -> None:
 @pytest.mark.parametrize("embeddings_frame", keyword_algorithm_embedding_frames)
 def test_keyword_algorithm_embeddings_dimension(embeddings_frame: EmbeddingsFrame) -> None:
     # embedding dimension corresponds to size of corpus vocabulary
-    assert all(len(embedding) == 21305 for embedding in embeddings_frame["embedding"])
+    assert all(len(embedding) == 21264 for embedding in embeddings_frame["embedding"])
 
 
 @pytest.mark.updated

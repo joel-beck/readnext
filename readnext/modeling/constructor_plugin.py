@@ -84,10 +84,13 @@ class UnseenModelDataConstructorPlugin(ModelDataConstructorPlugin):
     response: SemanticScholarResponse
 
     def collect_query_document(self) -> DocumentInfo:
-        title = self.response.title if self.response.title is not None else ""
-        abstract = self.response.abstract if self.response.abstract is not None else ""
-
-        return DocumentInfo(d3_document_id=-1, title=title, abstract=abstract)
+        return DocumentInfo(
+            d3_document_id=-1,
+            title=self.response.title,
+            semanticscholar_url=self.response.semanticscholar_url,
+            arxiv_url=self.response.arxiv_url,
+            abstract=self.response.abstract,
+        )
 
     def get_candidate_scores(self, scores_frame: CandidateScoresFrame) -> CandidateScoresFrame:
         """

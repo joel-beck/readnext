@@ -118,7 +118,7 @@ def test_from_data_seen(document_info: DocumentInfo) -> None:
         for fixture in document_info_fixtures_slow_skip_ci
     ],
 )
-def test_from_data_unseen(document_info: DocumentInfo) -> None:
+def test_from_inference_data_unseen(document_info: DocumentInfo) -> None:
     assert document_info.d3_document_id == -1
     assert document_info.title == "GPT-4 Technical Report"
     # author is not set for unseen papers
@@ -128,8 +128,10 @@ def test_from_data_unseen(document_info: DocumentInfo) -> None:
     # no arxiv labels for unseen papers
     assert document_info.arxiv_labels == []
     # semanticscholar url is not set since input identifier is arxiv url
-    assert document_info.semanticscholar_url == ""
-    # TODO: Why is neither of the urls set?
+    assert (
+        document_info.semanticscholar_url
+        == "https://www.semanticscholar.org/paper/8ca62fdf4c276ea3052dc96dcfd8ee96ca425a48"
+    )
     assert document_info.arxiv_url == ""
     assert len(document_info.abstract) > 0
 
@@ -145,8 +147,8 @@ def test_from_model_data_unseen(
     assert document_info.author == ""
     assert document_info.publication_date == ""
     assert document_info.arxiv_labels == []
-    assert document_info.semanticscholar_url == ""
-    assert document_info.arxiv_url == ""
+    assert document_info.semanticscholar_url == "TestURL"
+    assert document_info.arxiv_url == "ArxivURL"
 
 
 @pytest.mark.updated

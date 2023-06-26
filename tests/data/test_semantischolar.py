@@ -40,6 +40,18 @@ def test_from_semanticscholar_id(
 
 
 @pytest.mark.updated
+def test_from_semanticscholar_url(
+    semanticscholar_request: SemanticscholarRequest,
+    semanticscholar_response: SemanticScholarResponse,
+    mock_get_response_from_request: None,  # noqa: ARG001
+) -> None:
+    semanticscholar_url = "https://www.semanticscholar.org/paper/TestID"
+    response = semanticscholar_request.from_semanticscholar_url(semanticscholar_url)
+    assert isinstance(response, SemanticScholarResponse)
+    assert response == semanticscholar_response
+
+
+@pytest.mark.updated
 def test_from_arxiv_id(
     semanticscholar_request: SemanticscholarRequest,
     semanticscholar_response: SemanticScholarResponse,
@@ -71,6 +83,8 @@ def test_kw_only_initialization_semanticscholar() -> None:
             "ArxviID",
             "Title",
             "Abstract",
+            "SemanticscholarURL",
+            "ArxivURL",
             [],
             [],
         )

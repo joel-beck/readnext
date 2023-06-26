@@ -2,7 +2,6 @@
 Tokenize abstracts for all documents to pass the tokenized abstracts to the embedding
 models.
 """
-
 import spacy
 from transformers import BertTokenizerFast, LongformerTokenizerFast
 

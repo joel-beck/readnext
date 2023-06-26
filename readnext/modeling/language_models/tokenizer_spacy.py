@@ -85,6 +85,14 @@ class SpacyTokenizer(ListTokenizer):
             # applied independently of each other
             token_text = token.text
 
+            # NOTE: Lemmatization and lowercasing must come first since removal of
+            # stopwords only works on lowercase tokens!
+            if self.text_processing_steps.lemmatize:
+                token_text = token.lemma_
+
+            if self.text_processing_steps.to_lowercase:
+                token_text = token_text.lower()
+
             if self.text_processing_steps.remove_non_alphanumeric and not token.is_alpha:
                 continue
 
@@ -100,15 +108,8 @@ class SpacyTokenizer(ListTokenizer):
             if self.text_processing_steps.remove_whitespace and token.is_space:
                 continue
 
-            # TODO: Fix that stopwords are not removed!
             if self.text_processing_steps.remove_stopwords and token_text in stopwords:
                 continue
-
-            if self.text_processing_steps.lemmatize:
-                token_text = token.lemma_
-
-            if self.text_processing_steps.to_lowercase:
-                token_text = token_text.lower()
 
             clean_tokens.append(token_text)
 

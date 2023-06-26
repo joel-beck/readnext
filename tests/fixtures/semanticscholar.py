@@ -26,7 +26,9 @@ def semanticscholar_json() -> SemanticScholarJson:
 def semanticscholar_response() -> SemanticScholarResponse:
     return SemanticScholarResponse(
         semanticscholar_id="TestID",
+        semanticscholar_url="TestURL",
         arxiv_id="ArxivID",
+        arxiv_url="ArxivURL",
         title="TestTitle",
         abstract="TestAbstract",
         citations=[],

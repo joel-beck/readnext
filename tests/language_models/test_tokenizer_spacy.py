@@ -17,7 +17,6 @@ def test_tokenize_single_document(
     assert tokens == spacy_expected_tokens
 
 
-# TODO: Fix
 @pytest.mark.updated
 def test_tokenize(
     spacy_tokenizer: SpacyTokenizer,

@@ -9,7 +9,9 @@ from typing_extensions import NotRequired
 
 from readnext.utils.convert_id_urls import (
     get_arxiv_id_from_arxiv_url,
+    get_arxiv_url_from_arxiv_id,
     get_semanticscholar_id_from_semanticscholar_url,
+    get_semanticscholar_url_from_semanticscholar_id,
 )
 from readnext.utils.progress_bar import rich_progress_bar
 
@@ -42,7 +44,9 @@ class SemanticScholarJson(TypedDict):
 @dataclass(kw_only=True)
 class SemanticScholarResponse:
     semanticscholar_id: str
+    semanticscholar_url: str
     arxiv_id: str
+    arxiv_url: str
     title: str
     abstract: str
     citations: list[SemanticScholarCitation]
@@ -106,9 +110,16 @@ class SemanticscholarRequest:
     def get_response_from_request(
         self, json_response: SemanticScholarJson
     ) -> SemanticScholarResponse:
+        semanticscholar_id = self.extract_semanticscholar_id_from_json_response(json_response)
+        semanticscholar_url = get_semanticscholar_url_from_semanticscholar_id(semanticscholar_id)
+        arxiv_id = self.extract_arxiv_id_from_json_response(json_response)
+        arxiv_url = get_arxiv_url_from_arxiv_id(arxiv_id)
+
         return SemanticScholarResponse(
-            semanticscholar_id=self.extract_semanticscholar_id_from_json_response(json_response),
-            arxiv_id=self.extract_arxiv_id_from_json_response(json_response),
+            semanticscholar_id=semanticscholar_id,
+            semanticscholar_url=semanticscholar_url,
+            arxiv_id=arxiv_id,
+            arxiv_url=arxiv_url,
             title=self.extract_title_from_json_response(json_response),
             abstract=self.extract_abstract_from_json_response(json_response),
             citations=self.extract_citations_from_json_response(json_response),

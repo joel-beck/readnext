@@ -11,9 +11,11 @@ Its main objective is to suggest relevant research papers based on a given query
 
 Here, you'll find everything you need to know about the project's background, as well as step-by-step instructions on how to install, use the package for your own needs, and reproduce the results of my thesis:
 
-- [Setup](setup.md): Discover project requirements, installation instructions, data setup guides, environment variable configurations, and an overview of the development workflow.
+- [Installation](installation.md): Get started with the package in no time with a simple installation guide.
 
 - [Overview](overview.md): Get a high-level perspective of the project with a concise schematic overview.
+
+- [Setup](setup.md): Build the foundation of inference by downloading the required data and model files. Set environment variables, run user scripts to precompute values for a fast inference step and get tips for an efficient development workflow.
 
 - [Background](background.md): Dive into the details of the citation-based methods and language models utilized in this project, and learn how they can help quantify document similarity.
 

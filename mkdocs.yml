@@ -81,8 +81,9 @@ extra_javascript:
 
 nav: # Navigation menu structure
   - Introduction: index.md
-  - Setup: setup.md
+  - Installation: installation.md
   - Overview: overview.md
+  - Setup: setup.md
   - Background: background.md
   - Inference: inference.md
   - Reproducibility: reproducibility.md

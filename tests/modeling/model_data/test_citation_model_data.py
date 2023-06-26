@@ -21,6 +21,7 @@ citation_model_data_fixtures_slow_skip_ci = [
 ]
 
 
+@pytest.mark.updated
 @pytest.mark.parametrize(
     "citation_model_data",
     [
@@ -43,15 +44,28 @@ def test_citation_model_data_getitem(citation_model_data: CitationModelData) -> 
     assert citation_model_data.query_document == sliced_citation_model_data.query_document
 
     assert (
-        sliced_citation_model_data.integer_labels_frame["d3_document_id"].to_list()
+        sliced_citation_model_data.integer_labels_frame["candidate_d3_document_id"].to_list()
         == d3_document_ids
     )
-    assert sliced_citation_model_data.info_frame["d3_document_id"].to_list() == d3_document_ids
-    assert sliced_citation_model_data.features_frame["d3_document_id"].to_list() == d3_document_ids
-    assert sliced_citation_model_data.ranks_frame["d3_document_id"].to_list() == d3_document_ids
-    assert sliced_citation_model_data.points_frame["d3_document_id"].to_list() == d3_document_ids
+    assert (
+        sliced_citation_model_data.info_frame["candidate_d3_document_id"].to_list()
+        == d3_document_ids
+    )
+    assert (
+        sliced_citation_model_data.features_frame["candidate_d3_document_id"].to_list()
+        == d3_document_ids
+    )
+    assert (
+        sliced_citation_model_data.ranks_frame["candidate_d3_document_id"].to_list()
+        == d3_document_ids
+    )
+    assert (
+        sliced_citation_model_data.points_frame["candidate_d3_document_id"].to_list()
+        == d3_document_ids
+    )
 
 
+@pytest.mark.updated
 @pytest.mark.updated
 def test_kw_only_initialization_citation_model_data() -> None:
     with pytest.raises(TypeError):

@@ -244,6 +244,7 @@ class UnseenInferenceDataConstructorPlugin(InferenceDataConstructorPlugin):
             self.align_with_exploded_candidate_embeddings(query_embedding, candidate_embeddings)
             .groupby("candidate_d3_document_id", maintain_order=True)
             .agg(score=cosine_similarity(pl.col("query_embedding"), pl.col("embedding")))
+            .sort("score", descending=True)
             .collect()
         )
 

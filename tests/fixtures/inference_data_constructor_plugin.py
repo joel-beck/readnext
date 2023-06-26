@@ -306,12 +306,27 @@ def inference_data_constructor_plugin_seen_cosine_similarities(
     return inference_data_constructor_plugin.get_cosine_similarities()
 
 
-# test only a single language model for unseen papers due to computational time
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", params=language_model_choices)
 def inference_data_constructor_plugin_unseen_cosine_similarities(
-    inference_data_constructor_plugin_unseen: UnseenInferenceDataConstructorPlugin,
+    request: pytest.FixtureRequest,
+    test_documents_frame: DocumentsFrame,
 ) -> ScoresFrame:
-    return inference_data_constructor_plugin_unseen.get_cosine_similarities()
+    """
+    Fixture for cosine similarities of all language models for unseen papers (slow).
+    """
+    arxiv_url = "https://arxiv.org/abs/2303.08774"
+
+    inference_data_constructor_plugin = UnseenInferenceDataConstructorPlugin(
+        semanticscholar_id=None,
+        semanticscholar_url=None,
+        arxiv_id=None,
+        arxiv_url=arxiv_url,
+        language_model_choice=request.param,
+        feature_weights=FeatureWeights(),
+        documents_frame=test_documents_frame,
+    )
+
+    return inference_data_constructor_plugin.get_cosine_similarities()
 
 
 @pytest.fixture(scope="session")

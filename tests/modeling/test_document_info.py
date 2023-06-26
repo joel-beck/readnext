@@ -6,11 +6,14 @@ from pytest_lazyfixture import lazy_fixture
 from readnext.modeling import DocumentInfo
 
 document_info_fixtures_seen = [
-    lazy_fixture("model_data_seen_query_document"),
     lazy_fixture("model_data_constructor_plugin_seen_query_document"),
+    lazy_fixture("model_data_seen_query_document"),
 ]
 
-document_info_fixtures_unseen = [lazy_fixture("model_data_unseen_query_document")]
+document_info_fixtures_unseen = [
+    lazy_fixture("model_data_constructor_plugin_unseen_query_document"),
+    lazy_fixture("model_data_unseen_query_document"),
+]
 
 document_info_fixtures = document_info_fixtures_seen + document_info_fixtures_unseen
 
@@ -51,20 +54,6 @@ def test_from_dummy(dummy_document_info: DocumentInfo) -> None:
         "Arxiv URL: https://arxiv.org/abs/2106.01572"
     )
     assert str(dummy_document_info) == str_representation
-
-
-@pytest.mark.updated
-def test_from_model_data_constructor_plugin_unseen(
-    model_data_constructor_plugin_unseen_query_document: DocumentInfo,
-) -> None:
-    assert model_data_constructor_plugin_unseen_query_document.d3_document_id == -1
-    assert model_data_constructor_plugin_unseen_query_document.title == "TestTitle"
-    assert model_data_constructor_plugin_unseen_query_document.abstract == "TestAbstract"
-    assert model_data_constructor_plugin_unseen_query_document.author == ""
-    assert model_data_constructor_plugin_unseen_query_document.publication_date == ""
-    assert model_data_constructor_plugin_unseen_query_document.arxiv_labels == []
-    assert model_data_constructor_plugin_unseen_query_document.semanticscholar_url == ""
-    assert model_data_constructor_plugin_unseen_query_document.arxiv_url == ""
 
 
 @pytest.mark.updated
@@ -125,11 +114,8 @@ def test_from_data_seen(document_info: DocumentInfo) -> None:
 @pytest.mark.parametrize(
     "document_info",
     [
-        *[pytest.param(fixture) for fixture in document_info_fixtures_unseen],
-        *[
-            pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
-            for fixture in document_info_fixtures_slow_skip_ci
-        ],
+        pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
+        for fixture in document_info_fixtures_slow_skip_ci
     ],
 )
 def test_from_data_unseen(document_info: DocumentInfo) -> None:
@@ -146,6 +132,21 @@ def test_from_data_unseen(document_info: DocumentInfo) -> None:
     # TODO: Why is neither of the urls set?
     assert document_info.arxiv_url == ""
     assert len(document_info.abstract) > 0
+
+
+@pytest.mark.updated
+@pytest.mark.parametrize("document_info", document_info_fixtures_unseen)
+def test_from_model_data_unseen(
+    document_info: DocumentInfo,
+) -> None:
+    assert document_info.d3_document_id == -1
+    assert document_info.title == "TestTitle"
+    assert document_info.abstract == "TestAbstract"
+    assert document_info.author == ""
+    assert document_info.publication_date == ""
+    assert document_info.arxiv_labels == []
+    assert document_info.semanticscholar_url == ""
+    assert document_info.arxiv_url == ""
 
 
 @pytest.mark.updated

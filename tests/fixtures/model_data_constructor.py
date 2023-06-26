@@ -1,5 +1,6 @@
 import pytest
 from pytest_lazyfixture import lazy_fixture
+import polars as pl
 
 from readnext.modeling import (
     CitationModelDataConstructor,
@@ -45,14 +46,26 @@ def citation_model_data_constructor_unseen(
     test_co_citation_analysis_scores: ScoresFrame,
     test_bibliographic_coupling_scores: ScoresFrame,
 ) -> CitationModelDataConstructor:
+    # score frames for unseen documents only contain scores for the single unseen query
+    # document and only the columns `candidate_d3_document_id` and `score`
+    query_d3_document_id = test_documents_frame[0, "d3_document_id"]
+
+    co_citation_analysis_scores_frame = test_co_citation_analysis_scores.filter(
+        pl.col("query_d3_document_id") == query_d3_document_id
+    ).drop("query_d3_document_id")
+
+    bibliographic_coupling_scores_frame = test_bibliographic_coupling_scores.filter(
+        pl.col("query_d3_document_id") == query_d3_document_id
+    ).drop("query_d3_document_id")
+
     return CitationModelDataConstructor(
         # d3 document id is not used for unseen model data constructor and always set to
         # -1
         d3_document_id=-1,
         documents_frame=test_documents_frame,
         constructor_plugin=model_data_constructor_plugin_unseen,
-        co_citation_analysis_scores_frame=test_co_citation_analysis_scores,
-        bibliographic_coupling_scores_frame=test_bibliographic_coupling_scores,
+        co_citation_analysis_scores_frame=co_citation_analysis_scores_frame,
+        bibliographic_coupling_scores_frame=bibliographic_coupling_scores_frame,
     )
 
 
@@ -76,11 +89,19 @@ def language_model_data_constructor_unseen(
     model_data_constructor_plugin_unseen: UnseenModelDataConstructorPlugin,
     test_bert_cosine_similarities: ScoresFrame,
 ) -> LanguageModelDataConstructor:
+    # score frames for unseen documents only contain scores for the single unseen query
+    # document and only the columns `candidate_d3_document_id` and `score`
+    query_d3_document_id = test_documents_frame[0, "d3_document_id"]
+
+    cosine_similarity_scores_frame = test_bert_cosine_similarities.filter(
+        pl.col("query_d3_document_id") == query_d3_document_id
+    ).drop("query_d3_document_id")
+
     return LanguageModelDataConstructor(
         d3_document_id=-1,
         documents_frame=test_documents_frame,
         constructor_plugin=model_data_constructor_plugin_unseen,
-        cosine_similarity_scores_frame=test_bert_cosine_similarities,
+        cosine_similarity_scores_frame=cosine_similarity_scores_frame,
     )
 
 

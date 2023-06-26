@@ -21,6 +21,7 @@ language_model_data_fixtures_slow_skip_ci = [
 ]
 
 
+@pytest.mark.updated
 @pytest.mark.parametrize(
     "language_model_data",
     [
@@ -43,13 +44,20 @@ def test_language_model_data_getitem(language_model_data: LanguageModelData) -> 
     assert language_model_data.query_document == sliced_language_model_data.query_document
 
     assert (
-        sliced_language_model_data.integer_labels_frame["d3_document_id"].to_list()
+        sliced_language_model_data.integer_labels_frame["candidate_d3_document_id"].to_list()
         == d3_document_ids
     )
-    assert sliced_language_model_data.info_frame["d3_document_id"].to_list() == d3_document_ids
-    assert sliced_language_model_data.features_frame["d3_document_id"].to_list() == d3_document_ids
+    assert (
+        sliced_language_model_data.info_frame["candidate_d3_document_id"].to_list()
+        == d3_document_ids
+    )
+    assert (
+        sliced_language_model_data.features_frame["candidate_d3_document_id"].to_list()
+        == d3_document_ids
+    )
 
 
+@pytest.mark.updated
 @pytest.mark.updated
 def test_kw_only_initialization_language_model_data() -> None:
     with pytest.raises(TypeError):

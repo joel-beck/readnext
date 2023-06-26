@@ -9,7 +9,6 @@ from readnext.inference.inference_data import InferenceData
 from readnext.modeling import DocumentInfo
 
 inference_data_fixtures_skip_ci = [lazy_fixture("inference_data_seen")]
-
 inference_data_fixtures_slow_skip_ci = [lazy_fixture("inference_data_unseen")]
 
 

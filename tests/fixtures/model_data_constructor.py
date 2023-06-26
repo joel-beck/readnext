@@ -25,14 +25,14 @@ from readnext.utils.aliases import (
 @pytest.fixture(scope="session")
 def citation_model_data_constructor_seen(
     test_documents_frame: DocumentsFrame,
-    seen_model_data_constructor_plugin: SeenModelDataConstructorPlugin,
+    model_data_constructor_plugin_seen: SeenModelDataConstructorPlugin,
     test_co_citation_analysis_scores: ScoresFrame,
     test_bibliographic_coupling_scores: ScoresFrame,
 ) -> CitationModelDataConstructor:
     return CitationModelDataConstructor(
         d3_document_id=13756489,
         documents_frame=test_documents_frame,
-        constructor_plugin=seen_model_data_constructor_plugin,
+        constructor_plugin=model_data_constructor_plugin_seen,
         co_citation_analysis_scores_frame=test_co_citation_analysis_scores,
         bibliographic_coupling_scores_frame=test_bibliographic_coupling_scores,
     )
@@ -41,7 +41,7 @@ def citation_model_data_constructor_seen(
 @pytest.fixture(scope="session")
 def citation_model_data_constructor_unseen(
     test_documents_frame: DocumentsFrame,
-    unseen_model_data_constructor_plugin: UnseenModelDataConstructorPlugin,
+    model_data_constructor_plugin_unseen: UnseenModelDataConstructorPlugin,
     test_co_citation_analysis_scores: ScoresFrame,
     test_bibliographic_coupling_scores: ScoresFrame,
 ) -> CitationModelDataConstructor:
@@ -50,7 +50,7 @@ def citation_model_data_constructor_unseen(
         # -1
         d3_document_id=-1,
         documents_frame=test_documents_frame,
-        constructor_plugin=unseen_model_data_constructor_plugin,
+        constructor_plugin=model_data_constructor_plugin_unseen,
         co_citation_analysis_scores_frame=test_co_citation_analysis_scores,
         bibliographic_coupling_scores_frame=test_bibliographic_coupling_scores,
     )
@@ -59,13 +59,13 @@ def citation_model_data_constructor_unseen(
 @pytest.fixture(scope="session")
 def language_model_data_constructor_seen(
     test_documents_frame: DocumentsFrame,
-    seen_model_data_constructor_plugin: SeenModelDataConstructorPlugin,
+    model_data_constructor_plugin_seen: SeenModelDataConstructorPlugin,
     test_bert_cosine_similarities: ScoresFrame,
 ) -> LanguageModelDataConstructor:
     return LanguageModelDataConstructor(
         d3_document_id=13756489,
         documents_frame=test_documents_frame,
-        constructor_plugin=seen_model_data_constructor_plugin,
+        constructor_plugin=model_data_constructor_plugin_seen,
         cosine_similarity_scores_frame=test_bert_cosine_similarities,
     )
 
@@ -73,13 +73,13 @@ def language_model_data_constructor_seen(
 @pytest.fixture(scope="session")
 def language_model_data_constructor_unseen(
     test_documents_frame: DocumentsFrame,
-    unseen_model_data_constructor_plugin: UnseenModelDataConstructorPlugin,
+    model_data_constructor_plugin_unseen: UnseenModelDataConstructorPlugin,
     test_bert_cosine_similarities: ScoresFrame,
 ) -> LanguageModelDataConstructor:
     return LanguageModelDataConstructor(
         d3_document_id=-1,
         documents_frame=test_documents_frame,
-        constructor_plugin=unseen_model_data_constructor_plugin,
+        constructor_plugin=model_data_constructor_plugin_unseen,
         cosine_similarity_scores_frame=test_bert_cosine_similarities,
     )
 
@@ -100,11 +100,28 @@ language_constructor_pair = [
     lazy_fixture("language_model_data_constructor_unseen"),
 ]
 
+seen_constructor_pair = [
+    lazy_fixture("citation_model_data_constructor_seen"),
+    lazy_fixture("language_model_data_constructor_seen"),
+]
+
+unseen_constructor_pair = [
+    lazy_fixture("citation_model_data_constructor_unseen"),
+    lazy_fixture("language_model_data_constructor_unseen"),
+]
+
 all_constructor_fixtures = citation_constructor_pair + language_constructor_pair
 
 
-@pytest.fixture(scope="session", params=all_constructor_fixtures)
-def model_data_constructor_integer_labels_frame(
+@pytest.fixture(scope="session", params=seen_constructor_pair)
+def model_data_constructor_seen_integer_labels_frame(
+    request: pytest.FixtureRequest,
+) -> IntegerLabelsFrame:
+    return request.param.get_integer_labels_frame()
+
+
+@pytest.fixture(scope="session", params=unseen_constructor_pair)
+def model_data_constructor_unseen_integer_labels_frame(
     request: pytest.FixtureRequest,
 ) -> IntegerLabelsFrame:
     return request.param.get_integer_labels_frame()

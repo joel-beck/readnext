@@ -21,7 +21,8 @@ def semanticscholar_json() -> SemanticScholarJson:
     }
 
 
-@pytest.fixture
+# must have scope="session" to be used in aother fixtures with scope="session"
+@pytest.fixture(scope="session")
 def semanticscholar_response() -> SemanticScholarResponse:
     return SemanticScholarResponse(
         semanticscholar_id="TestID",

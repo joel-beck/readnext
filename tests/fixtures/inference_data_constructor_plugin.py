@@ -15,13 +15,13 @@ from readnext.modeling import (
 from readnext.modeling.language_models import LanguageModelChoice
 from readnext.utils.aliases import (
     CitationFeaturesFrame,
+    CitationInfoFrame,
     CitationPointsFrame,
     CitationRanksFrame,
     DocumentsFrame,
-    CitationInfoFrame,
-    LanguageInfoFrame,
     IntegerLabelsFrame,
     LanguageFeaturesFrame,
+    LanguageInfoFrame,
     ScoresFrame,
 )
 
@@ -369,14 +369,14 @@ def inference_data_constructor_plugin_unseen_model_data_query_document(
 
 
 @pytest.fixture(scope="session", params=model_data_pair_seen)
-def inference_data_constructor_plugin_seen_model_data_integer_labels(
+def inference_data_constructor_plugin_seen_model_data_integer_labels_frame(
     request: pytest.FixtureRequest,
 ) -> IntegerLabelsFrame:
     return request.param.integer_labels_frame
 
 
 @pytest.fixture(scope="session", params=model_data_pair_unseen)
-def inference_data_constructor_plugin_unseen_model_data_integer_labels(
+def inference_data_constructor_plugin_unseen_model_data_integer_labels_frame(
     request: pytest.FixtureRequest,
 ) -> IntegerLabelsFrame:
     return request.param.integer_labels_frame

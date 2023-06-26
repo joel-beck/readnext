@@ -10,12 +10,12 @@ from readnext.modeling import (
 )
 from readnext.utils.aliases import (
     CitationFeaturesFrame,
+    CitationInfoFrame,
     CitationPointsFrame,
     CitationRanksFrame,
-    CitationInfoFrame,
-    LanguageInfoFrame,
     IntegerLabelsFrame,
     LanguageFeaturesFrame,
+    LanguageInfoFrame,
 )
 
 

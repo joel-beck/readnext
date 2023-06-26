@@ -7,11 +7,11 @@ from readnext.modeling.constructor_plugin import ModelDataConstructorPlugin
 from readnext.modeling.document_info import DocumentInfo
 from readnext.utils.aliases import (
     CitationFeaturesFrame,
-    DocumentsFrame,
     CitationInfoFrame,
-    LanguageInfoFrame,
+    DocumentsFrame,
     IntegerLabelsFrame,
     LanguageFeaturesFrame,
+    LanguageInfoFrame,
     QueryDocumentsFrame,
 )
 

@@ -19,13 +19,13 @@ from readnext.modeling import (
 from readnext.modeling.language_models import LanguageModelChoice
 from readnext.utils.aliases import (
     CitationFeaturesFrame,
+    CitationInfoFrame,
     CitationPointsFrame,
     CitationRanksFrame,
     DocumentsFrame,
-    CitationInfoFrame,
-    LanguageInfoFrame,
     IntegerLabelsFrame,
     LanguageFeaturesFrame,
+    LanguageInfoFrame,
 )
 
 

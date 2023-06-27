@@ -5,8 +5,10 @@ from enum import Enum
 import numpy as np
 import polars as pl
 from joblib import Parallel, delayed
+from sklearn.feature_extraction.text import TfidfVectorizer
 
-from readnext.utils.aliases import Embedding, EmbeddingsFrame, KeywordAlgorithm, Tokens, TokensFrame
+from readnext.modeling.language_models.bm25 import bm25
+from readnext.utils.aliases import Embedding, EmbeddingsFrame, Tokens, TokensFrame
 from readnext.utils.progress_bar import rich_progress_bar
 from readnext.utils.protocols import FastTextModelProtocol, Word2VecModelProtocol
 
@@ -44,9 +46,6 @@ class Embedder(ABC):
     tokens_frame: TokensFrame
 
     @abstractmethod
-    def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
-        """Computes a single document embedding from a tokenized document."""
-
     def compute_embeddings_frame(self) -> EmbeddingsFrame:
         """
         Takes a tokens frame with the two columns `d3_document_id` and `tokens` as input
@@ -55,15 +54,15 @@ class Embedder(ABC):
         Output is a polars data frame with two columns named `d3_document_id` and
         `embedding`.
         """
-        with rich_progress_bar() as progress_bar:
-            embeddings = Parallel(n_jobs=-1, prefer="threads")(
-                delayed(self.compute_embedding_single_document)(row["tokens"])
-                for row in progress_bar.track(
-                    self.tokens_frame.iter_rows(named=True), total=len(self.tokens_frame)
-                )
-            )
+        # with rich_progress_bar() as progress_bar:
+        #     embeddings = Parallel(n_jobs=-1, prefer="threads")(
+        #         delayed(self.compute_embedding_single_document)(row["tokens"])
+        #         for row in progress_bar.track(
+        #             self.tokens_frame.iter_rows(named=True), total=len(self.tokens_frame)
+        #         )
+        #     )
 
-        return self.tokens_frame.with_columns(embedding=pl.Series(embeddings)).drop("tokens")
+        # return self.tokens_frame.with_columns(embedding=pl.Series(embeddings)).drop("tokens")
 
     @staticmethod
     def word_embeddings_to_document_embedding(
@@ -87,15 +86,39 @@ class Embedder(ABC):
 @dataclass(kw_only=True)
 class TFIDFEmbedder(Embedder):
     """
-    Computes document embeddings with the TF-IDF or BM25 model.
+    Computes document embeddings with the TF-IDF algorithm.
     """
 
-    keyword_algorithm: KeywordAlgorithm
+    tfidf_vectorizer: TfidfVectorizer
+
+    def compute_embeddings_frame(self) -> EmbeddingsFrame:
+        token_strings = self.tokens_frame.to_pandas()["tokens"].str.join(" ")
+        tfidf_values = self.tfidf_vectorizer.fit_transform(token_strings).toarray()
+
+        return self.tokens_frame.select("d3_document_id").with_columns(
+            embedding=pl.Series(tfidf_values)
+        )
+
+
+@dataclass(kw_only=True)
+class BM25Embedder(Embedder):
+    """
+    Computes document embeddings with the BM25 algorithm.
+    """
 
     def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
-        return self.keyword_algorithm(
-            document_tokens, self.tokens_frame["tokens"].to_list()
-        ).tolist()
+        return bm25(document_tokens, self.tokens_frame["tokens"].to_list()).tolist()
+
+    def compute_embeddings_frame(self) -> EmbeddingsFrame:
+        with rich_progress_bar() as progress_bar:
+            embeddings = Parallel(n_jobs=-1, prefer="threads")(
+                delayed(self.compute_embedding_single_document)(row["tokens"])
+                for row in progress_bar.track(
+                    self.tokens_frame.iter_rows(named=True), total=len(self.tokens_frame)
+                )
+            )
+
+        return self.tokens_frame.with_columns(embedding=pl.Series(embeddings)).drop("tokens")
 
 
 @dataclass(kw_only=True)

@@ -4,7 +4,7 @@ Specifies placeholder default values for quick object initialization.
 
 import polars as pl
 
-from readnext.config import DataPaths
+from readnext.config import PROJECT_PATH
 from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference.constructor_plugin_seen import (
     SeenInferenceDataConstructorPlugin,
@@ -16,7 +16,11 @@ from readnext.modeling import (
 )
 from readnext.modeling.language_models import LanguageModelChoice
 
-documents_frame_default = pl.scan_parquet(DataPaths.merged.documents_frame).head(10).collect()
+
+# use testing documents data which is available during test runs in CI
+documents_frame_default = pl.read_parquet(
+    PROJECT_PATH / "tests" / "testing_data" / "test_documents_frame.parquet"
+)
 
 document_info_default = DocumentInfo(
     d3_document_id=-1,

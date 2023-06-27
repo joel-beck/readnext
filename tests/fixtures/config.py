@@ -2,13 +2,13 @@ from pathlib import Path
 
 import pytest
 
-from readnext.config import MagicNumbers
+from readnext.config import MagicNumbers, PROJECT_PATH
 
 
 @pytest.fixture(scope="session")
 def root_path() -> Path:
     """Return project root path when pytest is executed from the project root directory."""
-    return Path().cwd()
+    return PROJECT_PATH
 
 
 @pytest.fixture(scope="session")

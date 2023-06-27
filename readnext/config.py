@@ -27,6 +27,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+PROJECT_PATH = Path(__file__).resolve().parent.parent
+
 data_dirpath = Path(os.getenv("DATA_DIRPATH", "data"))
 models_dirpath = Path(os.getenv("MODELS_DIRPATH", "models"))
 results_dirpath = Path(os.getenv("RESULTS_DIRPATH", "results"))

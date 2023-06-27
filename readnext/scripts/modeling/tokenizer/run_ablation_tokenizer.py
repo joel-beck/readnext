@@ -9,8 +9,8 @@ from transformers import BertTokenizerFast
 
 from readnext.config import DataPaths, ModelVersions
 from readnext.utils.io import read_df_from_parquet
-from readnext.utils.logging import suppress_transformers_logging
 from readnext.utils.progress_bar import rich_progress_bar
+from readnext.utils.transformers_logging import suppress_transformers_logging
 
 
 def main() -> None:

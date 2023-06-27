@@ -1,5 +1,5 @@
 from abc import ABC
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Generic, TypeVar
 
 import polars as pl
@@ -23,7 +23,7 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
 
     token_ids_frame: TokenIdsFrame
     torch_model: TTorchModel
-    device: torch.device = get_torch_device()
+    device: torch.device = field(default_factory=get_torch_device)
     aggregation_strategy: AggregationStrategy = AggregationStrategy.mean
 
     @staticmethod

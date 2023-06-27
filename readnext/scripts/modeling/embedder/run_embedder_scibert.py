@@ -7,7 +7,7 @@ from transformers import BertModel
 from readnext.config import ModelVersions, ResultsPaths
 from readnext.modeling.language_models import BERTEmbedder
 from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
-from readnext.utils.logging import suppress_transformers_logging
+from readnext.utils.transformers_logging import suppress_transformers_logging
 
 
 def main() -> None:

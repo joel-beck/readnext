@@ -1,28 +1,23 @@
 """
-Precompute and store bibliographic coupling scores for all documents in a dataframe.
+Precompute and store bibliographic coupling scores for all documents.
 """
 
+
+import polars as pl
+
 from readnext.config import DataPaths, ResultsPaths
-from readnext.evaluation.scoring import precompute_co_references
-from readnext.utils import load_df_from_pickle, write_df_to_pickle
+from readnext.evaluation.scoring import precompute_co_references_polars
+from readnext.utils.io import write_df_to_parquet
 
 
 def main() -> None:
-    documents_authors_labels_citations_most_cited = load_df_from_pickle(
-        DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
-    )
-    # NOTE: Remove to train on full data
-    documents_authors_labels_citations_most_cited = (
-        documents_authors_labels_citations_most_cited.head(1000)
-    )
+    documents_frame = pl.scan_parquet(DataPaths.merged.documents_frame)
 
-    bibliographic_coupling_scores_most_cited = precompute_co_references(
-        documents_authors_labels_citations_most_cited
-    )
+    bibliographic_coupling_scores = precompute_co_references_polars(documents_frame)
 
-    write_df_to_pickle(
-        bibliographic_coupling_scores_most_cited,
-        ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl,
+    write_df_to_parquet(
+        bibliographic_coupling_scores,
+        ResultsPaths.citation_models.bibliographic_coupling_scores_parquet,
     )
 
 

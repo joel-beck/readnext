@@ -1,28 +1,22 @@
 """
-Precompute and store co-citation scores for all documents in a dataframe.
+Precompute and store co-citation analysis scores for all documents.
 """
 
+import polars as pl
+
 from readnext.config import DataPaths, ResultsPaths
-from readnext.evaluation.scoring import precompute_co_citations
-from readnext.utils import load_df_from_pickle, write_df_to_pickle
+from readnext.evaluation.scoring import precompute_co_citations_polars
+from readnext.utils.io import write_df_to_parquet
 
 
 def main() -> None:
-    documents_authors_labels_citations_most_cited = load_df_from_pickle(
-        DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
-    )
-    # NOTE: Remove to train on full data
-    documents_authors_labels_citations_most_cited = (
-        documents_authors_labels_citations_most_cited.head(1000)
-    )
+    documents_frame = pl.scan_parquet(DataPaths.merged.documents_frame)
 
-    co_citation_analysis_scores_most_cited = precompute_co_citations(
-        documents_authors_labels_citations_most_cited
-    )
+    co_citation_analysis_scores = precompute_co_citations_polars(documents_frame)
 
-    write_df_to_pickle(
-        co_citation_analysis_scores_most_cited,
-        ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl,
+    write_df_to_parquet(
+        co_citation_analysis_scores,
+        ResultsPaths.citation_models.co_citation_analysis_scores_parquet,
     )
 
 

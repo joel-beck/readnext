@@ -3,13 +3,9 @@ Compute scores and select the best recommendations from the hybrid recommender m
 both hybrid recommender component orders for a given query document.
 """
 
-import pandas as pd
+import polars as pl
 
 from readnext.config import DataPaths, ResultsPaths
-from readnext.data import (
-    add_citation_feature_rank_cols,
-    set_missing_publication_dates_to_max_rank,
-)
 from readnext.evaluation.metrics import AveragePrecision
 from readnext.evaluation.scoring import HybridScore, HybridScorer, compare_hybrid_scores
 from readnext.modeling import (
@@ -17,114 +13,126 @@ from readnext.modeling import (
     CitationModelDataConstructor,
     LanguageModelData,
     LanguageModelDataConstructor,
+    SeenModelDataConstructorPlugin,
 )
-from readnext.utils import load_df_from_pickle
+from readnext.utils.aliases import DocumentsFrame, ScoresFrame
+from readnext.utils.io import read_df_from_parquet
 
 
 def compare_hybrid_scores_by_document_id(
     query_d3_document_id: int,
-    documents_data: pd.DataFrame,
-    co_citation_analysis_scores: pd.DataFrame,
-    bibliographic_coupling_scores: pd.DataFrame,
-) -> pd.DataFrame:
+    documents_frame: DocumentsFrame,
+    co_citation_analysis_scores: ScoresFrame,
+    bibliographic_coupling_scores: ScoresFrame,
+) -> pl.DataFrame:
     # SECTION: Citation Models
+    model_data_constructor_plugin = SeenModelDataConstructorPlugin(
+        query_d3_document_id, documents_frame
+    )
+
     citation_model_data_constructor = CitationModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data.pipe(add_citation_feature_rank_cols).pipe(
-            set_missing_publication_dates_to_max_rank
-        ),
-        co_citation_analysis_scores=co_citation_analysis_scores,
-        bibliographic_coupling_scores=bibliographic_coupling_scores,
+        documents_frame=documents_frame,
+        co_citation_analysis_scores_frame=co_citation_analysis_scores,
+        bibliographic_coupling_scores_frame=bibliographic_coupling_scores,
+        constructor_plugin=model_data_constructor_plugin,
     )
     citation_model_data = CitationModelData.from_constructor(citation_model_data_constructor)
 
     # SECTION: Language Models
     # SUBSECTION: TF-IDF
-
-    tfidf_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
-        ResultsPaths.language_models.tfidf_cosine_similarities_most_cited_pkl
+    tfidf_cosine_similarities: ScoresFrame = read_df_from_parquet(
+        ResultsPaths.language_models.tfidf_cosine_similarities_parquet
     )
     tfidf_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=tfidf_cosine_similarities_most_cited,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=tfidf_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     tfidf_data = LanguageModelData.from_constructor(tfidf_data_constructor)
 
     # SUBSECTION: BM25
-    bm25_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
-        ResultsPaths.language_models.bm25_cosine_similarities_most_cited_pkl
+    bm25_cosine_similarities: ScoresFrame = read_df_from_parquet(
+        ResultsPaths.language_models.bm25_cosine_similarities_parquet
     )
     bm25_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=bm25_cosine_similarities_most_cited,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=bm25_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     bm25_data = LanguageModelData.from_constructor(bm25_data_constructor)
 
     # SUBSECTION: Word2Vec
-    word2vec_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
-        ResultsPaths.language_models.word2vec_cosine_similarities_most_cited_pkl
+    word2vec_cosine_similarities: ScoresFrame = read_df_from_parquet(
+        ResultsPaths.language_models.word2vec_cosine_similarities_parquet
     )
     word2vec_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=word2vec_cosine_similarities_most_cited,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=word2vec_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     word2vec_data = LanguageModelData.from_constructor(word2vec_data_constructor)
 
     # SUBSECTION: GloVe
-    glove_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
-        ResultsPaths.language_models.glove_cosine_similarities_most_cited_pkl
+    glove_cosine_similarities: ScoresFrame = read_df_from_parquet(
+        ResultsPaths.language_models.glove_cosine_similarities_parquet
     )
     glove_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=glove_cosine_similarities_most_cited,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=glove_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     glove_data = LanguageModelData.from_constructor(glove_data_constructor)
 
     # SUBSECTION: FastText
-    fasttext_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
-        ResultsPaths.language_models.fasttext_cosine_similarities_most_cited_pkl
+    fasttext_cosine_similarities: ScoresFrame = read_df_from_parquet(
+        ResultsPaths.language_models.fasttext_cosine_similarities_parquet
     )
     fasttext_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=fasttext_cosine_similarities_most_cited,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=fasttext_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     fasttext_data = LanguageModelData.from_constructor(fasttext_data_constructor)
 
     # SUBSECTION: BERT
-    bert_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
-        ResultsPaths.language_models.bert_cosine_similarities_most_cited_pkl
+    bert_cosine_similarities: ScoresFrame = read_df_from_parquet(
+        ResultsPaths.language_models.bert_cosine_similarities_parquet
     )
     bert_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=bert_cosine_similarities_most_cited,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=bert_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     bert_data = LanguageModelData.from_constructor(bert_data_constructor)
 
     # SUBSECTION: SciBERT
-    scibert_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
-        ResultsPaths.language_models.scibert_cosine_similarities_most_cited_pkl
+    scibert_cosine_similarities: ScoresFrame = read_df_from_parquet(
+        ResultsPaths.language_models.scibert_cosine_similarities_parquet
     )
     scibert_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=scibert_cosine_similarities_most_cited,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=scibert_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     scibert_data = LanguageModelData.from_constructor(scibert_data_constructor)
 
     # SUBSECTION: Longformer
-    longformer_cosine_similarities_most_cited: pd.DataFrame = load_df_from_pickle(
-        ResultsPaths.language_models.longformer_cosine_similarities_most_cited_pkl
+    longformer_cosine_similarities: ScoresFrame = read_df_from_parquet(
+        ResultsPaths.language_models.longformer_cosine_similarities_parquet
     )
     longformer_data_constructor = LanguageModelDataConstructor(
         d3_document_id=query_d3_document_id,
-        documents_data=documents_data,
-        cosine_similarities=longformer_cosine_similarities_most_cited,
+        documents_frame=documents_frame,
+        cosine_similarity_scores_frame=longformer_cosine_similarities,
+        constructor_plugin=model_data_constructor_plugin,
     )
     longformer_data = LanguageModelData.from_constructor(longformer_data_constructor)
 
@@ -234,64 +242,48 @@ def compare_hybrid_scores_by_document_id(
     longformer_hybrid_score = HybridScore.from_scorer(longformer_hybrid_scorer)
 
     # SECTION: Compare Scores
-    return (
-        compare_hybrid_scores(
-            tfidf_hybrid_score,
-            bm25_hybrid_score,
-            word2vec_hybrid_score,
-            glove_hybrid_score,
-            fasttext_hybrid_score,
-            bert_hybrid_score,
-            scibert_hybrid_score,
-            longformer_hybrid_score,
-        )
-        .assign(query_d3_document_id=query_d3_document_id)
-        .set_index("query_d3_document_id")
-        .rename_axis(index="Query Document ID")
-    )
+    return compare_hybrid_scores(
+        tfidf_hybrid_score,
+        bm25_hybrid_score,
+        word2vec_hybrid_score,
+        glove_hybrid_score,
+        fasttext_hybrid_score,
+        bert_hybrid_score,
+        scibert_hybrid_score,
+        longformer_hybrid_score,
+    ).insert_at_idx(0, pl.Series("Query Document ID", [query_d3_document_id] * 8))
 
 
 def main() -> None:
-    documents_authors_labels_citations_most_cited: pd.DataFrame = load_df_from_pickle(
-        DataPaths.merged.documents_authors_labels_citations_most_cited_pkl
-    )
-    # NOTE: Remove to evaluate on full data
-    documents_authors_labels_citations_most_cited = (
-        documents_authors_labels_citations_most_cited.head(1000)
+    documents_frame: DocumentsFrame = read_df_from_parquet(DataPaths.merged.documents_frame)
+
+    bibliographic_coupling_scores: ScoresFrame = read_df_from_parquet(
+        ResultsPaths.citation_models.bibliographic_coupling_scores_parquet
     )
 
-    bibliographic_coupling_scores_most_cited: pd.DataFrame = load_df_from_pickle(
-        ResultsPaths.citation_models.bibliographic_coupling_scores_most_cited_pkl
-    )
-
-    co_citation_analysis_scores_most_cited: pd.DataFrame = load_df_from_pickle(
-        ResultsPaths.citation_models.co_citation_analysis_scores_most_cited_pkl
+    co_citation_analysis_scores: ScoresFrame = read_df_from_parquet(
+        ResultsPaths.citation_models.co_citation_analysis_scores_parquet
     )
 
     # add query document ids to index
-    average_precision_scores = pd.concat(
+    average_precision_scores = pl.concat(
         [
             compare_hybrid_scores_by_document_id(
                 query_d3_document_id,
-                documents_authors_labels_citations_most_cited,
-                co_citation_analysis_scores_most_cited,
-                bibliographic_coupling_scores_most_cited,
+                documents_frame,
+                co_citation_analysis_scores,
+                bibliographic_coupling_scores,
             )
-            for query_d3_document_id in documents_authors_labels_citations_most_cited.head(
-                5
-            ).index.to_numpy()
+            for query_d3_document_id in documents_frame["d3_document_id"].head(5)
         ]
-    )
+    ).with_columns(pl.max(pl.exclude(["Query Document ID", "Language Model"])).alias("Best Score"))
 
-    # add best score column for each query document id
-    average_precision_scores["Best Score"] = average_precision_scores.select_dtypes(
-        include="number"
-    ).max(axis=1)
+    print(average_precision_scores)
 
     # filter best language model for each query document id
-    average_precision_scores.sort_values("Best Score", ascending=False).reset_index(
-        drop=False
-    ).drop_duplicates(subset="Query Document ID").reset_index(drop=True)
+    average_precision_scores.sort(by="Best Score", descending=True).unique(
+        subset="Query Document ID"
+    )
 
 
 if __name__ == "__main__":

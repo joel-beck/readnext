@@ -1,78 +1,97 @@
-import pandas as pd
-from tqdm import tqdm
+"""
+Precompute co-citation analysis scores, bibliographic coupling scores and cosine
+similarity scores.
+"""
 
+import polars as pl
+from joblib import Parallel, delayed
+
+from readnext.config import MagicNumbers
 from readnext.evaluation.metrics import (
     CosineSimilarity,
     CountCommonCitations,
     CountCommonReferences,
     PairwiseMetric,
 )
-from readnext.modeling import DocumentInfo, DocumentScore
-from readnext.utils import ScoresFrame, sort_document_scores
+from readnext.utils.aliases import DocumentsFrame, EmbeddingsFrame, ScoresFrame
+from readnext.utils.progress_bar import rich_progress_bar
 
 
-def find_top_n_matches_single_document(
-    input_df: pd.DataFrame, query_d3_document_id: int, pairwise_metric: PairwiseMetric, n: int
-) -> list[DocumentScore]:
+def generate_id_combinations_frame(documents_frame: DocumentsFrame) -> pl.DataFrame:
     """
-    Find the n documents with the highest pairwise score for a single query document.
+    Create a dataframe with two columns `query_d3_document_id` and
+    `candidate_d3_document_id` with all combinations of the documents `d3_document_id`
+    values.
     """
-    document_scores = []
+    query_frame = pl.DataFrame(dict(query_d3_document_id=documents_frame["d3_document_id"]))
+    candidate_frame = pl.DataFrame(dict(candidate_d3_document_id=documents_frame["d3_document_id"]))
 
-    for d3_document_id in input_df.index:
-        if d3_document_id == query_d3_document_id:
-            continue
+    return query_frame.join(candidate_frame, how="cross")
 
-        # full documents data (input of `precompute_co_citations` and
-        # `precompute_co_references`) has index of type `pd.Index`, while the input of
-        # `precompute_cosine_similarities` does not require an extra `.item()` call
-        d3_document_id = (
-            d3_document_id if isinstance(d3_document_id, int) else d3_document_id.item()
+
+def remove_matching_id_rows(id_combinations_frame: pl.DataFrame) -> pl.DataFrame:
+    """
+    Remove all rows from a dataframe where the `query_d3_document_id` and
+    `candidate_d3_document_id` values are identical. Pairwise scores should only be
+    computed for two different documents.
+    """
+    return id_combinations_frame.filter(
+        pl.col("query_d3_document_id") != pl.col("candidate_d3_document_id")
+    )
+
+
+def pairwise_scores_from_columns(
+    documents_frame: DocumentsFrame,
+    id_combinations_frame: pl.DataFrame,
+    pairwise_metric: PairwiseMetric,
+) -> ScoresFrame:
+    """
+    Add third `score` column that is computed from the `query_d3_document_id` and
+    `candidate_d3_document_id` columns by means of a given `pairwise_metric`.
+    """
+    with rich_progress_bar() as progress_bar:
+        scores = Parallel(n_jobs=-1, prefer="threads")(
+            delayed(pairwise_metric.from_df)(
+                documents_frame,
+                row["query_d3_document_id"],
+                row["candidate_d3_document_id"],
+            )
+            for row in progress_bar.track(
+                id_combinations_frame.iter_rows(named=True), total=len(id_combinations_frame)
+            )
         )
 
-        document_info = DocumentInfo(d3_document_id=d3_document_id)
-        score = pairwise_metric.from_df(input_df, query_d3_document_id, d3_document_id)
-        document_scores.append(DocumentScore(document_info=document_info, score=score))
-
-    return sort_document_scores(document_scores)[:n]
+    return id_combinations_frame.with_columns(score=pl.Series(scores))
 
 
 def precompute_pairwise_scores(
-    input_df: pd.DataFrame, pairwise_metric: PairwiseMetric, n: int | None
+    documents_frame: DocumentsFrame, pairwise_metric: PairwiseMetric, n: int
 ) -> ScoresFrame:
     """
-    Precompute and store pairwise scores for all documents in a dataframe with one row
-    per query document. The scores are stored as a sorted list of `DocumentScore`
-    objects.
+    Precompute and store pairwise scores for all documents in `ScoresFrame` with three
+    columns named `query_d3_document_id`, `candidate_d3_document_id`, and `score`.
+
+    Threshold the number of scores per query document to a given integer value `n` such
+    that the output dataframe size grows linearly with the number of documents.
     """
-    tqdm.pandas()
-
-    if n is None:
-        n = len(input_df)
-
-    return (
-        pd.DataFrame(data=input_df.index, columns=["document_id"])
-        .assign(
-            # the new scoped dataframe inside the first lambda function must have a
-            # different name than the input dataframe since the input dataframe is
-            # passed to the `find_top_n_matches_single_document` function and NOT the
-            # scoped dataframe!
-            scores=lambda new_df: new_df["document_id"].progress_apply(
-                lambda query_d3_document_id: find_top_n_matches_single_document(
-                    input_df, query_d3_document_id, pairwise_metric, n
-                )
-            )
-        )
-        .set_index("document_id")
+    id_combinations_frame = generate_id_combinations_frame(documents_frame).pipe(
+        remove_matching_id_rows
     )
+
+    scores_frame = pairwise_scores_from_columns(
+        documents_frame, id_combinations_frame, pairwise_metric
+    ).sort(by=["query_d3_document_id", "score"], descending=[False, True])
+
+    # slice top n scores per query document
+    return scores_frame.groupby("query_d3_document_id").head(n)
 
 
 # Set value for `n` higher for co-citation analysis and bibliographic coupling since
 # they are features for the weighted linear model. The higher the value for `n`, the
 # more observations the weighted model is able to use.
 def precompute_co_citations(
-    df: pd.DataFrame,
-    n: int | None = None,
+    documents_frame: DocumentsFrame,
+    n: int = MagicNumbers.scoring_limit,
 ) -> ScoresFrame:
     """
     Precompute and store pairwise co-citation scores for all documents in a dataframe
@@ -80,31 +99,30 @@ def precompute_co_citations(
 
     The input dataframe is the full documents data.
     """
-    return precompute_pairwise_scores(df, CountCommonCitations(), n)
+    return precompute_pairwise_scores(documents_frame, CountCommonCitations(), n)
 
 
 def precompute_co_references(
-    df: pd.DataFrame,
-    n: int | None = None,
+    documents_frame: DocumentsFrame,
+    n: int = MagicNumbers.scoring_limit,
 ) -> ScoresFrame:
     """
-    Precmopute and store pairwise co-reference scores for all documents in a dataframe
+    Precompute and store pairwise co-reference scores for all documents in a dataframe
     with one row per query document.
 
     The input dataframe is the full documents data.
     """
-    return precompute_pairwise_scores(df, CountCommonReferences(), n)
+    return precompute_pairwise_scores(documents_frame, CountCommonReferences(), n)
 
 
 def precompute_cosine_similarities(
-    df: pd.DataFrame,
-    n: int | None = None,
+    embeddings_frame: EmbeddingsFrame,
+    n: int = MagicNumbers.scoring_limit,
 ) -> ScoresFrame:
     """
     Precompute and store pairwise cosine similarity scores for all documents in a
     dataframe with one row per query document.
 
-    The input dataframe has a single column named `embedding` and the index is named
-    `document_id`.
+    The input dataframe has two columns named `d3_document_id` and `embedding`.
     """
-    return precompute_pairwise_scores(df, CosineSimilarity(), n)
+    return precompute_pairwise_scores(embeddings_frame, CosineSimilarity(), n)

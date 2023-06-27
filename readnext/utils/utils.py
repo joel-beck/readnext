@@ -1,8 +1,6 @@
 from collections.abc import Hashable
 from typing import TypeVar
 
-from readnext.modeling import DocumentScore
-
 TKey = TypeVar("TKey", bound=Hashable)
 TValue = TypeVar("TValue")
 
@@ -28,7 +26,3 @@ def slice_mapping(
         end = len(mapping)
 
     return {key: value for i, (key, value) in enumerate(mapping.items()) if start <= i < end}
-
-
-def sort_document_scores(document_scores: list[DocumentScore]) -> list[DocumentScore]:
-    return sorted(document_scores, key=lambda x: x.score, reverse=True)

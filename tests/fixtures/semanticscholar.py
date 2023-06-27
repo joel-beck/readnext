@@ -10,7 +10,7 @@ def semanticscholar_request() -> SemanticscholarRequest:
 
 
 @pytest.fixture
-def json_response() -> SemanticScholarJson:
+def semanticscholar_json() -> SemanticScholarJson:
     return {
         "paperId": "TestID",
         "title": "TestTitle",
@@ -21,11 +21,14 @@ def json_response() -> SemanticScholarJson:
     }
 
 
-@pytest.fixture
+# must have scope="session" to be used in aother fixtures with scope="session"
+@pytest.fixture(scope="session")
 def semanticscholar_response() -> SemanticScholarResponse:
     return SemanticScholarResponse(
         semanticscholar_id="TestID",
+        semanticscholar_url="TestURL",
         arxiv_id="ArxivID",
+        arxiv_url="ArxivURL",
         title="TestTitle",
         abstract="TestAbstract",
         citations=[],

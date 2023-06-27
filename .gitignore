@@ -104,6 +104,7 @@ ENV/
 # pdm
 .pdm-python
 .pdm.toml
+.pdm-build
 
 # ruff
 .ruff_cache/

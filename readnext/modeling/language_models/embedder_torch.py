@@ -3,18 +3,12 @@ from dataclasses import dataclass
 from typing import Generic, TypeVar
 
 import torch
+from tqdm import tqdm
 
 from readnext.modeling.language_models.embedder import AggregationStrategy
-
-# do not import from .language_models to avoid circular imports
-from readnext.modeling.language_models.tokenizer_tensor import TokenIds, TokensIdMapping
-from readnext.utils import (
-    BertModelProtocol,
-    Embedding,
-    EmbeddingsMapping,
-    LongformerModelProtocol,
-    setup_progress_bar,
-)
+from readnext.utils.aliases import Embedding, EmbeddingsFrame, TokenIds, TokenIdsFrame
+from readnext.utils.progress_bar import tqdm_progress_bar_wrapper
+from readnext.utils.protocols import BertModelProtocol, LongformerModelProtocol
 
 TTorchModel = TypeVar("TTorchModel", bound=BertModelProtocol | LongformerModelProtocol)
 
@@ -22,11 +16,11 @@ TTorchModel = TypeVar("TTorchModel", bound=BertModelProtocol | LongformerModelPr
 @dataclass(kw_only=True)
 class TorchEmbedder(ABC, Generic[TTorchModel]):
     """
-    Abstract Base class for pytorch embedding models. All embedding models implement a
-    `compute_embeddings_mapping` method.
+    Abstract Base class for pytorch embedding models. All embedding models implement
+    `compute_embedding_single_document()` and `compute_embeddings_frame()` methods.
     """
 
-    tokens_tensor_mapping: TokensIdMapping
+    token_ids_frame: TokenIdsFrame
     torch_model: TTorchModel
     aggregation_strategy: AggregationStrategy = AggregationStrategy.mean
 
@@ -68,31 +62,29 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
         document_embeddings: torch.Tensor = outputs.last_hidden_state
         document_embedding = self.aggregate_document_embeddings(document_embeddings)
 
-        return document_embedding.squeeze(0).detach().numpy()
+        return document_embedding.squeeze(0).detach().tolist()
 
-    def compute_embeddings_mapping(self) -> EmbeddingsMapping:
+    def compute_embeddings_frame(self) -> EmbeddingsFrame:
         """
         Takes a tensor of tokenized documents as input and computes the BERT or
         Longformer token embeddings.
 
-        Output is a dictionary with document ids as keys and document embeddings as
-        values. Each document embedding has shape (n_dimensions,) with
-
-        - n_dimensions: dimension of the embedding space
+        Output is a polars data frame with two columns named `d3_document_id` and
+        `embedding`.
         """
-        embeddings_mapping = {}
-
-        with setup_progress_bar() as progress_bar:
-            for d3_document_id, tokens_tensor in progress_bar.track(
-                self.tokens_tensor_mapping.items(),
-                total=len(self.tokens_tensor_mapping),
-                description=f"{self.__class__.__name__}:",
-            ):
-                embeddings_mapping[d3_document_id] = self.compute_embedding_single_document(
-                    tokens_tensor
+        with tqdm(total=len(self.token_ids_frame)) as progress_bar:
+            embeddings_frame = self.token_ids_frame.with_columns(
+                embedding=self.token_ids_frame["token_ids"].apply(
+                    tqdm_progress_bar_wrapper(
+                        progress_bar,
+                        # each row is implicitly converted to a polars Series from a
+                        # Python list during `apply()`
+                        lambda row: self.compute_embedding_single_document(row.to_list()),
+                    )
                 )
+            )
 
-        return embeddings_mapping
+        return embeddings_frame.drop("token_ids")
 
 
 @dataclass(kw_only=True)

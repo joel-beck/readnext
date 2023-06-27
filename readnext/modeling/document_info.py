@@ -1,8 +1,4 @@
 from dataclasses import dataclass, field
-from typing import overload
-
-import pandas as pd
-from typing_extensions import Self
 
 
 @dataclass(kw_only=True)
@@ -12,7 +8,10 @@ class DocumentInfo:
     d3_document_id: int
     title: str = ""
     author: str = ""
+    publication_date: str = ""
     arxiv_labels: list[str] = field(default_factory=list)
+    semanticscholar_url: str = ""
+    arxiv_url: str = ""
     abstract: str = ""
 
     def __repr__(self) -> str:
@@ -21,7 +20,10 @@ class DocumentInfo:
             f"  d3_document_id={self.d3_document_id},\n"
             f"  title={self.title},\n"
             f"  author={self.author},\n"
+            f"  publication_date={self.publication_date},\n"
             f"  arxiv_labels={self.arxiv_labels},\n"
+            f"  semanticscholar_url={self.semanticscholar_url}\n"
+            f"  arxiv_url={self.arxiv_url}\n"
             f"  abstract={self.abstract}\n"
             ")"
         )
@@ -32,66 +34,8 @@ class DocumentInfo:
             "---------------------\n"
             f"Title: {self.title}\n"
             f"Author: {self.author}\n"
-            f"Arxiv Labels: {self.arxiv_labels}"
+            f"Publication Date: {self.publication_date}\n"
+            f"Arxiv Labels: {self.arxiv_labels}\n"
+            f"Semanticscholar URL: {self.semanticscholar_url}\n"
+            f"Arxiv URL: {self.arxiv_url}"
         )
-
-
-@dataclass
-class DocumentsInfo:
-    """Represents a collection of multiple documents/papers."""
-
-    documents_info: list[DocumentInfo]
-
-    def __post_init__(self) -> None:
-        self.d3_document_ids = [
-            document_info.d3_document_id for document_info in self.documents_info
-        ]
-        self.titles = [document_info.title for document_info in self.documents_info]
-        self.abstracts = [document_info.abstract for document_info in self.documents_info]
-
-    def __len__(self) -> int:
-        return len(self.documents_info)
-
-    @overload
-    def __getitem__(self, index: int) -> DocumentInfo:
-        ...
-
-    @overload
-    def __getitem__(self, index: slice) -> Self:
-        ...
-
-    def __getitem__(self, index: int | slice) -> DocumentInfo | Self:
-        # return single document info for integer index
-        if isinstance(index, int):
-            return self.documents_info[index]
-        # return list of document infos for slice index
-        return self.__class__(self.documents_info[index])
-
-
-# defined here instead of in readnext.evaluation to avoid circular imports
-@dataclass(kw_only=True)
-class DocumentScore:
-    """
-    Represents a document and its corresponding score. Depending on the context, the
-    score can be e.g. a similarity score or an average precision score.
-    """
-
-    document_info: DocumentInfo
-    score: float
-
-
-def documents_info_from_df(df: pd.DataFrame) -> DocumentsInfo:
-    """
-    Generate a `DocumentsInfo` instance from the input documents dataframe, which
-    contains `document_id`, `title`, and `abstract` columns.
-    """
-    document_ids = df["document_id"].tolist()
-    titles = df["title"].tolist()
-    abstracts = df["abstract"].tolist()
-
-    return DocumentsInfo(
-        [
-            DocumentInfo(d3_document_id=d3_document_id, title=title, abstract=abstract)
-            for d3_document_id, title, abstract in zip(document_ids, titles, abstracts)
-        ]
-    )

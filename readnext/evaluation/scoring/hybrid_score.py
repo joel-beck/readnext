@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-import pandas as pd
+import polars as pl
 from typing_extensions import Self
 
 from readnext.evaluation.scoring.hybrid_scorer import HybridScorer
@@ -25,10 +25,10 @@ class HybridScore:
         """Constructs a HybridScore from a HybridScorer."""
         return cls(
             language_model_name=hybrid_scorer.language_model_name,
-            citation_to_language=hybrid_scorer.citation_to_language_scores,
-            citation_to_language_candidates=hybrid_scorer.citation_to_language_candidate_scores,
-            language_to_citation=hybrid_scorer.language_to_citation_scores,
-            language_to_citation_candidates=hybrid_scorer.language_to_citation_candidate_scores,
+            citation_to_language=hybrid_scorer.citation_to_language_score,
+            citation_to_language_candidates=hybrid_scorer.citation_to_language_candidates_score,
+            language_to_citation=hybrid_scorer.language_to_citation_score,
+            language_to_citation_candidates=hybrid_scorer.language_to_citation_candidates_score,
         )
 
     def __str__(self) -> str:
@@ -45,9 +45,9 @@ class HybridScore:
             f"Final Score: {self.language_to_citation:.3f}\n"
         )
 
-    def to_frame(self) -> pd.DataFrame:
+    def to_frame(self) -> pl.DataFrame:
         """Collect all scores in a DataFrame."""
-        return pd.DataFrame(
+        return pl.DataFrame(
             {
                 "Language Model": self.language_model_name,
                 "Citation -> Language Candidates": round(
@@ -59,13 +59,12 @@ class HybridScore:
                 ),
                 "Language -> Citation Final": round(self.language_to_citation, ndigits=3),
             },
-            index=[0],
         )
 
 
-def compare_hybrid_scores(*hybrid_scores: HybridScore) -> pd.DataFrame:
+def compare_hybrid_scores(*hybrid_scores: HybridScore) -> pl.DataFrame:
     """
     Stacks the hybrid recommender scores for multiple query documents vertically in a
     DataFrame.
     """
-    return pd.concat([hybrid_score.to_frame() for hybrid_score in hybrid_scores], ignore_index=True)
+    return pl.concat([hybrid_score.to_frame() for hybrid_score in hybrid_scores])

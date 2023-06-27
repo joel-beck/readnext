@@ -20,86 +20,61 @@ containing the downloaded D3 authors in jsonl format
 """
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
+PROJECT_PATH = Path(__file__).resolve().parent.parent
+
 data_dirpath = Path(os.getenv("DATA_DIRPATH", "data"))
 models_dirpath = Path(os.getenv("MODELS_DIRPATH", "models"))
 results_dirpath = Path(os.getenv("RESULTS_DIRPATH", "results"))
 
 documents_metadata_json_filename = os.getenv(
-    "DOCUMENTS_METADATA_FILENAME", "2022-11-30-papers.jsonl"
+    "DOCUMENTS_METADATA_FILENAME", "2022-11-30_papers.jsonl"
 )
-authors_metadata_json_filename = os.getenv("AUTHORS_METADATA_FILENAME", "2022-11-30-authors.jsonl")
+authors_metadata_json_filename = os.getenv("AUTHORS_METADATA_FILENAME", "2022-11-30_authors.jsonl")
+arxiv_metadata_json_filename = os.getenv("ARXIV_METADATA_FILENAME", "arxiv_metadata.json")
 
 
 @dataclass(frozen=True)
-class D3DocumentsDataPaths:
-    """Sets file paths for the raw D3 documents data."""
+class RawDataPaths:
+    """
+    Sets file paths for the raw documents, authors and arxiv metadata in JSON and
+    Parquet format.
+    """
 
-    raw_json: Path = data_dirpath / documents_metadata_json_filename
-    chunks_stem: Path = data_dirpath / "2022-11-30_documents_chunks"
-    full_pkl: Path = data_dirpath / "2022-11-30_documents_full.pkl"
-    preprocessed_chunks_stem: Path = data_dirpath / "documents_preprocessed_chunks"
-
-
-@dataclass(frozen=True)
-class D3AuthorsDataPaths:
-    """Sets file paths for the raw D3 authors data."""
-
-    raw_json: Path = data_dirpath / authors_metadata_json_filename
-    most_cited_pkl: Path = data_dirpath / "2022-11-30_authors_most_cited.pkl"
-    full_pkl: Path = data_dirpath / "2022-11-30_authors_full.pkl"
-
-
-@dataclass(frozen=True)
-class D3:
-    """Collects file paths for the raw D3 data."""
-
-    documents: D3DocumentsDataPaths = D3DocumentsDataPaths()  # noqa: RUF009
-    authors: D3AuthorsDataPaths = D3AuthorsDataPaths()  # noqa: RUF009
-
-
-@dataclass(frozen=True)
-class ArxivDataPaths:
-    """Sets file paths for the raw arXiv data."""
-
-    raw_json: Path = data_dirpath / "arxiv_metadata.json"
-    id_labels_pkl: Path = data_dirpath / "arxiv_id_labels.pkl"
+    documents_json: Path = data_dirpath / documents_metadata_json_filename
+    documents_parquet: Path = data_dirpath / "2022-11-30_documents.parquet"
+    authors_json: Path = data_dirpath / authors_metadata_json_filename
+    authors_parquet: Path = data_dirpath / "2022-11-30_authors.parquet"
+    arxiv_labels_json: Path = data_dirpath / arxiv_metadata_json_filename
+    arxiv_labels_parquet: Path = data_dirpath / "arxiv_metadata.parquet"
 
 
 @dataclass(frozen=True)
 class MergedDataPaths:
     """
-    Sets file paths for all processed data files after adding information to the raw D3
-    data.
+    Sets file paths for all processed data files after adding information to the raw
+    documents data.
     """
 
-    documents_labels_chunk_stem: Path = data_dirpath / "documents_labels_chunks"
-    documents_labels_pkl: Path = data_dirpath / "documents_labels.pkl"
-    documents_authors_labels_pkl: Path = data_dirpath / "documents_authors_labels.pkl"
-    documents_authors_labels_citations_chunks_stem: Path = (
-        data_dirpath / "documents_authors_labels_citations_chunks"
+    documents_labels: Path = data_dirpath / "documents_labels.parquet"
+    documents_authors_labels: Path = data_dirpath / "documents_authors_labels.parquet"
+    documents_authors_labels_citations: Path = (
+        data_dirpath / "documents_authors_labels_citations.parquet"
     )
-    documents_authors_labels_citations_pkl: Path = (
-        data_dirpath / "documents_authors_labels_citations.pkl"
-    )
-    documents_authors_labels_citations_most_cited_pkl: Path = (
-        data_dirpath / "documents_authors_labels_citations_most_cited.pkl"
-    )
-    most_cited_subset_size: int = 10_000
+    documents_frame: Path = data_dirpath / "documents_frame.parquet"
 
 
 @dataclass(frozen=True)
 class DataPaths:
     """Collects file paths for all data files."""
 
-    d3: D3 = D3()  # noqa: RUF009
-    arxiv: ArxivDataPaths = ArxivDataPaths()  # noqa: RUF009
+    raw: RawDataPaths = RawDataPaths()  # noqa: RUF009
     merged: MergedDataPaths = MergedDataPaths()  # noqa: RUF009
 
 
@@ -129,11 +104,11 @@ class ModelPaths:
 class CitationModelsResultsPaths:
     """Sets file paths for citation model results."""
 
-    bibliographic_coupling_scores_most_cited_pkl: Path = (
-        results_dirpath / "bibliographic_coupling_scores_most_cited.pkl"
+    bibliographic_coupling_scores_parquet: Path = (
+        results_dirpath / "bibliographic_coupling_scores.parquet"
     )
-    co_citation_analysis_scores_most_cited_pkl: Path = (
-        results_dirpath / "co_citation_analysis_scores_most_cited.pkl"
+    co_citation_analysis_scores_parquet: Path = (
+        results_dirpath / "co_citation_analysis_scores.parquet"
     )
 
 
@@ -141,55 +116,45 @@ class CitationModelsResultsPaths:
 class LanguageModelsResultsPaths:
     """Sets file paths for language model results."""
 
-    spacy_tokenized_abstracts_mapping_most_cited_pkl: Path = (
-        results_dirpath / "spacy_tokenized_abstracts_mapping_most_cited.pkl"
+    spacy_tokens_frame_parquet: Path = results_dirpath / "spacy_tokens_frame.parquet"
+
+    tfidf_embeddings_frame_parquet: Path = results_dirpath / "tfidf_embeddings_frame.parquet"
+    tfidf_cosine_similarities_parquet: Path = results_dirpath / "tfidf_cosine_similarities.parquet"
+
+    bm25_embeddings_frame_parquet: Path = results_dirpath / "bm25_embeddings_frame.parquet"
+    bm25_cosine_similarities_parquet: Path = results_dirpath / "bm25_cosine_similarities.parquet"
+
+    word2vec_embeddings_frame_parquet: Path = results_dirpath / "word2vec_embeddings_frame.parquet"
+    word2vec_cosine_similarities_parquet: Path = (
+        results_dirpath / "word2vec_cosine_similarities.parquet"
     )
-    tfidf_embeddings_most_cited_pkl: Path = results_dirpath / "tfidf_embeddings_most_cited.pkl"
-    tfidf_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "tfidf_cosine_similarities_most_cited.pkl"
+
+    glove_embeddings_frame_parquet: Path = results_dirpath / "glove_embeddings_frame.parquet"
+    glove_cosine_similarities_parquet: Path = results_dirpath / "glove_cosine_similarities.parquet"
+
+    fasttext_embeddings_frame_parquet: Path = results_dirpath / "fasttext_embeddings_frame.parquet"
+    fasttext_cosine_similarities_parquet: Path = (
+        results_dirpath / "fasttext_cosine_similarities.parquet"
     )
-    bm25_embeddings_most_cited_pkl: Path = results_dirpath / "bm25_embeddings_most_cited.pkl"
-    bm25_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "bm25_cosine_similarities_most_cited.pkl"
+
+    bert_token_ids_frame_parquet: Path = results_dirpath / "bert_token_ids_frame.parquet"
+    bert_embeddings_frame_parquet: Path = results_dirpath / "bert_embeddings_frame.parquet"
+    bert_cosine_similarities_parquet: Path = results_dirpath / "bert_cosine_similarities.parquet"
+
+    scibert_token_ids_frame_parquet: Path = results_dirpath / "scibert_token_ids_frame.parquet"
+    scibert_embeddings_frame_parquet: Path = results_dirpath / "scibert_embeddings_frame.parquet"
+    scibert_cosine_similarities_parquet: Path = (
+        results_dirpath / "scibert_cosine_similarities.parquet"
     )
-    word2vec_embeddings_most_cited_pkl: Path = (
-        results_dirpath / "word2vec_embeddings_most_cited.pkl"
+
+    longformer_token_ids_frame_parquet: Path = (
+        results_dirpath / "longformer_token_ids_frame.parquet"
     )
-    word2vec_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "word2vec_cosine_similarities_most_cited.pkl"
+    longformer_embeddings_frame_parquet: Path = (
+        results_dirpath / "longformer_embeddings_frame.parquet"
     )
-    glove_embeddings_most_cited_pkl: Path = results_dirpath / "glove_embeddings_most_cited.pkl"
-    glove_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "glove_cosine_similarities_most_cited.pkl"
-    )
-    fasttext_embeddings_most_cited_pkl: Path = (
-        results_dirpath / "fasttext_embeddings_most_cited.pkl"
-    )
-    fasttext_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "fasttext_cosine_similarities_most_cited.pkl"
-    )
-    bert_tokenized_abstracts_mapping_most_cited_pkl: Path = (
-        results_dirpath / "bert_tokenized_abstracts_mapping_most_cited.pkl"
-    )
-    bert_embeddings_most_cited_pkl: Path = results_dirpath / "bert_embeddings_most_cited.pkl"
-    bert_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "bert_cosine_similarities_most_cited.pkl"
-    )
-    scibert_tokenized_abstracts_mapping_most_cited_pkl: Path = (
-        results_dirpath / "scibert_tokenized_abstracts_mapping_most_cited.pkl"
-    )
-    scibert_embeddings_most_cited_pkl: Path = results_dirpath / "scibert_embeddings_most_cited.pkl"
-    scibert_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "scibert_cosine_similarities_most_cited.pkl"
-    )
-    longformer_tokenized_abstracts_mapping_most_cited_pkl: Path = (
-        results_dirpath / "longformer_tokenized_abstracts_mapping_most_cited.pkl"
-    )
-    longformer_embeddings_most_cited_pkl: Path = (
-        results_dirpath / "longformer_embeddings_most_cited.pkl"
-    )
-    longformer_cosine_similarities_most_cited_pkl: Path = (
-        results_dirpath / "longformer_cosine_similarities_most_cited.pkl"
+    longformer_cosine_similarities_parquet: Path = (
+        results_dirpath / "longformer_cosine_similarities.parquet"
     )
 
 
@@ -199,3 +164,84 @@ class ResultsPaths:
 
     citation_models: CitationModelsResultsPaths = CitationModelsResultsPaths()  # noqa: RUF009
     language_models: LanguageModelsResultsPaths = LanguageModelsResultsPaths()  # noqa: RUF009
+
+
+@dataclass
+class MagicNumbers:
+    """
+    Sets numeric values for dataset sizes, scoring and the candidate and final
+    recommendation list.
+    """
+
+    documents_frame_intermediate_cutoff: int = 1_000_000
+    documents_frame_final_size: int = 10_000
+    documents_frame_test_size: int = 100
+    scoring_limit: int = 100
+    n_candidates: int = 20
+    n_recommendations: int = 20
+
+
+@dataclass(frozen=True)
+class ColumnOrder:
+    """
+    Sets the column order of dataframe outputs.
+    """
+
+    documents_frame: list[str] = field(
+        default_factory=lambda: [
+            "d3_document_id",
+            "d3_author_id",
+            "title",
+            "author",
+            "publication_date",
+            "publication_date_rank",
+            "citationcount_document",
+            "citationcount_document_rank",
+            "citationcount_author",
+            "citationcount_author_rank",
+            "citations",
+            "references",
+            "abstract",
+            "semanticscholar_id",
+            "semanticscholar_url",
+            "semanticscholar_tags",
+            "arxiv_id",
+            "arxiv_url",
+            "arxiv_labels",
+        ]
+    )
+    recommendations_citation: list[str] = field(
+        default_factory=lambda: [
+            "candidate_d3_document_id",
+            "weighted_points",
+            "title",
+            "author",
+            "arxiv_labels",
+            "integer_label",
+            "semanticscholar_url",
+            "arxiv_url",
+            "publication_date",
+            "publication_date_points",
+            "citationcount_document",
+            "citationcount_document_points",
+            "citationcount_author",
+            "citationcount_author_points",
+            "co_citation_analysis_score",
+            "co_citation_analysis_points",
+            "bibliographic_coupling_score",
+            "bibliographic_coupling_points",
+        ]
+    )
+    recommendations_language: list[str] = field(
+        default_factory=lambda: [
+            "candidate_d3_document_id",
+            "cosine_similarity",
+            "title",
+            "author",
+            "publication_date",
+            "arxiv_labels",
+            "integer_label",
+            "semanticscholar_url",
+            "arxiv_url",
+        ]
+    )

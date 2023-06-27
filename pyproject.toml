@@ -1,17 +1,17 @@
 [project]
 name = "readnext"
-version = "0.0.1"
+version = "0.1.0"
 description = "Hybrid recommender system for computer science papers"
 authors = [{ name = "Joel Beck", email = "joel.beck@stud.uni-goettingen.de" }]
 dependencies = [
     # spacy model can be installed with pip from GitHub release
     "en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.5.0/en_core_web_sm-3.5.0-py3-none-any.whl",
     "gensim>=4.3.1",
-    "ipywidgets>=8.0.6",
+    "joblib>=1.2.0",
     "matplotlib>=3.7.1",
     "numpy>=1.24.2",
-    "pandas>=2.0.0",
-    "pip>=23.0.1",
+    "polars[pandas,pyarrow]>=0.18.3",
+    "pydantic>=1.10.9",
     "python-dotenv>=1.0.0",
     "requests>=2.28.2",
     "rich[jupyter]>=13.3.4",
@@ -48,6 +48,7 @@ dev = [
     "pytest-xdist>=3.3.1",
     "pytest>=7.2.2",
     "ruff>=0.0.261",
+    "tabulate>=0.9.0",
     "types-requests>=2.28.11.17",
 ]
 
@@ -64,10 +65,13 @@ update-all = { composite = ["update-pdm", "update-deps"] }
 format = "black ."
 lint = "ruff --fix --exit-non-zero-on-fix --show-fixes ."
 check = "mypy ."
+check-no-tests = "mypy . --exclude tests" # do not run mypy on `tests` directory
 test = "pytest"
 test-cov = "pytest --cov=readnext"
 test-slow = "pytest -m 'slow'" # run all tests marked with `@pytest.mark.slow`
 test-fast = "pytest -m 'not slow'" # run all tests except those marked with `@pytest.mark.slow`
+test-updated = "pytest -m 'updated'" # run all tests marked with `@pytest.mark.updated`
+test-updated-fast = "pytest -m 'updated and not slow'"
 # run all tests except those marked with `@pytest.mark.skip_ci` and create coverage report
 test-ci = "pytest -m 'not skip_ci' --cov=readnext --cov-report=xml"
 pre = "pre-commit run --all-files"
@@ -82,6 +86,7 @@ include = '\.pyi?$'
 # see all options at
 # https://mypy.readthedocs.io/en/stable/config_file.html#the-mypy-configuration-file
 [tool.mypy]
+plugins = "pydantic.mypy"
 # Import discovery
 ignore_missing_imports = true
 # Disallow dynamic typing
@@ -130,10 +135,17 @@ omit = [
     "*/__init__.py",
     # exclude executable scripts in `readnext/scripts` directory from coverage
     "readnext/scripts/*",
-    # exclude loading and saving functions in `readnext/utils/io.py` directory from coverage
+    # exclude utility functions in `readnext/utils/` directory that are not supposed to
+    # be tested from coverage
+    "readnext/utils/aliases.py",
     "readnext/utils/io.py",
+    "readnext/utils/decorators.py",
+    "readnext/utils/logging.py",
+    "readnext/utils/repr.py",
     # exclude files that are tested by loading locally stored data that are not available in CI
-    "readnext/inference/inference_data_constructor.py",
+    "readnext/inference/constructor.py",
+    "readnext/inference/constructor_plugin_unseen.py",
+    "readnext/inference/constructor_plugin_unseen_language_models.py",
     "readnext/inference/inference_data.py"
 ]
 
@@ -221,3 +233,12 @@ mark-parentheses = false # `@pytest.mark.foo` instead of `@pytest.mark.foo()`
 
 [tool.ruff.isort]
 combine-as-imports = true # combines `as` imports on the same line
+
+[tool.ruff.pep8-naming]
+# Allow Pydantic's `@validator` decorator to use `cls` instead of `self` as first
+# argument
+classmethod-decorators = [
+    "classmethod",
+    "pydantic.validator",
+    "pydantic.root_validator"
+]

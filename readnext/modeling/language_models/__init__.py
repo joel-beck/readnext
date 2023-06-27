@@ -5,19 +5,22 @@ from readnext.modeling.language_models.embedder import (
     GensimEmbedder,
     TFIDFEmbedder,
     Word2VecEmbedder,
-    embeddings_mapping_to_frame,
 )
 from readnext.modeling.language_models.embedder_torch import (
     BERTEmbedder,
     LongformerEmbedder,
     TorchEmbedder,
 )
-from readnext.modeling.language_models.model_choice import (
-    LanguageModelChoice,
-    get_cosine_similarities_path_from_choice,
-    get_embeddings_path_from_choice,
+from readnext.modeling.language_models.load_embeddings import (
     load_cosine_similarities_from_choice,
     load_embeddings_from_choice,
+)
+from readnext.modeling.language_models.model_choice import (
+    LanguageModelChoice,
+    LanguageModelChoicePaths,
+    get_cosine_similarities_path_from_choice,
+    get_embeddings_path_from_choice,
+    get_language_model_choice_paths,
 )
 from readnext.modeling.language_models.tfidf import (
     df,
@@ -27,18 +30,16 @@ from readnext.modeling.language_models.tfidf import (
     tfidf,
     tfidf_single_term,
 )
-from readnext.modeling.language_models.tokenizer_list import (
+from readnext.modeling.language_models.tokenizer_spacy import (
     SpacyTokenizer,
     TextProcessingSteps,
     Tokens,
-    TokensMapping,
 )
-from readnext.modeling.language_models.tokenizer_tensor import (
+from readnext.modeling.language_models.tokenizer_torch import (
     BERTTokenizer,
     LongformerTokenizer,
-    TensorTokenizer,
     TokenIds,
-    TokensIdMapping,
+    TorchTokenizer,
 )
 
 __all__ = [
@@ -53,11 +54,12 @@ __all__ = [
     "TorchEmbedder",
     "TFIDFEmbedder",
     "Word2VecEmbedder",
-    "embeddings_mapping_to_frame",
     "AggregationStrategy",
     "get_cosine_similarities_path_from_choice",
     "get_embeddings_path_from_choice",
+    "get_language_model_choice_paths",
     "LanguageModelChoice",
+    "LanguageModelChoicePaths",
     "load_cosine_similarities_from_choice",
     "load_embeddings_from_choice",
     "df",
@@ -68,11 +70,9 @@ __all__ = [
     "tfidf_single_term",
     "BERTTokenizer",
     "LongformerTokenizer",
-    "TensorTokenizer",
+    "TorchTokenizer",
     "SpacyTokenizer",
     "TextProcessingSteps",
     "TokenIds",
     "Tokens",
-    "TokensIdMapping",
-    "TokensMapping",
 ]

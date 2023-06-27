@@ -1,13 +1,14 @@
+from pathlib import Path
+
+import pytest
+
 from readnext.modeling.language_models import (
     LanguageModelChoice,
     LanguageModelChoicePaths,
-    get_embeddings_path_from_choice,
     get_cosine_similarities_path_from_choice,
+    get_embeddings_path_from_choice,
     get_language_model_choice_paths,
 )
-import pytest
-from pathlib import Path
-
 
 language_model_choices = [
     LanguageModelChoice.TFIDF,

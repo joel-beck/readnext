@@ -18,7 +18,6 @@ feature_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "features",
     [
@@ -49,7 +48,6 @@ def test_from_inference_data(features: Features) -> None:
     assert isinstance(features.feature_weights.bibliographic_coupling, float)
 
 
-@pytest.mark.updated
 def test_pydantic_validation() -> None:
     # Correct data
     fw = FeatureWeights(
@@ -84,7 +82,6 @@ def test_pydantic_validation() -> None:
         )
 
 
-@pytest.mark.updated
 def test_feature_weights_normalization() -> None:
     fw = FeatureWeights(
         publication_date=1.0,
@@ -131,7 +128,6 @@ def test_feature_weights_normalization() -> None:
     )
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_feature_weights() -> None:
     with pytest.raises(TypeError):
         FeatureWeights(1.0, 1.0, 1.0, 1.0, 1.0)  # type: ignore

@@ -19,7 +19,6 @@ feature_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "features",
     [
@@ -46,7 +45,6 @@ def test_feature_attributes(features: Features) -> None:
     ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "features",
     [
@@ -79,7 +77,6 @@ def test_publication_date(features: Features) -> None:
     )
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "features",
     [
@@ -112,7 +109,6 @@ def test_citationcount_document(features: Features) -> None:
     )
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "features",
     [
@@ -145,7 +141,6 @@ def test_citationcount_author(features: Features) -> None:
     )
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "features",
     [
@@ -175,7 +170,6 @@ def test_co_citation_analysis(features: Features) -> None:
     assert all(score >= 0 for score in features.co_citation_analysis["co_citation_analysis_score"])
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "features",
     [
@@ -207,7 +201,6 @@ def test_bibliographic_coupling(features: Features) -> None:
     )
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "features",
     [
@@ -239,7 +232,6 @@ def test_cosine_similarity(features: Features) -> None:
     )
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "features",
     [
@@ -262,7 +254,6 @@ def test_no_missing_values(features: Features) -> None:
     assert features.cosine_similarity.null_count().sum(axis=1).item() == 0
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_features() -> None:
     with pytest.raises(TypeError):
         Features(

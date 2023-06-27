@@ -21,7 +21,6 @@ language_model_data_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "language_model_data",
     [
@@ -57,8 +56,6 @@ def test_language_model_data_getitem(language_model_data: LanguageModelData) -> 
     )
 
 
-@pytest.mark.updated
-@pytest.mark.updated
 def test_kw_only_initialization_language_model_data() -> None:
     with pytest.raises(TypeError):
         LanguageModelData(

@@ -35,7 +35,6 @@ language_features_frame_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "citation_features_frame",
     [
@@ -71,7 +70,6 @@ def test_citation_model_data_features_frame(citation_features_frame: CitationFea
     assert citation_features_frame["bibliographic_coupling_score"].dtype == pl.Int64
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "language_features_frame",
     [

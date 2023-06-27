@@ -31,7 +31,6 @@ model_data_constructor_fixtures = (
 )
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("model_data_constructor", model_data_constructor_fixtures)
 def test_initialization(model_data_constructor: ModelDataConstructor) -> None:
     assert isinstance(model_data_constructor, ModelDataConstructor)
@@ -49,7 +48,6 @@ def test_initialization(model_data_constructor: ModelDataConstructor) -> None:
     assert isinstance(model_data_constructor.query_document, DocumentInfo)
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("model_data_constructor", model_data_constructor_fixtures)
 def test_get_query_documents_frame(
     model_data_constructor: ModelDataConstructor,
@@ -69,7 +67,6 @@ def test_get_query_documents_frame(
     )
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("model_data_constructor", model_data_constructor_seen_fixtures)
 def test_shares_arxiv_label(model_data_constructor: ModelDataConstructor) -> None:
     candidate_document_labels = ["cs.CL", "stat.ML"]
@@ -85,7 +82,6 @@ def test_shares_arxiv_label(model_data_constructor: ModelDataConstructor) -> Non
     assert not result
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("model_data_constructor", model_data_constructor_fixtures)
 def test_boolean_to_int(model_data_constructor: ModelDataConstructor) -> None:
     result = model_data_constructor.boolean_to_int(True)
@@ -94,7 +90,6 @@ def test_boolean_to_int(model_data_constructor: ModelDataConstructor) -> None:
     assert result == 1
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_citation_model_data_constructor() -> None:
     with pytest.raises(TypeError):
         CitationModelDataConstructor(
@@ -106,7 +101,6 @@ def test_kw_only_initialization_citation_model_data_constructor() -> None:
         )
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_language_model_data_constructor() -> None:
     with pytest.raises(TypeError):
         LanguageModelDataConstructor(

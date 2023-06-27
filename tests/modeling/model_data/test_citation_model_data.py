@@ -21,7 +21,6 @@ citation_model_data_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "citation_model_data",
     [
@@ -65,8 +64,6 @@ def test_citation_model_data_getitem(citation_model_data: CitationModelData) -> 
     )
 
 
-@pytest.mark.updated
-@pytest.mark.updated
 def test_kw_only_initialization_citation_model_data() -> None:
     with pytest.raises(TypeError):
         CitationModelData(

@@ -20,7 +20,6 @@ citation_ranks_frame_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "citation_ranks_frame",
     [

@@ -35,7 +35,6 @@ language_info_frame_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "citation_info_frame",
     [
@@ -73,7 +72,6 @@ def test_citation_model_data_info_frame(
     assert citation_info_frame["arxiv_url"].dtype == pl.Utf8
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "language_info_frame",
     [

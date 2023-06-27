@@ -12,7 +12,6 @@ inference_data_fixtures_skip_ci = [lazy_fixture("inference_data_seen")]
 inference_data_fixtures_slow_skip_ci = [lazy_fixture("inference_data_unseen")]
 
 
-@pytest.mark.updated
 @pytest.mark.skip_ci
 @pytest.mark.parametrize(
     "inference_data",
@@ -46,7 +45,6 @@ def test_inference_data_attributes(inference_data: InferenceData) -> None:
     assert isinstance(inference_data.recommendations, Recommendations)
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_inference_data(
     dummy_document_identifier: DocumentIdentifier,
     dummy_document_info: DocumentInfo,

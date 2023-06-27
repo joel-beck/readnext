@@ -11,7 +11,6 @@ documents_frame_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "documents_frame",
     [
@@ -52,7 +51,6 @@ def test_column_names(documents_frame: DocumentsFrame) -> None:
     assert documents_frame.columns == columns
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "documents_frame",
     [
@@ -89,7 +87,6 @@ def test_dtypes(documents_frame: DocumentsFrame) -> None:
     assert documents_frame["arxiv_labels"].dtype == pl.List
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "documents_frame",
     [
@@ -115,7 +112,6 @@ def test_arxiv_labels(documents_frame: DocumentsFrame) -> None:
     assert arxiv_labels.apply(lambda x: len(x) > 0).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "documents_frame",
     [pytest.param(fixture) for fixture in documents_frame_fixtures],
@@ -126,7 +122,6 @@ def test_arxiv_labels_testing_data(documents_frame: DocumentsFrame) -> None:
     assert len(unique_arxiv_labels) == 16
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "documents_frame",
     [
@@ -150,7 +145,6 @@ def test_arxiv_labels_real_data(documents_frame: DocumentsFrame) -> None:
     assert len(unique_arxiv_labels_cs) == 39
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "documents_frame",
     [
@@ -176,7 +170,6 @@ def test_semanticscholar_tags(documents_frame: DocumentsFrame) -> None:
     assert semanticscholar_tags.apply(lambda x: len(x) > 0).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "documents_frame",
     [pytest.param(fixture) for fixture in documents_frame_fixtures],
@@ -187,7 +180,6 @@ def test_semanticscholar_tags_testing_data(documents_frame: DocumentsFrame) -> N
     assert len(unique_semanticscholar_tags) == 7
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "documents_frame",
     [

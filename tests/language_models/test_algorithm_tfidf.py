@@ -12,7 +12,6 @@ from readnext.modeling.language_models import (
 )
 
 
-@pytest.mark.updated
 def test_tf(toy_document_tokens: Tokens) -> None:
     assert tf("a", toy_document_tokens) == 2 / 9
     assert tf("b", toy_document_tokens) == 2 / 9
@@ -25,7 +24,6 @@ def test_tf(toy_document_tokens: Tokens) -> None:
         tf("a", [])
 
 
-@pytest.mark.updated
 def test_df(toy_document_corpus: list[Tokens]) -> None:
     assert df("a", toy_document_corpus) == 3  # Appears in all documents
     assert df("b", toy_document_corpus) == 3  # Appears in all documents
@@ -34,7 +32,6 @@ def test_df(toy_document_corpus: list[Tokens]) -> None:
     assert df("e", toy_document_corpus) == 0  # Does not appear in any document
 
 
-@pytest.mark.updated
 def test_idf(toy_document_corpus: list[Tokens]) -> None:
     assert idf("a", toy_document_corpus) == np.log(
         (1 + 3) / (1 + 3) + 1
@@ -56,7 +53,6 @@ def test_idf(toy_document_corpus: list[Tokens]) -> None:
     np.testing.assert_almost_equal(idf("a", []), 0.6931471805599453)
 
 
-@pytest.mark.updated
 def test_learn_vocabulary(toy_document_corpus: list[Tokens]) -> None:
     # Common case
     assert learn_vocabulary(toy_document_corpus) == ["a", "b", "c", "d"]
@@ -68,7 +64,6 @@ def test_learn_vocabulary(toy_document_corpus: list[Tokens]) -> None:
     assert learn_vocabulary([[], [], []]) == []
 
 
-@pytest.mark.updated
 def test_tfidf_single_term(toy_document_tokens: Tokens, toy_document_corpus: list[Tokens]) -> None:
     # Common case
     assert tfidf_single_term("d", toy_document_tokens, toy_document_corpus) == tf(
@@ -81,7 +76,6 @@ def test_tfidf_single_term(toy_document_tokens: Tokens, toy_document_corpus: lis
         tfidf_single_term("d", Tokens([]), toy_document_corpus)
 
 
-@pytest.mark.updated
 def test_tfidf(toy_document_tokens: Tokens, toy_document_corpus: list[Tokens]) -> None:
     # Common case
     expected_tfidf = np.array([0.1540327, 0.1540327, 0.1540327, 0.2310491])

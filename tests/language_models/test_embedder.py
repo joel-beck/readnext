@@ -25,7 +25,6 @@ torch_embedder_fixtures = [lazy_fixture("bert_embedder"), lazy_fixture("longform
 embedder_fixtures = tfidf_gensim_embedder_fixtures + torch_embedder_fixtures
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("embedder", tfidf_gensim_embedder_fixtures)
 def test_word_embeddings_to_document_embedding(embedder: GensimEmbedder) -> None:
     # `word_embeddings_to_document_embedding()` takes numpy arrays as input, conversion
@@ -47,7 +46,6 @@ def test_word_embeddings_to_document_embedding(embedder: GensimEmbedder) -> None
     )
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("embedder", torch_embedder_fixtures)
 def test_aggregate_document_embeddings(embedder: TorchEmbedder) -> None:
     document_embeddings = torch.tensor(
@@ -66,7 +64,6 @@ def test_aggregate_document_embeddings(embedder: TorchEmbedder) -> None:
     )
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("embedder", embedder_fixtures)
 def test_compute_embeddings_frame(embedder: GensimEmbedder | TorchEmbedder) -> None:
     embeddings_frame = embedder.compute_embeddings_frame()
@@ -77,7 +74,6 @@ def test_compute_embeddings_frame(embedder: GensimEmbedder | TorchEmbedder) -> N
     assert embeddings_frame.dtypes == [pl.Int64, pl.List(pl.Float64)]
 
 
-@pytest.mark.updated
 def test_embedding_dimension_tfidf(tfidf_embedder: TFIDFEmbedder) -> None:
     embeddings_frame = tfidf_embedder.compute_embeddings_frame()
     corpus_vocabulary_size = tfidf_embedder.tokens_frame["tokens"].explode().n_unique()
@@ -85,27 +81,23 @@ def test_embedding_dimension_tfidf(tfidf_embedder: TFIDFEmbedder) -> None:
     assert (embeddings_frame["embedding"].list.lengths() == corpus_vocabulary_size).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("embedder", gensim_embedder_fixtures)
 def test_embedding_dimension_gensim(embedder: GensimEmbedder) -> None:
     embeddings_frame = embedder.compute_embeddings_frame()
     assert (embeddings_frame["embedding"].list.lengths() == 300).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("embedder", torch_embedder_fixtures)
 def test_embedding_dimension_torch(embedder: GensimEmbedder) -> None:
     embeddings_frame = embedder.compute_embeddings_frame()
     assert (embeddings_frame["embedding"].list.lengths() == 768).all()
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_tfidf_embedder() -> None:
     with pytest.raises(TypeError):
         TFIDFEmbedder(pl.DataFrame(), tfidf)  # type: ignore
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_bert_embedder(bert_model: BertModelProtocol) -> None:
     with pytest.raises(TypeError):
         BERTEmbedder(
@@ -114,7 +106,6 @@ def test_kw_only_initialization_bert_embedder(bert_model: BertModelProtocol) -> 
         )
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_longformer_embedder(
     longformer_model: LongformerModelProtocol,
 ) -> None:

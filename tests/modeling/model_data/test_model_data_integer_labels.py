@@ -25,7 +25,6 @@ integer_labels_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "integer_labels_frame",
     [
@@ -58,7 +57,6 @@ def test_integer_labels_frame(
     assert integer_labels_frame["integer_label"].dtype == pl.Int64
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "integer_labels_frame",
     [
@@ -76,7 +74,6 @@ def test_integer_labels_frame_seen(
     assert integer_labels_frame["integer_label"].is_in([0, 1]).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "integer_labels_frame",
     [

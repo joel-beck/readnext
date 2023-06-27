@@ -30,7 +30,6 @@ document_info_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 def test_from_dummy(dummy_document_info: DocumentInfo) -> None:
     assert dummy_document_info.d3_document_id == 1
     assert dummy_document_info.title == "Sample Paper"
@@ -56,7 +55,6 @@ def test_from_dummy(dummy_document_info: DocumentInfo) -> None:
     assert str(dummy_document_info) == str_representation
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "document_info",
     [
@@ -85,7 +83,6 @@ def test_from_data(document_info: DocumentInfo) -> None:
     ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "document_info",
     [
@@ -110,7 +107,6 @@ def test_from_data_seen(document_info: DocumentInfo) -> None:
     assert len(document_info.abstract) > 0
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "document_info",
     [
@@ -136,7 +132,6 @@ def test_from_inference_data_unseen(document_info: DocumentInfo) -> None:
     assert len(document_info.abstract) > 0
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("document_info", document_info_fixtures_unseen)
 def test_from_model_data_unseen(
     document_info: DocumentInfo,
@@ -151,7 +146,6 @@ def test_from_model_data_unseen(
     assert document_info.arxiv_url == "ArxivURL"
 
 
-@pytest.mark.updated
 def test_document_info_defaults() -> None:
     document_info = DocumentInfo(d3_document_id=3)
 
@@ -177,7 +171,6 @@ def test_document_info_defaults() -> None:
     assert str(document_info) == str_representation
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_document_info() -> None:
     with pytest.raises(TypeError):
         DocumentInfo(

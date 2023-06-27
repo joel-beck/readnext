@@ -38,7 +38,6 @@ document_identifier_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "document_identifier",
     [
@@ -65,7 +64,6 @@ def test_inference_data_document_identifier(document_identifier: DocumentIdentif
     ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "document_identifier",
     [
@@ -89,7 +87,6 @@ def test_inference_data_seen_document_identifier(
     assert document_identifier.arxiv_url == "https://arxiv.org/abs/1706.03762"
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "document_identifier",
     [
@@ -113,7 +110,6 @@ def test_inference_data_unseen_document_identifier(
     assert document_identifier.arxiv_url == "https://arxiv.org/abs/2303.08774"
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_document_identifier() -> None:
     with pytest.raises(TypeError):
         DocumentIdentifier(

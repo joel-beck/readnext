@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 
 from readnext.modeling.language_models import (
     Tokens,
@@ -13,7 +12,6 @@ from readnext.modeling.language_models import (
 )
 
 
-@pytest.mark.updated
 def test_bm25_tf(toy_document_tokens: Tokens, toy_document_corpus: list[Tokens]) -> None:
     k = 1.5
     b = 0.75
@@ -80,7 +78,6 @@ def test_bm25_tf(toy_document_tokens: Tokens, toy_document_corpus: list[Tokens])
     )
 
 
-@pytest.mark.updated
 def test_bm25_idf(toy_document_corpus: list[Tokens]) -> None:
     assert bm25_idf("a", toy_document_corpus) == np.log(
         (len(toy_document_corpus) + 1) / df("a", toy_document_corpus)
@@ -96,7 +93,6 @@ def test_bm25_idf(toy_document_corpus: list[Tokens]) -> None:
     )
 
 
-@pytest.mark.updated
 def test_bm25(toy_document_tokens: Tokens, toy_document_corpus: list[Tokens]) -> None:
     k = 1.5
     b = 0.75

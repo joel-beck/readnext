@@ -1,51 +1,43 @@
 import polars as pl
-import pytest
 
 from readnext.evaluation.metrics import CountCommonReferences
 
 
-@pytest.mark.updated
 def test_count_common_references_basic() -> None:
     u = [1, 2, 3, 4, 5]
     v = [4, 5, 6, 7, 8]
     assert CountCommonReferences.score(u, v) == 2
 
 
-@pytest.mark.updated
 def test_count_common_references_identical_vectors() -> None:
     u = [1, 2, 3, 4, 5]
     assert CountCommonReferences.score(u, u) == 5
 
 
-@pytest.mark.updated
 def test_count_common_references_no_common_references() -> None:
     u = [1, 2, 3]
     v = [4, 5, 6]
     assert CountCommonReferences.score(u, v) == 0
 
 
-@pytest.mark.updated
 def test_count_common_references_different_lengths() -> None:
     u = [1, 2, 3, 4, 5]
     v = [3, 4, 5, 6]
     assert CountCommonReferences.score(u, v) == 3
 
 
-@pytest.mark.updated
 def test_count_common_references_pandas_series() -> None:
     u = pl.Series([1, 2, 3, 4, 5])
     v = pl.Series([4, 5, 6, 7, 8])
     assert CountCommonReferences.score(u, v) == 2
 
 
-@pytest.mark.updated
 def test_count_common_references_mixed_inputs() -> None:
     u = [1, 2, 3, 4, 5]
     v = pl.Series([4, 5, 6, 7, 8])
     assert CountCommonReferences.score(u, v) == 2
 
 
-@pytest.mark.updated
 def test_count_common_references_from_df() -> None:
     df = pl.DataFrame(
         {
@@ -63,7 +55,6 @@ def test_count_common_references_from_df() -> None:
     assert CountCommonReferences.from_df(df, 2, 3) == 2
 
 
-@pytest.mark.updated
 def test_count_common_references_from_df_different_data_types() -> None:
     df = pl.DataFrame(
         {

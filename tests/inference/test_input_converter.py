@@ -4,7 +4,6 @@ from polars.exceptions import ComputeError
 from readnext.inference import InferenceDataInputConverter
 
 
-@pytest.mark.updated
 def test_get_d3_document_id_from_semanticscholar_id(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
@@ -16,7 +15,6 @@ def test_get_d3_document_id_from_semanticscholar_id(
     assert d3_document_id_1 == 13756489
 
 
-@pytest.mark.updated
 def test_get_d3_document_id_from_semanticscholar_url(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
@@ -30,7 +28,6 @@ def test_get_d3_document_id_from_semanticscholar_url(
     assert d3_document_id_1 == 13756489
 
 
-@pytest.mark.updated
 def test_get_d3_document_id_from_arxiv_id(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
@@ -40,7 +37,6 @@ def test_get_d3_document_id_from_arxiv_id(
     assert d3_document_id_1 == 13756489
 
 
-@pytest.mark.updated
 def test_get_d3_document_id_from_arxiv_url(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
@@ -50,7 +46,6 @@ def test_get_d3_document_id_from_arxiv_url(
     assert d3_document_id_1 == 13756489
 
 
-@pytest.mark.updated
 def test_get_semanticscholar_id_from_d3_document_id(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
@@ -70,7 +65,6 @@ def test_get_semanticscholar_id_from_d3_document_id(
         )
 
 
-@pytest.mark.updated
 def test_get_semanticscholar_url_from_d3_document_id(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
@@ -93,7 +87,6 @@ def test_get_semanticscholar_url_from_d3_document_id(
         )
 
 
-@pytest.mark.updated
 def test_get_arxiv_id_from_d3_document_id(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:
@@ -111,7 +104,6 @@ def test_get_arxiv_id_from_d3_document_id(
         )
 
 
-@pytest.mark.updated
 def test_get_arxiv_url_from_d3_document_id(
     inference_data_input_converter: InferenceDataInputConverter,
 ) -> None:

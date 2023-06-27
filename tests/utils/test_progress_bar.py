@@ -1,4 +1,3 @@
-import pytest
 from rich.progress import (
     BarColumn,
     MofNCompleteColumn,
@@ -11,7 +10,6 @@ from rich.progress import (
 from readnext.utils.progress_bar import rich_progress_bar
 
 
-@pytest.mark.updated
 def test_setup_progress_bar() -> None:
     progress_bar = rich_progress_bar()
 

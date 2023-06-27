@@ -1,5 +1,3 @@
-import pytest
-
 from readnext.utils.convert_id_urls import (
     get_arxiv_id_from_arxiv_url,
     get_arxiv_url_from_arxiv_id,
@@ -8,7 +6,6 @@ from readnext.utils.convert_id_urls import (
 )
 
 
-@pytest.mark.updated
 def test_get_semanticscholar_id_from_semanticscholar_url(
     semanticscholar_url: str, semanticscholar_id: str
 ) -> None:
@@ -22,7 +19,6 @@ def test_get_semanticscholar_id_from_semanticscholar_url(
     assert get_semanticscholar_id_from_semanticscholar_url("") == ""
 
 
-@pytest.mark.updated
 def test_get_semanticscholar_url_from_semanticscholar_id(
     semanticscholar_url: str, semanticscholar_id: str
 ) -> None:
@@ -32,14 +28,12 @@ def test_get_semanticscholar_url_from_semanticscholar_id(
     assert get_semanticscholar_url_from_semanticscholar_id(None) == ""
 
 
-@pytest.mark.updated
 def test_get_arxiv_id_from_arxiv_url(arxiv_url: str, arxiv_id: str) -> None:
     assert get_arxiv_id_from_arxiv_url(arxiv_url) == arxiv_id
     assert get_arxiv_id_from_arxiv_url("https://arxiv.org/abs/") == ""
     assert get_arxiv_id_from_arxiv_url("") == ""
 
 
-@pytest.mark.updated
 def test_get_arxiv_url_from_arxiv_id(arxiv_url: str, arxiv_id: str) -> None:
     assert get_arxiv_url_from_arxiv_id(arxiv_id) == arxiv_url
     assert get_arxiv_url_from_arxiv_id(None) == ""

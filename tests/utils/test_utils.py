@@ -1,23 +1,18 @@
-import pytest
-
 from readnext.utils.utils import slice_mapping
 
 
-@pytest.mark.updated
 def test_slice_mapping_empty() -> None:
     empty_dict: dict = {}
     result = slice_mapping(empty_dict)
     assert result == {}
 
 
-@pytest.mark.updated
 def test_slice_mapping_full() -> None:
     mapping = {"a": 1, "b": 2, "c": 3}
     result = slice_mapping(mapping)
     assert result == mapping
 
 
-@pytest.mark.updated
 def test_slice_mapping_size() -> None:
     mapping = {"a": 1, "b": 2, "c": 3}
     result = slice_mapping(mapping, size=2)
@@ -25,7 +20,6 @@ def test_slice_mapping_size() -> None:
     assert result == expected_result
 
 
-@pytest.mark.updated
 def test_slice_mapping_start() -> None:
     mapping = {"a": 1, "b": 2, "c": 3}
     result = slice_mapping(mapping, start=1)
@@ -33,7 +27,6 @@ def test_slice_mapping_start() -> None:
     assert result == expected_result
 
 
-@pytest.mark.updated
 def test_slice_mapping_end() -> None:
     mapping = {"a": 1, "b": 2, "c": 3}
     result = slice_mapping(mapping, end=2)
@@ -41,7 +34,6 @@ def test_slice_mapping_end() -> None:
     assert result == expected_result
 
 
-@pytest.mark.updated
 def test_slice_mapping_start_end() -> None:
     mapping = {"a": 1, "b": 2, "c": 3}
     result = slice_mapping(mapping, start=1, end=2)
@@ -49,7 +41,6 @@ def test_slice_mapping_start_end() -> None:
     assert result == expected_result
 
 
-@pytest.mark.updated
 def test_slice_mapping_size_overrides_start_end() -> None:
     mapping = {"a": 1, "b": 2, "c": 3}
     result = slice_mapping(mapping, size=2, start=0, end=2)
@@ -57,7 +48,6 @@ def test_slice_mapping_size_overrides_start_end() -> None:
     assert result == expected_result
 
 
-@pytest.mark.updated
 def test_slice_mapping_different_key_types() -> None:
     mapping = {1: "one", "two": 2, 3.0: "three"}
     result = slice_mapping(mapping, size=2)
@@ -65,7 +55,6 @@ def test_slice_mapping_different_key_types() -> None:
     assert result == expected_result
 
 
-@pytest.mark.updated
 def test_slice_mapping_different_value_types() -> None:
     mapping = {"a": 1, "b": "two", "c": [3]}
     result = slice_mapping(mapping, start=1, end=2)

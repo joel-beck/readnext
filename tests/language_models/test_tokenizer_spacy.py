@@ -1,11 +1,9 @@
 import polars as pl
-import pytest
 
 from readnext.modeling.language_models import SpacyTokenizer
 from readnext.utils.aliases import DocumentsFrame, Tokens
 
 
-@pytest.mark.updated
 def test_tokenize_single_document(
     spacy_tokenizer: SpacyTokenizer, toy_abstract: str, spacy_expected_tokens: Tokens
 ) -> None:
@@ -17,7 +15,6 @@ def test_tokenize_single_document(
     assert tokens == spacy_expected_tokens
 
 
-@pytest.mark.updated
 def test_tokenize(
     spacy_tokenizer: SpacyTokenizer,
     test_documents_frame: DocumentsFrame,
@@ -55,7 +52,6 @@ def test_tokenize(
     )
 
 
-@pytest.mark.updated
 def test_tokenize_empty_abstract(spacy_tokenizer: SpacyTokenizer) -> None:
     abstract = ""
     tokens = spacy_tokenizer.tokenize_single_document(abstract)

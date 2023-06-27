@@ -17,7 +17,6 @@ feature_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "points",
     [
@@ -42,7 +41,6 @@ def test_points_attributes(points: Points) -> None:
     ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "points",
     [
@@ -73,7 +71,6 @@ def test_publication_date_points(points: Points) -> None:
     assert points.publication_date["publication_date_points"].is_between(0, 100).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "points",
     [
@@ -104,7 +101,6 @@ def test_citationcount_document_points(points: Points) -> None:
     assert points.citationcount_document["citationcount_document_points"].is_between(0, 100).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "points",
     [
@@ -135,7 +131,6 @@ def test_citationcount_author_points(points: Points) -> None:
     assert points.citationcount_author["citationcount_author_points"].is_between(0, 100).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "points",
     [
@@ -166,7 +161,6 @@ def test_co_citation_analysis_points(points: Points) -> None:
     assert points.co_citation_analysis["co_citation_analysis_points"].is_between(0, 100).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "points",
     [
@@ -197,7 +191,6 @@ def test_bibliographic_coupling_points(points: Points) -> None:
     assert points.bibliographic_coupling["bibliographic_coupling_points"].is_between(0, 100).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "points",
     [
@@ -219,7 +212,6 @@ def test_no_missing_values_points(points: Points) -> None:
     assert points.bibliographic_coupling.null_count().sum(axis=1).item() == 0
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_points() -> None:
     with pytest.raises(TypeError):
         Points(

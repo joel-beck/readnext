@@ -1,6 +1,6 @@
 [project]
 name = "readnext"
-version = "0.0.1"
+version = "0.1.0"
 description = "Hybrid recommender system for computer science papers"
 authors = [{ name = "Joel Beck", email = "joel.beck@stud.uni-goettingen.de" }]
 dependencies = [
@@ -135,10 +135,17 @@ omit = [
     "*/__init__.py",
     # exclude executable scripts in `readnext/scripts` directory from coverage
     "readnext/scripts/*",
-    # exclude loading and saving functions in `readnext/utils/io.py` directory from coverage
+    # exclude utility functions in `readnext/utils/` directory that are not supposed to
+    # be tested from coverage
+    "readnext/utils/aliases.py",
     "readnext/utils/io.py",
+    "readnext/utils/decorators.py",
+    "readnext/utils/logging.py",
+    "readnext/utils/repr.py",
     # exclude files that are tested by loading locally stored data that are not available in CI
-    "readnext/inference/inference_data_constructor.py",
+    "readnext/inference/constructor.py",
+    "readnext/inference/constructor_plugin_unseen.py",
+    "readnext/inference/constructor_plugin_unseen_language_models.py",
     "readnext/inference/inference_data.py"
 ]
 

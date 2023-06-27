@@ -19,7 +19,6 @@ tokenizer_expected_tokens_pairs = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(("tokenizer", "expected_tokens"), tokenizer_expected_tokens_pairs)
 def test_tokenize_single_document(
     tokenizer: TorchTokenizer, toy_abstract: str, expected_tokens: Tokens
@@ -40,7 +39,6 @@ def test_tokenize_single_document(
     assert tokenizer.token_ids_to_tokens(tokenizer.tokens_to_token_ids(tokens)) == tokens
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("tokenizer", torch_tokenizer_fixtures)
 def test_tokenize(tokenizer: TorchTokenizer, test_documents_frame: DocumentsFrame) -> None:
     token_ids_frame = tokenizer.tokenize(test_documents_frame.head(3))
@@ -72,7 +70,6 @@ def test_tokenize(tokenizer: TorchTokenizer, test_documents_frame: DocumentsFram
     )
 
 
-@pytest.mark.updated
 def test_tokenize_empty_abstract_bert(bert_tokenizer: BERTTokenizer) -> None:
     abstract = ""
     token_ids = bert_tokenizer.tokenize_into_ids(abstract)
@@ -80,7 +77,6 @@ def test_tokenize_empty_abstract_bert(bert_tokenizer: BERTTokenizer) -> None:
     assert tokens == ["[CLS]", "[SEP]"]
 
 
-@pytest.mark.updated
 def test_tokenize_empty_abstract_longformer(longformer_tokenizer: LongformerTokenizer) -> None:
     abstract = ""
     token_ids = longformer_tokenizer.tokenize_into_ids(abstract)

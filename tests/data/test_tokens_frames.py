@@ -17,7 +17,6 @@ token_ids_frames = [
 tokens_frames = [lazy_fixture("test_spacy_tokens_frame")]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("tokens_frame", tokens_frames)
 def test_tokens_frame(tokens_frame: TokensFrame) -> None:
     assert isinstance(tokens_frame, pl.DataFrame)
@@ -30,7 +29,6 @@ def test_tokens_frame(tokens_frame: TokensFrame) -> None:
     assert all(len(tokens) > 0 for tokens in tokens_frame["tokens"])
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("token_ids_frame", token_ids_frames)
 def test_token_ids_frame(token_ids_frame: TokenIdsFrame) -> None:
     assert isinstance(token_ids_frame, pl.DataFrame)
@@ -43,7 +41,6 @@ def test_token_ids_frame(token_ids_frame: TokenIdsFrame) -> None:
     assert all(len(token_ids) > 0 for token_ids in token_ids_frame["token_ids"])
 
 
-@pytest.mark.updated
 def test_bert_token_ids_frame(test_bert_token_ids_frame: TokenIdsFrame) -> None:
     single_abstract_token_ids = (
         test_bert_token_ids_frame.filter(pl.col("d3_document_id") == 13756489)
@@ -56,7 +53,6 @@ def test_bert_token_ids_frame(test_bert_token_ids_frame: TokenIdsFrame) -> None:
     assert all(token_id == 0 for token_id in single_abstract_token_ids[242:])
 
 
-@pytest.mark.updated
 def test_scibert_token_ids_frame(test_scibert_token_ids_frame: TokenIdsFrame) -> None:
     single_abstract_token_ids = (
         test_scibert_token_ids_frame.filter(pl.col("d3_document_id") == 13756489)
@@ -69,7 +65,6 @@ def test_scibert_token_ids_frame(test_scibert_token_ids_frame: TokenIdsFrame) ->
     assert all(token_id == 0 for token_id in single_abstract_token_ids[217:])
 
 
-@pytest.mark.updated
 def test_longformer_token_ids_frame(test_longformer_token_ids_frame: TokenIdsFrame) -> None:
     single_abstract_token_ids = (
         test_longformer_token_ids_frame.filter(pl.col("d3_document_id") == 13756489)

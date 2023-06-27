@@ -8,7 +8,6 @@ from readnext.inference.constructor_plugin_unseen import UnseenInferenceDataCons
 from readnext.modeling.language_models import LanguageModelChoice
 
 
-@pytest.mark.updated
 @pytest.mark.skip_ci
 def test_seen_attribute_getter_is_selected_correctly(
     inference_data_constructor_seen: InferenceDataConstructor,
@@ -20,7 +19,6 @@ def test_seen_attribute_getter_is_selected_correctly(
     )
 
 
-@pytest.mark.updated
 @pytest.mark.slow
 @pytest.mark.skip_ci
 def test_unseen_attribute_getter_is_selected_correctly(
@@ -33,7 +31,6 @@ def test_unseen_attribute_getter_is_selected_correctly(
     )
 
 
-@pytest.mark.updated
 def test_pydantic_validation() -> None:
     # Test missing required data
     with pytest.raises(TypeError):
@@ -79,7 +76,6 @@ def test_pydantic_validation() -> None:
         )
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_inference_data_constructor() -> None:
     with pytest.raises(TypeError):
         InferenceDataConstructor(

@@ -17,7 +17,6 @@ feature_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "recommendations",
     [
@@ -41,7 +40,6 @@ def test_feature_attributes(recommendations: Recommendations) -> None:
     ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "recommendations",
     [
@@ -125,7 +123,6 @@ def test_citation_recommendations(recommendations: Recommendations) -> None:
     assert recommendations.language_to_citation["weighted_points"].is_sorted(descending=True)
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "recommendations",
     [
@@ -191,7 +188,6 @@ def test_language_recommendations(recommendations: Recommendations) -> None:
     assert recommendations.citation_to_language["cosine_similarity"].is_sorted(descending=True)
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "recommendations",
     [
@@ -212,7 +208,6 @@ def test_no_missing_values(recommendations: Recommendations) -> None:
     assert recommendations.language_to_citation.null_count().sum(axis=1).item() == 0
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_recommendations() -> None:
     with pytest.raises(TypeError):
         Recommendations(

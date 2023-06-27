@@ -43,7 +43,6 @@ real_test_dataframe_pairs_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.skip_ci
 @pytest.mark.parametrize(("real_dataframe", "test_dataframe"), real_test_dataframe_pairs_skip_ci)
 def test_that_test_dataframes_mimic_real_dataframes(

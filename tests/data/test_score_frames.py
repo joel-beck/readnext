@@ -51,7 +51,6 @@ unseen_score_frames_slow_skip_ci = (
 )
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("candidate_scores_frame", candidate_score_frames)
 def test_candidate_score_frames(candidate_scores_frame: CandidateScoresFrame) -> None:
     assert isinstance(candidate_scores_frame, pl.DataFrame)
@@ -66,7 +65,6 @@ def test_candidate_score_frames(candidate_scores_frame: CandidateScoresFrame) ->
     assert candidate_scores_frame["score"].is_sorted(descending=True)
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "scores_frame",
     [
@@ -98,7 +96,6 @@ def test_seen_score_frames(
     assert_frame_equal(first_document_scores_sorted, query_scores_frame)
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "scores_frame",
     [
@@ -122,7 +119,6 @@ def test_unseen_score_frames(
     assert scores_frame["score"].is_sorted(descending=True)
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "scores_frame",
     [
@@ -144,7 +140,6 @@ def test_integer_score_frames(
     assert scores_frame["score"].dtype == pl.Int64
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "scores_frame",
     [

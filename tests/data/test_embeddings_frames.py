@@ -24,7 +24,6 @@ all_embedding_frames = (
 )
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("embeddings_frame", all_embedding_frames)
 def test_embeddings_frame_structure(embeddings_frame: EmbeddingsFrame) -> None:
     assert isinstance(embeddings_frame, pl.DataFrame)
@@ -36,20 +35,17 @@ def test_embeddings_frame_structure(embeddings_frame: EmbeddingsFrame) -> None:
     assert embeddings_frame.dtypes == [pl.Int64, pl.List(pl.Float64)]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("embeddings_frame", keyword_algorithm_embedding_frames)
 def test_keyword_algorithm_embeddings_dimension(embeddings_frame: EmbeddingsFrame) -> None:
     # embedding dimension corresponds to size of corpus vocabulary
     assert all(len(embedding) == 21264 for embedding in embeddings_frame["embedding"])
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("embeddings_frame", gensim_embedding_frames)
 def test_gensim_embeddings_dimension(embeddings_frame: EmbeddingsFrame) -> None:
     assert all(len(embedding) == 300 for embedding in embeddings_frame["embedding"])
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize("embeddings_frame", torch_embedding_frames)
 def test_torch_embeddings_dimension(embeddings_frame: EmbeddingsFrame) -> None:
     assert all(len(embedding) == 768 for embedding in embeddings_frame["embedding"])

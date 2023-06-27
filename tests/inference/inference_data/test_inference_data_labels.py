@@ -18,7 +18,6 @@ label_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "labels",
     [
@@ -34,7 +33,6 @@ def test_feature_attributes(labels: Labels) -> None:
     assert list(dataclasses.asdict(labels)) == ["arxiv", "integer"]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "labels",
     [
@@ -64,7 +62,6 @@ def test_arxiv_labels(labels: Labels) -> None:
     )
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "labels",
     [
@@ -91,7 +88,6 @@ def test_citationcount_document(labels: Labels) -> None:
     assert labels.integer["integer_label"].is_between(0, 1).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "labels",
     [
@@ -107,7 +103,6 @@ def test_no_missing_values(labels: Labels) -> None:
     assert labels.integer.null_count().sum(axis=1).item() == 0
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_labels() -> None:
     with pytest.raises(TypeError):
         Labels(pl.DataFrame(), pl.DataFrame())  # type: ignore

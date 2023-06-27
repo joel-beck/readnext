@@ -73,9 +73,9 @@ def get_language_model_choice_paths(
             raise ValueError(f"Invalid language model choice: {language_model_choice}")
 
 
-def get_cosine_similarities_path_from_choice(language_model_choice: LanguageModelChoice) -> Path:
-    return get_language_model_choice_paths(language_model_choice).cosine_similarities
-
-
 def get_embeddings_path_from_choice(language_model_choice: LanguageModelChoice) -> Path:
     return get_language_model_choice_paths(language_model_choice).embeddings
+
+
+def get_cosine_similarities_path_from_choice(language_model_choice: LanguageModelChoice) -> Path:
+    return get_language_model_choice_paths(language_model_choice).cosine_similarities

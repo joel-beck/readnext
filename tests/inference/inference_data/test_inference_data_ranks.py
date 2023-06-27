@@ -17,7 +17,6 @@ feature_fixtures_slow_skip_ci = [
 ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "ranks",
     [
@@ -42,7 +41,6 @@ def test_rank_attributes(ranks: Ranks) -> None:
     ]
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "ranks",
     [
@@ -73,7 +71,6 @@ def test_publication_date_rank(ranks: Ranks) -> None:
     assert ranks.publication_date["publication_date_rank"].is_between(1, 101).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "ranks",
     [
@@ -104,7 +101,6 @@ def test_citationcount_document_rank(ranks: Ranks) -> None:
     assert ranks.citationcount_document["citationcount_document_rank"].is_between(1, 101).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "ranks",
     [
@@ -135,7 +131,6 @@ def test_citationcount_author_rank(ranks: Ranks) -> None:
     assert ranks.citationcount_author["citationcount_author_rank"].is_between(1, 101).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "ranks",
     [
@@ -166,7 +161,6 @@ def test_co_citation_analysis_rank(ranks: Ranks) -> None:
     assert ranks.co_citation_analysis["co_citation_analysis_rank"].is_between(1, 101).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "ranks",
     [
@@ -197,7 +191,6 @@ def test_bibliographic_coupling_rank(ranks: Ranks) -> None:
     assert ranks.bibliographic_coupling["bibliographic_coupling_rank"].is_between(1, 101).all()
 
 
-@pytest.mark.updated
 @pytest.mark.parametrize(
     "ranks",
     [
@@ -219,7 +212,6 @@ def test_no_missing_values_ranks(ranks: Ranks) -> None:
     assert ranks.bibliographic_coupling.null_count().sum(axis=1).item() == 0
 
 
-@pytest.mark.updated
 def test_kw_only_initialization_ranks() -> None:
     with pytest.raises(TypeError):
         Ranks(

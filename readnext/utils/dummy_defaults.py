@@ -16,7 +16,6 @@ from readnext.modeling import (
 )
 from readnext.modeling.language_models import LanguageModelChoice
 
-
 # use testing documents data which is available during test runs in CI
 documents_frame_default = pl.read_parquet(
     PROJECT_PATH / "tests" / "testing_data" / "test_documents_frame.parquet"

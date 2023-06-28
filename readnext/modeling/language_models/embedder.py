@@ -127,30 +127,106 @@ class GensimEmbedder(Embedder):
         return df.explode("tokens")
 
     def filter_tokens(self, df: pl.LazyFrame, vocab: Collection) -> pl.LazyFrame:
+        """
+        Consider only tokens that are in the vocabulary of the pretrained embedding
+        model.
+        """
         return df.filter(pl.col("tokens").is_in(vocab))
 
-    def add_word_embeddings(self, df: pl.LazyFrame) -> pl.LazyFrame:
+    def add_token_embeddings(self, df: pl.LazyFrame) -> pl.LazyFrame:
         """
-        Adds new `word_embedding` column that contains the word embeddings for each
-        token in the `tokens` column.
+        Adds new column that contains the word embeddings for each token in the `tokens`
+        column.
         """
         return df.with_columns(
-            word_embedding=pl.col("tokens").apply(lambda token: self.keyed_vectors[token].tolist())
+            token_embedding=pl.col("tokens").apply(lambda token: self.keyed_vectors[token].tolist())
         )
 
-    def average_word_embeddings(self, df: pl.LazyFrame) -> pl.LazyFrame:
+    def add_unique_token_id(self, df: pl.LazyFrame) -> pl.LazyFrame:
+        """
+        Adds an additional unique token id to group by. This token id is different for
+        two occurences of the same token within one document.
+
+        The reason why grouping by the tokens itself is not sufficient is that groups of
+        tokens with multiple occurences would be larger than groups of tokens with a
+        single occurence.
+        """
+        return df.with_row_count("unique_token_id")
+
+    def add_grouped_row_number(self, df: pl.LazyFrame) -> pl.LazyFrame:
+        """
+        'Hack' to add a row number column for each group. Here each group is a unique
+        combination of document and unique token.
+
+        The added row number represents the dimension of the token embedding.
+        """
+        return df.with_columns(dummy_ones=pl.lit(1)).with_columns(
+            dimension=pl.col("dummy_ones").cumsum().over(["d3_document_id", "unique_token_id"])
+        )
+
+    def average_token_embeddings_per_dimension(self, df: pl.LazyFrame) -> pl.LazyFrame:
+        """
+        Computes dimension-wise averages of all token embeddings within a document. The
+        average has the same dimension as each token embedding and is independent of the
+        number of tokens within a document.
+        """
+        return (
+            df.pipe(self.add_unique_token_id)
+            .explode("token_embedding")
+            .pipe(self.add_grouped_row_number)
+            .groupby(["d3_document_id", "dimension"], maintain_order=True)
+            .agg(pl.col("token_embedding").mean())
+        )
+
+    def collapse_per_dimension_averages(self, df: pl.LazyFrame) -> pl.LazyFrame:
+        """
+        Collects the dimension wise averages of all tokens in a document from long
+        format (one value per dimension) into a list.
+
+        The output dataframe has a single row per document, where the `embedding` column
+        contains lists with one entry per embedding dimension (and NOT per token within
+        the document). This ensures that all lists have the same length which is equal
+        to the embedding dimension of the pretrained embedding model.
+        """
         return df.groupby("d3_document_id", maintain_order=True).agg(
-            embedding=pl.col("word_embedding").list.mean()
+            embedding=pl.col("token_embedding")
         )
 
-    def compute_embeddings_frame(self) -> EmbeddingsFrame:
+    def compute_embeddings_frame_slice(self, tokens_frame_slice: TokensFrame) -> EmbeddingsFrame:
+        """
+        Computes embeddings for slices of the tokens frame.
+        """
         vocab = self.keyed_vectors.key_to_index.keys()
 
         return (
-            self.tokens_frame.lazy()
+            tokens_frame_slice.lazy()
             .pipe(self.explode_tokens)
             .pipe(self.filter_tokens, vocab=vocab)
-            .pipe(self.add_word_embeddings)
-            .pipe(self.average_word_embeddings)
+            .pipe(self.add_token_embeddings)
+            .pipe(self.average_token_embeddings_per_dimension)
+            .pipe(self.collapse_per_dimension_averages)
             .collect()
         )
+
+    def compute_embeddings_frame(self) -> EmbeddingsFrame:
+        """
+        Computes embeddings for all tokenized abstracts in the tokens frame.
+
+        The output is a polars data frame with two columns named `d3_document_id` and
+        `embedding`.
+        """
+        slice_size = 100
+        num_rows = self.tokens_frame.height
+        num_slices = num_rows // slice_size
+
+        with rich_progress_bar() as progress_bar:
+            return pl.concat(
+                [
+                    self.compute_embeddings_frame_slice(
+                        self.tokens_frame.slice(next_index, slice_size)
+                    )
+                    for next_index in progress_bar.track(
+                        range(0, num_rows, slice_size), total=num_slices
+                    )
+                ]
+            )

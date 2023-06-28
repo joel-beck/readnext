@@ -8,8 +8,8 @@ from readnext.config import ModelPaths, ModelVersions, ResultsPaths
 from readnext.modeling.language_models import (
     BERTEmbedder,
     BERTTokenizer,
-    LongformerEmbedder,
     GensimEmbedder,
+    LongformerEmbedder,
     LongformerTokenizer,
     SpacyTokenizer,
     TFIDFEmbedder,

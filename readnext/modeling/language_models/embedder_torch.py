@@ -83,7 +83,7 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
         """
         Computes embeddings for all tokenized abstracts in the token ids frame.
 
-        Output is a polars data frame with two columns named `d3_document_id` and
+        The output is a polars data frame with two columns named `d3_document_id` and
         `embedding`.
         """
         slice_size = 5

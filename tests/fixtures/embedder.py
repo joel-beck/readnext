@@ -5,9 +5,9 @@ from transformers import BertModel, LongformerModel
 from readnext.modeling.language_models import (
     BERTEmbedder,
     BM25Embedder,
+    GensimEmbedder,
     LongformerEmbedder,
     TFIDFEmbedder,
-    GensimEmbedder,
 )
 from readnext.utils.aliases import TokenIdsFrame, TokensFrame
 from readnext.utils.protocols import FastTextModelProtocol, Word2VecModelProtocol
@@ -41,7 +41,8 @@ def fasttext_embedder(
     test_spacy_tokens_frame: TokensFrame, fasttext_model: FastTextModelProtocol
 ) -> GensimEmbedder:
     return GensimEmbedder(
-        tokens_frame=test_spacy_tokens_frame.head(3), keyed_vectors=fasttext_model.wv  # type: ignore
+        tokens_frame=test_spacy_tokens_frame.head(3),
+        keyed_vectors=fasttext_model.wv,  # type: ignore
     )
 
 

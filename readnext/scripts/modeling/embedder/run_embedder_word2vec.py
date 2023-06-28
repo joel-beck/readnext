@@ -11,7 +11,7 @@ from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 def main() -> None:
     spacy_tokens_frame = read_df_from_parquet(
         ResultsPaths.language_models.spacy_tokens_frame_parquet
-    )
+    ).head(10)
 
     # requires pre-downloaded model from gensim data repository:
     # https://github.com/RaRe-Technologies/gensim-data

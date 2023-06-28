@@ -7,7 +7,7 @@ import torch
 from transformers import BertModel, LongformerModel
 
 from readnext.modeling.language_models.embedder import AggregationStrategy
-from readnext.utils.aliases import EmbeddingsFrame, TokenIds, TokenIdsFrame
+from readnext.utils.aliases import Embedding, EmbeddingsFrame, TokenIds, TokenIdsFrame
 from readnext.utils.progress_bar import rich_progress_bar
 from readnext.utils.torch_device import get_torch_device
 
@@ -26,23 +26,19 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
     device: torch.device = field(default_factory=get_torch_device)
     aggregation_strategy: AggregationStrategy = AggregationStrategy.mean
 
-    @staticmethod
-    def aggregate_document_embeddings(
-        document_embeddings: torch.Tensor,
-        aggregation_strategy: AggregationStrategy = AggregationStrategy.mean,
-    ) -> torch.Tensor:
+    def aggregate_document_embeddings(self, document_embeddings: torch.Tensor) -> torch.Tensor:
         """
         Collapses first dimension of document embeddings tensor (number of tokens per
         document) to a single document embedding.
         """
-        if aggregation_strategy.is_mean:
+        if self.aggregation_strategy.is_mean:
             return torch.mean(document_embeddings, dim=1)
 
-        if aggregation_strategy.is_max:
+        if self.aggregation_strategy.is_max:
             # Index 0 to only return the max values, not the indices
             return torch.max(document_embeddings, dim=1)[0]
 
-        raise ValueError(f"Aggregation strategy `{aggregation_strategy}` is not implemented.")
+        raise ValueError(f"Aggregation strategy `{self.aggregation_strategy}` is not implemented.")
 
     def compute_embeddings(self, tokenized_documents: list[TokenIds]) -> torch.Tensor:
         """
@@ -53,16 +49,25 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
         - n_documents_input: number of documents in provided input
         - n_dimensions: dimension of embedding space
         """
-
         bert_model = self.torch_model.to(self.device)  # type: ignore
 
         with torch.no_grad():
             bert_model.eval()
 
             # outputs is an ordered dictionary with keys `last_hidden_state` and `pooler_output`
-            outputs = bert_model(torch.tensor(tokenized_documents, device=self.device))
+            outputs = (
+                bert_model(torch.tensor(tokenized_documents, device=self.device))
+                .last_hidden_state.detach()
+                .cpu()
+            )
 
-        return outputs.last_hidden_state.detach().cpu()
+            return self.aggregate_document_embeddings(outputs)
+
+    def compute_embedding_single_document(self, document_token_ids: TokenIds) -> Embedding:
+        """
+        Compute the abstract embedding for a single document.
+        """
+        return self.compute_embeddings([document_token_ids])[0].tolist()
 
     def compute_embeddings_frame_slice(
         self, token_ids_frame_slice: TokenIdsFrame
@@ -71,12 +76,10 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
         Computes abstract embeddings for slices of the token ids frame.
         """
         token_ids = token_ids_frame_slice["token_ids"].to_list()
-
         outputs = self.compute_embeddings(token_ids)
-        aggregated_outputs = self.aggregate_document_embeddings(outputs)
 
         return token_ids_frame_slice.select("d3_document_id").with_columns(
-            embedding=pl.Series(aggregated_outputs.tolist())
+            embedding=pl.Series(outputs.tolist())
         )
 
     def compute_embeddings_frame(self) -> EmbeddingsFrame:

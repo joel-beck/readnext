@@ -14,6 +14,7 @@ from readnext.modeling.language_models.load_embeddings import (
     load_cosine_similarities_from_choice,
     load_embeddings_from_choice,
 )
+from readnext.modeling.language_models.load_model import load_language_model
 from readnext.modeling.language_models.model_choice import (
     LanguageModelChoice,
     LanguageModelChoicePaths,
@@ -60,6 +61,7 @@ __all__ = [
     "LanguageModelChoicePaths",
     "load_cosine_similarities_from_choice",
     "load_embeddings_from_choice",
+    "load_language_model",
     "df",
     "idf",
     "learn_vocabulary",

@@ -1,10 +1,14 @@
 """
 Generate embedding frames of document abstracts with Word2Vec.
 """
-from gensim.models.keyedvectors import KeyedVectors, load_word2vec_format
+from gensim.models.keyedvectors import KeyedVectors
 
-from readnext.config import ModelPaths, ResultsPaths
-from readnext.modeling.language_models import GensimEmbedder
+from readnext.config import ResultsPaths
+from readnext.modeling.language_models import (
+    GensimEmbedder,
+    LanguageModelChoice,
+    load_language_model,
+)
 from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 
 
@@ -21,7 +25,7 @@ def main() -> None:
     # `api.load(ModelVersions.word2vec, return_path=True)`
     #
     # then unzip the model file and move it to the local `models` directory
-    keyed_vectors: KeyedVectors = load_word2vec_format(ModelPaths.word2vec, binary=True)
+    keyed_vectors: KeyedVectors = load_language_model(LanguageModelChoice.WORD2VEC)
     word2vec_embedder = GensimEmbedder(tokens_frame=spacy_tokens_frame, keyed_vectors=keyed_vectors)
     word2vec_embeddings_frame = word2vec_embedder.compute_embeddings_frame()
 

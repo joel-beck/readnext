@@ -2,10 +2,8 @@
 Generate embedding frames of document abstracts with BERT.
 """
 
-from transformers import BertModel
-
-from readnext.config import ModelVersions, ResultsPaths
-from readnext.modeling.language_models import BERTEmbedder
+from readnext.config import ResultsPaths
+from readnext.modeling.language_models import BERTEmbedder, LanguageModelChoice, load_language_model
 from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 from readnext.utils.transformers_logging import suppress_transformers_logging
 
@@ -17,7 +15,7 @@ def main() -> None:
         ResultsPaths.language_models.bert_token_ids_frame_parquet
     )
 
-    bert_model = BertModel.from_pretrained(ModelVersions.bert)
+    bert_model = load_language_model(LanguageModelChoice.BERT)
     bert_embedder = BERTEmbedder(
         token_ids_frame=bert_token_ids_frame,
         torch_model=bert_model,  # type: ignore

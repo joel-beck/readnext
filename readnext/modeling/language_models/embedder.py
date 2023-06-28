@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from collections.abc import Collection
+from collections.abc import Collection, Iterable
 from dataclasses import dataclass
 from enum import Enum
 
@@ -47,6 +47,12 @@ class Embedder(ABC):
     tokens_frame: TokensFrame
 
     @abstractmethod
+    def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
+        """
+        Computes the embedding (list of floats) for a single document.
+        """
+
+    @abstractmethod
     def compute_embeddings_frame(self) -> EmbeddingsFrame:
         """
         Takes a tokens frame with the two columns `d3_document_id` and `tokens` as input
@@ -55,24 +61,6 @@ class Embedder(ABC):
         Output is a polars data frame with two columns named `d3_document_id` and
         `embedding`.
         """
-
-    @staticmethod
-    def word_embeddings_to_document_embedding(
-        word_embeddings_per_document: np.ndarray, aggregation_strategy: AggregationStrategy
-    ) -> np.ndarray:
-        """
-        Combines word embeddings per document by averaging each embedding dimension.
-
-        Output has shape (n_dimensions,) with
-        - n_dimensions: dimension of embedding space
-        """
-        if aggregation_strategy.is_mean:
-            return np.mean(word_embeddings_per_document, axis=0)
-
-        if aggregation_strategy.is_max:
-            return np.max(word_embeddings_per_document, axis=0)
-
-        raise ValueError(f"Aggregation strategy `{aggregation_strategy}` is not implemented.")
 
 
 @dataclass(kw_only=True)
@@ -83,9 +71,17 @@ class TFIDFEmbedder(Embedder):
 
     tfidf_vectorizer: TfidfVectorizer
 
+    def apply_tfidf_vectorizer(self, documents: Iterable[str]) -> np.ndarray:
+        return TfidfVectorizer().fit_transform(documents).toarray()
+
+    def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
+        document_string = " ".join(document_tokens)
+        tfidf_values = self.apply_tfidf_vectorizer([document_string])
+        return tfidf_values[0].tolist()
+
     def compute_embeddings_frame(self) -> EmbeddingsFrame:
         token_strings = self.tokens_frame.to_pandas()["tokens"].str.join(" ")
-        tfidf_values = self.tfidf_vectorizer.fit_transform(token_strings).toarray()
+        tfidf_values = self.apply_tfidf_vectorizer(token_strings)
 
         return self.tokens_frame.select("d3_document_id").with_columns(
             embedding=pl.Series(tfidf_values)
@@ -122,6 +118,28 @@ class GensimEmbedder(Embedder):
 
     aggregation_strategy: AggregationStrategy = AggregationStrategy.mean
     keyed_vectors: KeyedVectors
+
+    def token_embeddings_to_document_embedding(
+        self, token_embeddings_per_document: np.ndarray
+    ) -> np.ndarray:
+        """
+        Combines token embeddings per document by averaging each embedding dimension.
+
+        Output has shape (n_dimensions,) with
+        - n_dimensions: dimension of embedding space
+        """
+        if self.aggregation_strategy.is_mean:
+            return np.mean(token_embeddings_per_document, axis=0)
+
+        if self.aggregation_strategy.is_max:
+            return np.max(token_embeddings_per_document, axis=0)
+
+        raise ValueError(f"Aggregation strategy `{self.aggregation_strategy}` is not implemented.")
+
+    def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
+        token_embeddings = self.keyed_vectors[document_tokens]
+        aggregated_embeddings = self.token_embeddings_to_document_embedding(token_embeddings)
+        return aggregated_embeddings.tolist()
 
     def explode_tokens(self, df: pl.LazyFrame) -> pl.LazyFrame:
         return df.explode("tokens")

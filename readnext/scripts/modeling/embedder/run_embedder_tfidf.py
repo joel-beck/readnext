@@ -2,10 +2,12 @@
 Generate embedding frames of document abstracts with TF-IDF.
 """
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-
 from readnext.config import ResultsPaths
-from readnext.modeling.language_models import TFIDFEmbedder
+from readnext.modeling.language_models import (
+    LanguageModelChoice,
+    TFIDFEmbedder,
+    load_language_model,
+)
 from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 
 
@@ -14,7 +16,7 @@ def main() -> None:
         ResultsPaths.language_models.spacy_tokens_frame_parquet
     )
 
-    tfidf_vectorizer = TfidfVectorizer()
+    tfidf_vectorizer = load_language_model(LanguageModelChoice.TFIDF)
     tfidf_embedder = TFIDFEmbedder(
         tokens_frame=spacy_tokens_frame, tfidf_vectorizer=tfidf_vectorizer
     )

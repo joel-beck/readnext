@@ -1,20 +1,20 @@
 import spacy
-from gensim.models.fasttext import FastText, load_facebook_model
-from gensim.models.keyedvectors import KeyedVectors, load_word2vec_format
+from gensim.models.fasttext import FastText
+from gensim.models.keyedvectors import KeyedVectors
 from transformers import BertModel, BertTokenizerFast, LongformerModel, LongformerTokenizerFast
 
-from readnext import LanguageModelChoice
-from readnext.config import ModelPaths, ModelVersions, ResultsPaths
+from readnext.config import ModelVersions, ResultsPaths
 from readnext.modeling.language_models import (
     BERTEmbedder,
     BERTTokenizer,
+    BM25Embedder,
     GensimEmbedder,
+    LanguageModelChoice,
     LongformerEmbedder,
     LongformerTokenizer,
     SpacyTokenizer,
     TFIDFEmbedder,
-    bm25,
-    tfidf,
+    load_language_model,
 )
 from readnext.utils.aliases import (
     DocumentsFrame,
@@ -53,9 +53,9 @@ def tfidf_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     learned_spacy_tokens_frame = spacy_load_training_tokens_frame()
     query_abstract_tokenized = spacy_tokenize_query(query_documents_frame)
 
+    tfidf_vectorizer = load_language_model(LanguageModelChoice.TFIDF)
     tfidf_embedder = TFIDFEmbedder(
-        tokens_frame=learned_spacy_tokens_frame,
-        keyword_algorithm=tfidf,
+        tokens_frame=learned_spacy_tokens_frame, tfidf_vectorizer=tfidf_vectorizer
     )
 
     return tfidf_compute_embedding(tfidf_embedder, query_abstract_tokenized)
@@ -63,7 +63,7 @@ def tfidf_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
 
 @status_update("Embedding query abstract")
 def bm25_compute_embedding(
-    bm25_embedder: TFIDFEmbedder, query_abstract_tokenized: Tokens
+    bm25_embedder: BM25Embedder, query_abstract_tokenized: Tokens
 ) -> Embedding:
     return bm25_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
@@ -72,14 +72,14 @@ def bm25_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     learned_spacy_tokens_frame = spacy_load_training_tokens_frame()
     query_abstract_tokenized = spacy_tokenize_query(query_documents_frame)
 
-    bm25_embedder = TFIDFEmbedder(tokens_frame=learned_spacy_tokens_frame, keyword_algorithm=bm25)
+    bm25_embedder = BM25Embedder(tokens_frame=learned_spacy_tokens_frame)
 
     return bm25_compute_embedding(bm25_embedder, query_abstract_tokenized)
 
 
 @status_update("Loading pretrained Word2Vec model")
 def word2vec_load_model() -> KeyedVectors:
-    return load_word2vec_format(ModelPaths.word2vec, binary=True)
+    return load_language_model(LanguageModelChoice.WORD2VEC)
 
 
 @status_update("Embedding query abstract")
@@ -104,7 +104,7 @@ def word2vec_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
 
 @status_update("Loading pretrained Glove model")
 def glove_load_model() -> KeyedVectors:
-    return load_word2vec_format(ModelPaths.glove, binary=False, no_header=True)
+    return load_language_model(LanguageModelChoice.GLOVE)
 
 
 @status_update("Embedding query abstract")
@@ -129,7 +129,7 @@ def glove_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
 
 @status_update("Loading pretrained FastText model")
 def fasttext_load_model() -> FastText:
-    return load_facebook_model(ModelPaths.fasttext)
+    return load_language_model(LanguageModelChoice.FASTTEXT)
 
 
 @status_update("Embedding query abstract")
@@ -152,9 +152,7 @@ def fasttest_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     return fasttext_compute_embedding(fasttext_embedder, query_abstract_tokenized)
 
 
-status_update("Loading training corpus")
-
-
+@status_update("Loading training corpus")
 def bert_load_training_tokens_frame() -> TokenIdsFrame:
     return read_df_from_parquet(ResultsPaths.language_models.bert_token_ids_frame_parquet)
 
@@ -171,7 +169,7 @@ def bert_tokenize_query(query_documents_frame: DocumentsFrame) -> TokenIds:
 
 @status_update("Loading pretrained BERT model")
 def bert_load_model() -> BertModel:
-    return BertModel.from_pretrained(ModelVersions.bert)  # type: ignore
+    return load_language_model(LanguageModelChoice.BERT)
 
 
 @status_update("Embedding query abstract")
@@ -211,7 +209,7 @@ def scibert_tokenize_query(query_documents_frame: DocumentsFrame) -> TokenIds:
 
 @status_update("Loading pretrained SciBERT model")
 def scibert_load_model() -> BertModel:
-    return BertModel.from_pretrained(ModelVersions.scibert)  # type: ignore
+    return load_language_model(LanguageModelChoice.SCIBERT)
 
 
 @status_update("Embedding query abstract")
@@ -251,7 +249,7 @@ def longformer_tokenize_query(query_documents_frame: DocumentsFrame) -> TokenIds
 
 @status_update("Loading pretrained Longformer model")
 def longformer_load_model() -> LongformerModel:
-    return LongformerModel.from_pretrained(ModelVersions.longformer)  # type: ignore
+    return load_language_model(LanguageModelChoice.LONGFORMER)
 
 
 @status_update("Embedding query abstract")

@@ -1,6 +1,6 @@
 from abc import ABC
 from dataclasses import dataclass
-from typing import Generic, TypeVar, cast
+from typing import Generic, TypeVar, cast, overload
 
 import polars as pl
 from transformers import BertTokenizerFast, LongformerTokenizerFast
@@ -17,9 +17,18 @@ class TorchTokenizer(ABC, Generic[TTorchTokenizer]):
     torch_tokenizer: TTorchTokenizer
     max_tokens: int
 
+    @overload
+    def tokenize_into_ids(self, documents: str) -> TokenIds:
+        ...
+
+    @overload
     def tokenize_into_ids(self, documents: list[str]) -> list[TokenIds]:
+        ...
+
+    def tokenize_into_ids(self, documents: str | list[str]) -> TokenIds | list[TokenIds]:
         """
-        Tokenizes a list of documents into token ids using a torch tokenizer.
+        Tokenizes a single document or a list of documents into token ids using a torch
+        tokenizer.
         """
         return self.torch_tokenizer(
             documents,

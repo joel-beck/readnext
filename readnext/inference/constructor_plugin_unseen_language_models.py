@@ -95,8 +95,7 @@ def word2vec_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
 
     word2vec_model = word2vec_load_model()
     word2vec_embedder = GensimEmbedder(
-        tokens_frame=learned_spacy_tokens_frame,
-        embedding_model=word2vec_model,  # type: ignore
+        tokens_frame=learned_spacy_tokens_frame, keyed_vectors=word2vec_model
     )
 
     return word2vec_compute_embedding(word2vec_embedder, query_abstract_tokenized)
@@ -120,8 +119,7 @@ def glove_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
 
     glove_model = glove_load_model()
     glove_embedder = GensimEmbedder(
-        tokens_frame=learned_spacy_tokens_frame,
-        embedding_model=glove_model,  # type: ignore
+        tokens_frame=learned_spacy_tokens_frame, keyed_vectors=glove_model
     )
 
     return glove_compute_embedding(glove_embedder, query_abstract_tokenized)
@@ -145,8 +143,7 @@ def fasttest_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
 
     fasttext_model = fasttext_load_model()
     fasttext_embedder = GensimEmbedder(
-        tokens_frame=learned_spacy_tokens_frame,
-        embedding_model=fasttext_model,  # type: ignore
+        tokens_frame=learned_spacy_tokens_frame, keyed_vectors=fasttext_model.wv
     )
 
     return fasttext_compute_embedding(fasttext_embedder, query_abstract_tokenized)
@@ -184,10 +181,7 @@ def bert_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     query_abstract_tokenized = bert_tokenize_query(query_documents_frame)
 
     bert_model = bert_load_model()
-    bert_embedder = BERTEmbedder(
-        token_ids_frame=learned_bert_tokens_frame,
-        torch_model=bert_model,  # type: ignore
-    )
+    bert_embedder = BERTEmbedder(token_ids_frame=learned_bert_tokens_frame, torch_model=bert_model)
 
     return bert_compute_embedding(bert_embedder, query_abstract_tokenized)
 
@@ -225,8 +219,7 @@ def scibert_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
 
     scibert_model = scibert_load_model()
     scibert_embedder = BERTEmbedder(
-        token_ids_frame=learned_scibert_tokens_frame,
-        torch_model=scibert_model,  # type: ignore
+        token_ids_frame=learned_scibert_tokens_frame, torch_model=scibert_model
     )
 
     return scibert_compute_embedding(scibert_embedder, query_abstract_tokenized)
@@ -266,8 +259,7 @@ def longformer_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
 
     longformer_model = longformer_load_model()
     longformer_embedder = LongformerEmbedder(
-        token_ids_frame=learned_longformer_tokens_frame,
-        torch_model=longformer_model,  # type: ignore
+        token_ids_frame=learned_longformer_tokens_frame, torch_model=longformer_model
     )
 
     return longformer_compute_embedding(longformer_embedder, query_abstract_tokenized)

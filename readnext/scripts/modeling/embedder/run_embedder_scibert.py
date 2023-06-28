@@ -17,8 +17,7 @@ def main() -> None:
 
     scibert_model = load_language_model(LanguageModelChoice.SCIBERT)
     scibert_embedder = BERTEmbedder(
-        token_ids_frame=scibert_token_ids_frame,
-        torch_model=scibert_model,  # type: ignore
+        token_ids_frame=scibert_token_ids_frame, torch_model=scibert_model
     )
     scibert_embeddings_frame = scibert_embedder.compute_embeddings_frame()
 

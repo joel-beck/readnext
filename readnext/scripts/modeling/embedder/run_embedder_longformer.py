@@ -21,8 +21,7 @@ def main() -> None:
 
     longformer_model = load_language_model(LanguageModelChoice.LONGFORMER)
     longformer_embedder = LongformerEmbedder(
-        token_ids_frame=longformer_token_ids_frame,
-        torch_model=longformer_model,  # type: ignore
+        token_ids_frame=longformer_token_ids_frame, torch_model=longformer_model
     )
     longformer_embeddings_frame = longformer_embedder.compute_embeddings_frame()
 

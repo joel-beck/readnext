@@ -49,7 +49,7 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
         - n_documents_input: number of documents in provided input
         - n_dimensions: dimension of embedding space
         """
-        bert_model = self.torch_model.to(self.device)  # type: ignore
+        bert_model = self.torch_model.to(self.device)
 
         with torch.no_grad():
             bert_model.eval()

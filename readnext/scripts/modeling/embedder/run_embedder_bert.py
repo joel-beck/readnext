@@ -16,10 +16,7 @@ def main() -> None:
     )
 
     bert_model = load_language_model(LanguageModelChoice.BERT)
-    bert_embedder = BERTEmbedder(
-        token_ids_frame=bert_token_ids_frame,
-        torch_model=bert_model,  # type: ignore
-    )
+    bert_embedder = BERTEmbedder(token_ids_frame=bert_token_ids_frame, torch_model=bert_model)
     bert_embeddings_frame = bert_embedder.compute_embeddings_frame()
 
     write_df_to_parquet(

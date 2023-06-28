@@ -1,10 +1,9 @@
 from readnext.modeling.language_models.bm25 import bm25, bm25_idf, bm25_single_term, bm25_tf
 from readnext.modeling.language_models.embedder import (
     AggregationStrategy,
-    FastTextEmbedder,
+    BM25Embedder,
     GensimEmbedder,
     TFIDFEmbedder,
-    Word2VecEmbedder,
 )
 from readnext.modeling.language_models.embedder_torch import (
     BERTEmbedder,
@@ -15,6 +14,7 @@ from readnext.modeling.language_models.load_embeddings import (
     load_cosine_similarities_from_choice,
     load_embeddings_from_choice,
 )
+from readnext.modeling.language_models.load_model import load_language_model
 from readnext.modeling.language_models.model_choice import (
     LanguageModelChoice,
     LanguageModelChoicePaths,
@@ -47,13 +47,12 @@ __all__ = [
     "bm25_idf",
     "bm25_single_term",
     "bm25_tf",
-    "FastTextEmbedder",
     "GensimEmbedder",
     "BERTEmbedder",
     "LongformerEmbedder",
     "TorchEmbedder",
     "TFIDFEmbedder",
-    "Word2VecEmbedder",
+    "BM25Embedder",
     "AggregationStrategy",
     "get_cosine_similarities_path_from_choice",
     "get_embeddings_path_from_choice",
@@ -62,6 +61,7 @@ __all__ = [
     "LanguageModelChoicePaths",
     "load_cosine_similarities_from_choice",
     "load_embeddings_from_choice",
+    "load_language_model",
     "df",
     "idf",
     "learn_vocabulary",

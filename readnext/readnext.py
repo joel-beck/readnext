@@ -2,7 +2,7 @@ from pydantic import HttpUrl
 
 from readnext import FeatureWeights, LanguageModelChoice
 from readnext.inference import InferenceData, InferenceDataConstructor
-from readnext.utils.logging import suppress_transformers_logging
+from readnext.utils.transformers_logging import suppress_transformers_logging
 
 
 def readnext(

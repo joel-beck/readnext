@@ -127,4 +127,4 @@ class CountUniqueLabels(EvaluationMetric):
         Count the number of unique labels in a list of labels that are contained in a
         dataframe column.
         """
-        return cls.score(df["arxiv_labels"])  # type: ignore
+        return cls.score(df["arxiv_labels"])

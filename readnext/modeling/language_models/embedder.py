@@ -71,8 +71,16 @@ class TFIDFEmbedder(Embedder):
 
     tfidf_vectorizer: TfidfVectorizer
 
+    def __post_init__(self) -> None:
+        self.token_strings = self.tokens_frame.to_pandas()["tokens"].str.join(" ")
+
     def apply_tfidf_vectorizer(self, documents: Iterable[str]) -> np.ndarray:
-        return TfidfVectorizer().fit_transform(documents).toarray()
+        """
+        Fit TF-IDF vectorizer on the entire training corpus to learn the vocabulary and
+        use it for inference on a single or multiple documents.
+        """
+        fitted_tfidf_vectorizer = self.tfidf_vectorizer.fit(self.token_strings)
+        return fitted_tfidf_vectorizer.transform(documents).toarray()
 
     def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
         document_string = " ".join(document_tokens)
@@ -80,8 +88,7 @@ class TFIDFEmbedder(Embedder):
         return tfidf_values[0].tolist()
 
     def compute_embeddings_frame(self) -> EmbeddingsFrame:
-        token_strings = self.tokens_frame.to_pandas()["tokens"].str.join(" ")
-        tfidf_values = self.apply_tfidf_vectorizer(token_strings)
+        tfidf_values = self.apply_tfidf_vectorizer(self.token_strings)
 
         return self.tokens_frame.select("d3_document_id").with_columns(
             embedding=pl.Series(tfidf_values)

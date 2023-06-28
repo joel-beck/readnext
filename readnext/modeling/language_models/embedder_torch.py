@@ -4,14 +4,14 @@ from typing import Generic, TypeVar
 
 import polars as pl
 import torch
+from transformers import BertModel, LongformerModel
 
 from readnext.modeling.language_models.embedder import AggregationStrategy
 from readnext.utils.aliases import EmbeddingsFrame, TokenIds, TokenIdsFrame
 from readnext.utils.progress_bar import rich_progress_bar
-from readnext.utils.protocols import BertModelProtocol, LongformerModelProtocol
 from readnext.utils.torch_device import get_torch_device
 
-TTorchModel = TypeVar("TTorchModel", bound=BertModelProtocol | LongformerModelProtocol)
+TTorchModel = TypeVar("TTorchModel", bound=BertModel | LongformerModel)
 
 
 @dataclass(kw_only=True)
@@ -112,7 +112,7 @@ class BERTEmbedder(TorchEmbedder):
     input.
     """
 
-    torch_model: BertModelProtocol
+    torch_model: BertModel
 
 
 @dataclass(kw_only=True)
@@ -122,4 +122,4 @@ class LongformerEmbedder(TorchEmbedder):
     input.
     """
 
-    torch_model: LongformerModelProtocol
+    torch_model: LongformerModel

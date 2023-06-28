@@ -77,13 +77,13 @@ For these models, text preprocessing and tokenization is performed by the `spaCy
 
 The following keyword-based models are considered:
 
-- TF-IDF: Implemented according to the formula:
+- TF-IDF: Implemented with `scikit-learn` [according to the formula](https://scikit-learn.org/stable/modules/feature_extraction.html#tfidf-term-weighting):
 
     $$\text{TF-IDF}(t, d) = \text{TF}(t, d) \cdot \text{IDF}(t)$$
 
     with:
 
-    $$\text{TF}(t, d) = \frac{\text{count}(t, d)}{\text{len}(d)}$$
+    $$\text{TF}(t, d) = \text{count}(t, d)$$
 
     and:
 
@@ -96,9 +96,10 @@ The following keyword-based models are considered:
     - $\text{TF}(t, d)$ is the term frequency of token $t$ in document $d$ (interpreted as the relative frequency of a term in a document),
     - $\text{IDF}(t)$ is the inverse document frequency of token $t$ across all documents in the training corpus,
     - $\text{count}(t, d)$ is the count of token $t$ in document $d$,
-    - $\text{len}(d)$ is the total number of tokens in document $d$,
     - $\text{DF}(t)$ is the document frequency of token $t$ (the number of documents in the corpus that contain the term $t$),
     - $N$ is the total number of documents in the corpus.
+
+    Finally, the TF-IDF vectors are normalized to unit length by the Euclidean norm.
 
 - BM25: Implemented in the BM25+ variant as proposed by (Lv & Zhai, 2011) and described in (Trotman et al., 2014).
 

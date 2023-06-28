@@ -28,7 +28,7 @@ class TextProcessingSteps:
 
 
 @dataclass
-class ListTokenizer(ABC):
+class Tokenizer(ABC):
     """Base class to tokenize abstracts into a list of string tokens."""
 
     @abstractmethod
@@ -41,20 +41,18 @@ class ListTokenizer(ABC):
         columns named `d3_document_id` and `tokens`.
         """
 
-        abstracts_frame = documents_frame.select(["d3_document_id", "abstract"])
-
-        with tqdm(total=len(abstracts_frame)) as progress_bar:
-            tokens_frame = abstracts_frame.with_columns(
+        with tqdm(total=len(documents_frame)) as progress_bar:
+            tokens_frame = documents_frame.with_columns(
                 tokens=pl.col("abstract").apply(
                     tqdm_progress_bar_wrapper(progress_bar, self.tokenize_single_document)
                 )
             )
 
-        return tokens_frame.drop("abstract")
+        return tokens_frame.select(["d3_document_id", "tokens"])
 
 
 @dataclass
-class SpacyTokenizer(ListTokenizer):
+class SpacyTokenizer(Tokenizer):
     """Tokenize abstracts using spacy into a list of string tokens."""
 
     spacy_model: Language

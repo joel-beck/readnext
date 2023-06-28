@@ -34,8 +34,6 @@ inference_data_constructor_plugins = (
 
 
 # SECTION: InferenceDataConstructorPlugin
-
-
 @pytest.mark.parametrize("constructor_plugins", inference_data_constructor_plugins)
 def test_attributes_are_created_correctly(
     constructor_plugins: InferenceDataConstructorPlugin,
@@ -47,8 +45,6 @@ def test_attributes_are_created_correctly(
 
 
 # SECTION: SeenInferenceDataConstructorPlugin
-
-
 def test_passing_inputs_to_input_converter_works_for_semanticscholar_id(
     inference_data_constructor_plugin_seen_from_semanticscholar_id: SeenInferenceDataConstructorPlugin,  # noqa: E501
 ) -> None:
@@ -127,8 +123,7 @@ def test_kw_only_initialization_constructor_plugin_seen() -> None:
 
 
 # SECTION: UnseenInferenceDataConstructorPlugin
-
-
+@pytest.mark.slow
 @pytest.mark.parametrize("constructor_plugin_unseen", inference_data_constructor_plugins_unseen)
 def test_constructor_plugin_unseen_attributes_are_created_correctly(
     constructor_plugin_unseen: UnseenInferenceDataConstructorPlugin,
@@ -141,6 +136,7 @@ def test_constructor_plugin_unseen_attributes_are_created_correctly(
     )
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("constructor_plugin_unseen", inference_data_constructor_plugins_unseen)
 def test_send_semanticscholar_request(
     constructor_plugin_unseen: UnseenInferenceDataConstructorPlugin,
@@ -195,6 +191,7 @@ def test_send_semanticscholar_request(
     )
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("constructor_plugin_unseen", inference_data_constructor_plugins_unseen)
 def test_query_citation_urls(
     constructor_plugin_unseen: UnseenInferenceDataConstructorPlugin,
@@ -212,6 +209,7 @@ def test_query_citation_urls(
     )
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("constructor_plugin_unseen", inference_data_constructor_plugins_unseen)
 def test_query_reference_urls(
     constructor_plugin_unseen: UnseenInferenceDataConstructorPlugin,

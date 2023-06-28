@@ -1,16 +1,17 @@
 from abc import ABC, abstractmethod
+from collections.abc import Collection
 from dataclasses import dataclass
 from enum import Enum
 
 import numpy as np
 import polars as pl
+from gensim.models.keyedvectors import KeyedVectors
 from joblib import Parallel, delayed
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from readnext.modeling.language_models.bm25 import bm25
 from readnext.utils.aliases import Embedding, EmbeddingsFrame, Tokens, TokensFrame
 from readnext.utils.progress_bar import rich_progress_bar
-from readnext.utils.protocols import FastTextModelProtocol, Word2VecModelProtocol
 
 
 class AggregationStrategy(str, Enum):
@@ -54,15 +55,6 @@ class Embedder(ABC):
         Output is a polars data frame with two columns named `d3_document_id` and
         `embedding`.
         """
-        # with rich_progress_bar() as progress_bar:
-        #     embeddings = Parallel(n_jobs=-1, prefer="threads")(
-        #         delayed(self.compute_embedding_single_document)(row["tokens"])
-        #         for row in progress_bar.track(
-        #             self.tokens_frame.iter_rows(named=True), total=len(self.tokens_frame)
-        #         )
-        #     )
-
-        # return self.tokens_frame.with_columns(embedding=pl.Series(embeddings)).drop("tokens")
 
     @staticmethod
     def word_embeddings_to_document_embedding(
@@ -124,49 +116,41 @@ class BM25Embedder(Embedder):
 @dataclass(kw_only=True)
 class GensimEmbedder(Embedder):
     """
-    Takes pretrained Word2Vec (`KeyedVectors` in gensim) or FastText model as input.
+    Embedder for all models with a gensim interface. This includes Word2Vec, GloVe and
+    FastText.
     """
 
     aggregation_strategy: AggregationStrategy = AggregationStrategy.mean
+    keyed_vectors: KeyedVectors
 
-    @abstractmethod
-    def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
+    def explode_tokens(self, df: pl.LazyFrame) -> pl.LazyFrame:
+        return df.explode("tokens")
+
+    def filter_tokens(self, df: pl.LazyFrame, vocab: Collection) -> pl.LazyFrame:
+        return df.filter(pl.col("tokens").is_in(vocab))
+
+    def add_word_embeddings(self, df: pl.LazyFrame) -> pl.LazyFrame:
         """
-        Stacks all word embeddings of a single document vertically.
-
-        Output has shape (n_tokens_input, n_dimensions) with
-        - n_tokens_input: number of tokens in provided input document
-        - n_dimensions: dimension of embedding space
+        Adds new `word_embedding` column that contains the word embeddings for each
+        token in the `tokens` column.
         """
-
-
-class Word2VecEmbedder(GensimEmbedder):
-    """Computes document embeddings with the Word2Vec model."""
-
-    def __init__(self, tokens_frame: TokensFrame, embedding_model: Word2VecModelProtocol) -> None:
-        super().__init__(tokens_frame=tokens_frame)
-        self.embedding_model = embedding_model
-
-    def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
-        # exclude any individual unknown tokens
-        stacked_word_embeddings = np.vstack(
-            [self.embedding_model[token] for token in document_tokens if token in self.embedding_model]  # type: ignore # noqa: E501
+        return df.with_columns(
+            word_embedding=pl.col("tokens").apply(lambda token: self.keyed_vectors[token].tolist())
         )
 
-        return self.word_embeddings_to_document_embedding(
-            stacked_word_embeddings, self.aggregation_strategy
-        ).tolist()
+    def average_word_embeddings(self, df: pl.LazyFrame) -> pl.LazyFrame:
+        return df.groupby("d3_document_id", maintain_order=True).agg(
+            embedding=pl.col("word_embedding").list.mean()
+        )
 
+    def compute_embeddings_frame(self) -> EmbeddingsFrame:
+        vocab = self.keyed_vectors.key_to_index.keys()
 
-class FastTextEmbedder(GensimEmbedder):
-    """Computes document embeddings with the FastText model."""
-
-    def __init__(self, tokens_frame: TokensFrame, embedding_model: FastTextModelProtocol) -> None:
-        super().__init__(tokens_frame=tokens_frame)
-        self.embedding_model = embedding_model
-
-    def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
-        return self.word_embeddings_to_document_embedding(
-            self.embedding_model.wv[document_tokens],
-            self.aggregation_strategy,
-        ).tolist()
+        return (
+            self.tokens_frame.lazy()
+            .pipe(self.explode_tokens)
+            .pipe(self.filter_tokens, vocab=vocab)
+            .pipe(self.add_word_embeddings)
+            .pipe(self.average_word_embeddings)
+            .collect()
+        )

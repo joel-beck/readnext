@@ -8,12 +8,11 @@ from readnext.config import ModelPaths, ModelVersions, ResultsPaths
 from readnext.modeling.language_models import (
     BERTEmbedder,
     BERTTokenizer,
-    FastTextEmbedder,
     LongformerEmbedder,
+    GensimEmbedder,
     LongformerTokenizer,
     SpacyTokenizer,
     TFIDFEmbedder,
-    Word2VecEmbedder,
     bm25,
     tfidf,
 )
@@ -85,7 +84,7 @@ def word2vec_load_model() -> KeyedVectors:
 
 @status_update("Embedding query abstract")
 def word2vec_compute_embedding(
-    word2vec_embedder: Word2VecEmbedder, query_abstract_tokenized: Tokens
+    word2vec_embedder: GensimEmbedder, query_abstract_tokenized: Tokens
 ) -> Embedding:
     return word2vec_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
@@ -95,7 +94,7 @@ def word2vec_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     query_abstract_tokenized = spacy_tokenize_query(query_documents_frame)
 
     word2vec_model = word2vec_load_model()
-    word2vec_embedder = Word2VecEmbedder(
+    word2vec_embedder = GensimEmbedder(
         tokens_frame=learned_spacy_tokens_frame,
         embedding_model=word2vec_model,  # type: ignore
     )
@@ -110,7 +109,7 @@ def glove_load_model() -> KeyedVectors:
 
 @status_update("Embedding query abstract")
 def glove_compute_embedding(
-    glove_embedder: Word2VecEmbedder, query_abstract_tokenized: Tokens
+    glove_embedder: GensimEmbedder, query_abstract_tokenized: Tokens
 ) -> Embedding:
     return glove_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
@@ -120,7 +119,7 @@ def glove_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     query_abstract_tokenized = spacy_tokenize_query(query_documents_frame)
 
     glove_model = glove_load_model()
-    glove_embedder = Word2VecEmbedder(
+    glove_embedder = GensimEmbedder(
         tokens_frame=learned_spacy_tokens_frame,
         embedding_model=glove_model,  # type: ignore
     )
@@ -135,7 +134,7 @@ def fasttext_load_model() -> FastText:
 
 @status_update("Embedding query abstract")
 def fasttext_compute_embedding(
-    fasttext_embedder: FastTextEmbedder, query_abstract_tokenized: Tokens
+    fasttext_embedder: GensimEmbedder, query_abstract_tokenized: Tokens
 ) -> Embedding:
     return fasttext_embedder.compute_embedding_single_document(query_abstract_tokenized)
 
@@ -145,7 +144,7 @@ def fasttest_embed_query(query_documents_frame: DocumentsFrame) -> Embedding:
     query_abstract_tokenized = spacy_tokenize_query(query_documents_frame)
 
     fasttext_model = fasttext_load_model()
-    fasttext_embedder = FastTextEmbedder(
+    fasttext_embedder = GensimEmbedder(
         tokens_frame=learned_spacy_tokens_frame,
         embedding_model=fasttext_model,  # type: ignore
     )

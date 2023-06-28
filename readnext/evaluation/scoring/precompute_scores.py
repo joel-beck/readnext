@@ -83,7 +83,7 @@ def precompute_pairwise_scores(
     ).sort(by=["query_d3_document_id", "score"], descending=[False, True])
 
     # slice top n scores per query document
-    return scores_frame.groupby("query_d3_document_id").head(n)
+    return scores_frame.groupby("query_d3_document_id", maintain_order=True).head(n)
 
 
 # Set value for `n` higher for co-citation analysis and bibliographic coupling since

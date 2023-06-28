@@ -61,7 +61,7 @@ def select_output_columns(df: pl.LazyFrame) -> pl.LazyFrame:
 def select_highest_scores(df: pl.LazyFrame, n: int) -> pl.LazyFrame:
     return (
         df.sort(by=["query_d3_document_id", "score"], descending=[False, True])
-        .groupby("query_d3_document_id")
+        .groupby("query_d3_document_id", maintain_order=True)
         .head(n)
     )
 

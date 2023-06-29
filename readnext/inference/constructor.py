@@ -56,6 +56,8 @@ class InferenceDataConstructor:
     language_model_choice: LanguageModelChoice
     feature_weights: FeatureWeights
 
+    check_if_seen: bool = True
+
     documents_frame: DocumentsFrame = field(init=False)
     constructor_plugin: InferenceDataConstructorPlugin = field(init=False)
     citation_model_data: CitationModelData = field(init=False)
@@ -184,6 +186,19 @@ class InferenceDataConstructor:
         raise ValueError("No query document identifier provided.")
 
     def get_constructor_plugin(self) -> InferenceDataConstructorPlugin:
+        seen_inference_data_constructor_plugin = SeenInferenceDataConstructorPlugin(
+            semanticscholar_id=self.semanticscholar_id,
+            semanticscholar_url=self.semanticscholar_url,
+            arxiv_id=self.arxiv_id,
+            arxiv_url=self.arxiv_url,
+            language_model_choice=self.language_model_choice,
+            feature_weights=self.feature_weights,
+            documents_frame=self.documents_frame,
+        )
+
+        if not self.check_if_seen:
+            return seen_inference_data_constructor_plugin
+
         console = Console()
 
         if self.query_document_in_training_data():
@@ -195,15 +210,7 @@ class InferenceDataConstructor:
                 )
             )
 
-            return SeenInferenceDataConstructorPlugin(
-                semanticscholar_id=self.semanticscholar_id,
-                semanticscholar_url=self.semanticscholar_url,
-                arxiv_id=self.arxiv_id,
-                arxiv_url=self.arxiv_url,
-                language_model_choice=self.language_model_choice,
-                feature_weights=self.feature_weights,
-                documents_frame=self.documents_frame,
-            )
+            return seen_inference_data_constructor_plugin
 
         console.print(
             Panel.fit(

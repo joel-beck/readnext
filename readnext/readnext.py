@@ -13,6 +13,7 @@ def readnext(
     arxiv_url: HttpUrl | str | None = None,
     language_model_choice: LanguageModelChoice,
     feature_weights: FeatureWeights = FeatureWeights(),
+    check_if_seen: bool = True,
 ) -> InferenceData:
     """
     Generates paper recommendations based on a specified query paper.
@@ -59,6 +60,7 @@ def readnext(
         arxiv_url=arxiv_url,
         language_model_choice=language_model_choice,
         feature_weights=feature_weights,
+        check_if_seen=check_if_seen,
     )
 
     return InferenceData.from_constructor(constructor)

@@ -6,6 +6,7 @@ similarity scores.
 import polars as pl
 
 from readnext.config import MagicNumbers
+from readnext.utils.aliases import ScoresFrame
 from readnext.utils.progress_bar import rich_progress_bar
 
 
@@ -68,7 +69,7 @@ def select_highest_scores(df: pl.LazyFrame, n: int) -> pl.LazyFrame:
 
 def precompute_common_values_slice(
     documents_frame_slice: pl.LazyFrame, colname: str, n: int
-) -> pl.DataFrame:
+) -> ScoresFrame:
     """
     Compute scores for a slice of the full dataframe.
     """
@@ -89,7 +90,7 @@ def precompute_common_values_slice(
 
 def precompute_common_values_polars(
     documents_frame: pl.LazyFrame, colname: str, n: int, description: str
-) -> pl.DataFrame:
+) -> ScoresFrame:
     """
     Compute scores sequentially for slices of the full dataframe and stack the outputs vertically.
     """
@@ -114,7 +115,7 @@ def precompute_common_values_polars(
 
 def precompute_co_citations_polars(
     documents_frame: pl.LazyFrame, n: int = MagicNumbers.scoring_limit
-) -> pl.DataFrame:
+) -> ScoresFrame:
     """
     Compute co-citation analysis scores sequentially for slices of the full dataframe
     and stack the outputs vertically.
@@ -126,7 +127,7 @@ def precompute_co_citations_polars(
 
 def precompute_co_references_polars(
     documents_frame: pl.LazyFrame, n: int = MagicNumbers.scoring_limit
-) -> pl.DataFrame:
+) -> ScoresFrame:
     """
     Compute bibliographic coupling scores sequentially for slices of the full dataframe
     and stack the outputs vertically.
@@ -197,7 +198,7 @@ def precompute_cosine_similarities_slice(
 
 def precompute_cosine_similarities_polars(
     embeddings_frame: pl.LazyFrame, n: int = MagicNumbers.scoring_limit
-) -> pl.DataFrame:
+) -> ScoresFrame:
     """
     Compute cosine similarities sequentially for slices of the full dataframe and stack
     the outputs vertically.

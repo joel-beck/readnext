@@ -56,7 +56,7 @@ class InferenceDataConstructor:
     language_model_choice: LanguageModelChoice
     feature_weights: FeatureWeights
 
-    check_if_seen: bool = True
+    check_if_unseen: bool = True
 
     documents_frame: DocumentsFrame = field(init=False)
     constructor_plugin: InferenceDataConstructorPlugin = field(init=False)
@@ -196,7 +196,7 @@ class InferenceDataConstructor:
             documents_frame=self.documents_frame,
         )
 
-        if not self.check_if_seen:
+        if not self.check_if_unseen:
             return seen_inference_data_constructor_plugin
 
         console = Console()

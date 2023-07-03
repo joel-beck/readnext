@@ -13,6 +13,10 @@ candidate_score_frames = [
 seen_integer_score_frames = [
     lazy_fixture("test_co_citation_analysis_scores"),
     lazy_fixture("test_bibliographic_coupling_scores"),
+    lazy_fixture("precomputed_co_citations"),
+    lazy_fixture("precomputed_co_citations_polars"),
+    lazy_fixture("precomputed_co_references"),
+    lazy_fixture("precomputed_co_references_polars"),
 ]
 seen_integer_score_frames_skip_ci = [
     lazy_fixture("inference_data_constructor_plugin_seen_co_citation_analysis"),
@@ -28,6 +32,8 @@ seen_float_score_frames = [
     lazy_fixture("test_bert_cosine_similarities"),
     lazy_fixture("test_scibert_cosine_similarities"),
     lazy_fixture("test_longformer_cosine_similarities"),
+    lazy_fixture("precomputed_cosine_similarities"),
+    lazy_fixture("precomputed_cosine_similarities_polars"),
 ]
 seen_float_score_frames_skip_ci = [
     lazy_fixture("inference_data_constructor_plugin_seen_cosine_similarities")

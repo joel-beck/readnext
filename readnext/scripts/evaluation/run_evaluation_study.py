@@ -13,9 +13,9 @@ from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
 from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference import Recommendations
 from readnext.modeling.language_models import LanguageModelChoice
+from readnext.utils.aliases import DocumentsFrame
 from readnext.utils.io import read_df_from_parquet
 from readnext.utils.progress_bar import rich_progress_bar
-from readnext.utils.aliases import DocumentsFrame
 
 
 def construct_combinations_frame(
@@ -57,7 +57,7 @@ def retrieve_recommendations(
         semanticscholar_id=semanticscholar_id,
         language_model_choice=LanguageModelChoice(language_model),
         feature_weights=FeatureWeights.from_sequence(feature_weights),
-        check_if_seen=False,
+        check_if_unseen=False,
     )
     return result.recommendations
 

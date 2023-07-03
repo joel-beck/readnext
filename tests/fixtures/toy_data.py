@@ -1,7 +1,7 @@
 import polars as pl
 import pytest
 
-from readnext.utils.aliases import EmbeddingsFrame, Tokens
+from readnext.utils.aliases import EmbeddingsFrame, TokenIds, Tokens
 
 
 @pytest.fixture
@@ -34,6 +34,22 @@ def toy_abstract() -> str:
     This is a DUMMY abstract. It contains a number of special characters like
     punctuation (brackets, curly braces).
     """
+
+
+@pytest.fixture(scope="session")
+def toy_tokens() -> Tokens:
+    return [
+        "dummy",
+        "abstract",
+        "contain",
+        "number",
+        "special",
+    ]
+
+
+@pytest.fixture(scope="session")
+def toy_token_ids() -> TokenIds:
+    return [1, 2, 3, 4, 5]
 
 
 @pytest.fixture(scope="session")

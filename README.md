@@ -265,7 +265,7 @@ The **Average Precision (AP)** computes a scalar score for a single recommendati
 
 **Precision**
 
-$$\text{Precision} = \frac{\text{\# of relevant items}}{\text{\# of items}}$$
+$$\text{Precision} = \frac{\text{number of relevant items}}{\text{number of items}}$$
 
 
 **Average Precision (AP)**

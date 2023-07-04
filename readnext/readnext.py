@@ -13,7 +13,7 @@ def readnext(
     arxiv_url: HttpUrl | str | None = None,
     language_model_choice: LanguageModelChoice,
     feature_weights: FeatureWeights = FeatureWeights(),
-    check_if_unseen: bool = True,
+    verbose: bool = True,
 ) -> InferenceData:
     """
     Generates paper recommendations based on a specified query paper.
@@ -24,13 +24,15 @@ def readnext(
     for 'unseen' papers, the function requires on-the-fly tokenization, embedding, and
     computation of cosine similarity, which slows down the inference process.
 
-    The function expects three categories of input arguments:
+    The function expects the following input arguments:
     - A paper identifier (required): This can be either `semanticscholar_id`,
       `semanticscholar_url`, `arxiv_id`, or `arxiv_url`.
-    - Language model choice (required): This determines the language model to be used
+    - `language_model_choice` (required): This argument determines the language model to be used
       for the Language Recommender.
-    - Feature weights (optional): These weights influence the citation features and
+    - `feature_weights` (optional): These weights influence the citation features and
       global document features for the Citation Recommender.
+    - `verbose` (optional): If set to `True`, the function prints status and progress
+      messages to the console.
 
     The function returns an `InferenceData` object that includes the following attributes:
     - `document_identifier`: Contains the identifiers of the query paper.
@@ -60,7 +62,7 @@ def readnext(
         arxiv_url=arxiv_url,
         language_model_choice=language_model_choice,
         feature_weights=feature_weights,
-        check_if_unseen=check_if_unseen,
+        verbose=verbose,
     )
 
     return InferenceData.from_constructor(constructor)

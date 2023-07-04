@@ -6,9 +6,7 @@ import polars as pl
 
 from readnext.config import PROJECT_PATH
 from readnext.evaluation.scoring import FeatureWeights
-from readnext.inference.constructor_plugin_seen import (
-    SeenInferenceDataConstructorPlugin,
-)
+from readnext.inference.constructor_plugin_seen import SeenInferenceDataConstructorPlugin
 from readnext.modeling import (
     CitationModelData,
     DocumentInfo,

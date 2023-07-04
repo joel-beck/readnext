@@ -57,7 +57,7 @@ def retrieve_recommendations(
         semanticscholar_id=semanticscholar_id,
         language_model_choice=LanguageModelChoice(language_model),
         feature_weights=FeatureWeights.from_sequence(feature_weights),
-        check_if_unseen=False,
+        verbose=False,
     )
     return result.recommendations
 

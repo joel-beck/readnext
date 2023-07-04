@@ -49,7 +49,10 @@ def test_scores(hybrid_scorer: HybridScorer, score_attribute: str) -> None:
     assert score <= 1
 
 
-citation_frame_attributes = ["citation_to_language_candidates", "language_to_citation"]
+citation_frame_attributes = [
+    "citation_to_language_candidates",
+    "language_to_citation_recommendations",
+]
 
 
 @pytest.mark.parametrize("citation_frame_attribute", citation_frame_attributes)
@@ -59,14 +62,11 @@ def test_citation_frames(hybrid_scorer: HybridScorer, citation_frame_attribute: 
     assert citation_frame.width == 18
     assert citation_frame["weighted_points"].is_sorted(descending=True)
 
-    assert isinstance(hybrid_scorer.citation_to_language_recommendations, pl.DataFrame)
-    assert hybrid_scorer.citation_to_language_recommendations.width == 9
-    assert hybrid_scorer.citation_to_language_recommendations["cosine_similarity"].is_sorted(
-        descending=True
-    )
 
-
-language_frame_attributes = ["language_to_citation_candidates", "citation_to_language"]
+language_frame_attributes = [
+    "language_to_citation_candidates",
+    "citation_to_language_recommendations",
+]
 
 
 @pytest.mark.parametrize("language_frame_attribute", language_frame_attributes)

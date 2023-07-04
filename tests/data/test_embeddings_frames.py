@@ -29,7 +29,7 @@ def test_embeddings_frame_structure(embeddings_frame: EmbeddingsFrame) -> None:
     assert isinstance(embeddings_frame, pl.DataFrame)
 
     # check number and names of columns and index
-    assert embeddings_frame.shape[1] == 2
+    assert embeddings_frame.width == 2
     assert embeddings_frame.columns == ["d3_document_id", "embedding"]
     # check that `embedding` column contains lists of floats
     assert embeddings_frame.dtypes == [pl.Int64, pl.List(pl.Float64)]

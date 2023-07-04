@@ -46,7 +46,7 @@ def test_feature_attributes(labels: Labels) -> None:
 def test_arxiv_labels(labels: Labels) -> None:
     assert isinstance(labels.arxiv, pl.DataFrame)
 
-    assert labels.arxiv.shape[1] == 2
+    assert labels.arxiv.width == 2
     assert labels.arxiv.columns == [
         "candidate_d3_document_id",
         "arxiv_labels",
@@ -75,7 +75,7 @@ def test_arxiv_labels(labels: Labels) -> None:
 def test_citationcount_document(labels: Labels) -> None:
     assert isinstance(labels.integer, pl.DataFrame)
 
-    assert labels.integer.shape[1] == 2
+    assert labels.integer.width == 2
     assert labels.integer.columns == [
         "candidate_d3_document_id",
         "integer_label",

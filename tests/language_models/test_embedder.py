@@ -15,6 +15,7 @@ from readnext.modeling.language_models import (
     TorchEmbedder,
     tfidf,
 )
+from readnext.utils.aliases import TokenIds, Tokens
 from readnext.utils.protocols import BertModelProtocol, LongformerModelProtocol
 
 keyword_based_embedder_fixtures = [lazy_fixture("tfidf_embedder"), lazy_fixture("bm25_embedder")]
@@ -83,38 +84,50 @@ def test_compute_embeddings_frame(embedder: GensimEmbedder | TorchEmbedder) -> N
     embeddings_frame = embedder.compute_embeddings_frame()
 
     assert isinstance(embeddings_frame, pl.DataFrame)
-    assert embeddings_frame.shape[1] == 2
+    assert embeddings_frame.width == 2
     assert embeddings_frame.columns == ["d3_document_id", "embedding"]
     assert embeddings_frame.dtypes == [pl.Int64, pl.List(pl.Float64)]
 
 
-def test_embedding_dimension_tfidf(tfidf_embedder: TFIDFEmbedder) -> None:
+def test_embedding_dimension_tfidf(tfidf_embedder: TFIDFEmbedder, toy_tokens: Tokens) -> None:
+    single_embedding = tfidf_embedder.compute_embedding_single_document(toy_tokens)
+
     embeddings_frame = tfidf_embedder.compute_embeddings_frame()
     corpus_vocabulary_size = tfidf_embedder.tokens_frame["tokens"].explode().n_unique()
 
+    assert len(single_embedding) == corpus_vocabulary_size
     assert (embeddings_frame["embedding"].list.lengths() == corpus_vocabulary_size).all()
 
 
-def test_embedding_dimension_bm25(bm25_embedder: BM25Embedder) -> None:
+def test_embedding_dimension_bm25(bm25_embedder: BM25Embedder, toy_tokens: Tokens) -> None:
+    single_embedding = bm25_embedder.compute_embedding_single_document(toy_tokens)
+
     embeddings_frame = bm25_embedder.compute_embeddings_frame()
     corpus_vocabulary_size = bm25_embedder.tokens_frame["tokens"].explode().n_unique()
 
+    assert len(single_embedding) == corpus_vocabulary_size
     assert (embeddings_frame["embedding"].list.lengths() == corpus_vocabulary_size).all()
 
 
 @pytest.mark.slow
 @pytest.mark.skip_ci
 @pytest.mark.parametrize("embedder", gensim_embedder_fixtures)
-def test_embedding_dimension_gensim(embedder: GensimEmbedder) -> None:
+def test_embedding_dimension_gensim(embedder: GensimEmbedder, toy_tokens: Tokens) -> None:
+    single_embedding = embedder.compute_embedding_single_document(toy_tokens)
     embeddings_frame = embedder.compute_embeddings_frame()
+
+    assert len(single_embedding) == 300
     assert (embeddings_frame["embedding"].list.lengths() == 300).all()
 
 
 @pytest.mark.slow
 @pytest.mark.skip_ci
 @pytest.mark.parametrize("embedder", torch_embedder_fixtures)
-def test_embedding_dimension_torch(embedder: GensimEmbedder) -> None:
+def test_embedding_dimension_torch(embedder: TorchEmbedder, toy_token_ids: TokenIds) -> None:
+    single_embedding = embedder.compute_embedding_single_document(toy_token_ids)
     embeddings_frame = embedder.compute_embeddings_frame()
+
+    assert len(single_embedding) == 768
     assert (embeddings_frame["embedding"].list.lengths() == 768).all()
 
 

@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 from typing_extensions import Self
@@ -37,4 +39,14 @@ class FeatureWeights:
             citationcount_author=self.citationcount_author / l1_norm,
             co_citation_analysis=self.co_citation_analysis / l1_norm,
             bibliographic_coupling=self.bibliographic_coupling / l1_norm,
+        )
+
+    @classmethod
+    def from_sequence(cls, sequence: Sequence) -> Self:
+        return cls(
+            publication_date=sequence[0],
+            citationcount_document=sequence[1],
+            citationcount_author=sequence[2],
+            co_citation_analysis=sequence[3],
+            bibliographic_coupling=sequence[4],
         )

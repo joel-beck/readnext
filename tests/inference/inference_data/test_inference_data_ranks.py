@@ -57,7 +57,7 @@ def test_rank_attributes(ranks: Ranks) -> None:
 def test_publication_date_rank(ranks: Ranks) -> None:
     assert isinstance(ranks.publication_date, pl.DataFrame)
 
-    assert ranks.publication_date.shape[1] == 2
+    assert ranks.publication_date.width == 2
     assert ranks.publication_date.columns == [
         "candidate_d3_document_id",
         "publication_date_rank",
@@ -90,7 +90,7 @@ def test_citationcount_document_rank(ranks: Ranks) -> None:
     assert ranks.citationcount_document["candidate_d3_document_id"].dtype == pl.Int64
     assert ranks.citationcount_document["citationcount_document_rank"].dtype == pl.Float32
 
-    assert ranks.citationcount_document.shape[1] == 2
+    assert ranks.citationcount_document.width == 2
     assert ranks.citationcount_document.columns == [
         "candidate_d3_document_id",
         "citationcount_document_rank",
@@ -120,7 +120,7 @@ def test_citationcount_author_rank(ranks: Ranks) -> None:
     assert ranks.citationcount_author["candidate_d3_document_id"].dtype == pl.Int64
     assert ranks.citationcount_author["citationcount_author_rank"].dtype == pl.Float32
 
-    assert ranks.citationcount_author.shape[1] == 2
+    assert ranks.citationcount_author.width == 2
     assert ranks.citationcount_author.columns == [
         "candidate_d3_document_id",
         "citationcount_author_rank",
@@ -150,7 +150,7 @@ def test_co_citation_analysis_rank(ranks: Ranks) -> None:
     assert ranks.co_citation_analysis["candidate_d3_document_id"].dtype == pl.Int64
     assert ranks.co_citation_analysis["co_citation_analysis_rank"].dtype == pl.Float32
 
-    assert ranks.co_citation_analysis.shape[1] == 2
+    assert ranks.co_citation_analysis.width == 2
     assert ranks.co_citation_analysis.columns == [
         "candidate_d3_document_id",
         "co_citation_analysis_rank",
@@ -180,7 +180,7 @@ def test_bibliographic_coupling_rank(ranks: Ranks) -> None:
     assert ranks.bibliographic_coupling["candidate_d3_document_id"].dtype == pl.Int64
     assert ranks.bibliographic_coupling["bibliographic_coupling_rank"].dtype == pl.Float32
 
-    assert ranks.bibliographic_coupling.shape[1] == 2
+    assert ranks.bibliographic_coupling.width == 2
     assert ranks.bibliographic_coupling.columns == [
         "candidate_d3_document_id",
         "bibliographic_coupling_rank",

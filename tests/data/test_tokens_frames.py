@@ -21,7 +21,7 @@ tokens_frames = [lazy_fixture("test_spacy_tokens_frame")]
 def test_tokens_frame(tokens_frame: TokensFrame) -> None:
     assert isinstance(tokens_frame, pl.DataFrame)
 
-    assert tokens_frame.shape[1] == 2
+    assert tokens_frame.width == 2
     assert tokens_frame.columns == ["d3_document_id", "tokens"]
     assert tokens_frame.dtypes == [pl.Int64, pl.List(pl.Utf8)]
 
@@ -33,7 +33,7 @@ def test_tokens_frame(tokens_frame: TokensFrame) -> None:
 def test_token_ids_frame(token_ids_frame: TokenIdsFrame) -> None:
     assert isinstance(token_ids_frame, pl.DataFrame)
 
-    assert token_ids_frame.shape[1] == 2
+    assert token_ids_frame.width == 2
     assert token_ids_frame.columns == ["d3_document_id", "token_ids"]
     assert token_ids_frame.dtypes == [pl.Int64, pl.List(pl.Int64)]
 

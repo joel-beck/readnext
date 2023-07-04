@@ -57,7 +57,7 @@ def test_points_attributes(points: Points) -> None:
 def test_publication_date_points(points: Points) -> None:
     assert isinstance(points.publication_date, pl.DataFrame)
 
-    assert points.publication_date.shape[1] == 2
+    assert points.publication_date.width == 2
     assert points.publication_date.columns == [
         "candidate_d3_document_id",
         "publication_date_points",
@@ -90,7 +90,7 @@ def test_citationcount_document_points(points: Points) -> None:
     assert points.citationcount_document["candidate_d3_document_id"].dtype == pl.Int64
     assert points.citationcount_document["citationcount_document_points"].dtype == pl.Float32
 
-    assert points.citationcount_document.shape[1] == 2
+    assert points.citationcount_document.width == 2
     assert points.citationcount_document.columns == [
         "candidate_d3_document_id",
         "citationcount_document_points",
@@ -120,7 +120,7 @@ def test_citationcount_author_points(points: Points) -> None:
     assert points.citationcount_author["candidate_d3_document_id"].dtype == pl.Int64
     assert points.citationcount_author["citationcount_author_points"].dtype == pl.Float32
 
-    assert points.citationcount_author.shape[1] == 2
+    assert points.citationcount_author.width == 2
     assert points.citationcount_author.columns == [
         "candidate_d3_document_id",
         "citationcount_author_points",
@@ -150,7 +150,7 @@ def test_co_citation_analysis_points(points: Points) -> None:
     assert points.co_citation_analysis["candidate_d3_document_id"].dtype == pl.Int64
     assert points.co_citation_analysis["co_citation_analysis_points"].dtype == pl.Float32
 
-    assert points.co_citation_analysis.shape[1] == 2
+    assert points.co_citation_analysis.width == 2
     assert points.co_citation_analysis.columns == [
         "candidate_d3_document_id",
         "co_citation_analysis_points",
@@ -180,7 +180,7 @@ def test_bibliographic_coupling_points(points: Points) -> None:
     assert points.bibliographic_coupling["candidate_d3_document_id"].dtype == pl.Int64
     assert points.bibliographic_coupling["bibliographic_coupling_points"].dtype == pl.Float32
 
-    assert points.bibliographic_coupling.shape[1] == 2
+    assert points.bibliographic_coupling.width == 2
     assert points.bibliographic_coupling.columns == [
         "candidate_d3_document_id",
         "bibliographic_coupling_points",

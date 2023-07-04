@@ -56,6 +56,8 @@ class InferenceDataConstructor:
     language_model_choice: LanguageModelChoice
     feature_weights: FeatureWeights
 
+    verbose: bool = True
+
     documents_frame: DocumentsFrame = field(init=False)
     constructor_plugin: InferenceDataConstructorPlugin = field(init=False)
     citation_model_data: CitationModelData = field(init=False)
@@ -187,15 +189,10 @@ class InferenceDataConstructor:
         console = Console()
 
         if self.query_document_in_training_data():
-            console.print(
-                Panel.fit(
-                    "Query document is contained in the training data",
-                    box=box.ROUNDED,
-                    padding=(1, 1, 1, 1),
-                )
-            )
-
-            return SeenInferenceDataConstructorPlugin(
+            # NOTE: Cannot be initialized before calling
+            # `self.query_document_in_training_data()` since `post_init()` of
+            # `SeenInferenceDataConstructorPlugin` raises an error for unseen documents
+            seen_inference_data_constructor_plugin = SeenInferenceDataConstructorPlugin(
                 semanticscholar_id=self.semanticscholar_id,
                 semanticscholar_url=self.semanticscholar_url,
                 arxiv_id=self.arxiv_id,
@@ -205,14 +202,20 @@ class InferenceDataConstructor:
                 documents_frame=self.documents_frame,
             )
 
-        console.print(
-            Panel.fit(
-                "Query document is [bold]not[/bold] contained in the training data",
-                box=box.ROUNDED,
-                padding=(1, 1, 1, 1),
+            if not self.verbose:
+                return seen_inference_data_constructor_plugin_default
+
+            console.print(
+                Panel.fit(
+                    "Query document is contained in the training data",
+                    box=box.ROUNDED,
+                    padding=(1, 1, 1, 1),
+                )
             )
-        )
-        return UnseenInferenceDataConstructorPlugin(
+
+            return seen_inference_data_constructor_plugin
+
+        unseen_inference_data_constructor_plugin = UnseenInferenceDataConstructorPlugin(
             semanticscholar_id=self.semanticscholar_id,
             semanticscholar_url=self.semanticscholar_url,
             arxiv_id=self.arxiv_id,
@@ -221,6 +224,18 @@ class InferenceDataConstructor:
             feature_weights=self.feature_weights,
             documents_frame=self.documents_frame,
         )
+
+        if not self.verbose:
+            return unseen_inference_data_constructor_plugin
+
+        console.print(
+            Panel.fit(
+                "Query document is [bold]not[/bold] contained in the training data",
+                box=box.ROUNDED,
+                padding=(1, 1, 1, 1),
+            )
+        )
+        return unseen_inference_data_constructor_plugin
 
     def collect_document_identifier(self) -> DocumentIdentifier:
         return self.constructor_plugin.identifier

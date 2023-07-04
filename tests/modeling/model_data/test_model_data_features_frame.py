@@ -52,7 +52,7 @@ language_features_frame_fixtures_slow_skip_ci = [
 def test_citation_model_data_features_frame(citation_features_frame: CitationFeaturesFrame) -> None:
     assert isinstance(citation_features_frame, pl.DataFrame)
 
-    assert citation_features_frame.shape[1] == 6
+    assert citation_features_frame.width == 6
     assert citation_features_frame.columns == [
         "candidate_d3_document_id",
         "publication_date",
@@ -87,7 +87,7 @@ def test_citation_model_data_features_frame(citation_features_frame: CitationFea
 def test_language_model_data_features_frame(language_features_frame: LanguageFeaturesFrame) -> None:
     assert isinstance(language_features_frame, pl.DataFrame)
 
-    assert language_features_frame.shape[1] == 2
+    assert language_features_frame.width == 2
     assert language_features_frame.columns == ["candidate_d3_document_id", "cosine_similarity"]
 
     assert language_features_frame["candidate_d3_document_id"].dtype == pl.Int64

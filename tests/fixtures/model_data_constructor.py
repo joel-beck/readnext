@@ -69,31 +69,43 @@ def citation_model_data_constructor_unseen(
     )
 
 
-@pytest.fixture(scope="session")
+cosine_similarity_fixtures = [
+    lazy_fixture("test_tfidf_cosine_similarities"),
+    lazy_fixture("test_bm25_cosine_similarities"),
+    lazy_fixture("test_word2vec_cosine_similarities"),
+    lazy_fixture("test_glove_cosine_similarities"),
+    lazy_fixture("test_fasttext_cosine_similarities"),
+    lazy_fixture("test_bert_cosine_similarities"),
+    lazy_fixture("test_scibert_cosine_similarities"),
+    lazy_fixture("test_longformer_cosine_similarities"),
+]
+
+
+@pytest.fixture(scope="session", params=cosine_similarity_fixtures)
 def language_model_data_constructor_seen(
+    request: pytest.FixtureRequest,
     test_documents_frame: DocumentsFrame,
     model_data_constructor_plugin_seen: SeenModelDataConstructorPlugin,
-    test_bert_cosine_similarities: ScoresFrame,
 ) -> LanguageModelDataConstructor:
     return LanguageModelDataConstructor(
         d3_document_id=13756489,
         documents_frame=test_documents_frame,
         constructor_plugin=model_data_constructor_plugin_seen,
-        cosine_similarity_scores_frame=test_bert_cosine_similarities,
+        cosine_similarity_scores_frame=request.param,
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", params=cosine_similarity_fixtures)
 def language_model_data_constructor_unseen(
+    request: pytest.FixtureRequest,
     test_documents_frame: DocumentsFrame,
     model_data_constructor_plugin_unseen: UnseenModelDataConstructorPlugin,
-    test_bert_cosine_similarities: ScoresFrame,
 ) -> LanguageModelDataConstructor:
     # score frames for unseen documents only contain scores for the single unseen query
     # document and only the columns `candidate_d3_document_id` and `score`
     query_d3_document_id = test_documents_frame[0, "d3_document_id"]
 
-    cosine_similarity_scores_frame = test_bert_cosine_similarities.filter(
+    cosine_similarity_scores_frame = request.param.filter(
         pl.col("query_d3_document_id") == query_d3_document_id
     ).drop("query_d3_document_id")
 

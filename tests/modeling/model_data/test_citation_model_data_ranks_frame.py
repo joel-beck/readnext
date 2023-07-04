@@ -37,7 +37,7 @@ citation_ranks_frame_fixtures_slow_skip_ci = [
 def test_citation_model_data_ranks_frame(citation_ranks_frame: CitationRanksFrame) -> None:
     assert isinstance(citation_ranks_frame, pl.DataFrame)
 
-    assert citation_ranks_frame.shape[1] == 6
+    assert citation_ranks_frame.width == 6
     assert citation_ranks_frame.columns == [
         "candidate_d3_document_id",
         "publication_date_rank",

@@ -6,12 +6,12 @@ from pytest_lazyfixture import lazy_fixture
 
 from readnext.inference.features import Recommendations
 
-feature_fixtures_skip_ci = [
+recommendation_fixtures_skip_ci = [
     lazy_fixture("inference_data_seen_recommendations"),
     lazy_fixture("inference_data_constructor_seen_recommendations"),
 ]
 
-feature_fixtures_slow_skip_ci = [
+recommendation_fixtures_slow_skip_ci = [
     lazy_fixture("inference_data_unseen_recommendations"),
     lazy_fixture("inference_data_constructor_unseen_recommendations"),
 ]
@@ -22,11 +22,11 @@ feature_fixtures_slow_skip_ci = [
     [
         *[
             pytest.param(fixture, marks=(pytest.mark.skip_ci))
-            for fixture in feature_fixtures_skip_ci
+            for fixture in recommendation_fixtures_skip_ci
         ],
         *[
             pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
-            for fixture in feature_fixtures_slow_skip_ci
+            for fixture in recommendation_fixtures_slow_skip_ci
         ],
     ],
 )
@@ -45,11 +45,11 @@ def test_feature_attributes(recommendations: Recommendations) -> None:
     [
         *[
             pytest.param(fixture, marks=(pytest.mark.skip_ci))
-            for fixture in feature_fixtures_skip_ci
+            for fixture in recommendation_fixtures_skip_ci
         ],
         *[
             pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
-            for fixture in feature_fixtures_slow_skip_ci
+            for fixture in recommendation_fixtures_slow_skip_ci
         ],
     ],
 )
@@ -57,8 +57,8 @@ def test_citation_recommendations(recommendations: Recommendations) -> None:
     assert isinstance(recommendations.citation_to_language_candidates, pl.DataFrame)
     assert isinstance(recommendations.language_to_citation, pl.DataFrame)
 
-    assert recommendations.citation_to_language_candidates.shape[1] == 18
-    assert recommendations.language_to_citation.shape[1] == 18
+    assert recommendations.citation_to_language_candidates.width == 18
+    assert recommendations.language_to_citation.width == 18
 
     assert all(
         columns
@@ -128,11 +128,11 @@ def test_citation_recommendations(recommendations: Recommendations) -> None:
     [
         *[
             pytest.param(fixture, marks=(pytest.mark.skip_ci))
-            for fixture in feature_fixtures_skip_ci
+            for fixture in recommendation_fixtures_skip_ci
         ],
         *[
             pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
-            for fixture in feature_fixtures_slow_skip_ci
+            for fixture in recommendation_fixtures_slow_skip_ci
         ],
     ],
 )
@@ -140,8 +140,8 @@ def test_language_recommendations(recommendations: Recommendations) -> None:
     assert isinstance(recommendations.language_to_citation_candidates, pl.DataFrame)
     assert isinstance(recommendations.citation_to_language, pl.DataFrame)
 
-    assert recommendations.language_to_citation_candidates.shape[1] == 9
-    assert recommendations.citation_to_language.shape[1] == 9
+    assert recommendations.language_to_citation_candidates.width == 9
+    assert recommendations.citation_to_language.width == 9
 
     assert all(
         columns
@@ -193,11 +193,11 @@ def test_language_recommendations(recommendations: Recommendations) -> None:
     [
         *[
             pytest.param(fixture, marks=(pytest.mark.skip_ci))
-            for fixture in feature_fixtures_skip_ci
+            for fixture in recommendation_fixtures_skip_ci
         ],
         *[
             pytest.param(fixture, marks=(pytest.mark.slow, pytest.mark.skip_ci))
-            for fixture in feature_fixtures_slow_skip_ci
+            for fixture in recommendation_fixtures_slow_skip_ci
         ],
     ],
 )

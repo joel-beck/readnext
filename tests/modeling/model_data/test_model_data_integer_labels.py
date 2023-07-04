@@ -47,7 +47,7 @@ def test_integer_labels_frame(
 ) -> None:
     assert isinstance(integer_labels_frame, pl.DataFrame)
 
-    assert integer_labels_frame.shape[1] == 2
+    assert integer_labels_frame.width == 2
     assert integer_labels_frame.columns == [
         "candidate_d3_document_id",
         "integer_label",

@@ -61,7 +61,7 @@ unseen_score_frames_slow_skip_ci = (
 def test_candidate_score_frames(candidate_scores_frame: CandidateScoresFrame) -> None:
     assert isinstance(candidate_scores_frame, pl.DataFrame)
 
-    assert candidate_scores_frame.shape[1] == 2
+    assert candidate_scores_frame.width == 2
     assert candidate_scores_frame.columns == ["candidate_d3_document_id", "score"]
 
     assert candidate_scores_frame["candidate_d3_document_id"].dtype == pl.Int64
@@ -86,7 +86,7 @@ def test_seen_score_frames(
 ) -> None:
     assert isinstance(scores_frame, pl.DataFrame)
 
-    assert scores_frame.shape[1] == 3
+    assert scores_frame.width == 3
     assert scores_frame.columns == ["query_d3_document_id", "candidate_d3_document_id", "score"]
 
     assert scores_frame["query_d3_document_id"].dtype == pl.Int64
@@ -116,7 +116,7 @@ def test_unseen_score_frames(
 ) -> None:
     assert isinstance(scores_frame, pl.DataFrame)
 
-    assert scores_frame.shape[1] == 2
+    assert scores_frame.width == 2
     assert scores_frame.columns == ["candidate_d3_document_id", "score"]
 
     assert scores_frame["candidate_d3_document_id"].dtype == pl.Int64

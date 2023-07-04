@@ -61,7 +61,7 @@ def test_feature_attributes(features: Features) -> None:
 def test_publication_date(features: Features) -> None:
     assert isinstance(features.publication_date, pl.DataFrame)
 
-    assert features.publication_date.shape[1] == 2
+    assert features.publication_date.width == 2
     assert features.publication_date.columns == [
         "candidate_d3_document_id",
         "publication_date",
@@ -93,7 +93,7 @@ def test_publication_date(features: Features) -> None:
 def test_citationcount_document(features: Features) -> None:
     assert isinstance(features.citationcount_document, pl.DataFrame)
 
-    assert features.citationcount_document.shape[1] == 2
+    assert features.citationcount_document.width == 2
     assert features.citationcount_document.columns == [
         "candidate_d3_document_id",
         "citationcount_document",
@@ -125,7 +125,7 @@ def test_citationcount_document(features: Features) -> None:
 def test_citationcount_author(features: Features) -> None:
     assert isinstance(features.citationcount_author, pl.DataFrame)
 
-    assert features.citationcount_author.shape[1] == 2
+    assert features.citationcount_author.width == 2
     assert features.citationcount_author.columns == [
         "candidate_d3_document_id",
         "citationcount_author",
@@ -157,7 +157,7 @@ def test_citationcount_author(features: Features) -> None:
 def test_co_citation_analysis(features: Features) -> None:
     assert isinstance(features.co_citation_analysis, pl.DataFrame)
 
-    assert features.co_citation_analysis.shape[1] == 2
+    assert features.co_citation_analysis.width == 2
     assert features.co_citation_analysis.columns == [
         "candidate_d3_document_id",
         "co_citation_analysis_score",
@@ -186,7 +186,7 @@ def test_co_citation_analysis(features: Features) -> None:
 def test_bibliographic_coupling(features: Features) -> None:
     assert isinstance(features.bibliographic_coupling, pl.DataFrame)
 
-    assert features.bibliographic_coupling.shape[1] == 2
+    assert features.bibliographic_coupling.width == 2
     assert features.bibliographic_coupling.columns == [
         "candidate_d3_document_id",
         "bibliographic_coupling_score",
@@ -217,7 +217,7 @@ def test_bibliographic_coupling(features: Features) -> None:
 def test_cosine_similarity(features: Features) -> None:
     assert isinstance(features.cosine_similarity, pl.DataFrame)
 
-    assert features.cosine_similarity.shape[1] == 2
+    assert features.cosine_similarity.width == 2
     assert features.cosine_similarity.columns == [
         "candidate_d3_document_id",
         "cosine_similarity",

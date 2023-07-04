@@ -84,7 +84,7 @@ def test_compute_embeddings_frame(embedder: GensimEmbedder | TorchEmbedder) -> N
     embeddings_frame = embedder.compute_embeddings_frame()
 
     assert isinstance(embeddings_frame, pl.DataFrame)
-    assert embeddings_frame.shape[1] == 2
+    assert embeddings_frame.width == 2
     assert embeddings_frame.columns == ["d3_document_id", "embedding"]
     assert embeddings_frame.dtypes == [pl.Int64, pl.List(pl.Float64)]
 

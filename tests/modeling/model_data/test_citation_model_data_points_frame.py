@@ -37,7 +37,7 @@ citation_points_frame_fixtures_slow_skip_ci = [
 def test_citation_model_data_points_frame(citation_points_frame: CitationPointsFrame) -> None:
     assert isinstance(citation_points_frame, pl.DataFrame)
 
-    assert citation_points_frame.shape[1] == 6
+    assert citation_points_frame.width == 6
     assert citation_points_frame.columns == [
         "candidate_d3_document_id",
         "publication_date_points",

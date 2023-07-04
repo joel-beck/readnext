@@ -44,13 +44,13 @@ def test_tokenize(tokenizer: TorchTokenizer, test_documents_frame: DocumentsFram
     token_ids_frame = tokenizer.tokenize(test_documents_frame.head(3))
 
     assert isinstance(token_ids_frame, pl.DataFrame)
-    assert token_ids_frame.shape[1] == 2
+    assert token_ids_frame.width == 2
     assert token_ids_frame.columns == ["d3_document_id", "token_ids"]
     assert token_ids_frame.dtypes == [pl.Int64, pl.List(pl.Int64)]
 
     tokens_frame = tokenizer.token_ids_frame_to_tokens_frame(token_ids_frame)
     assert isinstance(tokens_frame, pl.DataFrame)
-    assert tokens_frame.shape[1] == 2
+    assert tokens_frame.width == 2
     assert tokens_frame.columns == ["d3_document_id", "tokens"]
     assert tokens_frame.dtypes == [pl.Int64, pl.List(pl.Utf8)]
 

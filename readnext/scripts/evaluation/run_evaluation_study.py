@@ -9,7 +9,7 @@ import polars as pl
 
 from readnext import readnext
 from readnext.config import DataPaths
-from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
+from readnext.evaluation.metrics import AveragePrecision
 from readnext.evaluation.scoring import FeatureWeights
 from readnext.inference import Recommendations
 from readnext.modeling.language_models import LanguageModelChoice

@@ -23,7 +23,7 @@ def test_tokenize(
 
     assert isinstance(tokens_frame, pl.DataFrame)
 
-    assert tokens_frame.shape[1] == 2
+    assert tokens_frame.width == 2
     assert tokens_frame.columns == ["d3_document_id", "tokens"]
 
     assert tokens_frame["d3_document_id"].dtype == pl.Int64

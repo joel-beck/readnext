@@ -86,10 +86,7 @@ class ModelScorer(ABC, Generic[TModelData]):
 class CitationModelScorer(ModelScorer):
     model_data: CitationModelData
 
-    @staticmethod
-    def compute_weighted_points(
-        points_frame: CitationPointsFrame, feature_weights: FeatureWeights
-    ) -> pl.DataFrame:
+    def compute_weighted_points(self, feature_weights: FeatureWeights) -> pl.DataFrame:
         """
         Compute the weighted rowsums of a dataframe with one weight for each citation
         feature column. The weights are normalized such that the weighted points are
@@ -101,17 +98,18 @@ class CitationModelScorer(ModelScorer):
         """
         feature_weight_normalized = feature_weights.normalize()
 
-        return points_frame.with_columns(
+        return self.model_data.points_frame.with_columns(
             weighted_points=(
-                feature_weight_normalized.publication_date * points_frame["publication_date_points"]
+                feature_weight_normalized.publication_date
+                * self.model_data.points_frame["publication_date_points"]
                 + feature_weight_normalized.citationcount_document
-                * points_frame["citationcount_document_points"]
+                * self.model_data.points_frame["citationcount_document_points"]
                 + feature_weight_normalized.citationcount_author
-                * points_frame["citationcount_author_points"]
+                * self.model_data.points_frame["citationcount_author_points"]
                 + feature_weight_normalized.co_citation_analysis
-                * points_frame["co_citation_analysis_points"]
+                * self.model_data.points_frame["co_citation_analysis_points"]
                 + feature_weight_normalized.bibliographic_coupling
-                * points_frame["bibliographic_coupling_points"]
+                * self.model_data.points_frame["bibliographic_coupling_points"]
             )
         ).select(["candidate_d3_document_id", "weighted_points"])
 
@@ -125,7 +123,7 @@ class CitationModelScorer(ModelScorer):
         """
 
         return (
-            self.compute_weighted_points(self.model_data.points_frame, feature_weights)
+            self.compute_weighted_points(feature_weights)
             .sort("weighted_points", descending=True)
             .head(n)
         )

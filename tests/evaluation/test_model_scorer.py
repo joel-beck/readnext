@@ -1,9 +1,8 @@
-from readnext import FeatureWeights
-from readnext.evaluation.metrics import AveragePrecision
-from readnext.evaluation.metrics import CountUniqueLabels
-from readnext.evaluation.scoring import CitationModelScorer, LanguageModelScorer
-
 import polars as pl
+
+from readnext import FeatureWeights
+from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
+from readnext.evaluation.scoring import CitationModelScorer, LanguageModelScorer
 
 
 def test_select_top_n_citation(citation_model_scorer: CitationModelScorer) -> None:
@@ -88,8 +87,10 @@ def test_select_top_n_language(language_model_scorer: LanguageModelScorer) -> No
     assert top_n_frame["candidate_d3_document_id"].dtype == pl.Int64
     assert top_n_frame["cosine_similarity"].dtype == pl.Float64
 
-    assert (top_n_frame["cosine_similarity"] >= 0).all()
-    assert (top_n_frame["cosine_similarity"] <= 1).all()
+    # value of exactly negative one comes from fill value after joining incomplete test
+    # data in `LanguageModelDataConstructor().get_features_frame()`
+    assert (top_n_frame["cosine_similarity"] >= -1).all()
+    assert (top_n_frame["cosine_similarity"] < 1).all()
     assert top_n_frame["cosine_similarity"].is_sorted(descending=True)
 
 

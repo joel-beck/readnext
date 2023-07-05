@@ -8,7 +8,6 @@ from readnext.config import ColumnOrder, MagicNumbers
 from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
 from readnext.evaluation.scoring.feature_weights import FeatureWeights
 from readnext.modeling import CitationModelData, LanguageModelData, ModelData
-from readnext.utils.aliases import CitationPointsFrame
 
 TModelData = TypeVar("TModelData", bound=ModelData)
 

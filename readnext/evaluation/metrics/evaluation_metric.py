@@ -10,6 +10,7 @@ from readnext.utils.aliases import (
     IntegerLabelLists,
     StringLabelList,
     StringLabelLists,
+    DocumentsFrame,
 )
 
 TLabelList = TypeVar("TLabelList", IntegerLabelList, StringLabelList)
@@ -27,7 +28,7 @@ class EvaluationMetric(ABC, Generic[TLabelList, TReturn]):
 
     @classmethod
     @abstractmethod
-    def from_df(cls, df: pl.DataFrame) -> TReturn:
+    def from_df(cls, df: DocumentsFrame) -> TReturn:
         ...
 
 
@@ -101,7 +102,7 @@ class AveragePrecision(EvaluationMetric):
         return np.mean([cls.score(label_list) for label_list in label_lists])  # type: ignore # noqa: E501
 
     @classmethod
-    def from_df(cls, df: pl.DataFrame) -> float:
+    def from_df(cls, df: DocumentsFrame) -> float:
         """
         Compute the average precision for a list of integer recommendation labels that are
         contained in a dataframe column.
@@ -122,7 +123,7 @@ class CountUniqueLabels(EvaluationMetric):
         return len({label for labels in label_list for label in labels})
 
     @classmethod
-    def from_df(cls, df: pl.DataFrame) -> int:
+    def from_df(cls, df: DocumentsFrame) -> int:
         """
         Count the number of unique labels in a list of labels that are contained in a
         dataframe column.

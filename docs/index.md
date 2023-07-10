@@ -23,4 +23,4 @@ Here, you'll find everything you need to know about the project's background, as
 
 - [Reproducibility](reproducibility.md): A comprehensive guide to ensure the results presented in the thesis can be reproduced and validated with precision and ease.
 
-- [Development](development.md): Detailed guidance on tailoring the package to your needs, including how to extend features, incorporate individual language models, and utilize diverse metrics for evaluation.
+- [Customization](customization.md): Detailed guidance on tailoring the package to your needs, including how to extend features, incorporate individual language models, and utilize diverse metrics for evaluation.

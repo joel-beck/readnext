@@ -6,11 +6,11 @@ import numpy as np
 import polars as pl
 
 from readnext.utils.aliases import (
+    DocumentsFrame,
     IntegerLabelList,
     IntegerLabelLists,
     StringLabelList,
     StringLabelLists,
-    DocumentsFrame,
 )
 
 TLabelList = TypeVar("TLabelList", IntegerLabelList, StringLabelList)

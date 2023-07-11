@@ -222,4 +222,3 @@ The new `DummyEmbedder` can now be used anywhere in the codebase in place of any
 existing embedder that is not based on a `transformers` model. This includes the
 `TFIDFEmbedder`, `BM25Embedder`, `Word2VecEmbedder`, `GloveEmbedder`, and
 `FastTextEmbedder` classes.
-

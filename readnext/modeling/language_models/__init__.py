@@ -30,7 +30,7 @@ from readnext.modeling.language_models.tfidf import (
     tfidf,
     tfidf_single_term,
 )
-from readnext.modeling.language_models.tokenizer_spacy import (
+from readnext.modeling.language_models.tokenizer import (
     SpacyTokenizer,
     TextProcessingSteps,
     Tokens,

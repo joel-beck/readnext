@@ -8,7 +8,7 @@ from collections.abc import Sequence
 import numpy as np
 
 from readnext.modeling.language_models.tfidf import df, learn_vocabulary, tf
-from readnext.modeling.language_models.tokenizer_spacy import Tokens
+from readnext.modeling.language_models.tokenizer import Tokens
 
 
 def bm25_tf(

@@ -87,4 +87,4 @@ nav: # Navigation menu structure
   - Background: background.md
   - Inference: inference.md
   - Reproducibility: reproducibility.md
-  - Development: development.md
+  - Customization: customization.md

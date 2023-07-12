@@ -1,8 +1,10 @@
 """
-Computes Average Precision for all combinations of language models and feature weights.
-The resulting scores are stored in a polars dataframe and saved to a parquet file.
+Samples a random subset of feature weights from the given ranges. The ten best
+performing feature weights (in terms of "hybrid average precision") are stored and used
+for the final evaluation.
 """
 
+import pickle
 from collections.abc import Sequence
 
 import polars as pl
@@ -16,7 +18,14 @@ from readnext.modeling.language_models import LanguageModelChoice
 from readnext.utils.aliases import DocumentsFrame
 from readnext.utils.io import read_df_from_parquet
 from readnext.utils.progress_bar import rich_progress_bar
-import pickle
+
+
+def seq_to_string(sequence: Sequence[int]) -> str:
+    return ",".join(str(num) for num in sequence)
+
+
+def string_to_seq(string: str) -> list[int]:
+    return [int(num) for num in string.split(",")]
 
 
 def construct_combinations_frame(
@@ -31,7 +40,10 @@ def construct_combinations_frame(
     )
     feature_weights_candidates_frame = pl.DataFrame(
         {
-            "feature_weights": feature_weights_candidates,
+            "feature_weights": [
+                seq_to_string(feature_weights_candidate)
+                for feature_weights_candidate in feature_weights_candidates
+            ],
         }
     )
 
@@ -128,7 +140,7 @@ def add_scoring_columns(combinations_frame: pl.DataFrame) -> pl.DataFrame:
             recommendations = retrieve_recommendations(
                 semanticscholar_id=row["semanticscholar_id"],
                 language_model=row["language_model"],
-                feature_weights=row["feature_weights"],
+                feature_weights=string_to_seq(row["feature_weights"]),
             )
 
             avg_precision_c_to_l_list.append(
@@ -180,33 +192,21 @@ def add_hybrid_average_precision(df: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def select_top_n_feature_weights(df: pl.DataFrame, n: int) -> list[list[int]]:
+def select_top_n_feature_weight_rows(df: pl.DataFrame, n: int) -> pl.DataFrame:
+    return df.sort(by="avg_precision_hybrid", descending=True).head(n)
+
+
+def extract_feature_weights(df: pl.DataFrame) -> list[str]:
     return (
-        df.groupby("feature_weights")
+        df.groupby("feature_weights", maintain_order=True)
         .agg(mean_avg_precision_hybrid=pl.col("avg_precision_hybrid").mean())["feature_weights"]
-        .head(n)
         .to_list()
-    )
-
-
-def compute_mean_average_precision(
-    results_frame: pl.DataFrame, grouping_columns: Sequence[str]
-) -> pl.DataFrame:
-    return results_frame.groupby(grouping_columns).agg(
-        mean_avg_precision_c_to_l=pl.col("avg_precision_c_to_l").mean(),
-        mean_avg_precision_c_to_l_cand=pl.col("avg_precision_c_to_l_cand").mean(),
-        mean_avg_precision_l_to_c=pl.col("avg_precision_l_to_c").mean(),
-        mean_avg_precision_l_to_c_cand=pl.col("avg_precision_l_to_c_cand").mean(),
-        mean_num_unique_labels_c_to_l=pl.col("num_unique_labels_c_to_l").mean(),
-        mean_num_unique_labels_c_to_l_cand=pl.col("num_unique_labels_c_to_l_cand").mean(),
-        mean_num_unique_labels_l_to_c=pl.col("num_unique_labels_l_to_c").mean(),
-        mean_num_unique_labels_l_to_c_cand=pl.col("num_unique_labels_l_to_c_cand").mean(),
     )
 
 
 def main() -> None:
     num_samples_feature_weights_candidates = 200
-    num_samples_input_combinations = 1000
+    num_samples_input_combinations = 10_000
     num_best_feature_weights = 10
     seed = 42
 
@@ -228,39 +228,23 @@ def main() -> None:
         num_samples=num_samples_feature_weights_candidates
     )
 
-    best_feature_weights = (
+    best_feature_weights_frame = (
         construct_combinations_frame(
             documents_frame, language_model_candidates, feature_weights_candidates
         )
         .pipe(sample_input_combinations, num_samples=num_samples_input_combinations, seed=seed)
         .pipe(add_scoring_columns)
         .pipe(add_hybrid_average_precision)
-        .pipe(select_top_n_feature_weights, n=num_best_feature_weights)
+        .pipe(select_top_n_feature_weight_rows, n=num_best_feature_weights)
     )
 
-    with open(ResultsPaths.evaluation.feature_weights_candidates_pkl, "wb") as file:
+    best_feature_weights = [
+        string_to_seq(feature_weights)
+        for feature_weights in extract_feature_weights(best_feature_weights_frame)
+    ]
+
+    with ResultsPaths.evaluation.feature_weights_candidates_pkl.open("wb") as file:
         pickle.dump(best_feature_weights, file)
-
-    # compare language models
-    # compute_mean_average_precision(results_frame, ["language_model"])
-
-    # compare feature weights
-    # compute_mean_average_precision(results_frame, ["feature_weights"])
-
-    # compare hybridization strategies
-    # compute_mean_average_precision(results_frame, ["semanticscholar_id"])
-
-    # compare combinations of language models and feature weights
-    # compute_mean_average_precision(results_frame, ["language_model", "feature_weights"])
-
-    # TODO: Implement workaround since polars does not support grouping by list columns, see
-    # https://github.com/pola-rs/polars/issues/4175
-    # results_frame.groupby(
-    #     "language_model",
-    #     pl.col("feature_weights").list.eval(pl.element().cast(pl.Utf8)).list.join(","),
-    # ).agg(
-    #     pl.col("avg_precision_c_to_l").mean(),
-    # )
 
 
 if __name__ == "__main__":

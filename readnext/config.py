@@ -160,7 +160,7 @@ class LanguageModelsResultsPaths:
 
 @dataclass
 class EvaluationResultsPaths:
-    feature_weights_candidates: Path = results_dirpath / "feature_weights_candidates.parquet"
+    feature_weights_candidates_pkl: Path = results_dirpath / "feature_weights_candidates.pkl"
 
 
 @dataclass(frozen=True)

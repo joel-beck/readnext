@@ -238,7 +238,7 @@ def main() -> None:
         .pipe(select_top_n_feature_weights, n=num_best_feature_weights)
     )
 
-    with open(ResultsPaths.evaluation.feature_weights_candidates, "wb") as file:
+    with open(ResultsPaths.evaluation.feature_weights_candidates_pkl, "wb") as file:
         pickle.dump(best_feature_weights, file)
 
     # compare language models

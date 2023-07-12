@@ -158,12 +158,18 @@ class LanguageModelsResultsPaths:
     )
 
 
+@dataclass
+class EvaluationResultsPaths:
+    feature_weights_candidates: Path = results_dirpath / "feature_weights_candidates.parquet"
+
+
 @dataclass(frozen=True)
 class ResultsPaths:
     """Collects file paths for all result files."""
 
     citation_models: CitationModelsResultsPaths = CitationModelsResultsPaths()  # noqa: RUF009
     language_models: LanguageModelsResultsPaths = LanguageModelsResultsPaths()  # noqa: RUF009
+    evaluation: EvaluationResultsPaths = EvaluationResultsPaths()  # noqa: RUF009
 
 
 @dataclass

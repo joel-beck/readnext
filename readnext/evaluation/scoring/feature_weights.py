@@ -1,3 +1,4 @@
+import random
 from collections.abc import Sequence
 
 from pydantic import Field
@@ -50,3 +51,30 @@ class FeatureWeights:
             co_citation_analysis=sequence[3],
             bibliographic_coupling=sequence[4],
         )
+
+
+@dataclass
+class FeatureWeightsRanges:
+    """
+    Defines the ranges for choosing the adequate feature weights during evaluation. Both
+    the lower and upper bound are inclusive. The resulting ranges are set as default
+    values.
+    """
+
+    publication_date: tuple[int, int] = (0, 20)
+    citationcount_document: tuple[int, int] = (0, 20)
+    citationcount_author: tuple[int, int] = (0, 20)
+    co_citation_analysis: tuple[int, int] = (0, 50)
+    bibliographic_coupling: tuple[int, int] = (0, 100)
+
+    def sample_one(self) -> tuple[int, int, int, int, int]:
+        return (
+            random.randint(*self.publication_date),
+            random.randint(*self.citationcount_document),
+            random.randint(*self.citationcount_author),
+            random.randint(*self.co_citation_analysis),
+            random.randint(*self.bibliographic_coupling),
+        )
+
+    def sample(self, num_samples: int) -> list[tuple[int, int, int, int, int]]:
+        return [self.sample_one() for _ in range(num_samples)]

@@ -76,5 +76,6 @@ class FeatureWeightsRanges:
             random.randint(*self.bibliographic_coupling),
         )
 
-    def sample(self, num_samples: int) -> list[tuple[int, int, int, int, int]]:
+    def sample(self, num_samples: int, seed: int) -> list[tuple[int, int, int, int, int]]:
+        random.seed(seed)
         return [self.sample_one() for _ in range(num_samples)]

@@ -4,7 +4,6 @@ performing feature weights (in terms of "hybrid average precision") are stored a
 for the final evaluation.
 """
 
-import pickle
 from collections.abc import Sequence
 
 import polars as pl
@@ -16,7 +15,7 @@ from readnext.evaluation.scoring import FeatureWeights, FeatureWeightsRanges
 from readnext.inference import Recommendations
 from readnext.modeling.language_models import LanguageModelChoice
 from readnext.utils.aliases import DocumentsFrame
-from readnext.utils.io import read_df_from_parquet
+from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 from readnext.utils.progress_bar import rich_progress_bar
 
 
@@ -189,26 +188,13 @@ def add_hybrid_average_precision(df: pl.DataFrame) -> pl.DataFrame:
     """
     return df.with_columns(
         avg_precision_hybrid=(pl.col("avg_precision_c_to_l") + pl.col("avg_precision_l_to_c")) / 2,
-    )
-
-
-def select_top_n_feature_weight_rows(df: pl.DataFrame, n: int) -> pl.DataFrame:
-    return df.sort(by="avg_precision_hybrid", descending=True).head(n)
-
-
-def extract_feature_weights(df: pl.DataFrame) -> list[str]:
-    return (
-        df.groupby("feature_weights", maintain_order=True)
-        .agg(mean_avg_precision_hybrid=pl.col("avg_precision_hybrid").mean())["feature_weights"]
-        .to_list()
-    )
+    ).sort(by="avg_precision_hybrid", descending=True)
 
 
 def main() -> None:
+    seed = 42
     num_samples_feature_weights_candidates = 200
     num_samples_input_combinations = 10_000
-    num_best_feature_weights = 10
-    seed = 42
 
     documents_frame: DocumentsFrame = read_df_from_parquet(DataPaths.merged.documents_frame)
 
@@ -225,26 +211,22 @@ def main() -> None:
 
     feature_weights_ranges = FeatureWeightsRanges()
     feature_weights_candidates = feature_weights_ranges.sample(
-        num_samples=num_samples_feature_weights_candidates
+        num_samples=num_samples_feature_weights_candidates, seed=seed
     )
 
-    best_feature_weights_frame = (
+    feature_weights_candidates_frame = (
         construct_combinations_frame(
             documents_frame, language_model_candidates, feature_weights_candidates
         )
         .pipe(sample_input_combinations, num_samples=num_samples_input_combinations, seed=seed)
         .pipe(add_scoring_columns)
         .pipe(add_hybrid_average_precision)
-        .pipe(select_top_n_feature_weight_rows, n=num_best_feature_weights)
     )
 
-    best_feature_weights = [
-        string_to_seq(feature_weights)
-        for feature_weights in extract_feature_weights(best_feature_weights_frame)
-    ]
-
-    with ResultsPaths.evaluation.feature_weights_candidates_pkl.open("wb") as file:
-        pickle.dump(best_feature_weights, file)
+    write_df_to_parquet(
+        feature_weights_candidates_frame,
+        ResultsPaths.evaluation.feature_weights_candidates_frame_parquet,
+    )
 
 
 if __name__ == "__main__":

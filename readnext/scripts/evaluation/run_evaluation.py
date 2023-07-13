@@ -15,7 +15,7 @@ from readnext.scripts.evaluation.run_feature_weights_search import (
     add_scoring_columns,
     construct_combinations_frame,
     sample_input_combinations,
-    string_to_seq,
+    string_to_list,
 )
 from readnext.utils.aliases import DocumentsFrame
 from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
@@ -36,14 +36,17 @@ def extract_feature_weights(df: pl.DataFrame) -> list[str]:
 def get_feature_weight_candidates(
     feature_weights_candidates_frame: pl.DataFrame, num_best_feature_weights: int
 ) -> list[list[int]]:
-    # first compute marginal MAP aggregating over all documents and language models,
-    # then select the top n feature weights
+    """
+    First computes the marginal mean average precision for all feature weights
+    aggregating over all documents and language models. Then selects the top n feature
+    weights and converts them from strings to lists.
+    """
     feature_weights_candidates_strings = extract_feature_weights(feature_weights_candidates_frame)[
         :num_best_feature_weights
     ]
 
     return [
-        string_to_seq(feature_weights) for feature_weights in feature_weights_candidates_strings
+        string_to_list(feature_weights) for feature_weights in feature_weights_candidates_strings
     ]
 
 
@@ -64,7 +67,7 @@ def compute_mean_average_precision(
 
 def main() -> None:
     seed = 123
-    num_samples_input_combinations = 100  # 100_000
+    num_samples_input_combinations = 100_000
     num_best_feature_weights = 10
 
     documents_frame: DocumentsFrame = read_df_from_parquet(DataPaths.merged.documents_frame)

@@ -23,7 +23,7 @@ def seq_to_string(sequence: Sequence[int]) -> str:
     return ",".join(str(num) for num in sequence)
 
 
-def string_to_seq(string: str) -> list[int]:
+def string_to_list(string: str) -> list[int]:
     return [int(num) for num in string.split(",")]
 
 
@@ -139,7 +139,7 @@ def add_scoring_columns(combinations_frame: pl.DataFrame) -> pl.DataFrame:
             recommendations = retrieve_recommendations(
                 semanticscholar_id=row["semanticscholar_id"],
                 language_model=row["language_model"],
-                feature_weights=string_to_seq(row["feature_weights"]),
+                feature_weights=string_to_list(row["feature_weights"]),
             )
 
             avg_precision_c_to_l_list.append(

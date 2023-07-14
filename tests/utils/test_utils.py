@@ -1,4 +1,4 @@
-from readnext.utils.utils import slice_mapping
+from readnext.utils.slicing import slice_mapping
 
 
 def test_slice_mapping_empty() -> None:

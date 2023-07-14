@@ -7,7 +7,7 @@ import polars as pl
 
 from readnext.config import MagicNumbers
 from readnext.utils.aliases import ScoresFrame
-from readnext.utils.progress_bar import rich_progress_bar
+from readnext.utils.slicing import concatenate_sliced_lazyframes
 
 
 def construct_combinations_frame(df: pl.LazyFrame, colname: str) -> pl.LazyFrame:
@@ -94,23 +94,14 @@ def precompute_common_values_polars(
     """
     Compute scores sequentially for slices of the full dataframe and stack the outputs vertically.
     """
-    slice_size = 100
-    num_rows = documents_frame.collect().height
-    num_slices = num_rows // slice_size
-
-    with rich_progress_bar() as progress_bar:
-        return pl.concat(
-            [
-                precompute_common_values_slice(
-                    documents_frame.slice(next_index, slice_size), colname, n
-                )
-                for next_index in progress_bar.track(
-                    range(0, num_rows, slice_size),
-                    total=num_slices,
-                    description=description,
-                )
-            ]
-        )
+    return concatenate_sliced_lazyframes(
+        df=documents_frame,
+        slice_function=precompute_common_values_slice,
+        slice_size=100,
+        progress_bar_description=description,
+        colname=colname,
+        n=n,
+    )
 
 
 def precompute_co_citations_polars(
@@ -179,7 +170,7 @@ def concatenate_ids_and_scores(
 
 def precompute_cosine_similarities_slice(
     embeddings_frame_slice: pl.LazyFrame, n: int
-) -> pl.LazyFrame:
+) -> pl.DataFrame:
     """
     Compute cosine similarities for a slice of the full dataframe.
     """
@@ -193,6 +184,7 @@ def precompute_cosine_similarities_slice(
         concatenate_ids_and_scores(combinations_frame.collect(), scores.collect())
         .lazy()
         .pipe(select_highest_scores, n)
+        .collect()
     )
 
 
@@ -203,20 +195,10 @@ def precompute_cosine_similarities_polars(
     Compute cosine similarities sequentially for slices of the full dataframe and stack
     the outputs vertically.
     """
-    slice_size = 100
-    num_rows = embeddings_frame.collect().height
-    num_slices = num_rows // slice_size
-
-    with rich_progress_bar() as progress_bar:
-        return pl.concat(
-            [
-                precompute_cosine_similarities_slice(
-                    embeddings_frame.slice(next_index, slice_size), n
-                ).collect()
-                for next_index in progress_bar.track(
-                    range(0, num_rows, slice_size),
-                    total=num_slices,
-                    description="Computing Cosine Similarities...",
-                )
-            ]
-        )
+    return concatenate_sliced_lazyframes(
+        df=embeddings_frame,
+        slice_function=precompute_cosine_similarities_slice,
+        slice_size=100,
+        progress_bar_description="Computing Cosine Similarities...",
+        n=n,
+    )

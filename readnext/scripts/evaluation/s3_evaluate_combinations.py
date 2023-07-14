@@ -1,12 +1,13 @@
 from collections.abc import Sequence
 
-import polars as pl
-import pandas as pd
 import matplotlib.pyplot as plt
+import polars as pl
 import seaborn as sns
 
 from readnext.config import ResultsPaths
 from readnext.utils.io import read_df_from_parquet
+
+sns.set_theme(style="whitegrid")
 
 
 def average(df: pl.DataFrame) -> pl.DataFrame:
@@ -123,31 +124,24 @@ def plot_language_model_feature_weight_combinations_comparison(
         .to_pandas()
     )
 
-    # TODO: Sort the y-axis in logical order for better comparison.
-    sns.catplot(
+    g: sns.FacetGrid = sns.catplot(
         data=plot_df,
         kind="bar",
         x="mean_avg_precision_c_to_l",
-        y="feature_weight_labels",
-        col="language_model",
-        col_wrap=2,
-        col_order=[
-            "TFIDF",
-            "BM25",
-            "WORD2VEC",
-            "GLOVE",
-            "FASTTEXT",
-            "BERT",
-            "SCIBERT",
-            "LONGFORMER",
-        ],
-        height=15,
+        y="language_model",
+        col="feature_weight_labels",
+        col_wrap=4,
+        height=16,
         aspect=1,
         sharex=False,
         sharey=True,
     )
+    g.set_axis_labels(x_var="", y_var="")
+    g.set_titles("{col_name}", size=30)
+    g.tick_params(labelsize=30)
+    # sns.set(font_scale=3)
 
-    plt.suptitle("Mean Average Precision of Feature Weights by Language Model", y=1.02)
+    plt.suptitle("Mean Average Precision of Feature Weights by Language Model", y=1.02, size=40)
     plt.show()
 
 
@@ -233,6 +227,7 @@ def main() -> None:
     compare_language_model_feature_weight_combinations(evaluation_frame)
     plot_language_model_feature_weight_combinations_comparison(evaluation_frame)
 
+    # would be interesting to facet by language model here
     compare_hybridization_strategies(evaluation_frame)
     plot_hybridization_strategies_comparison(evaluation_frame)
 

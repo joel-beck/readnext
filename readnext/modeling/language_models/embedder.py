@@ -12,6 +12,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from readnext.modeling.language_models.bm25 import bm25
 from readnext.utils.aliases import Embedding, EmbeddingsFrame, Tokens, TokensFrame
 from readnext.utils.progress_bar import rich_progress_bar
+from readnext.utils.slicing import concatenate_sliced_dataframes
 
 
 class AggregationStrategy(str, Enum):
@@ -240,18 +241,9 @@ class GensimEmbedder(Embedder):
         The output is a polars data frame with two columns named `d3_document_id` and
         `embedding`.
         """
-        slice_size = 100
-        num_rows = self.tokens_frame.height
-        num_slices = num_rows // slice_size
-
-        with rich_progress_bar() as progress_bar:
-            return pl.concat(
-                [
-                    self.compute_embeddings_frame_slice(
-                        self.tokens_frame.slice(next_index, slice_size)
-                    )
-                    for next_index in progress_bar.track(
-                        range(0, num_rows, slice_size), total=num_slices
-                    )
-                ]
-            )
+        return concatenate_sliced_dataframes(
+            df=self.tokens_frame,
+            slice_function=self.compute_embeddings_frame_slice,
+            slice_size=100,
+            progress_bar_description=f"{self.keyed_vectors.__class__.__name__}:",
+        )

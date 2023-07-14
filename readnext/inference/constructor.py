@@ -203,7 +203,7 @@ class InferenceDataConstructor:
             )
 
             if not self.verbose:
-                return seen_inference_data_constructor_plugin_default
+                return seen_inference_data_constructor_plugin
 
             console.print(
                 Panel.fit(

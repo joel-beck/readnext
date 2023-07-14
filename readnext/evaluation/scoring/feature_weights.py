@@ -64,7 +64,7 @@ class FeatureWeightsRanges:
     publication_date: tuple[int, int] = (0, 20)
     citationcount_document: tuple[int, int] = (0, 20)
     citationcount_author: tuple[int, int] = (0, 20)
-    co_citation_analysis: tuple[int, int] = (0, 50)
+    co_citation_analysis: tuple[int, int] = (0, 100)
     bibliographic_coupling: tuple[int, int] = (0, 100)
 
     def sample_one(self) -> tuple[int, int, int, int, int]:

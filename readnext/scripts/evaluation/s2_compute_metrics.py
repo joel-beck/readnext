@@ -9,7 +9,7 @@ resulting evaluation dataframe in a parquet file.
 import polars as pl
 
 from readnext.config import DataPaths, ResultsPaths
-from readnext.scripts.evaluation.run_feature_weights_search import (
+from readnext.scripts.evaluation.s1_search_feature_weights import (
     add_scoring_columns,
     construct_combinations_frame,
     sample_input_combinations,

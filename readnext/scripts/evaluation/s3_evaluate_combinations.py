@@ -123,14 +123,31 @@ def plot_language_model_feature_weight_combinations_comparison(
         .to_pandas()
     )
 
-    plt.figure(figsize=(10, 6))
-    sns.barplot(
-        x="mean_avg_precision_c_to_l", y="language_model", hue="feature_weight_labels", data=plot_df
+    # TODO: Sort the y-axis in logical order for better comparison.
+    sns.catplot(
+        data=plot_df,
+        kind="bar",
+        x="mean_avg_precision_c_to_l",
+        y="feature_weight_labels",
+        col="language_model",
+        col_wrap=2,
+        col_order=[
+            "TFIDF",
+            "BM25",
+            "WORD2VEC",
+            "GLOVE",
+            "FASTTEXT",
+            "BERT",
+            "SCIBERT",
+            "LONGFORMER",
+        ],
+        height=15,
+        aspect=1,
+        sharex=False,
+        sharey=True,
     )
-    plt.xlabel("Mean Average Precision")
-    plt.ylabel("Language Model")
-    plt.title("Mean Average Precision of Language Model and Feature Weight Combinations")
-    plt.legend(title="Feature Weights", bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
+
+    plt.suptitle("Mean Average Precision of Feature Weights by Language Model", y=1.02)
     plt.show()
 
 
@@ -214,7 +231,6 @@ def main() -> None:
     plot_feature_weight_comparison(evaluation_frame)
 
     compare_language_model_feature_weight_combinations(evaluation_frame)
-    # TODO: Make this plot nicer.
     plot_language_model_feature_weight_combinations_comparison(evaluation_frame)
 
     compare_hybridization_strategies(evaluation_frame)

@@ -181,6 +181,63 @@ def plot_hybridization_strategies_comparison(evaluation_frame: pl.DataFrame) -> 
     plt.show()
 
 
+def compare_hybridization_strategies_by_language_model(
+    evaluation_frame: pl.DataFrame,
+) -> pl.DataFrame:
+    return average_by_group(evaluation_frame, ["language_model"]).select(
+        [
+            "language_model",
+            "mean_avg_precision_c_to_l",
+            "mean_avg_precision_c_to_l_cand",
+            "mean_avg_precision_l_to_c",
+            "mean_avg_precision_l_to_c_cand",
+        ]
+    )
+
+
+def plot_hybridization_strategies_by_language_model_comparison(
+    evaluation_frame: pl.DataFrame,
+) -> None:
+    label_mapping = {
+        "mean_avg_precision_c_to_l": "Citation to Language",
+        "mean_avg_precision_c_to_l_cand": "Citation to Language Candidates",
+        "mean_avg_precision_l_to_c": "Language to Citation",
+        "mean_avg_precision_l_to_c_cand": "Language to Citation Candidates",
+    }
+
+    plot_df = (
+        compare_hybridization_strategies_by_language_model(evaluation_frame)
+        .melt(id_vars=["language_model"])
+        .with_columns(variable=pl.col("variable").map_dict(label_mapping))
+        .to_pandas()
+    )
+
+    g: sns.FacetGrid = sns.catplot(
+        data=plot_df,
+        kind="bar",
+        x="value",
+        y="variable",
+        col="language_model",
+        col_wrap=3,
+        height=12,
+        aspect=1,
+        sharex=True,
+        sharey=True,
+    )
+
+    g.set_axis_labels(x_var="", y_var="")
+    g.set_titles("{col_name}", size=30)
+    g.tick_params(labelsize=30)
+
+    plt.suptitle(
+        "Mean Average Precision of Hybridization Strategies by Language Model", y=1.02, size=40
+    )
+    plt.subplots_adjust(top=0.95)
+    plt.tight_layout()
+
+    plt.show()
+
+
 def compare_diversity(evaluation_frame: pl.DataFrame) -> pl.DataFrame:
     """
     Compare number of unique labels for both hybrid recommender orders. Since the number
@@ -215,6 +272,57 @@ def plot_diversity_comparison(evaluation_frame: pl.DataFrame) -> None:
     plt.show()
 
 
+def compare_diversity_by_language_model(evaluation_frame: pl.DataFrame) -> pl.DataFrame:
+    return average_by_group(evaluation_frame, ["language_model"]).select(
+        [
+            "language_model",
+            "mean_num_unique_labels_c_to_l_cand",
+            "mean_num_unique_labels_l_to_c_cand",
+        ]
+    )
+
+
+def plot_diversity_by_language_model_comparison(evaluation_frame: pl.DataFrame) -> None:
+    label_mapping = {
+        "mean_num_unique_labels_c_to_l_cand": "Citation to Language",
+        "mean_num_unique_labels_l_to_c_cand": "Language to Citation",
+    }
+
+    plot_df = (
+        compare_diversity_by_language_model(evaluation_frame)
+        .melt(id_vars=["language_model"])
+        .with_columns(variable=pl.col("variable").map_dict(label_mapping))
+        .to_pandas()
+    )
+
+    g: sns.FacetGrid = sns.catplot(
+        data=plot_df,
+        kind="bar",
+        x="value",
+        y="variable",
+        col="language_model",
+        col_wrap=3,
+        height=12,
+        aspect=1,
+        sharex=True,
+        sharey=True,
+    )
+
+    g.set_axis_labels(x_var="", y_var="")
+    g.set_titles("{col_name}", size=30)
+    g.tick_params(labelsize=30)
+
+    plt.suptitle(
+        "Mean Number of Unique Labels of Hybridization Strategies by Language Model",
+        y=1.02,
+        size=40,
+    )
+    plt.subplots_adjust(top=0.95)
+    plt.tight_layout()
+
+    plt.show()
+
+
 def main() -> None:
     evaluation_frame = read_df_from_parquet(ResultsPaths.evaluation.evaluation_frame_parquet)
 
@@ -227,12 +335,17 @@ def main() -> None:
     compare_language_model_feature_weight_combinations(evaluation_frame)
     plot_language_model_feature_weight_combinations_comparison(evaluation_frame)
 
-    # would be interesting to facet by language model here
     compare_hybridization_strategies(evaluation_frame)
     plot_hybridization_strategies_comparison(evaluation_frame)
 
+    compare_hybridization_strategies_by_language_model(evaluation_frame)
+    plot_hybridization_strategies_by_language_model_comparison(evaluation_frame)
+
     compare_diversity(evaluation_frame)
     plot_diversity_comparison(evaluation_frame)
+
+    compare_diversity_by_language_model(evaluation_frame)
+    plot_diversity_by_language_model_comparison(evaluation_frame)
 
 
 if __name__ == "__main__":

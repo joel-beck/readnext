@@ -1,10 +1,10 @@
 """
+Step 1: Hyperparameter Search for Feature Weights
+
 Samples a random subset of feature weights from the given ranges. The ten best
 performing feature weights (in terms of "hybrid average precision") are stored and used
-for the final evaluation.
-
-The query papers for inference are sampled from the validation set. The candidate papers
-are sampled from the training set.
+for the final evaluation. The query papers for inference are sampled from the validation
+set.
 """
 
 from collections.abc import Sequence
@@ -70,13 +70,11 @@ def retrieve_recommendations(
     semanticscholar_id: str,
     language_model: str,
     feature_weights: Sequence[int],
-    data_split: DataSplit,
 ) -> Recommendations:
     result = readnext(
         semanticscholar_id=semanticscholar_id,
         language_model_choice=LanguageModelChoice(language_model),
         feature_weights=FeatureWeights.from_sequence(feature_weights),
-        _candidates_data_split=data_split,
         _verbose=False,
     )
     return result.recommendations
@@ -130,9 +128,7 @@ def compute_num_unique_labels_language_to_citation_candidates(
     return CountUniqueLabels.from_df(recommendations.language_to_citation_candidates)
 
 
-def add_scoring_columns(
-    combinations_frame: pl.DataFrame, candidates_data_split: DataSplit
-) -> pl.DataFrame:
+def add_scoring_columns(combinations_frame: pl.DataFrame) -> pl.DataFrame:
     avg_precision_c_to_l_list = []
     avg_precision_c_to_l_cand_list = []
     avg_precision_l_to_c_list = []
@@ -150,7 +146,6 @@ def add_scoring_columns(
                 semanticscholar_id=row["semanticscholar_id"],
                 language_model=row["language_model"],
                 feature_weights=string_to_list(row["feature_weights"]),
-                data_split=candidates_data_split,
             )
 
             avg_precision_c_to_l_list.append(
@@ -204,14 +199,11 @@ def add_hybrid_average_precision(df: pl.DataFrame) -> pl.DataFrame:
 
 def main() -> None:
     query_data_split = DataSplit.VALIDATION
-    candidates_data_split = DataSplit.TRAIN
     query_documents_frame = load_data_split(query_data_split)
 
     seed = 42
-    # num_samples_feature_weights_candidates = 200
-    # num_samples_input_combinations = 10_000
-    num_samples_feature_weights_candidates = 20
-    num_samples_input_combinations = 40
+    num_samples_feature_weights_candidates = 200
+    num_samples_input_combinations = 10_000
 
     language_model_candidates = [
         "TFIDF",
@@ -234,7 +226,7 @@ def main() -> None:
             query_documents_frame, language_model_candidates, feature_weights_candidates
         )
         .pipe(sample_input_combinations, num_samples=num_samples_input_combinations, seed=seed)
-        .pipe(add_scoring_columns, candidates_data_split=candidates_data_split)
+        .pipe(add_scoring_columns)
         .pipe(add_hybrid_average_precision)
     )
 

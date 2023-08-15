@@ -1,7 +1,6 @@
 from pydantic import HttpUrl
 
 from readnext import FeatureWeights, LanguageModelChoice
-from readnext.data.data_split import DataSplit
 from readnext.inference import InferenceData, InferenceDataConstructor
 from readnext.utils.transformers_logging import suppress_transformers_logging
 
@@ -14,7 +13,6 @@ def readnext(
     arxiv_url: HttpUrl | str | None = None,
     language_model_choice: LanguageModelChoice,
     feature_weights: FeatureWeights = FeatureWeights(),
-    _candidates_data_split: DataSplit = DataSplit.FULL,
     _verbose: bool = True,
 ) -> InferenceData:
     """
@@ -33,8 +31,6 @@ def readnext(
       be used for the Language Recommender.
     - `feature_weights` (optional): These weights influence the citation features and
       global document features for the Citation Recommender.
-    - `_candidates_data_split` (optional): Determines if recommendations are generated
-      from the full or the training data set.
     - `_verbose` (optional): If set to `True`, the function prints status and progress
       messages to the console.
 
@@ -66,7 +62,6 @@ def readnext(
         arxiv_url=arxiv_url,
         language_model_choice=language_model_choice,
         feature_weights=feature_weights,
-        candidates_data_split=_candidates_data_split,
         verbose=_verbose,
     )
 

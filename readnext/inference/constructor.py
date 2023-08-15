@@ -7,7 +7,7 @@ from rich import box
 from rich.console import Console
 from rich.panel import Panel
 
-from readnext.config import DataPaths
+from readnext.data.data_split import DataSplit, load_data_split
 from readnext.evaluation.scoring import FeatureWeights, HybridScorer
 from readnext.inference.constructor_plugin import (
     InferenceDataConstructorPlugin,
@@ -37,7 +37,6 @@ from readnext.utils.dummy_defaults import (
     language_model_data_default,
     seen_inference_data_constructor_plugin_default,
 )
-from readnext.utils.io import read_df_from_parquet
 from readnext.utils.repr import generate_frame_repr
 
 
@@ -56,6 +55,7 @@ class InferenceDataConstructor:
     language_model_choice: LanguageModelChoice
     feature_weights: FeatureWeights
 
+    data_split: DataSplit = DataSplit.FULL
     verbose: bool = True
 
     documents_frame: DocumentsFrame = field(init=False)
@@ -131,7 +131,7 @@ class InferenceDataConstructor:
         # documents data must be set before the constructor plugin since documents data
         # is required to check if the query document is contained in the training data
         # and, thus, to select the correct constructor plugin
-        self.documents_frame = self.get_documents_frame()
+        self.documents_frame = self.get_documents_frame(self.data_split)
         self.constructor_plugin = self.get_constructor_plugin()
         self.citation_model_data = self.constructor_plugin.get_citation_model_data()
         self.language_model_data = self.constructor_plugin.get_language_model_data()
@@ -163,8 +163,8 @@ class InferenceDataConstructor:
             ")"
         )
 
-    def get_documents_frame(self) -> DocumentsFrame:
-        return read_df_from_parquet(DataPaths.merged.documents_frame)
+    def get_documents_frame(self, data_split: DataSplit) -> DocumentsFrame:
+        return load_data_split(data_split)
 
     def query_document_in_training_data(self) -> bool:
         if self.semanticscholar_id is not None:

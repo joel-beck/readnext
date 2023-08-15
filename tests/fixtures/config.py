@@ -13,4 +13,4 @@ def root_path() -> Path:
 
 @pytest.fixture(scope="session")
 def test_data_size() -> int:
-    return MagicNumbers.documents_frame_test_size
+    return MagicNumbers.unit_testing_size

@@ -81,7 +81,9 @@ def bm25(
     Default values are taken from the `rank_bm25` package:
     https://github.com/dorianbrown/rank_bm25/blob/990470ebbe6b28c18216fd1a8b18fe7446237dd6/rank_bm25.py#L176
 
-    Computes the BM25+ vector for a single document.
+    Computes the BM25+ vector for a single document. Tokens that are contained in the
+    vocabulary but not in the document are set to 0. Tokens that are not contained in
+    the vocabulary are ignored and do not impact the embedding dimension.
     """
     corpus_vocabulary = learn_vocabulary(document_corpus)
 

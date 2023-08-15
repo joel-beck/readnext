@@ -65,19 +65,6 @@ class Embedder(ABC):
         `embedding`.
         """
 
-
-@dataclass(kw_only=True)
-class TFIDFEmbedder(Embedder):
-    """
-    Computes document embeddings with the TF-IDF algorithm.
-    """
-
-    tfidf_vectorizer: TfidfVectorizer
-
-    def __post_init__(self) -> None:
-        self.split_tokens_frame()
-        self.set_token_strings()
-
     def split_tokens_frame(self) -> None:
         """
         Split the full tokens frame into training, validation and test sets.
@@ -93,6 +80,19 @@ class TFIDFEmbedder(Embedder):
         self.tokens_frame_test = self.tokens_frame.filter(
             pl.col("d3_document_id").is_in(data_split_indices.test)
         )
+
+
+@dataclass(kw_only=True)
+class TFIDFEmbedder(Embedder):
+    """
+    Computes document embeddings with the TF-IDF algorithm.
+    """
+
+    tfidf_vectorizer: TfidfVectorizer
+
+    def __post_init__(self) -> None:
+        self.split_tokens_frame()
+        self.set_token_strings()
 
     def convert_tokens_to_token_strings(self, tokens_frame: TokensFrame) -> pd.Series:
         """
@@ -182,17 +182,36 @@ class BM25Embedder(Embedder):
     Computes document embeddings with the BM25 algorithm.
     """
 
+    def __post_init__(self) -> None:
+        self.split_tokens_frame()
+
+    def get_training_corpus(self) -> list[Tokens]:
+        """
+        Collect the training corpus as a list tokens.
+        """
+        return self.tokens_frame_train["tokens"].to_list()
+
     def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
-        return bm25(document_tokens, self.tokens_frame["tokens"].to_list()).tolist()
+        """
+        Compute the BM25+ embedding for a single document. The training set is used to
+        construct the corpus / vocabulary.
+        """
+        training_corpus = self.get_training_corpus()
+        return bm25(document_tokens, document_corpus=training_corpus).tolist()
 
     def compute_embeddings_frame(self) -> EmbeddingsFrame:
+        """
+        Compute the document embeddings for all documents in dataset. New tokens from
+        the validation and test set are not contained in the vocabulary and thus set to
+        zero.
+        """
         with rich_progress_bar() as progress_bar:
-            embeddings = Parallel(n_jobs=-1, prefer="threads")(
-                delayed(self.compute_embedding_single_document)(row["tokens"])
+            embeddings = [
+                self.compute_embedding_single_document(row["tokens"])
                 for row in progress_bar.track(
                     self.tokens_frame.iter_rows(named=True), total=len(self.tokens_frame)
                 )
-            )
+            ]
 
         return self.tokens_frame.with_columns(embedding=pl.Series(embeddings)).drop("tokens")
 

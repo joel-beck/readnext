@@ -14,7 +14,7 @@ def readnext(
     arxiv_url: HttpUrl | str | None = None,
     language_model_choice: LanguageModelChoice,
     feature_weights: FeatureWeights = FeatureWeights(),
-    _data_split: DataSplit = DataSplit.FULL,
+    _candidates_data_split: DataSplit = DataSplit.FULL,
     _verbose: bool = True,
 ) -> InferenceData:
     """
@@ -33,9 +33,9 @@ def readnext(
       be used for the Language Recommender.
     - `feature_weights` (optional): These weights influence the citation features and
       global document features for the Citation Recommender.
-    - `data_split` (optional): Determines if the full dataset is used for inference or
-      one of the training, validation, or test sets.
-    - `verbose` (optional): If set to `True`, the function prints status and progress
+    - `_candidates_data_split` (optional): Determines if recommendations are generated
+      from the full or the training data set.
+    - `_verbose` (optional): If set to `True`, the function prints status and progress
       messages to the console.
 
     The function returns an `InferenceData` object that includes the following
@@ -66,7 +66,7 @@ def readnext(
         arxiv_url=arxiv_url,
         language_model_choice=language_model_choice,
         feature_weights=feature_weights,
-        data_split=_data_split,
+        candidates_data_split=_candidates_data_split,
         verbose=_verbose,
     )
 

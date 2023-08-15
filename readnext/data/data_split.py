@@ -5,6 +5,7 @@ import polars as pl
 from typing_extensions import Self
 
 from readnext.config import DataPaths
+from readnext.utils.aliases import DocumentsFrame
 
 
 @dataclass
@@ -35,7 +36,7 @@ class DataSplit(Enum):
     TEST = "test"
 
 
-def load_data_split(data_split: DataSplit) -> pl.DataFrame:
+def load_data_split(data_split: DataSplit) -> DocumentsFrame:
     match data_split:
         case DataSplit.FULL:
             return pl.read_parquet(DataPaths.merged.documents_frame)

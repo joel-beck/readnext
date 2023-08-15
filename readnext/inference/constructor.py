@@ -55,7 +55,7 @@ class InferenceDataConstructor:
     language_model_choice: LanguageModelChoice
     feature_weights: FeatureWeights
 
-    data_split: DataSplit = DataSplit.FULL
+    candidates_data_split: DataSplit = DataSplit.FULL
     verbose: bool = True
 
     documents_frame: DocumentsFrame = field(init=False)
@@ -131,7 +131,7 @@ class InferenceDataConstructor:
         # documents data must be set before the constructor plugin since documents data
         # is required to check if the query document is contained in the training data
         # and, thus, to select the correct constructor plugin
-        self.documents_frame = self.get_documents_frame(self.data_split)
+        self.documents_frame = self.get_documents_frame(self.candidates_data_split)
         self.constructor_plugin = self.get_constructor_plugin()
         self.citation_model_data = self.constructor_plugin.get_citation_model_data()
         self.language_model_data = self.constructor_plugin.get_language_model_data()

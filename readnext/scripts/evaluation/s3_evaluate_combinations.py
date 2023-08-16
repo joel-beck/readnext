@@ -1,3 +1,9 @@
+"""
+Step 3: Final Evaluation
+
+Numerical and graphical analysis of the evaluation results.
+"""
+
 from collections.abc import Sequence
 
 import matplotlib.pyplot as plt

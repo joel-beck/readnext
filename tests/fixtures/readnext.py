@@ -38,7 +38,7 @@ def tfidf_recommendations_candidates_non_verbose() -> pl.DataFrame:
         semanticscholar_id=semanticscholar_id,
         language_model_choice=LanguageModelChoice.TFIDF,
         feature_weights=FeatureWeights(),
-        verbose=False,
+        _verbose=False,
     )
 
     return recommendations.recommendations.language_to_citation_candidates
@@ -52,7 +52,7 @@ def bm25_recommendations_candidates_non_verbose() -> pl.DataFrame:
         semanticscholar_id=semanticscholar_id,
         language_model_choice=LanguageModelChoice.BM25,
         feature_weights=FeatureWeights(),
-        verbose=False,
+        _verbose=False,
     )
 
     return recommendations.recommendations.language_to_citation_candidates

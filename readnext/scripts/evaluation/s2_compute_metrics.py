@@ -1,21 +1,22 @@
 """
-Samples a random subset of input combinations (query document, language model and
-feature weights) using baseline feature weights plus the selected feature weights
-candidates from the previous step. Computes the average precision and counts the unique
-labels for both hybrid recommender orders and candidate recommendation lists. Stores the
-resulting evaluation dataframe in a parquet file.
+Step 2: Metrics Computation
+
+Evaluates all combinations of test documents, language models and the baseline feature
+weights plus the selected feature weights candidates from the previous step. Computes
+the average precision and counts the unique labels for both hybrid recommender orders
+and candidate recommendation lists. Stores the resulting evaluation dataframe in a
+parquet file.
 """
 
 import polars as pl
 
-from readnext.config import DataPaths, ResultsPaths
+from readnext.config import ResultsPaths
+from readnext.data.data_split import DataSplit, load_data_split
 from readnext.scripts.evaluation.s1_search_feature_weights import (
     add_scoring_columns,
     construct_combinations_frame,
-    sample_input_combinations,
     string_to_list,
 )
-from readnext.utils.aliases import DocumentsFrame
 from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
 
 
@@ -49,11 +50,10 @@ def get_feature_weight_candidates(
 
 
 def main() -> None:
-    seed = 123
-    num_samples_input_combinations = 200  # 100_000
-    num_best_feature_weights = 10
+    query_data_split = DataSplit.TEST
+    query_documents_frame = load_data_split(query_data_split)
 
-    documents_frame: DocumentsFrame = read_df_from_parquet(DataPaths.merged.documents_frame)
+    num_best_feature_weights = 10
 
     language_model_candidates = [
         "TFIDF",
@@ -84,13 +84,9 @@ def main() -> None:
 
     evaluated_feature_weights = baseline_feature_weights + feature_weight_candidates
 
-    evaluation_frame = (
-        construct_combinations_frame(
-            documents_frame, language_model_candidates, evaluated_feature_weights
-        )
-        .pipe(sample_input_combinations, num_samples=num_samples_input_combinations, seed=seed)
-        .pipe(add_scoring_columns)
-    )
+    evaluation_frame = construct_combinations_frame(
+        query_documents_frame, language_model_candidates, evaluated_feature_weights
+    ).pipe(add_scoring_columns)
 
     write_df_to_parquet(evaluation_frame, ResultsPaths.evaluation.evaluation_frame_parquet)
 

@@ -70,33 +70,11 @@ def test_aggregate_document_embeddings(embedder: TorchEmbedder) -> None:
     )
 
 
-@pytest.mark.parametrize(
-    "embedder",
-    [
-        *[pytest.param(fixture) for fixture in keyword_based_embedder_fixtures],
-        *[
-            pytest.param(fixture, marks=[pytest.mark.slow, pytest.mark.skip_ci])
-            for fixture in gensim_embedder_fixtures + torch_embedder_fixtures
-        ],
-    ],
-)
-def test_compute_embeddings_frame(embedder: GensimEmbedder | TorchEmbedder) -> None:
-    embeddings_frame = embedder.compute_embeddings_frame()
-
-    assert isinstance(embeddings_frame, pl.DataFrame)
-    assert embeddings_frame.width == 2
-    assert embeddings_frame.columns == ["d3_document_id", "embedding"]
-    assert embeddings_frame.dtypes == [pl.Int64, pl.List(pl.Float64)]
-
-
 def test_embedding_dimension_tfidf(tfidf_embedder: TFIDFEmbedder, toy_tokens: Tokens) -> None:
     single_embedding = tfidf_embedder.compute_embedding_single_document(toy_tokens)
 
-    embeddings_frame = tfidf_embedder.compute_embeddings_frame()
-    corpus_vocabulary_size = tfidf_embedder.tokens_frame["tokens"].explode().n_unique()
-
-    assert len(single_embedding) == corpus_vocabulary_size
-    assert (embeddings_frame["embedding"].list.lengths() == corpus_vocabulary_size).all()
+    training_vocabulary_size = tfidf_embedder.tokens_frame_train["tokens"].explode().n_unique()
+    assert len(single_embedding) == training_vocabulary_size
 
 
 def test_embedding_dimension_bm25(bm25_embedder: BM25Embedder, toy_tokens: Tokens) -> None:

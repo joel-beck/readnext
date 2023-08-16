@@ -2,7 +2,7 @@ import polars as pl
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
-from readnext.utils.aliases import EmbeddingsFrame
+from readnext.utils.aliases import EmbeddingsFrame, TokensFrame
 
 keyword_based_embedding_frames = [
     lazy_fixture("test_tfidf_embeddings_frame"),
@@ -36,13 +36,24 @@ def test_embeddings_frame_structure(embeddings_frame: EmbeddingsFrame) -> None:
 
 
 def test_tfidf_embeddings_dimension(test_tfidf_embeddings_frame: EmbeddingsFrame) -> None:
-    # embedding dimension corresponds to size of corpus vocabulary
-    assert all(len(embedding) == 21240 for embedding in test_tfidf_embeddings_frame["embedding"])
+    # embedding dimension is constant for all documents
+    assert (test_tfidf_embeddings_frame["embedding"].apply(len) == 19116).all()
 
 
 def test_bm25_embeddings_dimension(test_bm25_embeddings_frame: EmbeddingsFrame) -> None:
     # different corpus vocabulary size to TfidfVectorizer from scikit-learn
-    assert all(len(embedding) == 21264 for embedding in test_bm25_embeddings_frame["embedding"])
+    assert (test_bm25_embeddings_frame["embedding"].apply(len) == 19140).all()
+
+
+@pytest.mark.skip_ci
+@pytest.mark.parametrize("embeddings_frame", keyword_based_embedding_frames)
+def test_vocabulary_from_training_corpus(
+    embeddings_frame: EmbeddingsFrame, spacy_tokens_frame: TokensFrame
+) -> None:
+    # embedding dimension stems from training corpus vocabulary size and is smaller than
+    # total number of unique tokens
+    num_unique_tokens = spacy_tokens_frame["tokens"].explode().n_unique()
+    assert len(embeddings_frame[0, "embedding"]) < num_unique_tokens
 
 
 @pytest.mark.parametrize("embeddings_frame", gensim_embedding_frames)

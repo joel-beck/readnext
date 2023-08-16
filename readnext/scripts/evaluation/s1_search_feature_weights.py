@@ -1,7 +1,10 @@
 """
+Step 1: Hyperparameter Search for Feature Weights
+
 Samples a random subset of feature weights from the given ranges. The ten best
 performing feature weights (in terms of "hybrid average precision") are stored and used
-for the final evaluation.
+for the final evaluation. The query papers for inference are sampled from the validation
+set.
 """
 
 from collections.abc import Sequence
@@ -9,13 +12,14 @@ from collections.abc import Sequence
 import polars as pl
 
 from readnext import readnext
-from readnext.config import DataPaths, ResultsPaths
+from readnext.config import ResultsPaths
+from readnext.data.data_split import DataSplit, load_data_split
 from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
 from readnext.evaluation.scoring import FeatureWeights, FeatureWeightsRanges
 from readnext.inference import Recommendations
 from readnext.modeling.language_models import LanguageModelChoice
 from readnext.utils.aliases import DocumentsFrame
-from readnext.utils.io import read_df_from_parquet, write_df_to_parquet
+from readnext.utils.io import write_df_to_parquet
 from readnext.utils.progress_bar import rich_progress_bar
 
 
@@ -28,7 +32,7 @@ def string_to_list(string: str) -> list[int]:
 
 
 def construct_combinations_frame(
-    documents_frame: DocumentsFrame,
+    query_documents_frame: DocumentsFrame,
     language_model_candidates: Sequence[str],
     feature_weights_candidates: Sequence[Sequence[int]],
 ) -> pl.DataFrame:
@@ -47,7 +51,7 @@ def construct_combinations_frame(
     )
 
     return (
-        documents_frame.select("semanticscholar_id")
+        query_documents_frame.select("semanticscholar_id")
         .join(language_model_candidates_frame, how="cross")
         .join(feature_weights_candidates_frame, how="cross")
     )
@@ -63,13 +67,15 @@ def sample_input_combinations(
 
 
 def retrieve_recommendations(
-    semanticscholar_id: str, language_model: str, feature_weights: Sequence[int]
+    semanticscholar_id: str,
+    language_model: str,
+    feature_weights: Sequence[int],
 ) -> Recommendations:
     result = readnext(
         semanticscholar_id=semanticscholar_id,
         language_model_choice=LanguageModelChoice(language_model),
         feature_weights=FeatureWeights.from_sequence(feature_weights),
-        verbose=False,
+        _verbose=False,
     )
     return result.recommendations
 
@@ -192,11 +198,12 @@ def add_hybrid_average_precision(df: pl.DataFrame) -> pl.DataFrame:
 
 
 def main() -> None:
+    query_data_split = DataSplit.VALIDATION
+    query_documents_frame = load_data_split(query_data_split)
+
     seed = 42
     num_samples_feature_weights_candidates = 200
     num_samples_input_combinations = 10_000
-
-    documents_frame: DocumentsFrame = read_df_from_parquet(DataPaths.merged.documents_frame)
 
     language_model_candidates = [
         "TFIDF",
@@ -216,7 +223,7 @@ def main() -> None:
 
     feature_weights_candidates_frame = (
         construct_combinations_frame(
-            documents_frame, language_model_candidates, feature_weights_candidates
+            query_documents_frame, language_model_candidates, feature_weights_candidates
         )
         .pipe(sample_input_combinations, num_samples=num_samples_input_combinations, seed=seed)
         .pipe(add_scoring_columns)

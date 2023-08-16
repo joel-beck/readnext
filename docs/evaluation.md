@@ -29,4 +29,3 @@ The goal of the evaluation is to provide data-driven answers to the following re
 
 
 ## Evaluation Strategy
-

@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 import polars as pl
 from gensim.models.keyedvectors import KeyedVectors
-from joblib import Parallel, delayed
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from readnext.data.data_split import DataSplitIndices

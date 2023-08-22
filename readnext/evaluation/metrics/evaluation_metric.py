@@ -39,7 +39,7 @@ class AveragePrecision(EvaluationMetric):
     @staticmethod
     def precision(label_list: IntegerLabelList) -> float:
         """
-        Compute the average precision for a list of integer recommendation labels.
+        Compute the precision for a list of integer recommendation labels.
 
         Precision = # of relevant items / # of items
 
@@ -90,11 +90,23 @@ class AveragePrecision(EvaluationMetric):
         return (1 / num_relevant_items) * np.dot(precision_scores, relevance_scores)  # type: ignore
 
     @classmethod
+    def mean_precision(cls, label_lists: IntegerLabelLists) -> float:
+        """
+        Computes the mean precision for multiple integer recommendation label lists.
+
+        The Mean Precision of empty input is set to 0.0.
+        """
+        if not len(label_lists):
+            return 0.0
+
+        return np.mean([cls.precision(label_list) for label_list in label_lists])  # type: ignore # noqa: E501
+
+    @classmethod
     def mean_average_precision(cls, label_lists: IntegerLabelLists) -> float:
         """
         Computes the mean average precision for multiple integer recommendation label lists.
 
-        Mean Average Precision of empty input is set to 0.0.
+        The Mean Average Precision of empty input is set to 0.0.
         """
         if not len(label_lists):
             return 0.0

@@ -490,9 +490,12 @@ def plot_diversity_by_language_model(evaluation_frame: pl.DataFrame) -> None:
 
 
 def main() -> None:
+    # TODO: Make colors more consistent across plots
+
     evaluation_frame = read_df_from_parquet(ResultsPaths.evaluation.evaluation_frame_parquet)
 
     compare_language_models(evaluation_frame)
+    # NOTE: plot is for language -> citation candidate, i.e. language models play dominant role. TF-IDF performs well here.
     plot_language_models(evaluation_frame)
 
     compare_feature_weights(evaluation_frame)
@@ -500,6 +503,7 @@ def main() -> None:
 
     compare_language_models_feature_weights(evaluation_frame)
     # plot_language_model_feature_weight_combinations_comparison_barplot(evaluation_frame)
+    # NOTE: plot is for citation -> language, i.e. feature weights play dominant role. TF-IDF performs poorly here.
     plot_language_models_feature_weights_heatmap(evaluation_frame)
 
     compare_hybridization_strategies(evaluation_frame)

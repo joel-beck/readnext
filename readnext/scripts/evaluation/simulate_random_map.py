@@ -8,8 +8,9 @@ items. The Average Precision (AP) is calculated for each list and the mean of al
 returned as the MAP.
 """
 
-from readnext.evaluation.metrics.evaluation_metric import AveragePrecision
 import numpy as np
+
+from readnext.evaluation.metrics.evaluation_metric import AveragePrecision
 
 
 def generate_recommendation_lists(
@@ -86,6 +87,24 @@ def main() -> None:
     print(f"Mean Precision with 80/20 proportions: {mean_precision_80_20:.3f}")
     print(f"Mean Average Precision with 80/20 proportions: {mean_average_precision_80_20:.3f}\n")
 
+    recommendation_lists_from_date = generate_recommendation_lists(
+        recommendation_labels,
+        num_simulations,
+        length_recommendation_list,
+        seed,
+        # proportion of relevant recommendations in documents frame is 0.280
+        proportions=[0.72, 0.28],
+    )
+
+    mean_precision_from_date = AveragePrecision.mean_precision(recommendation_lists_from_date)
+
+    mean_average_precision_from_date = AveragePrecision.mean_average_precision(
+        recommendation_lists_from_date
+    )
+
+    print(f"Mean Precision with data proportions: {mean_precision_from_date:.3f}")
+    print(f"Mean Average Precision with data proportions: {mean_average_precision_from_date:.3f}\n")
+
     # findings:
     # - the values of the NULL model with randomly sampled recommendations strongly
     #   depend on the proportions of relevant and irrelevant recommendations
@@ -98,6 +117,8 @@ def main() -> None:
     #
     # - random MAP value for 80/20 proportions of 0/1, i.e. irrelevant/relevant
     #   recommendations: 0.308
+    #
+    # - random MAP value for 72/28 proportions as found in dataset: 0.378
 
 
 if __name__ == "__main__":

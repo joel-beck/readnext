@@ -47,7 +47,13 @@ def average_by_group(
 def compare_language_models(evaluation_frame: pl.DataFrame) -> pl.DataFrame:
     return (
         average_by_group(evaluation_frame, ["language_model"])
-        .select(["language_model", "mean_avg_precision_l_to_c_cand", "mean_avg_precision_c_to_l"])
+        .select(
+            [
+                "language_model",
+                "mean_avg_precision_l_to_c_cand",
+                "mean_avg_precision_c_to_l",
+            ]
+        )
         .sort(by="mean_avg_precision_l_to_c_cand", descending=True)
     )
 
@@ -92,7 +98,12 @@ def plot_feature_weights(evaluation_frame: pl.DataFrame) -> None:
     )
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    sns.barplot(x="mean_avg_precision_c_to_l_cand", y="feature_weight_labels", data=plot_df, ax=ax)
+    sns.barplot(
+        x="mean_avg_precision_c_to_l_cand",
+        y="feature_weight_labels",
+        data=plot_df,
+        ax=ax,
+    )
     ax.set(
         xlabel="Mean Average Precision",
         ylabel="Feature Weights",
@@ -205,7 +216,11 @@ def plot_language_models_feature_weights_heatmap(
 
     sns.heatmap(plot_df, cmap="YlGnBu", annot=True, fmt=".2f", linewidths=0.5, ax=ax)
 
-    ax.set_title("MAP (Citation to Language) of Feature Weights by Language Model", size=16, pad=20)
+    ax.set_title(
+        "MAP (Citation to Language) of Feature Weights by Language Model",
+        size=16,
+        pad=20,
+    )
     ax.set(xlabel="", ylabel="")
     ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
 
@@ -422,7 +437,12 @@ def plot_diversities_boxplot(evaluation_frame: pl.DataFrame) -> None:
     }
 
     plot_df = (
-        evaluation_frame.select(["num_unique_labels_c_to_l_cand", "num_unique_labels_l_to_c_cand"])
+        evaluation_frame.select(
+            [
+                "num_unique_labels_c_to_l_cand",
+                "num_unique_labels_l_to_c_cand",
+            ]
+        )
         .melt()
         .with_columns(variable=pl.col("variable").map_dict(label_mapping))
         .to_pandas()
@@ -495,7 +515,8 @@ def main() -> None:
     evaluation_frame = read_df_from_parquet(ResultsPaths.evaluation.evaluation_frame_parquet)
 
     compare_language_models(evaluation_frame)
-    # NOTE: plot is for language -> citation candidate, i.e. language models play dominant role. TF-IDF performs well here.
+    # NOTE: plot is for language -> citation candidate, i.e. language models play
+    # dominant role. TF-IDF performs well here.
     plot_language_models(evaluation_frame)
 
     compare_feature_weights(evaluation_frame)
@@ -503,7 +524,8 @@ def main() -> None:
 
     compare_language_models_feature_weights(evaluation_frame)
     # plot_language_model_feature_weight_combinations_comparison_barplot(evaluation_frame)
-    # NOTE: plot is for citation -> language, i.e. feature weights play dominant role. TF-IDF performs poorly here.
+    # NOTE: plot is for citation -> language, i.e. feature weights play dominant role.
+    # TF-IDF performs poorly here.
     plot_language_models_feature_weights_heatmap(evaluation_frame)
 
     compare_hybridization_strategies(evaluation_frame)

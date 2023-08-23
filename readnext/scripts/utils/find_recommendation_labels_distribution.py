@@ -1,7 +1,6 @@
 import numpy as np
 
-from readnext.config import DataPaths
-from readnext.utils.io import read_df_from_parquet
+from readnext.data.data_split import DataSplit, load_data_split
 
 
 def is_relevant_document(
@@ -22,8 +21,8 @@ def get_proportion_relevant_documents(
 
 
 def main() -> None:
-    documents_frame = read_df_from_parquet(DataPaths.merged.documents_frame)
-    all_document_labels_list = documents_frame["arxiv_labels"].to_list()
+    test_set = load_data_split(DataSplit.TEST)
+    all_document_labels_list = test_set["arxiv_labels"].to_list()
 
     proportions = []
 
@@ -38,8 +37,8 @@ def main() -> None:
         )
 
     mean_proportion = np.mean(proportions)
-    print(f"Proportions of relevant documents: {mean_proportion:.3f}")
-    # Mean Proportion of relevant documents: 0.280
+    print(f"Proportions of relevant documents in test set: {mean_proportion:.3f}")
+    # Mean Proportion of relevant documents in test set: 0.287
 
 
 if __name__ == "__main__":

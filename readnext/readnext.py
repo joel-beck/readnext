@@ -11,8 +11,14 @@ def readnext(
     semanticscholar_url: HttpUrl | str | None = None,
     arxiv_id: str | None = None,
     arxiv_url: HttpUrl | str | None = None,
-    language_model_choice: LanguageModelChoice,
-    feature_weights: FeatureWeights = FeatureWeights(),
+    language_model_choice: LanguageModelChoice = LanguageModelChoice.SCIBERT,
+    feature_weights: FeatureWeights = FeatureWeights(
+        publication_date=0,
+        citationcount_document=0,
+        citationcount_author=0,
+        co_citation_analysis=0,
+        bibliographic_coupling=1,
+    ),
     _verbose: bool = True,
 ) -> InferenceData:
     """
@@ -28,9 +34,12 @@ def readnext(
     This can be either `semanticscholar_id`,
       `semanticscholar_url`, `arxiv_id`, or `arxiv_url`.
     - `language_model_choice` (required): This argument determines the language model to
-      be used for the Language Recommender.
+      be used for the Language Recommender. The default value `SciBERT` showed the best
+      performance in our experiments.
     - `feature_weights` (optional): These weights influence the citation features and
-      global document features for the Citation Recommender.
+      global document features for the Citation Recommender. The default values using
+      only the bibliographic coupling feature showed the best performance in our
+      experiments.
     - `_verbose` (optional): If set to `True`, the function prints status and progress
       messages to the console.
 

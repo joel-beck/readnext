@@ -5,15 +5,14 @@ Welcome to the `readnext` documentation! ☀️
 The `readnext` package provides a hybrid recommender system for computer science papers.
 Its main objective is to suggest relevant research papers based on a given query document you might be currently exploring, streamlining your journey to discover more intriguing academic literature.
 
+Check out the source code of the [readnext](https://github.com/joel-beck/readnext) package on GitHub.
+The motivation, theoretical background and results of this project are presented in the [thesis](https://github.com/joel-beck/msc-thesis/blob/main/thesis/beck-joel_masters-thesis.pdf). The accompanying [repository](https://github.com/joel-beck/msc-thesis) contains the LaTeX source code as well as the code to generate all figures and diagrams in the thesis.
+
 
 ## Quick Links
 
 - **Source Code**: [readnext](https://github.com/joel-beck/readnext)
 - **Thesis**: [Bridging Citation Analysis and Language Models: A Hybrid Recommender System for Computer Science Papers](thesis/beck-joel_masters-thesis.pdf)
-
-Check out the source code of the [readnext](https://github.com/joel-beck/readnext) package on GitHub.
-
-The motivation, theoretical background and results of this project are presented in the [thesis](https://github.com/joel-beck/msc-thesis/blob/main/thesis/beck-joel_masters-thesis.pdf). The accompanying [repository](https://github.com/joel-beck/msc-thesis) contains the LaTeX source code as well as the code to generate all figures and diagrams in the thesis.
 
 
 ## Overview

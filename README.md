@@ -14,16 +14,16 @@ Its main objective is to suggest relevant research papers based on a given query
 It is part of my master's thesis, "Bridging Citation Analysis and Language Models: A Hybrid Recommender System for Computer Science Papers", submitted to the University of Göttingen on September 26th, 2023, as a requirement for the Master of Science in Applied Statistics.
 The thesis was supervised by [Dr. Corinna Breitinger](https://gipplab.org/team/corinna-breitinger/) and [Dr. Terry Ruas](https://gipplab.org/team/dr-terry-lima-ruas/) from the [Chair for Scientific Information Analytics](https://gipplab.org) at the University of Göttingen.
 
+Find instructions on how to install, setup, and use the `readnext` package with a brief overview of its functionality below.
+For more detailed information about usage, customization and reproducibility, check out the [documentation](https://joel-beck.github.io/readnext/).
+
+The motivation, theoretical background and results of this project are presented in the [thesis](https://github.com/joel-beck/msc-thesis/blob/main/thesis/beck-joel_masters-thesis.pdf). The accompanying [repository](https://github.com/joel-beck/msc-thesis) contains the LaTeX source code as well as the code to generate all figures and diagrams in the thesis.
+
 
 ## Quick Links
 
 - **Documentation**: [readnext Docs](https://joel-beck.github.io/readnext/)
 - **Thesis**: [Bridging Citation Analysis and Language Models: A Hybrid Recommender System for Computer Science Papers](thesis/beck-joel_masters-thesis.pdf)
-
-Find instructions on how to install, setup, and use the `readnext` package with a brief overview of its functionality below.
-For more detailed information about usage, customization and reproducibility, check out the [documentation](https://joel-beck.github.io/readnext/).
-
-The motivation, theoretical background and results of this project are presented in the [thesis](https://github.com/joel-beck/msc-thesis/blob/main/thesis/beck-joel_masters-thesis.pdf). The accompanying [repository](https://github.com/joel-beck/msc-thesis) contains the LaTeX source code as well as the code to generate all figures and diagrams in the thesis.
 
 
 ## Quick Look

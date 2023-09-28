@@ -11,11 +11,20 @@
 The `readnext` package provides a hybrid recommender system for computer science papers.
 Its main objective is to suggest relevant research papers based on a given query document you might be currently exploring, streamlining your journey to discover more intriguing academic literature.
 
-It is part of my master's thesis at the University of Göttingen supervised by [Corinna Breitinger](https://gipplab.org/team/corinna-breitinger/) and [Terry Ruas](https://gipplab.org/team/dr-terry-lima-ruas/).
+It is part of my master's thesis, "Bridging Citation Analysis and Language Models: A Hybrid Recommender System for Computer Science Papers", submitted to the University of Göttingen on September 26th, 2023, as a requirement for the Master of Science in Applied Statistics.
+The thesis was supervised by [Dr. Corinna Breitinger](https://gipplab.org/team/corinna-breitinger/) and [Dr. Terry Ruas](https://gipplab.org/team/dr-terry-lima-ruas/) from the [Chair for Scientific Information Analytics](https://gipplab.org) at the University of Göttingen.
 
-The project is under active development.
-Below you find the installation instructions and a brief overview of the package.
-Check out the [documentation](https://joel-beck.github.io/readnext/) for background information about the citation-based methods and language models that are used in this project as well as details how to reproduce all results and customize the package to your individual needs.
+
+## Quick Links
+
+- **Documentation**: [readnext Docs](https://joel-beck.github.io/readnext/)
+- **Thesis**: [Bridging Citation Analysis and Language Models: A Hybrid Recommender System for Computer Science Papers](thesis/beck-joel_masters-thesis.pdf)
+
+Find instructions on how to install, setup, and use the `readnext` package with a brief overview of its functionality below.
+For more detailed information about usage, customization and reproducibility, check out the [documentation](https://joel-beck.github.io/readnext/).
+
+The motivation, theoretical background and results of this project are presented in the [thesis](https://github.com/joel-beck/msc-thesis/blob/main/thesis/beck-joel_masters-thesis.pdf). The accompanying [repository](https://github.com/joel-beck/msc-thesis) contains the LaTeX source code as well as the code to generate all figures and diagrams in the thesis.
+
 
 ## Quick Look
 
@@ -57,6 +66,7 @@ See the [Usage](#usage) section for more details and examples.
 
 ## Table of Contents <!-- omit from toc -->
 
+- [Quick Links](#quick-links)
 - [Quick Look](#quick-look)
 - [Installation](#installation)
 - [Overview](#overview)

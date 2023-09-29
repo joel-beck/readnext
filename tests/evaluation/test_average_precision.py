@@ -25,6 +25,19 @@ def test_average_precision_score_mixed() -> None:
     assert AveragePrecision.score(label_list) == pytest.approx(0.533333333)
 
 
+def test_average_precision_score_blog_article() -> None:
+    # examples with solutions from
+    # https://towardsdatascience.com/mean-average-precision-at-k-map-k-clearly-explained-538d8e032d2 # noqa: E501
+    label_list = [0, 1, 0, 1, 0, 0]
+    assert AveragePrecision.score(label_list) == pytest.approx(0.5)
+
+    label_list_2 = [1, 1, 0, 0, 0, 0]
+    assert AveragePrecision.score(label_list_2) == 1
+
+    label_list_3 = [0, 0, 0, 0, 1, 1]
+    assert AveragePrecision.score(label_list_3) == pytest.approx(0.5 * (1 / 5 + 2 / 6))
+
+
 def test_average_precision_score_numpy_array() -> None:
     label_list = np.array([0, 1, 0, 1, 1])
     assert AveragePrecision.score(label_list) == pytest.approx(0.533333333)

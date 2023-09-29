@@ -53,6 +53,14 @@ def test_mean_average_precision_multiple_lists_different_lengths() -> None:
     ) == pytest.approx(0.6851851851851851)
 
 
+def test_mean_average_precision_blog_article() -> None:
+    # examples with solutions from
+    # https://towardsdatascience.com/mean-average-precision-at-k-map-k-clearly-explained-538d8e032d2 # noqa: E501
+    assert AveragePrecision.mean_average_precision(
+        [[1, 1, 0, 0, 0, 0], [0, 0, 0, 0, 1, 1], [0, 1, 0, 1, 0, 0]]
+    ) == pytest.approx(0.588888888)
+
+
 def test_mean_average_precision_with_numpy_arrays() -> None:
     a1 = np.array([0, 1, 0, 0, 1])
     a2 = np.array([1, 1, 0, 1, 0])

@@ -8,7 +8,7 @@ from transformers import BertModel, LongformerModel
 
 from readnext.modeling.language_models.embedder import AggregationStrategy
 from readnext.utils.aliases import Embedding, EmbeddingsFrame, TokenIds, TokenIdsFrame
-from readnext.utils.progress_bar import rich_progress_bar
+from readnext.utils.slicing import concatenate_sliced_dataframes
 from readnext.utils.torch_device import get_torch_device
 
 TTorchModel = TypeVar("TTorchModel", bound=BertModel | LongformerModel)
@@ -89,23 +89,12 @@ class TorchEmbedder(ABC, Generic[TTorchModel]):
         The output is a polars data frame with two columns named `d3_document_id` and
         `embedding`.
         """
-        slice_size = 5
-        num_rows = self.token_ids_frame.height
-        num_slices = num_rows // slice_size
-
-        with rich_progress_bar() as progress_bar:
-            return pl.concat(
-                [
-                    self.compute_embeddings_frame_slice(
-                        self.token_ids_frame.slice(next_index, slice_size)
-                    )
-                    for next_index in progress_bar.track(
-                        range(0, num_rows, slice_size),
-                        total=num_slices,
-                        description=f"{self.torch_model.__class__.__name__}:",
-                    )
-                ]
-            )
+        return concatenate_sliced_dataframes(
+            df=self.token_ids_frame,
+            slice_function=self.compute_embeddings_frame_slice,
+            slice_size=5,
+            progress_bar_description=f"{self.torch_model.__class__.__name__}:",
+        )
 
 
 @dataclass(kw_only=True)

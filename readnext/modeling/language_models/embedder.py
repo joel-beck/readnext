@@ -1,17 +1,19 @@
 from abc import ABC, abstractmethod
-from collections.abc import Collection, Iterable
+from collections.abc import Collection
 from dataclasses import dataclass
 from enum import Enum
 
 import numpy as np
+import pandas as pd
 import polars as pl
 from gensim.models.keyedvectors import KeyedVectors
-from joblib import Parallel, delayed
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+from readnext.data.data_split import DataSplitIndices
 from readnext.modeling.language_models.bm25 import bm25
 from readnext.utils.aliases import Embedding, EmbeddingsFrame, Tokens, TokensFrame
 from readnext.utils.progress_bar import rich_progress_bar
+from readnext.utils.slicing import concatenate_sliced_dataframes
 
 
 class AggregationStrategy(str, Enum):
@@ -62,6 +64,22 @@ class Embedder(ABC):
         `embedding`.
         """
 
+    def split_tokens_frame(self) -> None:
+        """
+        Split the full tokens frame into training, validation and test sets.
+        """
+        data_split_indices = DataSplitIndices.from_frames()
+
+        self.tokens_frame_train = self.tokens_frame.filter(
+            pl.col("d3_document_id").is_in(data_split_indices.train)
+        )
+        self.tokens_frame_validation = self.tokens_frame.filter(
+            pl.col("d3_document_id").is_in(data_split_indices.validation)
+        )
+        self.tokens_frame_test = self.tokens_frame.filter(
+            pl.col("d3_document_id").is_in(data_split_indices.test)
+        )
+
 
 @dataclass(kw_only=True)
 class TFIDFEmbedder(Embedder):
@@ -72,27 +90,89 @@ class TFIDFEmbedder(Embedder):
     tfidf_vectorizer: TfidfVectorizer
 
     def __post_init__(self) -> None:
-        self.token_strings = self.tokens_frame.to_pandas()["tokens"].str.join(" ")
+        self.split_tokens_frame()
+        self.set_token_strings()
 
-    def apply_tfidf_vectorizer(self, documents: Iterable[str]) -> np.ndarray:
+    def convert_tokens_to_token_strings(self, tokens_frame: TokensFrame) -> pd.Series:
         """
-        Fit TF-IDF vectorizer on the entire training corpus to learn the vocabulary and
-        use it for inference on a single or multiple documents.
+        Convert tokens (list of strings) to strings that can be processed by the TF-IDF
+        vectorizer.
         """
-        fitted_tfidf_vectorizer = self.tfidf_vectorizer.fit(self.token_strings)
-        return fitted_tfidf_vectorizer.transform(documents).toarray()
+        return tokens_frame.to_pandas()["tokens"].str.join(" ")
+
+    def set_token_strings(self) -> None:
+        """
+        Convert all tokens in the `tokens` column of the tokens frames to strings.
+        """
+        self.token_strings_train = self.convert_tokens_to_token_strings(self.tokens_frame_train)
+        self.token_strings_validation = self.convert_tokens_to_token_strings(
+            self.tokens_frame_validation
+        )
+        self.token_strings_test = self.convert_tokens_to_token_strings(self.tokens_frame_test)
+
+    def fit_tfidf_vectorizer(self, training_documents: pd.Series) -> None:
+        """
+        Fit TF-IDF vectorizer on the entire training corpus to learn the vocabulary.
+        """
+        self.tfidf_vectorizer.fit(training_documents)
+
+    def apply_tfidf_vectorizer(self, documents: pd.Series | list[str]) -> np.ndarray:
+        """
+        Use the fitted TF-IDF vectorizer for inference on a single or multiple documents.
+        """
+        return self.tfidf_vectorizer.transform(documents).toarray()
 
     def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
+        """
+        Fit the TF-IDF vectorizer on the training corpus and use it to compute the
+        document embedding for a single test document.
+        """
         document_string = " ".join(document_tokens)
-        tfidf_values = self.apply_tfidf_vectorizer([document_string])
-        return tfidf_values[0].tolist()
+        self.fit_tfidf_vectorizer(self.token_strings_train)
+        tfidf_embedding = self.apply_tfidf_vectorizer([document_string])
+        return tfidf_embedding[0].tolist()
+
+    @staticmethod
+    def enframe_embeddings(
+        tokens_frame_subset: TokensFrame, embeddings_subset: np.ndarray
+    ) -> EmbeddingsFrame:
+        """
+        Add the matching indices from the tokens frame to the embeddings array.
+        """
+        return tokens_frame_subset.select("d3_document_id").with_columns(
+            embedding=pl.Series(embeddings_subset.tolist())
+        )
+
+    def concatenate_embeddings(
+        self,
+        embeddings_train: np.ndarray,
+        embeddings_validation: np.ndarray,
+        embeddings_test: np.ndarray,
+    ) -> pl.DataFrame:
+        """
+        Concatenate the embeddings for the training, validation and test sets. The
+        training embeddings were used for training, the validation embeddings and test
+        embeddings are computed from the fitted TF-IDF vectorizer.
+        """
+        return pl.concat(
+            [
+                self.enframe_embeddings(self.tokens_frame_train, embeddings_train),
+                self.enframe_embeddings(self.tokens_frame_validation, embeddings_validation),
+                self.enframe_embeddings(self.tokens_frame_test, embeddings_test),
+            ]
+        )
 
     def compute_embeddings_frame(self) -> EmbeddingsFrame:
-        tfidf_values = self.apply_tfidf_vectorizer(self.token_strings)
+        """
+        Compute the document embeddings for all documents in the training, validation
+        and test sets.
+        """
+        self.fit_tfidf_vectorizer(self.token_strings_train)
+        embeddings_train = self.apply_tfidf_vectorizer(self.token_strings_train)
+        embeddings_validation = self.apply_tfidf_vectorizer(self.token_strings_validation)
+        embeddings_test = self.apply_tfidf_vectorizer(self.token_strings_test)
 
-        return self.tokens_frame.select("d3_document_id").with_columns(
-            embedding=pl.Series(tfidf_values)
-        )
+        return self.concatenate_embeddings(embeddings_train, embeddings_validation, embeddings_test)
 
 
 @dataclass(kw_only=True)
@@ -101,17 +181,36 @@ class BM25Embedder(Embedder):
     Computes document embeddings with the BM25 algorithm.
     """
 
+    def __post_init__(self) -> None:
+        self.split_tokens_frame()
+
+    def get_training_corpus(self) -> list[Tokens]:
+        """
+        Collect the training corpus as a list tokens.
+        """
+        return self.tokens_frame_train["tokens"].to_list()
+
     def compute_embedding_single_document(self, document_tokens: Tokens) -> Embedding:
-        return bm25(document_tokens, self.tokens_frame["tokens"].to_list()).tolist()
+        """
+        Compute the BM25+ embedding for a single document. The training set is used to
+        construct the corpus / vocabulary.
+        """
+        training_corpus = self.get_training_corpus()
+        return bm25(document_tokens, document_corpus=training_corpus).tolist()
 
     def compute_embeddings_frame(self) -> EmbeddingsFrame:
+        """
+        Compute the document embeddings for all documents in dataset. New tokens from
+        the validation and test set are not contained in the vocabulary and thus set to
+        zero.
+        """
         with rich_progress_bar() as progress_bar:
-            embeddings = Parallel(n_jobs=-1, prefer="threads")(
-                delayed(self.compute_embedding_single_document)(row["tokens"])
+            embeddings = [
+                self.compute_embedding_single_document(row["tokens"])
                 for row in progress_bar.track(
                     self.tokens_frame.iter_rows(named=True), total=len(self.tokens_frame)
                 )
-            )
+            ]
 
         return self.tokens_frame.with_columns(embedding=pl.Series(embeddings)).drop("tokens")
 
@@ -240,18 +339,9 @@ class GensimEmbedder(Embedder):
         The output is a polars data frame with two columns named `d3_document_id` and
         `embedding`.
         """
-        slice_size = 100
-        num_rows = self.tokens_frame.height
-        num_slices = num_rows // slice_size
-
-        with rich_progress_bar() as progress_bar:
-            return pl.concat(
-                [
-                    self.compute_embeddings_frame_slice(
-                        self.tokens_frame.slice(next_index, slice_size)
-                    )
-                    for next_index in progress_bar.track(
-                        range(0, num_rows, slice_size), total=num_slices
-                    )
-                ]
-            )
+        return concatenate_sliced_dataframes(
+            df=self.tokens_frame,
+            slice_function=self.compute_embeddings_frame_slice,
+            slice_size=100,
+            progress_bar_description=f"{self.keyed_vectors.__class__.__name__}:",
+        )

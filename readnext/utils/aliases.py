@@ -96,7 +96,7 @@ Vector: TypeAlias = Sequence | NDArray | pl.Series
 EmbeddingVector: TypeAlias = Sequence[float] | NDArray | pl.Series
 
 IntegerLabelList: TypeAlias = Sequence[int] | NDArray | pl.Series
-IntegerLabelLists: TypeAlias = Sequence[IntegerLabelList]
+IntegerLabelLists: TypeAlias = Sequence[IntegerLabelList] | NDArray
 
 StringLabelList: TypeAlias = Sequence[str] | pl.Series
 StringLabelLists: TypeAlias = Sequence[StringLabelList] | pl.Series

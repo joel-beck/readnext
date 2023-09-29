@@ -44,7 +44,7 @@ def main() -> None:
             continue
 
         df = read_df_from_parquet(path)
-        write_df_to_parquet(df.head(MagicNumbers.documents_frame_test_size), destination_path)
+        write_df_to_parquet(df.head(MagicNumbers.unit_testing_size), destination_path)
 
 
 if __name__ == "__main__":

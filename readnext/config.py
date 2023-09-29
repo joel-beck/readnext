@@ -68,6 +68,9 @@ class MergedDataPaths:
         data_dirpath / "documents_authors_labels_citations.parquet"
     )
     documents_frame: Path = data_dirpath / "documents_frame.parquet"
+    documents_frame_train: Path = data_dirpath / "documents_frame_train.parquet"
+    documents_frame_validation: Path = data_dirpath / "documents_frame_validation.parquet"
+    documents_frame_test: Path = data_dirpath / "documents_frame_test.parquet"
 
 
 @dataclass(frozen=True)
@@ -158,12 +161,21 @@ class LanguageModelsResultsPaths:
     )
 
 
+@dataclass
+class EvaluationResultsPaths:
+    feature_weights_candidates_frame_parquet: Path = (
+        results_dirpath / "feature_weights_candidates.parquet"
+    )
+    evaluation_frame_parquet: Path = results_dirpath / "evaluation_frame.parquet"
+
+
 @dataclass(frozen=True)
 class ResultsPaths:
     """Collects file paths for all result files."""
 
     citation_models: CitationModelsResultsPaths = CitationModelsResultsPaths()  # noqa: RUF009
     language_models: LanguageModelsResultsPaths = LanguageModelsResultsPaths()  # noqa: RUF009
+    evaluation: EvaluationResultsPaths = EvaluationResultsPaths()  # noqa: RUF009
 
 
 @dataclass
@@ -175,7 +187,13 @@ class MagicNumbers:
 
     documents_frame_intermediate_cutoff: int = 1_000_000
     documents_frame_final_size: int = 10_000
-    documents_frame_test_size: int = 100
+    unit_testing_size: int = 100
+
+    training_size: int = 8_000
+    validation_size: int = 1_000
+    testing_size: int = 1_000
+    data_split_seed: int = 555
+
     scoring_limit: int = 100
     n_candidates: int = 20
     n_recommendations: int = 20

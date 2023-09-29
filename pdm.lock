@@ -1251,6 +1251,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "seaborn"
+version = "0.12.2"
+requires_python = ">=3.7"
+summary = "Statistical data visualization"
+dependencies = [
+    "matplotlib!=3.6.1,>=3.1",
+    "numpy!=1.24.0,>=1.17",
+    "pandas>=0.25",
+]
+
+[[package]]
 name = "send2trash"
 version = "1.8.2"
 requires_python = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
@@ -1573,7 +1584,7 @@ summary = "Jupyter interactive widgets for Jupyter Notebook"
 lock_version = "4.2"
 cross_platform = true
 groups = ["default", "dev"]
-content_hash = "sha256:32e93dbc2cdadc4c0942397f07663843858382941fdec19061e19ae0da993430"
+content_hash = "sha256:e3a1641e0d2f9d549044c90fb9ef4682006653bd46766a9c27e0cd26929ced14"
 
 [metadata.files]
 "anyio 3.7.0" = [
@@ -3270,6 +3281,10 @@ content_hash = "sha256:32e93dbc2cdadc4c0942397f07663843858382941fdec19061e19ae0d
     {url = "https://files.pythonhosted.org/packages/e7/f0/55d81813b1a4cb79ce7dc8290eac083bf38bfb36e1ada94ea13b7b1a5f79/scipy-1.10.1-cp39-cp39-macosx_12_0_arm64.whl", hash = "sha256:79c8e5a6c6ffaf3a2262ef1be1e108a035cf4f05c14df56057b64acc5bebffb6"},
     {url = "https://files.pythonhosted.org/packages/ea/e5/452086ebed676ce4000ceb5eeeb0ee4f8c6f67c7e70fb9323a370ff95c1f/scipy-1.10.1-cp310-cp310-macosx_12_0_arm64.whl", hash = "sha256:4b3f429188c66603a1a5c549fb414e4d3bdc2a24792e061ffbd607d3d75fd84e"},
     {url = "https://files.pythonhosted.org/packages/ec/e3/b06ac3738bf365e89710205a471abe7dceec672a51c244b469bc5d1291c7/scipy-1.10.1-cp310-cp310-win_amd64.whl", hash = "sha256:fae8a7b898c42dffe3f7361c40d5952b6bf32d10c4569098d276b4c547905ee1"},
+]
+"seaborn 0.12.2" = [
+    {url = "https://files.pythonhosted.org/packages/8a/77/5cde8bc47df770486acf64f550839b4136d1696e5e4d57ce33fa1823972b/seaborn-0.12.2.tar.gz", hash = "sha256:374645f36509d0dcab895cba5b47daf0586f77bfe3b36c97c607db7da5be0139"},
+    {url = "https://files.pythonhosted.org/packages/8f/2e/17bbb83fbf102687bb2aa3d808add39da820a7698159302a1a69bb82e01c/seaborn-0.12.2-py3-none-any.whl", hash = "sha256:ebf15355a4dba46037dfd65b7350f014ceb1f13c05e814eda2c9f5fd731afc08"},
 ]
 "send2trash 1.8.2" = [
     {url = "https://files.pythonhosted.org/packages/4a/d2/d4b4d8b1564752b4e593c6d007426172b6574df5a7c07322feba010f5551/Send2Trash-1.8.2.tar.gz", hash = "sha256:c132d59fa44b9ca2b1699af5c86f57ce9f4c5eb56629d5d55fbb7a35f84e2312"},

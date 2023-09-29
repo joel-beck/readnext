@@ -41,13 +41,18 @@ The **Citation Recommender** uses three global document features and two citatio
 
 2. **Citation-Based Features**
 
-    ![Co-Citation Analysis vs. Bibliographic Coupling](assets/bibliographic_coupling_co_citation.png)
-
     - **Co-Citation Analysis**:
         Counts the number of shared citations, which in this context is equivalent to shared *citing papers*. These are papers that themselves cite both the query and the candidate paper. Candidate documents with higher co-citation analysis scores are considered more relevant to the query document.
 
     - **Bibliographic Coupling**:
         Counts the number of shared references or shared *cited* papers, i.e. papers that appear in the bibliography of both the query and the candidate paper. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
+
+    <figure markdown>
+      ![Bibliographic Coupling vs. Co-Citation Analysis](assets/bibliographic_coupling_co_citation.png)
+      <figcaption>
+      Left: Bibliographic coupling counts the number of shared references. Paper A and Paper B are connected by bibliographic coupling since they both cite the same Paper C. Right: Co-citation analysis counts the number of shared citing papers. Here, Paper A and Paper B are connected by co-citation analysis since they are both cited by Paper C.
+      </figcaption>
+    </figure>
 
 
 

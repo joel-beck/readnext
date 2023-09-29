@@ -112,7 +112,10 @@ For a more detailed presentation, see chapter 3 of the [thesis](https://github.c
 
 ### Hybrid Recommender
 
-![Hybrid Recommender](docs/assets/hybrid_recommender.png)
+<p align="center">
+  <img src="docs/assets/hybrid_recommender.png" alt="Hybrid Recommender" width="600" height="auto">
+</p>
+
 
 The Hybrid Recommender involves a **Citation Recommender** that combines global document characteristics and citation-based features of papers, and a **Language Recommender** that employs a language model to generate embeddings from paper abstracts.
 
@@ -127,7 +130,9 @@ The candidate lists and final rankings of both hybrid orderings are evaluated us
 
 ### Citation Recommender
 
-![Citation Recommender](docs/assets/citation_recommender.png)
+<p align="center">
+  <img src="docs/assets/citation_recommender.png" alt="Citation Recommender" width="600" height="auto">
+</p>
 
 The **Citation Recommender** uses three global document features and two citation-based features:
 
@@ -147,14 +152,22 @@ The **Citation Recommender** uses three global document features and two citatio
 
 2. **Citation-Based Features**
 
-    ![Co-Citation Analysis vs. Bibliographic Coupling](docs/assets/bibliographic_coupling_co_citation.png)
+    - **Bibliographic Coupling**:
+        Counts the number of shared references or shared *cited* papers, i.e. papers that appear in the bibliography of both the query and the candidate paper. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
 
     - **Co-Citation Analysis**:
         Counts the number of shared citations, which in this context is equivalent to shared *citing papers*. These are papers that themselves cite both the query and the candidate paper. Candidate documents with higher co-citation analysis scores are considered more relevant to the query document.
 
-    - **Bibliographic Coupling**:
-        Counts the number of shared references or shared *cited* papers, i.e. papers that appear in the bibliography of both the query and the candidate paper. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
-
+        <p align="center">
+        <img src="docs/assets/bibliographic_coupling_co_citation.png" alt="Co-Citation Analysis vs. Bibliographic Coupling" width="600" height="auto">
+        <br>
+        <i>
+        Left: Bibliographic coupling counts the number of shared references.
+        Paper A and Paper B are connected by bibliographic coupling since they both cite the same Paper C.
+        Right: Co-citation analysis counts the number of shared citing papers.
+        Here, Paper A and Paper B are connected by co-citation analysis since they are both cited by Paper C.
+        </i>
+        </p>
 
 
 **Feature Weighting**

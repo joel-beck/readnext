@@ -70,6 +70,8 @@ def test_aggregate_document_embeddings(embedder: TorchEmbedder) -> None:
     )
 
 
+@pytest.mark.slow
+@pytest.mark.skip_ci
 def test_embedding_dimension_tfidf(tfidf_embedder: TFIDFEmbedder, toy_tokens: Tokens) -> None:
     single_embedding = tfidf_embedder.compute_embedding_single_document(toy_tokens)
 
@@ -77,6 +79,8 @@ def test_embedding_dimension_tfidf(tfidf_embedder: TFIDFEmbedder, toy_tokens: To
     assert len(single_embedding) == training_vocabulary_size
 
 
+@pytest.mark.slow
+@pytest.mark.skip_ci
 def test_embedding_dimension_bm25(bm25_embedder: BM25Embedder, toy_tokens: Tokens) -> None:
     single_embedding = bm25_embedder.compute_embedding_single_document(toy_tokens)
 

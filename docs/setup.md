@@ -4,34 +4,40 @@
 
 !!! note
 
-    To execute all scripts and reproduce project results, the following **local downloads** are necessary:
-
-    - [D3 papers and authors dataset](https://zenodo.org/record/7071698#.ZFZnCi9ByLc)
-    - [Arxiv dataset from Kaggle](https://www.kaggle.com/datasets/Cornell-University/arxiv)
-    - Pretrained [word2vec-google-news-300 Word2Vec model](https://github.com/RaRe-Technologies/gensim-data) from Gensim
-    - Pretrained [glove.6B GloVe model](https://nlp.stanford.edu/projects/glove/) from the Stanford NLP website
-    - Pretrained [English FastText model](https://fasttext.cc/docs/en/crawl-vectors.html#models) from the FastText website
+    To execute all scripts and reproduce project results, some **local downloads** are necessary as prerequisites, including data files and pretrained models.
 
 
+### Data
 
-### D3 Dataset
+![](assets/dataset_construction.png)
 
-The hybrid recommender system's training data originates from multiple sources.
-The [D3 DBLP Discovery Dataset](https://github.com/jpwahle/lrec22-d3-dataset/tree/main) serves as the foundation, offering information about computer science papers and their authors.
-This dataset provides global document features for the text-independent recommender as well as paper abstracts for the content-based recommender.
+There are three data sources for this project:
 
-### Citation Information
+1. **D3 Dataset**
 
-The D3 dataset only includes total citation and reference counts for each paper.
-To obtain individual citations and references, the [Semantic Scholar API](https://api.semanticscholar.org/api-docs/graph) is employed.
-A [private API key](https://www.semanticscholar.org/product/api#api-key) is recommended for a higher request rate.
+    The [D3 DBLP Discovery Dataset](https://github.com/jpwahle/lrec22-d3-dataset/tree/main) is a compilation of metadata for over 6 million computer science papers. It is the primary data source for this project. All three global document features as well as the paper abstracts are provided by this dataset.
+
+    The dataset consists of two files with information about documents and authors, respectively. They can be downloaded from the [Zenodo repository](https://zenodo.org/record/7071698#.ZFZnCi9ByLc).
+
+2. **Arxiv Labels**
+
+    Arxiv categories are used as labels for evaluating the Hybrid Recommender's performance.
+    A binary classification task is defined: A candidate paper is considered a *relevant* recommendation if it shares at least one arXiV label with the query paper, and *irrelevant* otherwise.
+    Arxiv labels are extracted from the [arxiv-metadata-oai-snapshot.json](https://www.kaggle.com/datasets/Cornell-University/arxiv) dataset on Kaggle.
+
+3. **Citation Information**
+
+    To obtain individual citations and references to compute co-citation analysis and bibliographic coupling scores, the [Semantic Scholar API](https://api.semanticscholar.org/api-docs/graph) is fetched.
+    A [private API key](https://www.semanticscholar.org/product/api#api-key) is recommended for a higher request rate.
 
 
-### Arxiv Labels
+### Models
 
-Arxiv categories act as labels for the recommender system.
-If two papers share at least one arxiv label, the recommendation is considered relevant, and irrelevant otherwise.
-Arxiv labels are extracted from the [arxiv-metadata-oai-snapshot.json](https://www.kaggle.com/datasets/Cornell-University/arxiv) dataset on Kaggle.
+The following pretrained Word2Vec, GloVe, and FastText models are used as static embedding models:
+
+- Pretrained [word2vec-google-news-300 Word2Vec model](https://github.com/RaRe-Technologies/gensim-data) from Gensim
+- Pretrained [glove.6B GloVe model](https://nlp.stanford.edu/projects/glove/) from the Stanford NLP website
+- Pretrained [English FastText model](https://fasttext.cc/docs/en/crawl-vectors.html#models) from the FastText website
 
 ## Environment Variables
 

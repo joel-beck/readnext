@@ -1,76 +1,81 @@
 # Overview
 
-The following diagram presents a high-level overview of the hybrid recommender system for papers in the training corpus:
+**Note:** This section provides only a surface-level overview of the project.
+For a more detailed presentation, see chapter 3 of the [thesis](https://github.com/joel-beck/msc-thesis/blob/main/thesis/beck-joel_masters-thesis.pdf).
 
-![Hybrid recommender system schematic](./assets/hybrid-architecture.png)
 
-The hybrid structure involves a **Citation Recommender** that combines global document features and citation-based features, and a **Language Recommender** that generates embeddings from paper abstracts.
+## Hybrid Recommender
 
-The hybrid recommender combines the Citation Recommender and the Language Recommender in a *cascade* fashion, i.e. one is used to generate a candidate list which is then re-ranked by the second recommender.
+![Hybrid Recommender](assets/hybrid_recommender.png)
 
-Both component orders as well as the two candidate lists are evaluated.The objectives of the evaluation study are
+The Hybrid Recommender involves a **Citation Recommender** that combines global document characteristics and citation-based features of papers, and a **Language Recommender** that employs a language model to generate embeddings from paper abstracts.
 
-1. To determine the best component order for the cascade strategy, i.e. Citation -> Language or Language -> Citation.
-1. To investigate if the hybrid approach improves performance over single component recommenders in the first place.
+The hybrid recommender combines the Citation Recommender and the Language Recommender in a *cascade* fashion, i.e. one is used to generate a candidate list which is then re-ranked by the other recommender.
+
+The candidate lists and final rankings of both hybrid orderings are evaluated using the Mean Average Precision (MAP) metric. The objectives of the evaluation are:
+
+1. Identify the best feature weights for the Citation Recommender.
+1. Identify the best language model for the Language Recommender.
+1. Assess whether the hybridization ordering, i.e. if the Citation or the Language Recommender is applied first, influences the Hybrid Recommender's performance.
 
 
 ## Citation Recommender
 
-The **Citation Recommender** extracts five features from each training document out of two categories: global document features and citation-based features.
+![Citation Recommender](assets/citation_recommender.png)
 
-### Global Document Features
+The **Citation Recommender** uses three global document features and two citation-based features:
 
-These features are derived from the document metadata in the D3 dataset.
+1. **Global Document Features**
 
-- **Publication Date**:
-    A *novelty* metric. Recent publications score higher, as they build upon earlier papers and compare their findings with existing results.
+    These features are derived from the document metadata:
 
-- **Paper Citation Count**:
-    A *document popularity* metric. Papers with more citations are considered more valuable and relevant.
+    - **Publication Date**:
+        A *novelty* metric. Recent publications score higher, as they build upon earlier papers and compare their findings with existing results.
 
-- **Author Citation Count**:
-    An *author popularity* metric. Authors with higher total citations across their publications are deemed more important in the research community.
+    - **Paper Citation Count**:
+        A *document popularity* metric. Papers with more citations are, on average and without any prior knowledge, considered more valuable and relevant.
 
-Note that global document features are identical for each query document.
-
-
-### Citation-Based Features
-
-These features are obtained from the citation data retrieved from the Semantic Scholar API and are *pairwise features* computed for each pair of documents in the training corpus.
-
-- **Co-Citation Analysis**:
-    Counts the number of shared *citing* papers, i.e. papers that themselves cite both the query and the candidate paper. Candidate documents with higher co-citation analysis scores are considered more relevant to the query document.
-
-- **Bibliographic Coupling**:
-    Counts shared *cited* papers, i.e. papers that are cited by both the query and the candidate paper. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
+    - **Author Citation Count**:
+        An *author popularity* metric. Authors with higher total citations across their publications are deemed more important in the research community.
 
 
-### Feature Weighting
+2. **Citation-Based Features**
 
-The five features are weighted in the following manner:
+    ![Co-Citation Analysis vs. Bibliographic Coupling](assets/bibliographic_coupling_co_citation.png)
 
-- To reduce memory load, only the top-100 of all precomputed scores are stored for each feature and query document. This number is configurable before running the setup scripts through the `readnext/config.py` file.
+    - **Co-Citation Analysis**:
+        Counts the number of shared citations, which in this context is equivalent to shared *citing papers*. These are papers that themselves cite both the query and the candidate paper. Candidate documents with higher co-citation analysis scores are considered more relevant to the query document.
 
-- All training documents are then ranked by each feature individually in ascending order. The candidate paper with the best score for a given feature is assigned rank 1 for this feature, the candidate paper with the 100th best score is assigned rank 100, all worse-scoring papers are assigned rank 101.
+    - **Bibliographic Coupling**:
+        Counts the number of shared references or shared *cited* papers, i.e. papers that appear in the bibliography of both the query and the candidate paper. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.
 
-- Thus, the weighting scheme grows linearly with a threshold at rank 100. The absolute magnitude of the original scores is not considered, but only their ranks to diminish the impact of outliers.
 
-- Instead of using the ranks directly for feature weighting, points are computed for better interpretability. They behave like inverse ranks, i.e. the best-scoring paper for a given feature receives 100 points, the 100th best-scoring paper receives 1 point, and all worse-scoring papers receive 0 points.
 
-- The points for each feature are combined linearly with the user-specified feature weights. Papers with the highest weighted points score are recommended.
+**Feature Weighting**
+
+The five features of the Citation Recommender are combined linearly with user-specified feature weights. The weights are normalized with the L1 norm, ensuring the results are not affected by the absolute magnitude of the weights.
+A caveat of this approach is that the raw feature values, such as the publication date (represented as a date) and the paper citation count (an integer), are not directly comparable.
+To aggregate all five features into a single score, a rank-based method is used.
+
+The Citation Recommender first ranks all candidate papers according to each of the five features individually.
+The ranking process assigns the top rank 1 to the most relevant candidate paper and increments the rank by 1 for each subsequent paper.
+Candidate papers with more recent publication dates, higher citation counts, higher co-citation analysis and higher bibliographic coupling scores receive better rankings.
+
+Finally, those candidate papers with the lowest weighted rank are recommended to the user.
+
+*Note:* The true weighting scheme involves some additional steps that add interpretability but are conceptually equivalent to the version described above. See chapter 3.3 of the [thesis](https://github.com/joel-beck/msc-thesis/blob/main/thesis/beck-joel_masters-thesis.pdf) for more details.
 
 
 ## Language Recommender
 
-Note: The following section assumes basic familiarity with embeddings and language models in general.
-For a more thorough introduction, check out the [documentation](https://joel-beck.github.io/readnext/background/#language-models).
+![Language Recommender](assets/language_recommender.png)
 
-The **Language Recommender** encodes paper abstracts into embedding vectors to capture semantic meaning. Papers with embeddings most similar to the query document (measured by cosine similarity) are recommended.
+The **Language Recommender** encodes paper abstracts into embedding vectors to capture semantic meaning. Candidate papers with embeddings most similar to the query embedding (measured by cosine similarity) are recommended.
 
-8 language models across 3 categories are considered: keyword-based models, static embedding models, and contextual embedding models.
+8 language models across 3 categories are implemented: keyword-based sparse embedding models, static embedding models, and contextual embedding models.
 
 
-### Keyword-based models
+**Keyword-based models**
 
 They produce sparse vector embeddings where the embedding dimension equals the vocabulary size of all document abstracts in the training corpus.
 For these models, text preprocessing and tokenization is performed by the `spaCy` library using the `en_core_web_sm` model.
@@ -131,7 +136,7 @@ The following keyword-based models are considered:
     Default values of $k = 1.5$, $b = 0.75$, and $\delta = 1.0$ are adapted from the [rank_bm25 package](https://github.com/dorianbrown/rank_bm25/blob/990470ebbe6b28c18216fd1a8b18fe7446237dd6/rank_bm25.py#L176).
 
 
-### Static embedding models
+**Static embedding models**
 
 They produce dense vector embeddings where the embedding dimension is fixed (here set to the default of 300) and independent of the vocabulary size.
 Word embeddings are averaged dimension-wise to obtain a single embedding vector for each abstract.
@@ -143,7 +148,7 @@ All three static embedding models are pretrained and implemented via their `gens
 - FastText: Pretrained on the Common Crawl corpus and Wikipedia using the `cc.en.300.bin` model from the FastText Website.
 
 
-### Contextual embedding models
+**Contextual embedding models**
 
 Similar to static embedding models, they produce dense vector embeddings where the embedding dimension is fixed (here set to the default of 768) and independent of the vocabulary size.
 Instead of string tokens, contextual embedding models take integer token IDs as input which are mapped to words and subwords and learned during pretraining.
@@ -157,10 +162,22 @@ Instead of averaging word embeddings like static embedding models, these Transfo
 However, only 0.58% of all abstracts in the training corpus exceed the maximum token length of 512 such that the impact of this cutoff is negligible.
 
 
+## Labels
+
+To determine whether the Hybrid Recommender generates relevant or irrelevant recommendations, **arXiV categories** are used as labels.
+Within the Computer Science domain there are 40 different arXiV categories, such as `cs.AI` for Artificial Intelligence or `cs.CL` for Computation and Language.
+Importantly, each paper is not constrained to a single category but can be assigned to multiple categories.
+
+Based on these labels, a binary classification task is defined: A candidate paper is considered a *relevant* recommendation if it shares at least one arXiV label with the query paper, and *irrelevant* otherwise.
+For instance, if the query paper is assigned to the `cs.CL` and `cs.IR` categories, the candidate paper *BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding* by Devlin et al. (2018) is considered a relevant recommendation because it is assigned to the `cs.CL` category. Hence, there is an overlap between the query and candidate paper's arXiV labels.
+In contrast, the candidate paper *Deep Residual Learning for Image Recognition* by He et al. (2016) is considered an irrelevant recommendation because it is only assigned to the `cs.CV` category, which does not overlap with any of the query paper's categories.
+
 
 ## Evaluation Metrics
 
-The **Mean Average Precision (MAP)** is used as evaluation metric due to the following reasons:
+The **Mean Average Precision (MAP)** is used as the primary evaluation metric to assess the performance of the Hybrid Recommender.
+
+Although many evaluation metrics are available for recommender systems, the MAP is chosen due to the following reasons:
 
 1. It takes the order of recommendations into account, i.e. it is not only important to recommend relevant items but also to recommend them early in the list.
 1. All items on the recommendation list are considered, i.e. it is not only important to recommend relevant items but also to avoid irrelevant items.
@@ -170,7 +187,8 @@ The **Average Precision (AP)** computes a scalar score for a single recommendati
 
 **Precision**
 
-$$\text{Precision} = \frac{\# \text{ of relevant items}}{\# \text{ of items}}$$
+$$\text{Precision} = \frac{\text{number of relevant items}}{\text{number of items}}$$
+
 
 **Average Precision (AP)**
 
@@ -201,3 +219,12 @@ where:
 
 Within this project, the MAP computes a scalar score for a given combination of Language Model Choice and Feature Weights.
 Thus, to determine which Recommender order works best within the Hybrid structure, we could e.g. aggregate the MAP scores for each order over all Language Model Choices and Feature Weights.
+
+
+**Example**
+
+The recommendation list [relevant, irrelvant, relevant] has a Precision of $P = \frac{2}{3}$ and an Average Precision of $AP = \frac{1}{2} \cdot (\frac{1}{1} + \frac{2}{3}) = \frac{5}{6}$.
+
+The recommendation list [relevant, relevant, irrelevant] has a Precision of $P = \frac{2}{3}$ and an Average Precision of $AP = \frac{1}{2} \cdot (\frac{1}{1} + \frac{2}{2}) = 1$.
+
+The MAP of these two rankings is $MAP = \frac{1}{2} \cdot (\frac{5}{6} + 1) = \frac{11}{12}$.

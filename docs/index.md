@@ -12,7 +12,7 @@ The motivation, theoretical background and results of this project are presented
 ## Quick Links
 
 - **Source Code**: [readnext](https://github.com/joel-beck/readnext)
-- **Thesis**: [Bridging Citation Analysis and Language Models: A Hybrid Recommender System for Computer Science Papers](thesis/beck-joel_masters-thesis.pdf)
+- **Thesis**: [Bridging Citation Analysis and Language Models: A Hybrid Recommender System for Computer Science Papers](https://github.com/joel-beck/msc-thesis/blob/main/thesis/beck-joel_masters-thesis.pdf)
 
 
 ## Overview

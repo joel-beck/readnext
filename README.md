@@ -700,7 +700,7 @@ publication_date
 
 The evaluation strategy and results are described in detail in chapter 4 of the [thesis](https://github.com/joel-beck/msc-thesis/blob/main/thesis/beck-joel_masters-thesis.pdf).
 
-The main findings are:
+The key findings are:
 
 1. The Bibliographic Coupling feature is the most important feature for the Citation Recommender followed by the Co-Citation Analysis feature. The Paper Citation Count performs worst and is, on average, equally effective as randomly chosen papers from the training corpus.
 

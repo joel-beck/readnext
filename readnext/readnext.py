@@ -34,12 +34,14 @@ def readnext(
     This can be either `semanticscholar_id`,
       `semanticscholar_url`, `arxiv_id`, or `arxiv_url`.
     - `language_model_choice` (required): This argument determines the language model to
-      be used for the Language Recommender. The default value `SciBERT` showed the best
-      performance in our experiments.
+      be used for the Language Recommender. The default value `SciBERT` indicated the
+      best performance in our experiments (See chapter 4.2.3 of the thesis:
+      https://github.com/joel-beck/msc-thesis/blob/main/thesis/beck-joel_masters-thesis.pdf)
     - `feature_weights` (optional): These weights influence the citation features and
       global document features for the Citation Recommender. The default values using
-      only the bibliographic coupling feature showed the best performance in our
-      experiments.
+      only the bibliographic coupling feature indicated the best performance in our
+      experiments (See chapter 4.2.2 of the thesis:
+      https://github.com/joel-beck/msc-thesis/blob/main/thesis/beck-joel_masters-thesis.pdf)
     - `_verbose` (optional): If set to `True`, the function prints status and progress
       messages to the console.
 

@@ -15,7 +15,7 @@ from readnext import readnext
 from readnext.config import ResultsPaths
 from readnext.data.data_split import DataSplit, load_data_split
 from readnext.evaluation.metrics import AveragePrecision, CountUniqueLabels
-from readnext.evaluation.scoring import FeatureWeights, FeatureWeightsRanges
+from readnext.evaluation.scoring import FeatureWeightRanges, FeatureWeights
 from readnext.inference import Recommendations
 from readnext.modeling.language_models import LanguageModelChoice
 from readnext.utils.aliases import DocumentsFrame
@@ -216,7 +216,7 @@ def main() -> None:
         "LONGFORMER",
     ]
 
-    feature_weights_ranges = FeatureWeightsRanges()
+    feature_weights_ranges = FeatureWeightRanges()
     feature_weights_candidates = feature_weights_ranges.sample(
         num_samples=num_samples_feature_weights_candidates, seed=seed
     )

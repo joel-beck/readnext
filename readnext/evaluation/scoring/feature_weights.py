@@ -54,7 +54,7 @@ class FeatureWeights:
 
 
 @dataclass
-class FeatureWeightsRanges:
+class FeatureWeightRanges:
     """
     Defines the ranges for choosing the adequate feature weights during evaluation. Both
     the lower and upper bound are inclusive. The resulting ranges are set as default

@@ -1,0 +1,735 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Hybrid Recommender System for Computer Science Papers">
+      
+      
+      
+        <link rel="canonical" href="https://joel-beck.github.io/readnext/customization/">
+      
+      
+        <link rel="prev" href="../reproducibility/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6">
+    
+    
+      
+        <title>Customization - readnext</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.558e4712.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="#193549" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#customization" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="readnext" class="md-header__button md-logo" aria-label="readnext" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m2.8 3 16.87 15.82s.33.45-.09.89c-.41.44-.95.06-.95.06L2.8 3m5.01 1.59 13.1 12.05s.32.44-.09.86c-.42.47-.96.09-.96.09l-12.05-13M4.29 8l13.1 12.03s.32.44-.09.88c-.42.45-.96.09-.96.09L4.29 8m7.76-2.04 9.15 8.41s.22.31-.07.63c-.28.3-.66.03-.66.03l-8.42-9.07m-6.6 5.95 9.15 8.42s.22.31-.06.62c-.29.31-.67.05-.67.05l-8.42-9.09m10.93-3.99 4.17 3.82s.11.14-.05.29c-.12.14-.31.02-.31.02l-3.81-4.13M7.56 16.1l4.18 3.81s.11.15-.04.29c-.14.15-.33.02-.33.02L7.56 16.1Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            readnext
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Customization
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="#193549" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+            </label>
+          
+        
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="#193549" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/joel-beck/readnext" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    readnext
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="readnext" class="md-nav__button md-logo" aria-label="readnext" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m2.8 3 16.87 15.82s.33.45-.09.89c-.41.44-.95.06-.95.06L2.8 3m5.01 1.59 13.1 12.05s.32.44-.09.86c-.42.47-.96.09-.96.09l-12.05-13M4.29 8l13.1 12.03s.32.44-.09.88c-.42.45-.96.09-.96.09L4.29 8m7.76-2.04 9.15 8.41s.22.31-.07.63c-.28.3-.66.03-.66.03l-8.42-9.07m-6.6 5.95 9.15 8.42s.22.31-.06.62c-.29.31-.67.05-.67.05l-8.42-9.09m10.93-3.99 4.17 3.82s.11.14-.05.29c-.12.14-.31.02-.31.02l-3.81-4.13M7.56 16.1l4.18 3.81s.11.15-.04.29c-.14.15-.33.02-.33.02L7.56 16.1Z"/></svg>
+
+    </a>
+    readnext
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/joel-beck/readnext" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    readnext
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../setup/" class="md-nav__link">
+        Setup
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference/" class="md-nav__link">
+        Inference
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reproducibility/" class="md-nav__link">
+        Reproducibility
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Customization
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Customization
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#adding-evaluation-metrics" class="md-nav__link">
+    Adding Evaluation Metrics
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding Evaluation Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-tokenizers" class="md-nav__link">
+    Adding Tokenizers
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding Tokenizers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example_1" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-language-models" class="md-nav__link">
+    Adding Language Models
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding Language Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example_2" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+
+<h1 id="customization">Customization<a class="headerlink" href="#customization" title="Permanent link">🔗&#xFE0E;</a></h1>
+<p>This chapter guides you through the process of adding custom components to the
+<code>readnext</code> package tailored to your needs. While certain parts of the codebase
+are not intended for modification to maintain lean code (e.g., the features of
+the Citation Recommender), others are designed for easy extension.</p>
+<p>We utilize the <a href="https://refactoring.guru/design-patterns/strategy">Strategy Pattern</a>
+to ensure adherence to the open-closed principle: New components can be added
+without modifying any of the existing code.</p>
+<p>In this chapter, we present three hands-on examples where customizing the
+<code>readnext</code> package is particularly straightforward. We will:</p>
+<ul>
+<li>Add a new tokenizer for the Language Recommender.</li>
+<li>Add a new language model for the Language Recommender.</li>
+<li>Add a new evaluation metric.</li>
+</ul>
+<p>By implementing a predefined interface, the new components can serve as
+<strong>drop-in replacements</strong> for the existing ones throughout the codebase.</p>
+<h2 id="adding-evaluation-metrics">Adding Evaluation Metrics<a class="headerlink" href="#adding-evaluation-metrics" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>All evaluation metrics for a list of recommendations inherit from the abstract
+<code>EvaluationMetric</code> class.</p>
+<div class="admonition note">
+<p class="admonition-title">Source Code</p>
+<p>Explore the source code of the <code>EvaluationMetric</code> class
+<a href="https://github.com/joel-beck/readnext/blob/main/readnext/evaluation/metrics/evaluation_metric.py">here</a>.</p>
+</div>
+<p>To comply with the interface of the parent class, all evaluation metrics must
+implement the <code>score()</code> and <code>from_df()</code> methods:</p>
+<ul>
+<li>The <code>score()</code> method accepts any generic
+  <a href="https://docs.python.org/3/library/collections.abc.html#collections-abstract-base-classes">Sequence type</a>
+  or polars Series of integers or strings as input and computes a scalar value
+  from it.</li>
+<li>The <code>from_df()</code> method takes the original documents dataframe with label
+  columns <code>arxiv_labels</code> and <code>integer_label</code> as input and applies the
+  <code>score()</code> method to one of these columns.</li>
+</ul>
+<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>As an illustrative example, we implement the new <code>FirstRelevant</code> evaluation
+metric that takes a list of 0/1 for irrelevant/relevant recommendations as input
+and returns the position of the first relevant recommendation.</p>
+<p>Thus, lower (positive) values are better: If the top recommendation is indeed
+relevant, the score is 1, if the second recommendation is relevant but the first
+is not, the score is 2, and so on. If none of the recommendations are relevant,
+the score is set to 0.</p>
+<p>The following code snippet shows the implementation of the <code>FirstRelevant</code> class:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-0-1"><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+</span><span id="__span-0-2">
+</span><span id="__span-0-3"><span class="kn">from</span> <span class="nn">readnext.evaluation.metrics</span> <span class="kn">import</span> <span class="n">EvaluationMetric</span>
+</span><span id="__span-0-4"><span class="kn">from</span> <span class="nn">readnext.utils.aliases</span> <span class="kn">import</span> <span class="n">DocumentsFrame</span>
+</span><span id="__span-0-5">
+</span><span id="__span-0-6"><span class="nd">@dataclass</span>
+</span><span id="__span-0-7"><span class="k">class</span> <span class="nc">FirstRelevant</span><span class="p">(</span><span class="n">EvaluationMetric</span><span class="p">):</span>
+</span><span id="__span-0-8"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="__span-0-9"><span class="sd">    Computes the position of the first relevant item in a list of integer</span>
+</span><span id="__span-0-10"><span class="sd">    recommendations.</span>
+</span><span id="__span-0-11"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-12">
+</span><span id="__span-0-13">    <span class="nd">@classmethod</span>
+</span><span id="__span-0-14">    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">label_list</span><span class="p">:</span> <span class="n">IntegerLabelList</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="__span-0-15">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_list</span><span class="p">):</span>
+</span><span id="__span-0-16">            <span class="k">return</span> <span class="mi">0</span>
+</span><span id="__span-0-17">
+</span><span id="__span-0-18">        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">label_list</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+</span><span id="__span-0-19">            <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="__span-0-20">                <span class="k">return</span> <span class="n">k</span>
+</span><span id="__span-0-21">
+</span><span id="__span-0-22">        <span class="k">return</span> <span class="mi">0</span>
+</span><span id="__span-0-23">
+</span><span id="__span-0-24">    <span class="nd">@classmethod</span>
+</span><span id="__span-0-25">    <span class="k">def</span> <span class="nf">from_df</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">DocumentsFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="__span-0-26">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;integer_label&quot;</span><span class="p">])</span>
+</span></code></pre></div>
+<p>The <code>score()</code> method first checks if the provided sequence is empty (in which
+case it returns early) and then uses the native <code>enumerate()</code> function to check
+if any label is equal to one. If so, this label position is returned. If not,
+the score is set to 0.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The <code>score()</code> method is one of the rare cases where we could have used the
+<code>else</code> keyword of a <code>for</code> loop: If the loop is not exited early, i.e. if no
+label is equal to 1, the <code>else</code> block is executed and returns 0.</p>
+</div>
+<p>The <code>from_df()</code> method simply calls the <code>score()</code> method on the <code>integer_label</code>
+column of the documents dataframe.</p>
+<p>Our new <code>FirstRelevant</code> metric can now be used anywhere in the codebase in place
+of the existing <code>AveragePrecision</code> and <code>CountUniqueLabels</code> evaluation metrics.</p>
+<h2 id="adding-tokenizers">Adding Tokenizers<a class="headerlink" href="#adding-tokenizers" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>In contrast to the case for evaluation metrics, tokenizers can inherit from two
+different abstract base classes, depending on whether they tokenize text into
+string tokens (such as <code>spacy</code>) or into integer token ids (such as all
+tokenizers from the <code>transformers</code> library):</p>
+<ol>
+<li>If they tokenize text into string tokens, they inherit from the <code>Tokenizer</code>
+   class. To comply with the interface of the parent class, they must implement
+   the <code>tokenize_single_document()</code> method, which takes a single string as input
+   and returns a list of string tokens. Then, they inherit the <code>tokenize()</code>
+   method which is used to construct a polars dataframe with a <code>tokens</code> column
+   that contains the tokenized documents.</li>
+<li>If they tokenize text into integer token ids, they inherit from the
+   <code>TorchTokenizer</code> class. Similar to the case above, all child classes must
+   implement a <code>tokenize_into_ids()</code> method that either takes a single string
+   as input and returns a list of integer token ids or a list of strings as input
+   and returns a list of lists of integer token ids. Then, they inherit the
+   <code>tokenize()</code> method which is used to construct a polars dataframe with a
+   <code>token_ids</code> column that contains the tokenized documents.</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Source Code</p>
+<p>Take a look at the source code of the <code>Tokenizer</code> class
+<a href="https://github.com/joel-beck/readnext/blob/main/readnext/modeling/language_models/tokenizer.py">here</a>
+and the source code of the <code>TorchTokenizer</code> class
+<a href="https://github.com/joel-beck/readnext/blob/main/readnext/modeling/language_models/tokenizer_torch.py">here</a>.</p>
+</div>
+<h3 id="example_1">Example<a class="headerlink" href="#example_1" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>As an example, we add the <code>NaiveTokenizer</code> that simply converts all characters
+to lowercase and splits the text at whitespace characters.</p>
+<p>Since the <code>NaiveTokenizer</code> tokenizes text into string tokens, it inherits from
+the <code>Tokenizer</code> class and must implement the <code>tokenize_single_document()</code> method:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-1-1"><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+</span><span id="__span-1-2">
+</span><span id="__span-1-3"><span class="kn">from</span> <span class="nn">readnext.utils.aliases</span> <span class="kn">import</span> <span class="n">Tokens</span>
+</span><span id="__span-1-4"><span class="kn">from</span> <span class="nn">readnext.modeling.language_models</span> <span class="kn">import</span> <span class="n">Tokenizer</span>
+</span><span id="__span-1-5">
+</span><span id="__span-1-6"><span class="nd">@dataclass</span>
+</span><span id="__span-1-7"><span class="k">class</span> <span class="nc">NaiveTokenizer</span><span class="p">(</span><span class="n">Tokenizer</span><span class="p">):</span>
+</span><span id="__span-1-8"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="__span-1-9"><span class="sd">    Naive tokenizer that splits text at whitespace characters and converts all</span>
+</span><span id="__span-1-10"><span class="sd">    characters to lowercase.</span>
+</span><span id="__span-1-11"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-1-12">
+</span><span id="__span-1-13">    <span class="k">def</span> <span class="nf">tokenize_single_document</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tokens</span><span class="p">:</span>
+</span><span id="__span-1-14">        <span class="k">return</span> <span class="n">document</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+</span></code></pre></div>
+<p>The new <code>NaiveTokenizer</code> can now be used anywhere in the codebase in place of the
+existing <code>SpacyTokenizer</code>.</p>
+<h2 id="adding-language-models">Adding Language Models<a class="headerlink" href="#adding-language-models" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Similar to Tokenizers, Language Models can inherit from two different abstract
+base classes, depending on whether they are a <code>transformers</code> model or not:</p>
+<ul>
+<li>If they are not a <code>transformers</code> model, they inherit from the <code>Embedder</code> class.
+  In this case, they must implement the <code>compute_embedding_single_document()</code>
+  and <code>compute_embeddings_frame()</code> methods. The former takes a <code>Tokens</code>
+  (a list of strings) as input and returns an <code>Embedding</code> (a list of floats).
+  The latter uses the <code>tokens_frame</code> from the instance initialization and returns
+  a polars DataFrame with two columns named <code>d3_document_id</code> and <code>embedding</code>.</li>
+<li>If they are a <code>transformers</code> model, they inherit from the <code>TorchEmbedder</code>
+  class. In this case, they do not have to implement any methods in the child
+  class since the interface for all <code>transformers</code> models is identical. For the
+  purpose of correct typing, any child class must only define the <code>torch_model</code>
+  attribute with the correct type annotation.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Source Code</p>
+<p>Take a look at the source code of the <code>Embedder</code> class
+<a href="https://github.com/joel-beck/readnext/blob/main/readnext/modeling/language_models/embedder.py">here</a>
+and the source code of the <code>TorchEmbedder</code> class
+<a href="https://github.com/joel-beck/readnext/blob/main/readnext/modeling/language_models/embedder_torch.py">here</a>.</p>
+</div>
+<h3 id="example_2">Example<a class="headerlink" href="#example_2" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>As an example, we add the <code>DummyEmbedder</code> that simply returns a list of zeros
+for each document. To simulate a 300-dimensional embedding, we set the length of
+the list to 300.</p>
+<p>Since the <code>DummyEmbedder</code> is not a <code>transformers</code> model, it inherits from the
+<code>Embedder</code> class and must implement the <code>compute_embedding_single_document()</code>
+and <code>compute_embeddings_frame()</code> methods:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-2-1"><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+</span><span id="__span-2-2">
+</span><span id="__span-2-3"><span class="kn">from</span> <span class="nn">readnext.utils.aliases</span> <span class="kn">import</span> <span class="n">EmbeddingsFrame</span><span class="p">,</span> <span class="n">Tokens</span>
+</span><span id="__span-2-4"><span class="kn">from</span> <span class="nn">readnext.modeling.language_models</span> <span class="kn">import</span> <span class="n">Embedder</span>
+</span><span id="__span-2-5">
+</span><span id="__span-2-6"><span class="nd">@dataclass</span>
+</span><span id="__span-2-7"><span class="k">class</span> <span class="nc">DummyEmbedder</span><span class="p">(</span><span class="n">Embedder</span><span class="p">):</span>
+</span><span id="__span-2-8"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="__span-2-9"><span class="sd">    Dummy embedder that returns a list of zeros for each document.</span>
+</span><span id="__span-2-10"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-2-11">
+</span><span id="__span-2-12">    <span class="k">def</span> <span class="nf">compute_embedding_single_document</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document_tokens</span><span class="p">:</span> <span class="n">Tokens</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Embedding</span><span class="p">:</span>
+</span><span id="__span-2-13">        <span class="c1"># although the `document_tokens` argument is not used, it is necessary</span>
+</span><span id="__span-2-14">        <span class="c1"># to implement the interface properly</span>
+</span><span id="__span-2-15">        <span class="k">return</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">300</span>
+</span><span id="__span-2-16">
+</span><span id="__span-2-17">    <span class="k">def</span> <span class="nf">compute_embeddings_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmbeddingsFrame</span><span class="p">:</span>
+</span><span id="__span-2-18">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens_frame</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+</span><span id="__span-2-19">            <span class="n">embedding</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">([[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">300</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens_frame</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+</span><span id="__span-2-20">        <span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;tokens&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>The new <code>DummyEmbedder</code> can now be used anywhere in the codebase in place of any
+existing embedder that is not based on a <code>transformers</code> model. This includes the
+<code>TFIDFEmbedder</code>, <code>BM25Embedder</code>, <code>Word2VecEmbedder</code>, <code>GloveEmbedder</code>, and
+<code>FastTextEmbedder</code> classes.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../reproducibility/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Reproducibility" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Reproducibility
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/joel-beck/readnext" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "content.tabs.link", "navigation.expand", "navigation.footer", "navigation.instant", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow", "toc.integrate"], "search": "../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.51d95adb.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

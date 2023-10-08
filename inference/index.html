@@ -1,0 +1,1133 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Hybrid Recommender System for Computer Science Papers">
+      
+      
+      
+        <link rel="canonical" href="https://joel-beck.github.io/readnext/inference/">
+      
+      
+        <link rel="prev" href="../setup/">
+      
+      
+        <link rel="next" href="../reproducibility/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6">
+    
+    
+      
+        <title>Inference - readnext</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.558e4712.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="#193549" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#inference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="readnext" class="md-header__button md-logo" aria-label="readnext" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m2.8 3 16.87 15.82s.33.45-.09.89c-.41.44-.95.06-.95.06L2.8 3m5.01 1.59 13.1 12.05s.32.44-.09.86c-.42.47-.96.09-.96.09l-12.05-13M4.29 8l13.1 12.03s.32.44-.09.88c-.42.45-.96.09-.96.09L4.29 8m7.76-2.04 9.15 8.41s.22.31-.07.63c-.28.3-.66.03-.66.03l-8.42-9.07m-6.6 5.95 9.15 8.42s.22.31-.06.62c-.29.31-.67.05-.67.05l-8.42-9.09m10.93-3.99 4.17 3.82s.11.14-.05.29c-.12.14-.31.02-.31.02l-3.81-4.13M7.56 16.1l4.18 3.81s.11.15-.04.29c-.14.15-.33.02-.33.02L7.56 16.1Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            readnext
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Inference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="#193549" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+            </label>
+          
+        
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="#193549" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/joel-beck/readnext" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    readnext
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="readnext" class="md-nav__button md-logo" aria-label="readnext" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m2.8 3 16.87 15.82s.33.45-.09.89c-.41.44-.95.06-.95.06L2.8 3m5.01 1.59 13.1 12.05s.32.44-.09.86c-.42.47-.96.09-.96.09l-12.05-13M4.29 8l13.1 12.03s.32.44-.09.88c-.42.45-.96.09-.96.09L4.29 8m7.76-2.04 9.15 8.41s.22.31-.07.63c-.28.3-.66.03-.66.03l-8.42-9.07m-6.6 5.95 9.15 8.42s.22.31-.06.62c-.29.31-.67.05-.67.05l-8.42-9.09m10.93-3.99 4.17 3.82s.11.14-.05.29c-.12.14-.31.02-.31.02l-3.81-4.13M7.56 16.1l4.18 3.81s.11.15-.04.29c-.14.15-.33.02-.33.02L7.56 16.1Z"/></svg>
+
+    </a>
+    readnext
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/joel-beck/readnext" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    readnext
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../setup/" class="md-nav__link">
+        Setup
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Inference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Inference
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#seen-query-paper" class="md-nav__link">
+    Seen Query Paper
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#continue-the-flow" class="md-nav__link">
+    Continue the Flow
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unseen-query-paper" class="md-nav__link">
+    Unseen Query Paper
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#input-validation" class="md-nav__link">
+    Input Validation
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reproducibility/" class="md-nav__link">
+        Reproducibility
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../customization/" class="md-nav__link">
+        Customization
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+
+<h1 id="inference">Inference<a class="headerlink" href="#inference" title="Permanent link">🔗&#xFE0E;</a></h1>
+<p>The user interface for generating recommendations is designed to be simple and easy to use.
+It relies on the top-level <code>readnext()</code> function, which takes two required and one optional keyword argument:</p>
+<ul>
+<li>An identifier for the query paper.
+This can be the Semanticscholar ID, Semanticscholar URL, Arxiv ID, or Arxiv URL of the paper.
+This argument is required and should be provided as a string.</li>
+</ul>
+<div class="admonition info">
+<p class="admonition-title">Term Definitions</p>
+<ul>
+<li>The <em>Semanticscholar ID</em> is a 40-digit hexadecimal string at the end of the Semanticscholar URL after the last forward slash.
+For example, the Semanticscholar ID for the URL <code>https://www.semanticscholar.org/paper/67c4ffa7f9c25e9e0f0b0eac5619070f6a5d143d</code> is <code>67c4ffa7f9c25e9e0f0b0eac5619070f6a5d143d</code>.</li>
+<li>The <em>Arxiv ID</em> is a 4-digit number followed by a dot followed by a 5-digit number at the end of the Arxiv URL after the last forward slash.
+For example, the Arxiv ID for the URL <code>https://arxiv.org/abs/1234.56789</code> is <code>1234.56789</code>.</li>
+</ul>
+</div>
+<ul>
+<li>
+<p>The language model choice for the Language Recommender, which is used to tokenize and embed the query paper's abstract.
+This argument is required and should be passed using the <code>LanguageModelChoice</code> Enum, which provides autocompletion for all eight available language models.</p>
+</li>
+<li>
+<p>The feature weighting for the Citation Recommender.
+This argument is optional and is submitted using an instance of the <code>FeatureWeights</code> class.
+If not specified, the five features (<code>publication_date</code>, <code>citationcount_document</code>, <code>citationcount_author</code>, <code>co_citation_analysis</code>, and <code>bibliographic_coupling</code>) are given equal weights of one.
+Note that the weights are normalized to sum up to one, so the absolute values are irrelevant; only the relative ratios matter.</p>
+</li>
+</ul>
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Inference works for both 'seen' and 'unseen' query documents, depending on whether the query document is part of the training corpus or not.</p>
+<h3 id="seen-query-paper">Seen Query Paper<a class="headerlink" href="#seen-query-paper" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>If the query paper is part of the training corpus, all feature values are precomputed and inference is fast.</p>
+<p>Assume that we have just read the groundbreaking paper "Attention is all you need" by Vaswani et al. (2017) and want to find related papers that could be of interest to us.</p>
+<p>The following code example illustrates the standard usage of the <code>readnext()</code> function to retrieve recommendations.
+In this case we use the ArXiV URL as identifier, the FastText language model and assign a custom weighting scheme to the Citation Recommender:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-0-1"><span class="kn">from</span> <span class="nn">readnext</span> <span class="kn">import</span> <span class="n">readnext</span><span class="p">,</span> <span class="n">LanguageModelChoice</span><span class="p">,</span> <span class="n">FeatureWeights</span>
+</span><span id="__span-0-2">
+</span><span id="__span-0-3"><span class="n">result</span> <span class="o">=</span> <span class="n">readnext</span><span class="p">(</span>
+</span><span id="__span-0-4">    <span class="c1"># `Attention is all you need` query paper</span>
+</span><span id="__span-0-5">    <span class="n">arxiv_url</span><span class="o">=</span><span class="s2">&quot;https://arxiv.org/abs/1706.03762&quot;</span><span class="p">,</span>
+</span><span id="__span-0-6">    <span class="n">language_model_choice</span><span class="o">=</span><span class="n">LanguageModelChoice</span><span class="o">.</span><span class="n">FASTTEXT</span><span class="p">,</span>
+</span><span id="__span-0-7">    <span class="n">feature_weights</span><span class="o">=</span><span class="n">FeatureWeights</span><span class="p">(</span>
+</span><span id="__span-0-8">        <span class="n">publication_date</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-0-9">        <span class="n">citationcount_document</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-0-10">        <span class="n">citationcount_author</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+</span><span id="__span-0-11">        <span class="n">co_citation_analysis</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-0-12">        <span class="n">bibliographic_coupling</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-0-13">    <span class="p">),</span>
+</span><span id="__span-0-14"><span class="p">)</span>
+</span></code></pre></div>
+<p>A message is printed to the console indicating that the query paper is part of the training corpus:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-1-1"><span class="go">&gt; ╭──────────────────────────────────────────────────╮</span>
+</span><span id="__span-1-2"><span class="go">&gt; │                                                  │</span>
+</span><span id="__span-1-3"><span class="go">&gt; │ Query document is contained in the training data │</span>
+</span><span id="__span-1-4"><span class="go">&gt; │                                                  │</span>
+</span><span id="__span-1-5"><span class="go">&gt; ╰──────────────────────────────────────────────────╯</span>
+</span></code></pre></div>
+<p>The return value of the <code>readnext()</code> function contains the following attributes:</p>
+<ul>
+<li>
+<p><code>document_identifier</code>: Contains the identifiers of the query paper.</p>
+</li>
+<li>
+<p><code>document_info</code>: Provides information about the query paper.</p>
+</li>
+<li>
+<p><code>features</code>: Individual dataframes that include values for <code>publication_date</code>, <code>citationcount_document</code>, <code>citationcount_author</code>, <code>co_citation_analysis</code>, <code>bibliographic_coupling</code>, <code>cosine_similarity</code>, and <code>feature_weights</code>.</p>
+</li>
+<li>
+<p><code>ranks</code>: Individual dataframes that list the ranks of individual features.</p>
+</li>
+<li>
+<p><code>points</code>: Individual dataframes that specify the points of individual features.</p>
+</li>
+<li>
+<p><code>labels</code>: Individual dataframes that present the arxiv labels for all candidate papers and binary 0/1 labels related to the query paper.
+These binary labels are useful for 'seen' query papers where the arxiv labels of the query paper is known.
+For 'unseen' papers this information is not availabels and all binary labels are set to 0.</p>
+</li>
+<li>
+<p><code>recommendations</code>: Individual dataframes that offer the top paper recommendations.
+Recommendations are calculated for both Hybrid-Recommender orders (Citation -&gt; Language and Language -&gt; Citation) and both the intermediate candidate lists and the final hybrid recommendations.</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span id="__span-2-1"><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">recommendations</span><span class="o">.</span><span class="n">language_to_citation</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th align="right">candidate_d3_document_id</th>
+<th align="right">weighted_points</th>
+<th align="left">title</th>
+<th align="left">author</th>
+<th align="left">arxiv_labels</th>
+<th align="right">integer_label</th>
+<th align="left">semanticscholar_url</th>
+<th align="left">arxiv_url</th>
+<th align="left">publication_date</th>
+<th align="right">publication_date_points</th>
+<th align="right">citationcount_document</th>
+<th align="right">citationcount_document_points</th>
+<th align="right">citationcount_author</th>
+<th align="right">citationcount_author_points</th>
+<th align="right">co_citation_analysis_score</th>
+<th align="right">co_citation_analysis_points</th>
+<th align="right">bibliographic_coupling_score</th>
+<th align="right">bibliographic_coupling_points</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">11212020</td>
+<td align="right">80.3</td>
+<td align="left">Neural Machine Translation by Jointly Learning to Align and Translate</td>
+<td align="left">Yoshua Bengio</td>
+<td align="left">['cs.CL' 'cs.LG' 'cs.NE' 'stat.ML']</td>
+<td align="right">1</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/fa72afa9b2cbc8f0d7b05d52548906610ffbb9c5">https://www.semanticscholar.org/paper/fa72afa9b2cbc8f0d7b05d52548906610ffbb9c5</a></td>
+<td align="left"><a href="https://arxiv.org/abs/1409.0473">https://arxiv.org/abs/1409.0473</a></td>
+<td align="left">2014-09-01</td>
+<td align="right">0</td>
+<td align="right">19996</td>
+<td align="right">88</td>
+<td align="right">372099</td>
+<td align="right">100</td>
+<td align="right">45</td>
+<td align="right">93</td>
+<td align="right">4</td>
+<td align="right">95</td>
+</tr>
+<tr>
+<td align="right">7961699</td>
+<td align="right">70.9</td>
+<td align="left">Sequence to Sequence Learning with Neural Networks</td>
+<td align="left">Ilya Sutskever</td>
+<td align="left">['cs.CL' 'cs.LG']</td>
+<td align="right">1</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/cea967b59209c6be22829699f05b8b1ac4dc092d">https://www.semanticscholar.org/paper/cea967b59209c6be22829699f05b8b1ac4dc092d</a></td>
+<td align="left"><a href="https://arxiv.org/abs/1409.3215">https://arxiv.org/abs/1409.3215</a></td>
+<td align="left">2014-09-10</td>
+<td align="right">0</td>
+<td align="right">15342</td>
+<td align="right">83</td>
+<td align="right">234717</td>
+<td align="right">0</td>
+<td align="right">25</td>
+<td align="right">86</td>
+<td align="right">5</td>
+<td align="right">97</td>
+</tr>
+<tr>
+<td align="right">1629541</td>
+<td align="right">58.9</td>
+<td align="left">Fully convolutional networks for semantic segmentation</td>
+<td align="left">Trevor Darrell</td>
+<td align="left">['cs.CV']</td>
+<td align="right">0</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/317aee7fc081f2b137a85c4f20129007fd8e717e">https://www.semanticscholar.org/paper/317aee7fc081f2b137a85c4f20129007fd8e717e</a></td>
+<td align="left"><a href="https://arxiv.org/abs/1411.4038">https://arxiv.org/abs/1411.4038</a></td>
+<td align="left">2014-11-14</td>
+<td align="right">0</td>
+<td align="right">25471</td>
+<td align="right">91</td>
+<td align="right">142117</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="right">81</td>
+<td align="right">0</td>
+<td align="right">49</td>
+</tr>
+<tr>
+<td align="right">206593880</td>
+<td align="right">57.9</td>
+<td align="left">Rethinking the Inception Architecture for Computer Vision</td>
+<td align="left">Christian Szegedy</td>
+<td align="left">['cs.CV']</td>
+<td align="right">0</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/23ffaa0fe06eae05817f527a47ac3291077f9e58">https://www.semanticscholar.org/paper/23ffaa0fe06eae05817f527a47ac3291077f9e58</a></td>
+<td align="left"><a href="https://arxiv.org/abs/1512.00567">https://arxiv.org/abs/1512.00567</a></td>
+<td align="left">2015-12-02</td>
+<td align="right">0</td>
+<td align="right">16562</td>
+<td align="right">85</td>
+<td align="right">128072</td>
+<td align="right">0</td>
+<td align="right">21</td>
+<td align="right">83</td>
+<td align="right">0</td>
+<td align="right">49</td>
+</tr>
+<tr>
+<td align="right">10716717</td>
+<td align="right">56.8</td>
+<td align="left">Feature Pyramid Networks for Object Detection</td>
+<td align="left">Kaiming He</td>
+<td align="left">['cs.CV']</td>
+<td align="right">0</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/b9b4e05faa194e5022edd9eb9dd07e3d675c2b36">https://www.semanticscholar.org/paper/b9b4e05faa194e5022edd9eb9dd07e3d675c2b36</a></td>
+<td align="left"><a href="https://arxiv.org/abs/1612.03144">https://arxiv.org/abs/1612.03144</a></td>
+<td align="left">2016-12-09</td>
+<td align="right">0</td>
+<td align="right">10198</td>
+<td align="right">70</td>
+<td align="right">251467</td>
+<td align="right">0</td>
+<td align="right">14</td>
+<td align="right">71</td>
+<td align="right">1</td>
+<td align="right">72</td>
+</tr>
+<tr>
+<td align="right">6287870</td>
+<td align="right">55.7</td>
+<td align="left">TensorFlow: A system for large-scale machine learning</td>
+<td align="left">J. Dean</td>
+<td align="left">['cs.DC' 'cs.AI']</td>
+<td align="right">0</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/46200b99c40e8586c8a0f588488ab6414119fb28">https://www.semanticscholar.org/paper/46200b99c40e8586c8a0f588488ab6414119fb28</a></td>
+<td align="left"><a href="https://arxiv.org/abs/1605.08695">https://arxiv.org/abs/1605.08695</a></td>
+<td align="left">2016-05-27</td>
+<td align="right">0</td>
+<td align="right">13266</td>
+<td align="right">77</td>
+<td align="right">115104</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">33</td>
+<td align="right">7</td>
+<td align="right">99</td>
+</tr>
+<tr>
+<td align="right">3429309</td>
+<td align="right">52.8</td>
+<td align="left">DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs</td>
+<td align="left">A. Yuille</td>
+<td align="left">['cs.CV']</td>
+<td align="right">0</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/cab372bc3824780cce20d9dd1c22d4df39ed081a">https://www.semanticscholar.org/paper/cab372bc3824780cce20d9dd1c22d4df39ed081a</a></td>
+<td align="left"><a href="https://arxiv.org/abs/1606.00915">https://arxiv.org/abs/1606.00915</a></td>
+<td align="left">2016-06-02</td>
+<td align="right">0</td>
+<td align="right">9963</td>
+<td align="right">69</td>
+<td align="right">64894</td>
+<td align="right">0</td>
+<td align="right">9</td>
+<td align="right">57</td>
+<td align="right">1</td>
+<td align="right">72</td>
+</tr>
+<tr>
+<td align="right">4555207</td>
+<td align="right">52.8</td>
+<td align="left">MobileNetV2: Inverted Residuals and Linear Bottlenecks</td>
+<td align="left">Liang-Chieh Chen</td>
+<td align="left">['cs.CV']</td>
+<td align="right">0</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/dd9cfe7124c734f5a6fc90227d541d3dbcd72ba4">https://www.semanticscholar.org/paper/dd9cfe7124c734f5a6fc90227d541d3dbcd72ba4</a></td>
+<td align="left"><a href="https://arxiv.org/abs/1801.04381">https://arxiv.org/abs/1801.04381</a></td>
+<td align="left">2018-01-13</td>
+<td align="right">0</td>
+<td align="right">7925</td>
+<td align="right">56</td>
+<td align="right">39316</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">60</td>
+<td align="right">2</td>
+<td align="right">82</td>
+</tr>
+<tr>
+<td align="right">13740328</td>
+<td align="right">52.5</td>
+<td align="left">Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification</td>
+<td align="left">Kaiming He</td>
+<td align="left">['cs.CV' 'cs.AI' 'cs.LG']</td>
+<td align="right">1</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/d6f2f611da110b5b5061731be3fc4c7f45d8ee23">https://www.semanticscholar.org/paper/d6f2f611da110b5b5061731be3fc4c7f45d8ee23</a></td>
+<td align="left"><a href="https://arxiv.org/abs/1502.01852">https://arxiv.org/abs/1502.01852</a></td>
+<td align="left">2015-02-06</td>
+<td align="right">0</td>
+<td align="right">12933</td>
+<td align="right">76</td>
+<td align="right">251467</td>
+<td align="right">0</td>
+<td align="right">6</td>
+<td align="right">49</td>
+<td align="right">1</td>
+<td align="right">72</td>
+</tr>
+<tr>
+<td align="right">225039882</td>
+<td align="right">52.3</td>
+<td align="left">An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale</td>
+<td align="left">Jakob Uszkoreit</td>
+<td align="left">['cs.CV' 'cs.AI' 'cs.LG']</td>
+<td align="right">1</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/268d347e8a55b5eb82fb5e7d2f800e33c75ab18a">https://www.semanticscholar.org/paper/268d347e8a55b5eb82fb5e7d2f800e33c75ab18a</a></td>
+<td align="left"><a href="https://arxiv.org/abs/2010.11929">https://arxiv.org/abs/2010.11929</a></td>
+<td align="left">2020-10-22</td>
+<td align="right">0</td>
+<td align="right">5519</td>
+<td align="right">16</td>
+<td align="right">51813</td>
+<td align="right">0</td>
+<td align="right">185</td>
+<td align="right">98</td>
+<td align="right">2</td>
+<td align="right">82</td>
+</tr>
+</tbody>
+</table>
+<p>Thus, the top recommendation is the paper "Neural Machine Translation by Jointly Learning to Align and Translate" by Yoshua Bengio.</p>
+<p>Recall that the second Recommender of the hybrid structure is responsible for re-ranking the candidate list.
+Thus, the <em>selection</em> of the recommendations above is performed by the Language Recommender based on cosine similarity whereas the <em>order</em> of the final recommendations is determined by the Citation Recommender based on the weighted points score in the second column.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>In situations where the co-citation analysis and bibliographic coupling scores do not differ much between the top candidate papers, the <strong>author citation count</strong> tends to influence the result heavily!
+To obtain balanced results, it is recommended to downscale the <code>citationcount_author</code> weight compared to some of the other features.</p>
+</div>
+<h3 id="continue-the-flow">Continue the Flow<a class="headerlink" href="#continue-the-flow" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>We have read the previously recommended paper, but want to dive even deeper into the literature.
+Note that the Semanticscholar URL and the ArXiV URL of the recommendations are contained in the output table.
+Thus, they can be immediately used as identifiers for a new query!</p>
+<p>In this case, we use the <code>SciBERT</code> language model and the default feature weights of 1 for each feature to demonstrate the minimal set of inputs of the <code>readnext()</code> function:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-3-1"><span class="kn">from</span> <span class="nn">readnext</span> <span class="kn">import</span> <span class="n">readnext</span><span class="p">,</span> <span class="n">LanguageModelChoice</span><span class="p">,</span> <span class="n">FeatureWeights</span>
+</span><span id="__span-3-2">
+</span><span id="__span-3-3"><span class="n">result</span> <span class="o">=</span> <span class="n">readnext</span><span class="p">(</span>
+</span><span id="__span-3-4">    <span class="c1"># `Attention is all you need` query paper</span>
+</span><span id="__span-3-5">    <span class="n">arxiv_url</span><span class="o">=</span><span class="s2">&quot;https://arxiv.org/abs/1706.03762&quot;</span><span class="p">,</span>
+</span><span id="__span-3-6">    <span class="n">language_model_choice</span><span class="o">=</span><span class="n">LanguageModelChoice</span><span class="o">.</span><span class="n">FASTTEXT</span><span class="p">,</span>
+</span><span id="__span-3-7">    <span class="n">feature_weights</span><span class="o">=</span><span class="n">FeatureWeights</span><span class="p">(</span>
+</span><span id="__span-3-8">        <span class="n">publication_date</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-3-9">        <span class="n">citationcount_document</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-3-10">        <span class="n">citationcount_author</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+</span><span id="__span-3-11">        <span class="n">co_citation_analysis</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-3-12">        <span class="n">bibliographic_coupling</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-3-13">    <span class="p">),</span>
+</span><span id="__span-3-14"><span class="p">)</span>
+</span><span id="__span-3-15">
+</span><span id="__span-3-16"><span class="c1"># extract one of the paper identifiers from the previous top recommendation</span>
+</span><span id="__span-3-17"><span class="n">semanticscholar_url</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">recommendations</span><span class="o">.</span><span class="n">citation_to_language</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;semanticscholar_url&quot;</span><span class="p">]</span>
+</span><span id="__span-3-18">
+</span><span id="__span-3-19"><span class="n">result_seen_query</span> <span class="o">=</span> <span class="n">readnext</span><span class="p">(</span>
+</span><span id="__span-3-20">    <span class="n">semanticscholar_url</span><span class="o">=</span><span class="n">semanticscholar_url</span><span class="p">,</span>
+</span><span id="__span-3-21">    <span class="n">language_model_choice</span><span class="o">=</span><span class="n">LanguageModelChoice</span><span class="o">.</span><span class="n">SCIBERT</span><span class="p">,</span>
+</span><span id="__span-3-22"><span class="p">)</span>
+</span></code></pre></div>
+<p>Let's first take a look at our new query paper:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-4-1"><span class="nb">print</span><span class="p">(</span><span class="n">result_seen_query</span><span class="o">.</span><span class="n">document_info</span><span class="p">)</span>
+</span></code></pre></div>
+<div class="highlight"><pre><span></span><code><span id="__span-5-1"><span class="go">&gt; Document 11212020</span>
+</span><span id="__span-5-2"><span class="go">&gt; ---------------------</span>
+</span><span id="__span-5-3"><span class="go">&gt; Title: Neural Machine Translation by Jointly Learning to Align and Translate</span>
+</span><span id="__span-5-4"><span class="go">&gt; Author: Yoshua Bengio</span>
+</span><span id="__span-5-5"><span class="go">&gt; Publication Date: 2014-09-01</span>
+</span><span id="__span-5-6"><span class="go">&gt; Arxiv Labels: [&#39;cs.CL&#39;, &#39;cs.LG&#39;, &#39;cs.NE&#39;, &#39;stat.ML&#39;]</span>
+</span><span id="__span-5-7"><span class="go">&gt; Semanticscholar URL: https://www.semanticscholar.org/paper/fa72afa9b2cbc8f0d7b05d52548906610ffbb9c5</span>
+</span><span id="__span-5-8"><span class="go">&gt; Arxiv URL: https://arxiv.org/abs/1409.0473</span>
+</span></code></pre></div>
+<p>In contrast to the previous example, we now choose the Citation -&gt; Language Hybrid-Recommender order.</p>
+<p>In this case, the rows are sorted in descending order by the <strong>cosine similarity</strong> between the query paper and the candidate papers since the re-ranking step is performed by the Language Recommender.</p>
+<p>For brevity we limit the output to the top three recommendations:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-6-1"><span class="nb">print</span><span class="p">(</span><span class="n">result_seen_query</span><span class="o">.</span><span class="n">recommendations</span><span class="o">.</span><span class="n">citation_to_language</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th align="right">candidate_d3_document_id</th>
+<th align="right">cosine_similarity</th>
+<th align="left">title</th>
+<th align="left">author</th>
+<th align="left">publication_date</th>
+<th align="left">arxiv_labels</th>
+<th align="right">integer_label</th>
+<th align="left">semanticscholar_url</th>
+<th align="left">arxiv_url</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">7961699</td>
+<td align="right">0.959</td>
+<td align="left">Sequence to Sequence Learning with Neural Networks</td>
+<td align="left">Ilya Sutskever</td>
+<td align="left">2014-09-10</td>
+<td align="left">['cs.CL' 'cs.LG']</td>
+<td align="right">1</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/cea967b59209c6be22829699f05b8b1ac4dc092d">https://www.semanticscholar.org/paper/cea967b59209c6be22829699f05b8b1ac4dc092d</a></td>
+<td align="left"><a href="https://arxiv.org/abs/1409.3215">https://arxiv.org/abs/1409.3215</a></td>
+</tr>
+<tr>
+<td align="right">5590763</td>
+<td align="right">0.9537</td>
+<td align="left">Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation</td>
+<td align="left">Yoshua Bengio</td>
+<td align="left">2014-06-03</td>
+<td align="left">['cs.CL' 'cs.LG' 'cs.NE' 'stat.ML']</td>
+<td align="right">1</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/0b544dfe355a5070b60986319a3f51fb45d1348e">https://www.semanticscholar.org/paper/0b544dfe355a5070b60986319a3f51fb45d1348e</a></td>
+<td align="left"><a href="https://arxiv.org/abs/1406.1078">https://arxiv.org/abs/1406.1078</a></td>
+</tr>
+<tr>
+<td align="right">1998416</td>
+<td align="right">0.9467</td>
+<td align="left">Effective Approaches to Attention-based Neural Machine Translation</td>
+<td align="left">Christopher D. Manning</td>
+<td align="left">2015-08-17</td>
+<td align="left">['cs.CL']</td>
+<td align="right">1</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/93499a7c7f699b6630a86fad964536f9423bb6d0">https://www.semanticscholar.org/paper/93499a7c7f699b6630a86fad964536f9423bb6d0</a></td>
+<td align="left"><a href="https://arxiv.org/abs/1508.04025">https://arxiv.org/abs/1508.04025</a></td>
+</tr>
+</tbody>
+</table>
+<p>Hence, we might read the paper "Sequence to Sequence Learning with Neural Networks" by Ilya Sutskever et al. next.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you are interested in the additional Citation Recommender feature values that were used to generate the candidate list, you can access them via the <code>recommendations.citation_to_language_candidates</code> attribute of the <code>result_seen_query</code> object.</p>
+</div>
+<h3 id="unseen-query-paper">Unseen Query Paper<a class="headerlink" href="#unseen-query-paper" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>If the query paper is not part of the training corpus, the inference step takes longer since tokenization, embedding and the computation of co-citation analysis, bibliographic coupling and cosine similarity scores has to be performed from scratch.</p>
+<p>However, apart from a longer waiting time, <strong>the user does not have to care about</strong> if the query paper is part of the training corpus or not since the user interface remains the same!</p>
+<p>As an example, we fetch recommendations for the "GPT-4 Technical Report" paper by OpenAI. This paper is too recent to be part of the training corpus.</p>
+<p>Due to its recency, it might not have been cited that often, so we lower the weight of the <code>co_citation_analysis</code> feature. Further, we increase the <code>publication_date</code> weight and decrease the <code>citationcount_author</code> weight.
+For the Language Recommender we use the <code>GloVe</code> model to embed the paper abstract.</p>
+<p>Note that we only need to specify the weights for the features we want to change from the default value of 1</p>
+<div class="highlight"><pre><span></span><code><span id="__span-7-1"><span class="kn">from</span> <span class="nn">readnext</span> <span class="kn">import</span> <span class="n">readnext</span><span class="p">,</span> <span class="n">LanguageModelChoice</span><span class="p">,</span> <span class="n">FeatureWeights</span>
+</span><span id="__span-7-2">
+</span><span id="__span-7-3"><span class="n">result_unseen_query</span> <span class="o">=</span> <span class="n">readnext</span><span class="p">(</span>
+</span><span id="__span-7-4">    <span class="n">arxiv_url</span><span class="o">=</span><span class="s2">&quot;https://arxiv.org/abs/2303.08774&quot;</span><span class="p">,</span>
+</span><span id="__span-7-5">    <span class="n">language_model_choice</span><span class="o">=</span><span class="n">LanguageModelChoice</span><span class="o">.</span><span class="n">GLOVE</span><span class="p">,</span>
+</span><span id="__span-7-6">    <span class="n">feature_weights</span><span class="o">=</span><span class="n">FeatureWeights</span><span class="p">(</span>
+</span><span id="__span-7-7">        <span class="n">publication_date</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+</span><span id="__span-7-8">        <span class="n">citationcount_author</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+</span><span id="__span-7-9">        <span class="n">co_citation_analysis</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+</span><span id="__span-7-10">    <span class="p">),</span>
+</span><span id="__span-7-11"><span class="p">)</span>
+</span></code></pre></div>
+<p>The console output informs us that the query paper is not part of the training corpus and provides some progress updates for the ongoing computations:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-8-1"><span class="go">&gt; ╭──────────────────────────────────────────────────────╮</span>
+</span><span id="__span-8-2"><span class="go">&gt; │                                                      │</span>
+</span><span id="__span-8-3"><span class="go">&gt; │ Query document is not contained in the training data │</span>
+</span><span id="__span-8-4"><span class="go">&gt; │                                                      │</span>
+</span><span id="__span-8-5"><span class="go">&gt; ╰──────────────────────────────────────────────────────╯</span>
+</span><span id="__span-8-6">
+</span><span id="__span-8-7"><span class="go">&gt; Loading training corpus................. ✅ (0.07 seconds)</span>
+</span><span id="__span-8-8"><span class="go">&gt; Tokenizing query abstract............... ✅ (0.41 seconds)</span>
+</span><span id="__span-8-9"><span class="go">&gt; Loading pretrained Glove model.......... ✅ (26.38 seconds)</span>
+</span><span id="__span-8-10"><span class="go">&gt; Embedding query abstract................ ✅ (0.00 seconds)</span>
+</span><span id="__span-8-11"><span class="go">&gt; Loading pretrained embeddings........... ✅ (0.19 seconds)</span>
+</span><span id="__span-8-12"><span class="go">&gt; Computing cosine similarities........... ✅ (0.05 seconds)</span>
+</span></code></pre></div>
+<p>The time distribution differs between the language models. For <code>GloVe</code>, loading the large pretrained model into memory allocates by far the most time.</p>
+<p>Now, we generate the recommendations candidate list with the Language Recommender and re-rank the candidates with the Citation Recommender.
+Since the second recommender of the hybrid structure is the Citation Recommender, the output is again sorted by the weighted points score of the individual features:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-9-1"><span class="nb">print</span><span class="p">(</span><span class="n">result_unseen_query</span><span class="o">.</span><span class="n">recommendations</span><span class="o">.</span><span class="n">language_to_citation</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th align="right">candidate_d3_document_id</th>
+<th align="right">weighted_points</th>
+<th align="left">title</th>
+<th align="left">author</th>
+<th align="left">arxiv_labels</th>
+<th align="right">integer_label</th>
+<th align="left">semanticscholar_url</th>
+<th align="left">arxiv_url</th>
+<th align="left">publication_date</th>
+<th align="right">publication_date_points</th>
+<th align="right">citationcount_document</th>
+<th align="right">citationcount_document_points</th>
+<th align="right">citationcount_author</th>
+<th align="right">citationcount_author_points</th>
+<th align="right">co_citation_analysis_score</th>
+<th align="right">co_citation_analysis_points</th>
+<th align="right">bibliographic_coupling_score</th>
+<th align="right">bibliographic_coupling_points</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">247951931</td>
+<td align="right">80</td>
+<td align="left">PaLM: Scaling Language Modeling with Pathways</td>
+<td align="left">Noam M. Shazeer</td>
+<td align="left">['cs.CL']</td>
+<td align="right">0</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/094ff971d6a8b8ff870946c9b3ce5aa173617bfb">https://www.semanticscholar.org/paper/094ff971d6a8b8ff870946c9b3ce5aa173617bfb</a></td>
+<td align="left"><a href="https://arxiv.org/abs/2204.02311">https://arxiv.org/abs/2204.02311</a></td>
+<td align="left">2022-04-05</td>
+<td align="right">99</td>
+<td align="right">145</td>
+<td align="right">0</td>
+<td align="right">51316</td>
+<td align="right">0</td>
+<td align="right">72</td>
+<td align="right">99</td>
+<td align="right">77</td>
+<td align="right">96</td>
+</tr>
+<tr>
+<td align="right">230435736</td>
+<td align="right">14.6</td>
+<td align="left">The Pile: An 800GB Dataset of Diverse Text for Language Modeling</td>
+<td align="left">Jason Phang</td>
+<td align="left">['cs.CL']</td>
+<td align="right">0</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/db1afe3b3cd4cd90e41fbba65d3075dd5aebb61e">https://www.semanticscholar.org/paper/db1afe3b3cd4cd90e41fbba65d3075dd5aebb61e</a></td>
+<td align="left"><a href="https://arxiv.org/abs/2101.00027">https://arxiv.org/abs/2101.00027</a></td>
+<td align="left">2020-12-31</td>
+<td align="right">19</td>
+<td align="right">154</td>
+<td align="right">0</td>
+<td align="right">1303</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">86</td>
+<td align="right">48</td>
+<td align="right">0</td>
+</tr>
+<tr>
+<td align="right">227239228</td>
+<td align="right">13.3</td>
+<td align="left">Pre-Trained Image Processing Transformer</td>
+<td align="left">W. Gao</td>
+<td align="left">['cs.CV' 'cs.LG']</td>
+<td align="right">0</td>
+<td align="left"><a href="https://www.semanticscholar.org/paper/43cb4886a8056d5005702edbc51be327542b2124">https://www.semanticscholar.org/paper/43cb4886a8056d5005702edbc51be327542b2124</a></td>
+<td align="left"><a href="https://arxiv.org/abs/2012.00364">https://arxiv.org/abs/2012.00364</a></td>
+<td align="left">2020-12-01</td>
+<td align="right">5</td>
+<td align="right">379</td>
+<td align="right">0</td>
+<td align="right">13361</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">52</td>
+<td align="right">65</td>
+</tr>
+</tbody>
+</table>
+<p>The top recommendation introducing the PaLM language model as a competitor to the GPT family seems quite reasonable.</p>
+<p>Note that the <code>integer_label</code> column is not informative for unseen query papers and only kept for consistency.
+Since no arxiv labels are available for unseen query papers they can not intersect with the arxiv labels of the candidates such that all values of the <code>integer_label</code> column are set to 0.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you are interested in the cosine similarity values that were used to generate the candidate list, you can access them via the <code>recommendations.language_to_citation_candidates</code> attribute of the <code>result_unseen_query</code> object.</p>
+</div>
+<h2 id="input-validation">Input Validation<a class="headerlink" href="#input-validation" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>The <code>pydantic</code> library is used for basic input validation.
+For invalid user inputs the command fails early before any computations are performed with an informative error message.</p>
+<p>The following checks are performed:</p>
+<ul>
+<li>
+<p>The Semanticscholar ID must be a 40-character hexadecimal string.</p>
+</li>
+<li>
+<p>The Semanticscholar URL must be a valid URL starting with <code>https://www.semanticscholar.org/paper/</code>.</p>
+</li>
+<li>
+<p>The Arxiv ID must start with 4 digits followed by a dot followed by 5 more
+digits (e.g. <code>1234.56789</code>).</p>
+</li>
+<li>
+<p>The Arxiv URL must be a valid URL starting with <code>https://arxiv.org/abs/</code>.</p>
+</li>
+<li>
+<p>At least one of the four query paper identifiers must be provided.</p>
+</li>
+<li>
+<p>The feature weights must be non-negative numeric values.</p>
+</li>
+</ul>
+<p>For example, the following command fails because we assigned a negative weight to the <code>publication_date</code> feature:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-10-1"><span class="kn">from</span> <span class="nn">readnext</span> <span class="kn">import</span> <span class="n">readnext</span><span class="p">,</span> <span class="n">LanguageModelChoice</span><span class="p">,</span> <span class="n">FeatureWeights</span>
+</span><span id="__span-10-2">
+</span><span id="__span-10-3"><span class="n">result</span> <span class="o">=</span> <span class="n">readnext</span><span class="p">(</span>
+</span><span id="__span-10-4">    <span class="n">arxiv_id</span><span class="o">=</span><span class="s2">&quot;2101.03041&quot;</span><span class="p">,</span>
+</span><span id="__span-10-5">    <span class="n">language_model_choice</span><span class="o">=</span><span class="n">LanguageModelChoice</span><span class="o">.</span><span class="n">BM25</span><span class="p">,</span>
+</span><span id="__span-10-6">    <span class="n">feature_weights</span><span class="o">=</span><span class="n">FeatureWeights</span><span class="p">(</span><span class="n">publication_date</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+</span><span id="__span-10-7"><span class="p">)</span>
+</span></code></pre></div>
+<div class="highlight"><pre><span></span><code><span id="__span-11-1"><span class="go">pydantic.error_wrappers.ValidationError: 1 validation error for FeatureWeights</span>
+</span><span id="__span-11-2"><span class="go">publication_date</span>
+</span><span id="__span-11-3"><span class="go">  ensure this value is greater than or equal to 0 (type=value_error.number.not_ge; limit_value=0)</span>
+</span></code></pre></div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../setup/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Setup" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Setup
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../reproducibility/" class="md-footer__link md-footer__link--next" aria-label="Next: Reproducibility" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Reproducibility
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/joel-beck/readnext" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "content.tabs.link", "navigation.expand", "navigation.footer", "navigation.instant", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow", "toc.integrate"], "search": "../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.51d95adb.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

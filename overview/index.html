@@ -1,0 +1,717 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Hybrid Recommender System for Computer Science Papers">
+      
+      
+      
+        <link rel="canonical" href="https://joel-beck.github.io/readnext/overview/">
+      
+      
+        <link rel="prev" href="../installation/">
+      
+      
+        <link rel="next" href="../setup/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6">
+    
+    
+      
+        <title>Overview - readnext</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.558e4712.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="#193549" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#overview" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="readnext" class="md-header__button md-logo" aria-label="readnext" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m2.8 3 16.87 15.82s.33.45-.09.89c-.41.44-.95.06-.95.06L2.8 3m5.01 1.59 13.1 12.05s.32.44-.09.86c-.42.47-.96.09-.96.09l-12.05-13M4.29 8l13.1 12.03s.32.44-.09.88c-.42.45-.96.09-.96.09L4.29 8m7.76-2.04 9.15 8.41s.22.31-.07.63c-.28.3-.66.03-.66.03l-8.42-9.07m-6.6 5.95 9.15 8.42s.22.31-.06.62c-.29.31-.67.05-.67.05l-8.42-9.09m10.93-3.99 4.17 3.82s.11.14-.05.29c-.12.14-.31.02-.31.02l-3.81-4.13M7.56 16.1l4.18 3.81s.11.15-.04.29c-.14.15-.33.02-.33.02L7.56 16.1Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            readnext
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Overview
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="#193549" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+            </label>
+          
+        
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="#193549" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/joel-beck/readnext" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    readnext
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="readnext" class="md-nav__button md-logo" aria-label="readnext" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m2.8 3 16.87 15.82s.33.45-.09.89c-.41.44-.95.06-.95.06L2.8 3m5.01 1.59 13.1 12.05s.32.44-.09.86c-.42.47-.96.09-.96.09l-12.05-13M4.29 8l13.1 12.03s.32.44-.09.88c-.42.45-.96.09-.96.09L4.29 8m7.76-2.04 9.15 8.41s.22.31-.07.63c-.28.3-.66.03-.66.03l-8.42-9.07m-6.6 5.95 9.15 8.42s.22.31-.06.62c-.29.31-.67.05-.67.05l-8.42-9.09m10.93-3.99 4.17 3.82s.11.14-.05.29c-.12.14-.31.02-.31.02l-3.81-4.13M7.56 16.1l4.18 3.81s.11.15-.04.29c-.14.15-.33.02-.33.02L7.56 16.1Z"/></svg>
+
+    </a>
+    readnext
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/joel-beck/readnext" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    readnext
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Overview
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Overview
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#hybrid-recommender" class="md-nav__link">
+    Hybrid Recommender
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#citation-recommender" class="md-nav__link">
+    Citation Recommender
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#language-recommender" class="md-nav__link">
+    Language Recommender
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#labels" class="md-nav__link">
+    Labels
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evaluation-metrics" class="md-nav__link">
+    Evaluation Metrics
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../setup/" class="md-nav__link">
+        Setup
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference/" class="md-nav__link">
+        Inference
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reproducibility/" class="md-nav__link">
+        Reproducibility
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../customization/" class="md-nav__link">
+        Customization
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+
+<h1 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">🔗&#xFE0E;</a></h1>
+<p><strong>Note:</strong> This section provides only a surface-level overview of the project.
+For a more detailed presentation, see chapter 3 of the <a href="https://github.com/joel-beck/msc-thesis/blob/main/thesis/beck-joel_masters-thesis.pdf">thesis</a>.</p>
+<h2 id="hybrid-recommender">Hybrid Recommender<a class="headerlink" href="#hybrid-recommender" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p><img alt="Hybrid Recommender" src="../assets/hybrid_recommender.png" /></p>
+<p>The Hybrid Recommender involves a <strong>Citation Recommender</strong> that combines global document characteristics and citation-based features of papers, and a <strong>Language Recommender</strong> that employs a language model to generate embeddings from paper abstracts.</p>
+<p>The hybrid recommender combines the Citation Recommender and the Language Recommender in a <em>cascade</em> fashion, i.e. one is used to generate a candidate list which is then re-ranked by the other recommender.</p>
+<p>The candidate lists and final rankings of both hybrid orderings are evaluated using the Mean Average Precision (MAP) metric. The objectives of the evaluation are:</p>
+<ol>
+<li>Identify the best feature weights for the Citation Recommender.</li>
+<li>Identify the best language model for the Language Recommender.</li>
+<li>Assess whether the hybridization ordering, i.e. if the Citation or the Language Recommender is applied first, influences the Hybrid Recommender's performance.</li>
+</ol>
+<h2 id="citation-recommender">Citation Recommender<a class="headerlink" href="#citation-recommender" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p><img alt="Citation Recommender" src="../assets/citation_recommender.png" /></p>
+<p>The <strong>Citation Recommender</strong> uses three global document features and two citation-based features:</p>
+<ol>
+<li>
+<p><strong>Global Document Features</strong></p>
+<p>These features are derived from the document metadata:</p>
+<ul>
+<li>
+<p><strong>Publication Date</strong>:
+    A <em>novelty</em> metric. Recent publications score higher, as they build upon earlier papers and compare their findings with existing results.</p>
+</li>
+<li>
+<p><strong>Paper Citation Count</strong>:
+    A <em>document popularity</em> metric. Papers with more citations are, on average and without any prior knowledge, considered more valuable and relevant.</p>
+</li>
+<li>
+<p><strong>Author Citation Count</strong>:
+    An <em>author popularity</em> metric. Authors with higher total citations across their publications are deemed more important in the research community.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Citation-Based Features</strong></p>
+<ul>
+<li>
+<p><strong>Co-Citation Analysis</strong>:
+    Counts the number of shared citations, which in this context is equivalent to shared <em>citing papers</em>. These are papers that themselves cite both the query and the candidate paper. Candidate documents with higher co-citation analysis scores are considered more relevant to the query document.</p>
+</li>
+<li>
+<p><strong>Bibliographic Coupling</strong>:
+    Counts the number of shared references or shared <em>cited</em> papers, i.e. papers that appear in the bibliography of both the query and the candidate paper. Candidate documents with higher bibliographic coupling scores are considered more relevant to the query document.</p>
+</li>
+</ul>
+<p><figure markdown>
+  <img alt="Bibliographic Coupling vs. Co-Citation Analysis" src="../assets/bibliographic_coupling_co_citation.png" />
+  <figcaption>
+  Left: Bibliographic coupling counts the number of shared references. Paper A and Paper B are connected by bibliographic coupling since they both cite the same Paper C. Right: Co-citation analysis counts the number of shared citing papers. Here, Paper A and Paper B are connected by co-citation analysis since they are both cited by Paper C.
+  </figcaption>
+</figure></p>
+</li>
+</ol>
+<p><strong>Feature Weighting</strong></p>
+<p>The five features of the Citation Recommender are combined linearly with user-specified feature weights. The weights are normalized with the L1 norm, ensuring the results are not affected by the absolute magnitude of the weights.
+A caveat of this approach is that the raw feature values, such as the publication date (represented as a date) and the paper citation count (an integer), are not directly comparable.
+To aggregate all five features into a single score, a rank-based method is used.</p>
+<p>The Citation Recommender first ranks all candidate papers according to each of the five features individually.
+The ranking process assigns the top rank 1 to the most relevant candidate paper and increments the rank by 1 for each subsequent paper.
+Candidate papers with more recent publication dates, higher citation counts, higher co-citation analysis and higher bibliographic coupling scores receive better rankings.</p>
+<p>Finally, those candidate papers with the lowest weighted rank are recommended to the user.</p>
+<p><em>Note:</em> The true weighting scheme involves some additional steps that add interpretability but are conceptually equivalent to the version described above. See chapter 3.3 of the <a href="https://github.com/joel-beck/msc-thesis/blob/main/thesis/beck-joel_masters-thesis.pdf">thesis</a> for more details.</p>
+<h2 id="language-recommender">Language Recommender<a class="headerlink" href="#language-recommender" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p><img alt="Language Recommender" src="../assets/language_recommender.png" /></p>
+<p>The <strong>Language Recommender</strong> encodes paper abstracts into embedding vectors to capture semantic meaning. Candidate papers with embeddings most similar to the query embedding (measured by cosine similarity) are recommended.</p>
+<p>8 language models across 3 categories are implemented: keyword-based sparse embedding models, static embedding models, and contextual embedding models.</p>
+<p><strong>Keyword-based models</strong></p>
+<p>They produce sparse vector embeddings where the embedding dimension equals the vocabulary size of all document abstracts in the training corpus.
+For these models, text preprocessing and tokenization is performed by the <code>spaCy</code> library using the <code>en_core_web_sm</code> model.</p>
+<p>The following keyword-based models are considered:</p>
+<ul>
+<li>
+<p>TF-IDF: Implemented with <code>scikit-learn</code> <a href="https://scikit-learn.org/stable/modules/feature_extraction.html#tfidf-term-weighting">according to the formula</a>:</p>
+<div class="arithmatex">\[\text{TF-IDF}(t, d) = \text{TF}(t, d) \cdot \text{IDF}(t)\]</div>
+<p>with:</p>
+<div class="arithmatex">\[\text{TF}(t, d) = \text{count}(t, d)\]</div>
+<p>and:</p>
+<div class="arithmatex">\[\text{IDF}(t) = \log\left(\frac{1 + N}{1 + \text{DF}(t)} + 1\right)\]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(t\)</span> is a token,</li>
+<li><span class="arithmatex">\(d\)</span> is a document,</li>
+<li><span class="arithmatex">\(\text{TF}(t, d)\)</span> is the term frequency of token <span class="arithmatex">\(t\)</span> in document <span class="arithmatex">\(d\)</span> (interpreted as the relative frequency of a term in a document),</li>
+<li><span class="arithmatex">\(\text{IDF}(t)\)</span> is the inverse document frequency of token <span class="arithmatex">\(t\)</span> across all documents in the training corpus,</li>
+<li><span class="arithmatex">\(\text{count}(t, d)\)</span> is the count of token <span class="arithmatex">\(t\)</span> in document <span class="arithmatex">\(d\)</span>,</li>
+<li><span class="arithmatex">\(\text{DF}(t)\)</span> is the document frequency of token <span class="arithmatex">\(t\)</span> (the number of documents in the corpus that contain the term <span class="arithmatex">\(t\)</span>),</li>
+<li><span class="arithmatex">\(N\)</span> is the total number of documents in the corpus.</li>
+</ul>
+<p>Finally, the TF-IDF vectors are normalized to unit length by the Euclidean norm.</p>
+</li>
+<li>
+<p>BM25: Implemented in the BM25+ variant as proposed by (Lv &amp; Zhai, 2011) and described in (Trotman et al., 2014).</p>
+<p>The formula is:</p>
+<div class="arithmatex">\[\text{BM25}(t, d) = \text{BM25-TF}(t, d) \cdot \text{BM25-IDF}(t)\]</div>
+<p>with:</p>
+<div class="arithmatex">\[\text{BM25-TF}(t, d) = \frac{(k + 1) \cdot \text{TF}(t, d)}{k \cdot (1 - b + b \cdot (\text{len}(d) / \text{avgdl})) + \text{TF}(t, d)} + \delta\]</div>
+<p>and:</p>
+<div class="arithmatex">\[\text{BM25-IDF}(t) = \log\left(\frac{N+1}{\text{DF}(t)}\right)\]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(t\)</span> is a token,</li>
+<li><span class="arithmatex">\(d\)</span> is a document,</li>
+<li><span class="arithmatex">\(\text{BM25-TF}(t, d)\)</span> is the BM25+ term frequency of token <span class="arithmatex">\(t\)</span> in document <span class="arithmatex">\(d\)</span>,</li>
+<li><span class="arithmatex">\(\text{BM25-IDF}(t)\)</span> is the BM25+ inverse document frequency of token <span class="arithmatex">\(t\)</span> across all documents in the training corpus,</li>
+<li><span class="arithmatex">\(\text{TF}(t, d)\)</span> is the term frequency of token <span class="arithmatex">\(t\)</span> in document <span class="arithmatex">\(d\)</span> (interpreted as the relative frequency of a term in a document),</li>
+<li><span class="arithmatex">\(\text{DF}(t)\)</span> is the document frequency of token <span class="arithmatex">\(t\)</span> (the number of documents in the corpus that contain the term <span class="arithmatex">\(t\)</span>),</li>
+<li><span class="arithmatex">\(\text{len}(d)\)</span> is the total number of tokens in document <span class="arithmatex">\(d\)</span>,</li>
+<li><span class="arithmatex">\(\text{avgdl}\)</span> is the average document length across the corpus,</li>
+<li><span class="arithmatex">\(N\)</span> is the total number of documents in the corpus,</li>
+<li><span class="arithmatex">\(k\)</span>, <span class="arithmatex">\(b\)</span>, and <span class="arithmatex">\(\delta\)</span> are free parameters.</li>
+</ul>
+<p>Default values of <span class="arithmatex">\(k = 1.5\)</span>, <span class="arithmatex">\(b = 0.75\)</span>, and <span class="arithmatex">\(\delta = 1.0\)</span> are adapted from the <a href="https://github.com/dorianbrown/rank_bm25/blob/990470ebbe6b28c18216fd1a8b18fe7446237dd6/rank_bm25.py#L176">rank_bm25 package</a>.</p>
+</li>
+</ul>
+<p><strong>Static embedding models</strong></p>
+<p>They produce dense vector embeddings where the embedding dimension is fixed (here set to the default of 300) and independent of the vocabulary size.
+Word embeddings are averaged dimension-wise to obtain a single embedding vector for each abstract.
+Again, <code>spaCy</code> is used for text preprocessing and tokenization.
+All three static embedding models are pretrained and implemented via their <code>gensim</code> interface:</p>
+<ul>
+<li>Word2Vec: Pretrained on the Google News corpus using the <code>word2vec-google-news-300</code> gensim model.</li>
+<li>GloVe: Pretrained on the Gigaword corpus and Wikipedia using the <code>glove.6B.300d</code> model from the NLP Stanford GloVe project.</li>
+<li>FastText: Pretrained on the Common Crawl corpus and Wikipedia using the <code>cc.en.300.bin</code> model from the FastText Website.</li>
+</ul>
+<p><strong>Contextual embedding models</strong></p>
+<p>Similar to static embedding models, they produce dense vector embeddings where the embedding dimension is fixed (here set to the default of 768) and independent of the vocabulary size.
+Instead of string tokens, contextual embedding models take integer token IDs as input which are mapped to words and subwords and learned during pretraining.
+All three static embedding models are pretrained and implemented via the HuggingFace <code>transformers</code> library:</p>
+<ul>
+<li>BERT: Pretrained on the BooksCorpus and English Wikipedia using the <code>bert-base-uncased</code> model.</li>
+<li>SciBERT: Pretrained on the Semantic Scholar corpus (i.e. specific to scientific language) using the <code>allenai/scibert_scivocab_uncased</code> model.</li>
+<li>Longformer: Pretrained on the BooksCorpus and English Wikipedia using the <code>allenai/longformer-base-4096</code> model.</li>
+</ul>
+<p>Instead of averaging word embeddings like static embedding models, these Transformer based models cut off the document abstracts at a maximum token length of 512 for BERT and SciBERT and 4096 for the Longformer model.
+However, only 0.58% of all abstracts in the training corpus exceed the maximum token length of 512 such that the impact of this cutoff is negligible.</p>
+<h2 id="labels">Labels<a class="headerlink" href="#labels" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>To determine whether the Hybrid Recommender generates relevant or irrelevant recommendations, <strong>arXiV categories</strong> are used as labels.
+Within the Computer Science domain there are 40 different arXiV categories, such as <code>cs.AI</code> for Artificial Intelligence or <code>cs.CL</code> for Computation and Language.
+Importantly, each paper is not constrained to a single category but can be assigned to multiple categories.</p>
+<p>Based on these labels, a binary classification task is defined: A candidate paper is considered a <em>relevant</em> recommendation if it shares at least one arXiV label with the query paper, and <em>irrelevant</em> otherwise.
+For instance, if the query paper is assigned to the <code>cs.CL</code> and <code>cs.IR</code> categories, the candidate paper <em>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</em> by Devlin et al. (2018) is considered a relevant recommendation because it is assigned to the <code>cs.CL</code> category. Hence, there is an overlap between the query and candidate paper's arXiV labels.
+In contrast, the candidate paper <em>Deep Residual Learning for Image Recognition</em> by He et al. (2016) is considered an irrelevant recommendation because it is only assigned to the <code>cs.CV</code> category, which does not overlap with any of the query paper's categories.</p>
+<h2 id="evaluation-metrics">Evaluation Metrics<a class="headerlink" href="#evaluation-metrics" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>The <strong>Mean Average Precision (MAP)</strong> is used as the primary evaluation metric to assess the performance of the Hybrid Recommender.</p>
+<p>Although many evaluation metrics are available for recommender systems, the MAP is chosen due to the following reasons:</p>
+<ol>
+<li>It takes the order of recommendations into account, i.e. it is not only important to recommend relevant items but also to recommend them early in the list.</li>
+<li>All items on the recommendation list are considered, i.e. it is not only important to recommend relevant items but also to avoid irrelevant items.</li>
+<li>It works well with binary 0/1 encoded labels as in our case for irrelevant/relevant recommendations.</li>
+</ol>
+<p>The <strong>Average Precision (AP)</strong> computes a scalar score for a single recommendation list according to the following definitions:</p>
+<p><strong>Precision</strong></p>
+<div class="arithmatex">\[\text{Precision} = \frac{\text{number of relevant items}}{\text{number of items}}\]</div>
+<p><strong>Average Precision (AP)</strong></p>
+<div class="arithmatex">\[\text{AP} = \frac{1}{r} \sum_{k=1}^{K} P(k) \cdot \text{rel}(k)\]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(K\)</span> is the total number of items,</li>
+<li><span class="arithmatex">\(r\)</span> is the total number of relevant items,</li>
+<li><span class="arithmatex">\(P(k)\)</span> is the precision at <span class="arithmatex">\(k\)</span>,</li>
+<li><span class="arithmatex">\(\text{rel}(k)\)</span> is 1 if item <span class="arithmatex">\(k\)</span> is relevant and 0 otherwise.</li>
+</ul>
+<p>If the labels are binary 0/1 encoded as in our case, the formula simplifies to:</p>
+<div class="arithmatex">\[\text{AP} = \frac{1}{r} \sum_{k=1}^{K} \frac{\sum_{i=1}^{k} \text{rel}(i)}{k}\]</div>
+<p>The Mean Average Precision is then computed as the average over the Average Precision scores for the recommendations of all query documents in the training corpus.</p>
+<p><strong>Mean Average Precision (MAP)</strong></p>
+<div class="arithmatex">\[\text{MAP} = \frac{1}{Q} \sum_{q=1}^{Q} \text{AP}(q)\]</div>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(Q\)</span> is the total number of query documents,</li>
+<li><span class="arithmatex">\(\text{AP}(q)\)</span> is the average precision for query document <span class="arithmatex">\(q\)</span>.</li>
+</ul>
+<p>Within this project, the MAP computes a scalar score for a given combination of Language Model Choice and Feature Weights.
+Thus, to determine which Recommender order works best within the Hybrid structure, we could e.g. aggregate the MAP scores for each order over all Language Model Choices and Feature Weights.</p>
+<p><strong>Example</strong></p>
+<p>The recommendation list [relevant, irrelvant, relevant] has a Precision of <span class="arithmatex">\(P = \frac{2}{3}\)</span> and an Average Precision of <span class="arithmatex">\(AP = \frac{1}{2} \cdot (\frac{1}{1} + \frac{2}{3}) = \frac{5}{6}\)</span>.</p>
+<p>The recommendation list [relevant, relevant, irrelevant] has a Precision of <span class="arithmatex">\(P = \frac{2}{3}\)</span> and an Average Precision of <span class="arithmatex">\(AP = \frac{1}{2} \cdot (\frac{1}{1} + \frac{2}{2}) = 1\)</span>.</p>
+<p>The MAP of these two rankings is <span class="arithmatex">\(MAP = \frac{1}{2} \cdot (\frac{5}{6} + 1) = \frac{11}{12}\)</span>.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../installation/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Installation" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Installation
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../setup/" class="md-footer__link md-footer__link--next" aria-label="Next: Setup" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Setup
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/joel-beck/readnext" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "content.tabs.link", "navigation.expand", "navigation.footer", "navigation.instant", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow", "toc.integrate"], "search": "../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.51d95adb.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
